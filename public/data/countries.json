@@ -1,0 +1,1448 @@
+[
+  {
+    "label": "Afghanistan",
+    "value": "+93",
+    "code": "af",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/af.svg"
+  },
+  {
+    "label": "Aland Islands",
+    "value": "+358 (18)",
+    "code": "ax",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ax.svg"
+  },
+  {
+    "label": "Albania",
+    "value": "+355",
+    "code": "al",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/al.svg"
+  },
+  {
+    "label": "Algeria",
+    "value": "+213",
+    "code": "dz",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/dz.svg"
+  },
+  {
+    "label": "American Samoa",
+    "value": "+1684",
+    "code": "as",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/as.svg"
+  },
+  {
+    "label": "Andorra",
+    "value": "+376",
+    "code": "ad",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ad.svg"
+  },
+  {
+    "label": "Angola",
+    "value": "+244",
+    "code": "ao",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ao.svg"
+  },
+  {
+    "label": "Anguilla",
+    "value": "+1264",
+    "code": "ai",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ai.svg"
+  },
+  {
+    "label": "Antarctica",
+    "value": "+672",
+    "code": "aq",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/aq.svg"
+  },
+  {
+    "label": "Antigua and Barbuda",
+    "value": "+1268",
+    "code": "ag",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ag.svg"
+  },
+  {
+    "label": "Argentina",
+    "value": "+54",
+    "code": "ar",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ar.svg"
+  },
+  {
+    "label": "Armenia",
+    "value": "+374",
+    "code": "am",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/am.svg"
+  },
+  {
+    "label": "Aruba",
+    "value": "+297",
+    "code": "aw",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/aw.svg"
+  },
+  {
+    "label": "Australia",
+    "value": "+61",
+    "code": "au",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/au.svg"
+  },
+  {
+    "label": "Austria",
+    "value": "+43",
+    "code": "at",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/at.svg"
+  },
+  {
+    "label": "Azerbaijan",
+    "value": "+994",
+    "code": "az",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/az.svg"
+  },
+  {
+    "label": "Bahamas",
+    "value": "+1242",
+    "code": "BS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bs.svg"
+  },
+  {
+    "label": "Bahrain",
+    "value": "+973",
+    "code": "BH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bh.svg"
+  },
+  {
+    "label": "Bangladesh",
+    "value": "+880",
+    "code": "BD",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bd.svg"
+  },
+  {
+    "label": "Barbados",
+    "value": "+1246",
+    "code": "BB",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bb.svg"
+  },
+  {
+    "label": "Belarus",
+    "value": "+375",
+    "code": "BY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/by.svg"
+  },
+  {
+    "label": "Belgium",
+    "value": "+32",
+    "code": "BE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/be.svg"
+  },
+  {
+    "label": "Belize",
+    "value": "+501",
+    "code": "BZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bz.svg"
+  },
+  {
+    "label": "Benin",
+    "value": "+229",
+    "code": "BJ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bj.svg"
+  },
+  {
+    "label": "Bermuda",
+    "value": "+1441",
+    "code": "BM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bm.svg"
+  },
+  {
+    "label": "Bhutan",
+    "value": "+975",
+    "code": "BT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bt.svg"
+  },
+  {
+    "label": "Bolivia, Plurinational State of",
+    "value": "+591",
+    "code": "BO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bo.svg"
+  },
+  {
+    "label": "Bosnia and Herzegovina",
+    "value": "+387",
+    "code": "BA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ba.svg"
+  },
+  {
+    "label": "Botswana",
+    "value": "+267",
+    "code": "BW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bw.svg"
+  },
+  {
+    "label": "Brazil",
+    "value": "+55",
+    "code": "BR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/br.svg"
+  },
+  {
+    "label": "British Indian Ocean Territory",
+    "value": "+246",
+    "code": "IO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/io.svg"
+  },
+  {
+    "label": "Brunei Darussalam",
+    "value": "+673",
+    "code": "BN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bn.svg"
+  },
+  {
+    "label": "Bulgaria",
+    "value": "+359",
+    "code": "BG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bg.svg"
+  },
+  {
+    "label": "Burkina Faso",
+    "value": "+226",
+    "code": "BF",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bf.svg"
+  },
+  {
+    "label": "Burundi",
+    "value": "+257",
+    "code": "BI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bi.svg"
+  },
+  {
+    "label": "Cambodia",
+    "value": "+855",
+    "code": "KH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/kh.svg"
+  },
+  {
+    "label": "Cameroon",
+    "value": "+237",
+    "code": "CM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cm.svg"
+  },
+  {
+    "label": "Canada",
+    "value": "+1",
+    "code": "CA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ca.svg"
+  },
+  {
+    "label": "Cape Verde",
+    "value": "+238",
+    "code": "CV",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cv.svg"
+  },
+  {
+    "label": "Cayman Islands",
+    "value": "+ 345",
+    "code": "KY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ky.svg"
+  },
+  {
+    "label": "Central African Republic",
+    "value": "+236",
+    "code": "CF",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cf.svg"
+  },
+  {
+    "label": "Chad",
+    "value": "+235",
+    "code": "TD",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/td.svg"
+  },
+  {
+    "label": "Chile",
+    "value": "+56",
+    "code": "CL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cl.svg"
+  },
+  {
+    "label": "China",
+    "value": "+86",
+    "code": "CN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cn.svg"
+  },
+  {
+    "label": "Christmas Island",
+    "value": "+61 (8 9164)",
+    "code": "CX",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cx.svg"
+  },
+  {
+    "label": "Cocos (Keeling) Islands",
+    "value": "+61 (8 9162)",
+    "code": "CC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cc.svg"
+  },
+  {
+    "label": "Colombia",
+    "value": "+57",
+    "code": "CO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/co.svg"
+  },
+  {
+    "label": "Comoros",
+    "value": "+269",
+    "code": "KM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/km.svg"
+  },
+  {
+    "label": "Congo",
+    "value": "+242",
+    "code": "CG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cg.svg"
+  },
+  {
+    "label": "Congo, The Democratic Republic of the Congo",
+    "value": "+243",
+    "code": "CD",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cd.svg"
+  },
+  {
+    "label": "Cook Islands",
+    "value": "+682",
+    "code": "CK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ck.svg"
+  },
+  {
+    "label": "Costa Rica",
+    "value": "+506",
+    "code": "CR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cr.svg"
+  },
+  {
+    "label": "Cote d'Ivoire",
+    "value": "+225",
+    "code": "CI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ci.svg"
+  },
+  {
+    "label": "Croatia",
+    "value": "+385",
+    "code": "HR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/hr.svg"
+  },
+  {
+    "label": "Cuba",
+    "value": "+53",
+    "code": "CU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cu.svg"
+  },
+  {
+    "label": "Cyprus",
+    "value": "+357",
+    "code": "CY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cy.svg"
+  },
+  {
+    "label": "Czech Republic",
+    "value": "+420",
+    "code": "CZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/cz.svg"
+  },
+  {
+    "label": "Denmark",
+    "value": "+45",
+    "code": "DK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/dk.svg"
+  },
+  {
+    "label": "Djibouti",
+    "value": "+253",
+    "code": "DJ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/dj.svg"
+  },
+  {
+    "label": "Dominica",
+    "value": "+1767",
+    "code": "DM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/dm.svg"
+  },
+  {
+    "label": "Dominican Republic",
+    "value": "+1849",
+    "code": "DO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/do.svg"
+  },
+  {
+    "label": "Ecuador",
+    "value": "+593",
+    "code": "EC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ec.svg"
+  },
+  {
+    "label": "Egypt",
+    "value": "+20",
+    "code": "EG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/eg.svg"
+  },
+  {
+    "label": "El Salvador",
+    "value": "+503",
+    "code": "SV",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sv.svg"
+  },
+  {
+    "label": "Equatorial Guinea",
+    "value": "+240",
+    "code": "GQ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gq.svg"
+  },
+  {
+    "label": "Eritrea",
+    "value": "+291",
+    "code": "ER",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/er.svg"
+  },
+  {
+    "label": "Estonia",
+    "value": "+372",
+    "code": "EE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ee.svg"
+  },
+  {
+    "label": "Ethiopia",
+    "value": "+251",
+    "code": "ET",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/et.svg"
+  },
+  {
+    "label": "Falkland Islands (Malvinas)",
+    "value": "+500",
+    "code": "FK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/fk.svg"
+  },
+  {
+    "label": "Faroe Islands",
+    "value": "+298",
+    "code": "FO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/fo.svg"
+  },
+  {
+    "label": "Fiji",
+    "value": "+679",
+    "code": "FJ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/fj.svg"
+  },
+  {
+    "label": "Finland",
+    "value": "+358",
+    "code": "FI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/fi.svg"
+  },
+  {
+    "label": "France",
+    "value": "+33",
+    "code": "FR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/fr.svg"
+  },
+  {
+    "label": "French Guiana",
+    "value": "+594",
+    "code": "GF",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gf.svg"
+  },
+  {
+    "label": "French Polynesia",
+    "value": "+689",
+    "code": "PF",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pf.svg"
+  },
+  {
+    "label": "Gabon",
+    "value": "+241",
+    "code": "GA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ga.svg"
+  },
+  {
+    "label": "Gambia",
+    "value": "+220",
+    "code": "GM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gm.svg"
+  },
+  {
+    "label": "Georgia",
+    "value": "+995",
+    "code": "GE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ge.svg"
+  },
+  {
+    "label": "Germany",
+    "value": "+49",
+    "code": "DE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/de.svg"
+  },
+  {
+    "label": "Ghana",
+    "value": "+233",
+    "code": "GH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gh.svg"
+  },
+  {
+    "label": "Gibraltar",
+    "value": "+350",
+    "code": "GI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gi.svg"
+  },
+  {
+    "label": "Greece",
+    "value": "+30",
+    "code": "GR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gr.svg"
+  },
+  {
+    "label": "Greenland",
+    "value": "+299",
+    "code": "GL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gl.svg"
+  },
+  {
+    "label": "Grenada",
+    "value": "+1473",
+    "code": "GD",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gd.svg"
+  },
+  {
+    "label": "Guadeloupe",
+    "value": "+590",
+    "code": "GP",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gp.svg"
+  },
+  {
+    "label": "Guam",
+    "value": "+1671",
+    "code": "GU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gu.svg"
+  },
+  {
+    "label": "Guatemala",
+    "value": "+502",
+    "code": "GT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gt.svg"
+  },
+  {
+    "label": "Guernsey",
+    "value": "+44 (1481)",
+    "code": "GG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gg.svg"
+  },
+  {
+    "label": "Guinea",
+    "value": "+224",
+    "code": "GN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gn.svg"
+  },
+  {
+    "label": "Guinea-Bissau",
+    "value": "+245",
+    "code": "GW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gw.svg"
+  },
+  {
+    "label": "Guyana",
+    "value": "+595",
+    "code": "GY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gy.svg"
+  },
+  {
+    "label": "Haiti",
+    "value": "+509",
+    "code": "HT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ht.svg"
+  },
+  {
+    "label": "Holy See (Vatican City State)",
+    "value": "+379",
+    "code": "VA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/va.svg"
+  },
+  {
+    "label": "Honduras",
+    "value": "+504",
+    "code": "HN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/hn.svg"
+  },
+  {
+    "label": "Hong Kong",
+    "value": "+852",
+    "code": "HK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/hk.svg"
+  },
+  {
+    "label": "Hungary",
+    "value": "+36",
+    "code": "HU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/hu.svg"
+  },
+  {
+    "label": "Iceland",
+    "value": "+354",
+    "code": "IS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/is.svg"
+  },
+  {
+    "label": "India",
+    "value": "+91",
+    "code": "IN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/in.svg"
+  },
+  {
+    "label": "Indonesia",
+    "value": "+62",
+    "code": "ID",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/id.svg"
+  },
+  {
+    "label": "Iran, Islamic Republic of Persian Gulf",
+    "value": "+98",
+    "code": "IR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ir.svg"
+  },
+  {
+    "label": "Iraq",
+    "value": "+964",
+    "code": "IQ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/iq.svg"
+  },
+  {
+    "label": "Ireland",
+    "value": "+353",
+    "code": "IE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ie.svg"
+  },
+  {
+    "label": "Isle of Man",
+    "value": "+44 (1624)",
+    "code": "IM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/im.svg"
+  },
+  {
+    "label": "Israel",
+    "value": "+972",
+    "code": "IL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/il.svg"
+  },
+  {
+    "label": "Italy",
+    "value": "+39",
+    "code": "IT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/it.svg"
+  },
+  {
+    "label": "Jamaica",
+    "value": "+1876",
+    "code": "JM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/jm.svg"
+  },
+  {
+    "label": "Japan",
+    "value": "+81",
+    "code": "JP",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/jp.svg"
+  },
+  {
+    "label": "Jersey",
+    "value": "+44 (1534)",
+    "code": "JE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/je.svg"
+  },
+  {
+    "label": "Jordan",
+    "value": "+962",
+    "code": "JO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/jo.svg"
+  },
+  {
+    "label": "Kazakhstan",
+    "value": "+77",
+    "code": "KZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/kz.svg"
+  },
+  {
+    "label": "Kenya",
+    "value": "+254",
+    "code": "KE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ke.svg"
+  },
+  {
+    "label": "Kiribati",
+    "value": "+686",
+    "code": "KI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ki.svg"
+  },
+  {
+    "label": "Korea, Democratic People's Republic of Korea",
+    "value": "+850",
+    "code": "KP",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/kp.svg"
+  },
+  {
+    "label": "Korea, Republic of South Korea",
+    "value": "+82",
+    "code": "KR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/kr.svg"
+  },
+  {
+    "label": "Kuwait",
+    "value": "+965",
+    "code": "KW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/kw.svg"
+  },
+  {
+    "label": "Kyrgyzstan",
+    "value": "+996",
+    "code": "KG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/kg.svg"
+  },
+  {
+    "label": "Laos",
+    "value": "+856",
+    "code": "LA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/la.svg"
+  },
+  {
+    "label": "Latvia",
+    "value": "+371",
+    "code": "LV",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/lv.svg"
+  },
+  {
+    "label": "Lebanon",
+    "value": "+961",
+    "code": "LB",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/lb.svg"
+  },
+  {
+    "label": "Lesotho",
+    "value": "+266",
+    "code": "LS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ls.svg"
+  },
+  {
+    "label": "Liberia",
+    "value": "+231",
+    "code": "LR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/lr.svg"
+  },
+  {
+    "label": "Libyan Arab Jamahiriya",
+    "value": "+218",
+    "code": "LY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ly.svg"
+  },
+  {
+    "label": "Liechtenstein",
+    "value": "+423",
+    "code": "LI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/li.svg"
+  },
+  {
+    "label": "Lithuania",
+    "value": "+370",
+    "code": "LT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/lt.svg"
+  },
+  {
+    "label": "Luxembourg",
+    "value": "+352",
+    "code": "LU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/lu.svg"
+  },
+  {
+    "label": "Macao",
+    "value": "+853",
+    "code": "MO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mo.svg"
+  },
+  {
+    "label": "Macedonia",
+    "value": "+389",
+    "code": "MK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mk.svg"
+  },
+  {
+    "label": "Madagascar",
+    "value": "+261",
+    "code": "MG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mg.svg"
+  },
+  {
+    "label": "Malawi",
+    "value": "+265",
+    "code": "MW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mw.svg"
+  },
+  {
+    "label": "Malaysia",
+    "value": "+60",
+    "code": "MY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/my.svg"
+  },
+  {
+    "label": "Maldives",
+    "value": "+960",
+    "code": "MV",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mv.svg"
+  },
+  {
+    "label": "Mali",
+    "value": "+223",
+    "code": "ML",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ml.svg"
+  },
+  {
+    "label": "Malta",
+    "value": "+356",
+    "code": "MT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mt.svg"
+  },
+  {
+    "label": "Marshall Islands",
+    "value": "+692",
+    "code": "MH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mh.svg"
+  },
+  {
+    "label": "Martinique",
+    "value": "+596",
+    "code": "MQ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mq.svg"
+  },
+  {
+    "label": "Mauritania",
+    "value": "+222",
+    "code": "MR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mr.svg"
+  },
+  {
+    "label": "Mauritius",
+    "value": "+230",
+    "code": "MU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mu.svg"
+  },
+  {
+    "label": "Mayotte",
+    "value": "+262",
+    "code": "YT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/yt.svg"
+  },
+  {
+    "label": "Mexico",
+    "value": "+52",
+    "code": "MX",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mx.svg"
+  },
+  {
+    "label": "Micronesia, Federated States of Micronesia",
+    "value": "+691",
+    "code": "FM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/fm.svg"
+  },
+  {
+    "label": "Moldova",
+    "value": "+373",
+    "code": "MD",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/md.svg"
+  },
+  {
+    "label": "Monaco",
+    "value": "+377",
+    "code": "MC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mc.svg"
+  },
+  {
+    "label": "Mongolia",
+    "value": "+976",
+    "code": "MN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mn.svg"
+  },
+  {
+    "label": "Montenegro",
+    "value": "+382",
+    "code": "ME",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/me.svg"
+  },
+  {
+    "label": "Montserrat",
+    "value": "+1664",
+    "code": "MS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ms.svg"
+  },
+  {
+    "label": "Morocco",
+    "value": "+212",
+    "code": "MA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ma.svg"
+  },
+  {
+    "label": "Mozambique",
+    "value": "+258",
+    "code": "MZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mz.svg"
+  },
+  {
+    "label": "Myanmar",
+    "value": "+95",
+    "code": "MM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mm.svg"
+  },
+  {
+    "label": "Namibia",
+    "value": "+264",
+    "code": "NA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/na.svg"
+  },
+  {
+    "label": "Nauru",
+    "value": "+674",
+    "code": "NR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/nr.svg"
+  },
+  {
+    "label": "Nepal",
+    "value": "+977",
+    "code": "NP",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/np.svg"
+  },
+  {
+    "label": "Netherlands",
+    "value": "+31",
+    "code": "NL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/nl.svg"
+  },
+  {
+    "label": "Netherlands Antilles",
+    "value": "+599",
+    "code": "AN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/an.svg"
+  },
+  {
+    "label": "New Caledonia",
+    "value": "+687",
+    "code": "NC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/nc.svg"
+  },
+  {
+    "label": "New Zealand",
+    "value": "+64",
+    "code": "NZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/nz.svg"
+  },
+  {
+    "label": "Nicaragua",
+    "value": "+505",
+    "code": "NI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ni.svg"
+  },
+  {
+    "label": "Niger",
+    "value": "+227",
+    "code": "NE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ne.svg"
+  },
+  {
+    "label": "Nigeria",
+    "value": "+234",
+    "code": "NG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ng.svg"
+  },
+  {
+    "label": "Niue",
+    "value": "+683",
+    "code": "NU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/nu.svg"
+  },
+  {
+    "label": "Norfolk Island",
+    "value": "+672 (3)",
+    "code": "NF",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/nf.svg"
+  },
+  {
+    "label": "Northern Mariana Islands",
+    "value": "+1670",
+    "code": "MP",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mp.svg"
+  },
+  {
+    "label": "Norway",
+    "value": "+47",
+    "code": "NO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/no.svg"
+  },
+  {
+    "label": "Oman",
+    "value": "+968",
+    "code": "OM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/om.svg"
+  },
+  {
+    "label": "Pakistan",
+    "value": "+92",
+    "code": "PK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pk.svg"
+  },
+  {
+    "label": "Palau",
+    "value": "+680",
+    "code": "PW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pw.svg"
+  },
+  {
+    "label": "Palestinian Territory, Occupied",
+    "value": "+970",
+    "code": "PS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ps.svg"
+  },
+  {
+    "label": "Panama",
+    "value": "+507",
+    "code": "PA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pa.svg"
+  },
+  {
+    "label": "Papua New Guinea",
+    "value": "+675",
+    "code": "PG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pg.svg"
+  },
+  {
+    "label": "Paraguay",
+    "value": "+595",
+    "code": "PY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/py.svg"
+  },
+  {
+    "label": "Peru",
+    "value": "+51",
+    "code": "PE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pe.svg"
+  },
+  {
+    "label": "Philippines",
+    "value": "+63",
+    "code": "PH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ph.svg"
+  },
+  {
+    "label": "Pitcairn",
+    "value": "+872",
+    "code": "PN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pn.svg"
+  },
+  {
+    "label": "Poland",
+    "value": "+48",
+    "code": "PL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pl.svg"
+  },
+  {
+    "label": "Portugal",
+    "value": "+351",
+    "code": "PT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pt.svg"
+  },
+  {
+    "label": "Puerto Rico",
+    "value": "+1939",
+    "code": "PR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pr.svg"
+  },
+  {
+    "label": "Qatar",
+    "value": "+974",
+    "code": "QA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/qa.svg"
+  },
+  {
+    "label": "Romania",
+    "value": "+40",
+    "code": "RO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ro.svg"
+  },
+  {
+    "label": "Russia",
+    "value": "+7",
+    "code": "RU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ru.svg"
+  },
+  {
+    "label": "Rwanda",
+    "value": "+250",
+    "code": "RW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/rw.svg"
+  },
+  {
+    "label": "Reunion",
+    "value": "+262",
+    "code": "RE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/re.svg"
+  },
+  {
+    "label": "Saint Barthelemy",
+    "value": "+590",
+    "code": "BL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/bl.svg"
+  },
+  {
+    "label": "Saint Helena, Ascension and Tristan Da Cunha",
+    "value": "+290",
+    "code": "SH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sh.svg"
+  },
+  {
+    "label": "Saint Kitts and Nevis",
+    "value": "+1869",
+    "code": "KN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/kn.svg"
+  },
+  {
+    "label": "Saint Lucia",
+    "value": "+1758",
+    "code": "LC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/lc.svg"
+  },
+  {
+    "label": "Saint Martin",
+    "value": "+590",
+    "code": "MF",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/mf.svg"
+  },
+  {
+    "label": "Saint Pierre and Miquelon",
+    "value": "+508",
+    "code": "PM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/pm.svg"
+  },
+  {
+    "label": "Saint Vincent and the Grenadines",
+    "value": "+1784",
+    "code": "VC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/vc.svg"
+  },
+  {
+    "label": "Samoa",
+    "value": "+685",
+    "code": "WS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ws.svg"
+  },
+  {
+    "label": "San Marino",
+    "value": "+378",
+    "code": "SM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sm.svg"
+  },
+  {
+    "label": "Sao Tome and Principe",
+    "value": "+239",
+    "code": "ST",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/st.svg"
+  },
+  {
+    "label": "Saudi Arabia",
+    "value": "+966",
+    "code": "SA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sa.svg"
+  },
+  {
+    "label": "Senegal",
+    "value": "+221",
+    "code": "SN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sn.svg"
+  },
+  {
+    "label": "Serbia",
+    "value": "+381",
+    "code": "RS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/rs.svg"
+  },
+  {
+    "label": "Seychelles",
+    "value": "+248",
+    "code": "SC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sc.svg"
+  },
+  {
+    "label": "Sierra Leone",
+    "value": "+232",
+    "code": "SL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sl.svg"
+  },
+  {
+    "label": "Singapore",
+    "value": "+65",
+    "code": "SG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sg.svg"
+  },
+  {
+    "label": "Slovakia",
+    "value": "+421",
+    "code": "SK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sk.svg"
+  },
+  {
+    "label": "Slovenia",
+    "value": "+386",
+    "code": "SI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/si.svg"
+  },
+  {
+    "label": "Solomon Islands",
+    "value": "+677",
+    "code": "SB",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sb.svg"
+  },
+  {
+    "label": "Somalia",
+    "value": "+252",
+    "code": "SO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/so.svg"
+  },
+  {
+    "label": "South Africa",
+    "value": "+27",
+    "code": "ZA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/za.svg"
+  },
+  {
+    "label": "South Sudan",
+    "value": "+211",
+    "code": "SS",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ss.svg"
+  },
+  {
+    "label": "Spain",
+    "value": "+34",
+    "code": "ES",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/es.svg"
+  },
+  {
+    "label": "Sri Lanka",
+    "value": "+94",
+    "code": "LK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/lk.svg"
+  },
+  {
+    "label": "Sudan",
+    "value": "+249",
+    "code": "SD",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sd.svg"
+  },
+  {
+    "label": "Surilabel",
+    "value": "+597",
+    "code": "SR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sr.svg"
+  },
+  {
+    "label": "Svalbard and Jan Mayen",
+    "value": "+47 (79)",
+    "code": "SJ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sj.svg"
+  },
+  {
+    "label": "Swaziland",
+    "value": "+268",
+    "code": "SZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sz.svg"
+  },
+  {
+    "label": "Sweden",
+    "value": "+46",
+    "code": "SE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/se.svg"
+  },
+  {
+    "label": "Switzerland",
+    "value": "+41",
+    "code": "CH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ch.svg"
+  },
+  {
+    "label": "Syrian Arab Republic",
+    "value": "+963",
+    "code": "SY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/sy.svg"
+  },
+  {
+    "label": "Taiwan",
+    "value": "+886",
+    "code": "TW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tw.svg"
+  },
+  {
+    "label": "Tajikistan",
+    "value": "+992",
+    "code": "TJ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tj.svg"
+  },
+  {
+    "label": "Tanzania, United Republic of Tanzania",
+    "value": "+255",
+    "code": "TZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tz.svg"
+  },
+  {
+    "label": "Thailand",
+    "value": "+66",
+    "code": "TH",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/th.svg"
+  },
+  {
+    "label": "Timor-Leste",
+    "value": "+670",
+    "code": "TL",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tl.svg"
+  },
+  {
+    "label": "Togo",
+    "value": "+228",
+    "code": "TG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tg.svg"
+  },
+  {
+    "label": "Tokelau",
+    "value": "+690",
+    "code": "TK",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tk.svg"
+  },
+  {
+    "label": "Tonga",
+    "value": "+676",
+    "code": "TO",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/to.svg"
+  },
+  {
+    "label": "Trinidad and Tobago",
+    "value": "+1868",
+    "code": "TT",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tt.svg"
+  },
+  {
+    "label": "Tunisia",
+    "value": "+216",
+    "code": "TN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tn.svg"
+  },
+  {
+    "label": "Turkey",
+    "value": "+90",
+    "code": "TR",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tr.svg"
+  },
+  {
+    "label": "Turkmenistan",
+    "value": "+993",
+    "code": "TM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tm.svg"
+  },
+  {
+    "label": "Turks and Caicos Islands",
+    "value": "+1649",
+    "code": "TC",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tc.svg"
+  },
+  {
+    "label": "Tuvalu",
+    "value": "+688",
+    "code": "TV",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/tv.svg"
+  },
+  {
+    "label": "Uganda",
+    "value": "+256",
+    "code": "UG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ug.svg"
+  },
+  {
+    "label": "Ukraine",
+    "value": "+380",
+    "code": "UA",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ua.svg"
+  },
+  {
+    "label": "United Arab Emirates",
+    "value": "+971",
+    "code": "AE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ae.svg"
+  },
+  {
+    "label": "United Kingdom",
+    "value": "+44",
+    "code": "GB",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/gb.svg"
+  },
+  {
+    "label": "United States",
+    "value": "+1",
+    "code": "US",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/us.svg"
+  },
+  {
+    "label": "Uruguay",
+    "value": "+598",
+    "code": "UY",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/uy.svg"
+  },
+  {
+    "label": "Uzbekistan",
+    "value": "+998",
+    "code": "UZ",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/uz.svg"
+  },
+  {
+    "label": "Vanuatu",
+    "value": "+678",
+    "code": "VU",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/vu.svg"
+  },
+  {
+    "label": "Venezuela, Bolivarian Republic of Venezuela",
+    "value": "+58",
+    "code": "VE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ve.svg"
+  },
+  {
+    "label": "Vietnam",
+    "value": "+84",
+    "code": "VN",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/vn.svg"
+  },
+  {
+    "label": "Virgin Islands, British",
+    "value": "+1284",
+    "code": "VG",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/vg.svg"
+  },
+  {
+    "label": "Virgin Islands, U.S.",
+    "value": "+1340",
+    "code": "VI",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/vi.svg"
+  },
+  {
+    "label": "Wallis and Futuna",
+    "value": "+681",
+    "code": "WF",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/wf.svg"
+  },
+  {
+    "label": "Yemen",
+    "value": "+967",
+    "code": "YE",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/ye.svg"
+  },
+  {
+    "label": "Zambia",
+    "value": "+260",
+    "code": "ZM",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/zm.svg"
+  },
+  {
+    "label": "Zimbabwe",
+    "value": "+263",
+    "code": "ZW",
+    "imgUrl": "https://hatscripts.github.io/circle-flags/flags/zw.svg"
+  }
+]

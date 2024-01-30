@@ -27,6 +27,7 @@ class UserSeeder extends Seeder
             'phone' => '+60123456789',
             'gender' => 'male',
             'dob' => '1990-09-12',
+            'referral_code' => 'fALmcXta'
         ]);
 
     }

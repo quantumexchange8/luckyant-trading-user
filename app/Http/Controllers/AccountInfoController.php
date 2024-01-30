@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use AleeDhillon\MetaFive\Entities\User;
-use AleeDhillon\MetaFive\Facades\Client;
+use App\Http\Requests\AddTradingAccountRequest;
+use App\Models\AccountType;
+use App\Models\TradingAccount;
+use App\Services\MetaFiveService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AccountInfoController extends Controller
@@ -13,26 +17,36 @@ class AccountInfoController extends Controller
         return Inertia::render('AccountInfo/AccountInfo');
     }
 
-    public function add_trading_account()
+    public function add_trading_account(AddTradingAccountRequest $request)
     {
-        $user = new User();
-        $user->setName("Test User 1");
-        $user->setEmail("test1@example.com");
-        $user->setGroup("JS");
-        $user->setLeverage(500);
-        $user->setPhone("0123456789");
-        $user->setAddress("City View");
-        $user->setCity("Malaysia");
-        $user->setState("Kuala Lumpur");
-        $user->setCountry("Kuala Lumpur");
-        $user->setZipCode(54000);
-        $user->setMainPassword("secret");
-        $user->setInvestorPassword("secret");
-        $user->setPhonePassword("secret");
+        $user = Auth::user();
+        $group = AccountType::with('metaGroup')->where('id', 1)->get()->value('metaGroup.meta_group_name');
+        $leverage = $request->leverage;
 
-        $result = Client::createUser($user);
+        $metaAccount = (new MetaFiveService())->createUser($user, $group, $leverage);
 
-        dd($result);
+        return back()->with('toast', trans('public.Successfully Created Trading Account'));
+    }
+
+    public function refreshTradingAccountsData()
+    {
+        return $this->getTradingAccountsData();
+    }
+
+    protected function getTradingAccountsData()
+    {
+        $user = Auth::user();
+        $connection = (new MetaFiveService())->getConnectionStatus();
+
+        if ($connection == 0) {
+            try {
+                (new MetaFiveService())->getUserInfo($user->tradingAccounts);
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
+        }
+
+        return TradingAccount::where('user_id', \Auth::id())->latest()->get();
     }
 
 }

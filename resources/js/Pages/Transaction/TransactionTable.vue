@@ -41,7 +41,7 @@ const paginationClass = [
 ];
 
 const paginationActiveClass = [
-    'dark:bg-transparent border-0 text-purple-500'
+    'dark:bg-transparent border-0 text-primary-500'
 ];
 </script>
 

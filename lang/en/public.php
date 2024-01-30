@@ -118,7 +118,7 @@ return [
     "Total Net Deposit" => "Total Net Deposit",
     "Network Tree" => "Network Tree",
     "Search" => "Search",
-    "Referrer Code" => "Referrer Code",
+    "Referral Code" => "Referral Code",
     "Referrer Email" => "Referrer Email",
     "Account Type" => "Account Type",
     "View Upline Info" => "View Upline Info",

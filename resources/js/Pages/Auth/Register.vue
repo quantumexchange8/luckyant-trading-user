@@ -47,9 +47,6 @@ const form = useForm({
     password_confirmation: '',
     dob: '',
     country: 132,
-    leverage: '',
-    account_platform: '',
-    account_type: 1,
     front_identity: null,
     back_identity: null,
     verification_via: 'email',
@@ -414,8 +411,16 @@ function startCountdown() {
                             <input
                                 type="file"
                                 id="front_identity"
+                                accept="image/*"
                                 @change="handleFrontIdentity"
-                                class="block border border-transparent bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 focus:ring-offset-dark-eval-1"
+                                :class="[
+                                    'block border bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
+                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
+                                    {
+                                        'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.front_identity,
+                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.front_identity,
+                                    }
+                                ]"
                             />
                             <InputError :message="form.errors.front_identity"/>
                         </div>
@@ -427,8 +432,16 @@ function startCountdown() {
                             <input
                                 type="file"
                                 id="back_identity"
+                                accept="image/*"
                                 @change="handleBackIdentity"
-                                class="block border border-transparent bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 focus:ring-offset-dark-eval-1"
+                                :class="[
+                                    'block border bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
+                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
+                                    {
+                                        'border-gray-300 dark:border-dark-eval-2 focus-within:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.back_identity,
+                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.back_identity,
+                                    }
+                                ]"
                             />
                             <InputError :message="form.errors.back_identity"/>
                         </div>
@@ -463,10 +476,32 @@ function startCountdown() {
                         </div>
                         <InputError :message="form.errors.verification_code"/>
                     </div>
+
+                    <div class="space-y-1.5">
+                        <Label
+                            for="referral_code"
+                            :value="$t('public.Referral Code')"
+                        />
+                        <Input
+                            id="referral_code"
+                            type="text"
+                            class="block w-full"
+                            :placeholder="$t('public.Referral Code')"
+                            v-model="form.referral_code"
+                            :invalid="form.errors.referral_code"
+                        />
+                        <InputError :message="form.errors.referral_code" />
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-center gap-8 mt-4">
-                    <Button type="button" :disabled="formStep === 1" @click="prevStep" class="px-12">
+                    <Button
+                        type="button"
+                        variant="white"
+                        :disabled="formStep === 1"
+                        @click="prevStep"
+                        class="px-12"
+                    >
                         <span>{{ $t('pagination.Back') }}</span>
                     </Button>
 

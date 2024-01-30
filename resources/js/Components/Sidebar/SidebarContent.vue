@@ -4,7 +4,7 @@ import SidebarLink from '@/Components/Sidebar/SidebarLink.vue'
 import { DashboardIcon } from '@/Components/Icons/outline'
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
-import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
+import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon } from '@heroicons/vue/outline'
 </script>
 
 <template>
@@ -53,22 +53,40 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon } from '@heroicons/vue
         </SidebarLink>
 
         <SidebarCollapsible
-            title="Components"
-            :active="route().current('components.*')"
+            title="Referral"
+            :active="route().current('referral.*')"
         >
             <template #icon>
-                <TemplateIcon
+                <UserGroupIcon
                     class="flex-shrink-0 w-6 h-6"
                     aria-hidden="true"
                 />
             </template>
 
             <SidebarCollapsibleItem
-                :href="route('components.buttons')"
-                title="Buttons"
-                :active="route().current('components.buttons')"
+                :href="route('referral.index')"
+                title="Network Tree"
+                :active="route().current('referral.index')"
             />
         </SidebarCollapsible>
+
+<!--        <SidebarCollapsible-->
+<!--            title="Components"-->
+<!--            :active="route().current('components.*')"-->
+<!--        >-->
+<!--            <template #icon>-->
+<!--                <TemplateIcon-->
+<!--                    class="flex-shrink-0 w-6 h-6"-->
+<!--                    aria-hidden="true"-->
+<!--                />-->
+<!--            </template>-->
+
+<!--            <SidebarCollapsibleItem-->
+<!--                :href="route('components.buttons')"-->
+<!--                title="Buttons"-->
+<!--                :active="route().current('components.buttons')"-->
+<!--            />-->
+<!--        </SidebarCollapsible>-->
 
         <!-- Examples -->
         <!--

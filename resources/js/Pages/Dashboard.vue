@@ -58,7 +58,7 @@ const user = usePage().props.auth.user
                             </div>
                         </div>
                         <div
-                            class="cursor-pointer group overflow-hidden p-5 duration-1000 hover:duration-1000 relative w-full h-52 bg-gray-100 dark:bg-dark-eval-3 rounded-xl"
+                            class="cursor-pointer group overflow-hidden p-5 duration-1000 hover:duration-1000 relative w-[600px] h-52 bg-gray-100 dark:bg-dark-eval-3 rounded-xl"
                         >
                             <div
                                 class="group-hover:-top-3 bg-transparent -top-8 -left-2 absolute shadow-yellow-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"

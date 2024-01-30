@@ -41,7 +41,7 @@ const categories = ref([
                                 'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                                 'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                                 selected
-                                ? 'bg-white text-purple-500 shadow'
+                                ? 'bg-white text-primary-500 shadow'
                                 : 'text-primary-700 dark:text-primary-300 hover:bg-white/[0.12] hover:text-white',
                             ]"
                         >

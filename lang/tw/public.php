@@ -118,7 +118,7 @@ return [
     "Total Net Deposit" => "淨存款總額",
     "Network Tree" => "樹狀網絡",
     "Search" => "搜查",
-    "Referrer Code" => "推薦人代碼",
+    "Referral Code" => "推薦人代碼",
     "Referrer Email" => "推薦人郵件",
     "Account Type" => "帳戶類型",
     "View Upline Info" => "查看上線資訊",

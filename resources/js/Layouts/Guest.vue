@@ -5,6 +5,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import PageFooter from '@/Components/PageFooter.vue'
 import Button from '@/Components/Button.vue'
 import { toggleDarkMode, isDark } from '@/Composables'
+import ToastList from "@/Components/ToastList.vue";
 
 defineProps({
     title: String
@@ -25,8 +26,9 @@ defineProps({
 
         <main class="flex items-center flex-1 w-full sm:max-w-2xl">
             <div
-                class="w-full px-6 py-4 overflow-hidden bg-white shadow-md  sm:rounded-lg dark:bg-dark-eval-1"
+                class="w-full px-6 py-4 bg-white shadow-md sm:rounded-lg dark:bg-dark-eval-1"
             >
+                <ToastList />
                 <slot />
             </div>
         </main>

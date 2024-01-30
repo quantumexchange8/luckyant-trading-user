@@ -11,6 +11,7 @@ let buttonVariants = [
     "warning",
     "info",
     "black",
+    "white"
 ];
 
 let buttonSizes = ["sm", "base", "lg"]

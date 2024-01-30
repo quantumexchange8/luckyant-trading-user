@@ -113,6 +113,17 @@ module.exports = {
                 "vtd-secondary": colors.zinc,
             },
         },
+        fontSize: {
+            'xs': ['12px', {
+                fontWeight: '400',
+            }],
+            'sm': ['14px', {
+                fontWeight: '600',
+            }],
+            'xl': ['20px', {
+                fontWeight: '600',
+            }],
+        }
     },
 
     plugins: [require('@tailwindcss/forms')],

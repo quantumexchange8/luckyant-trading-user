@@ -97,7 +97,7 @@ return [
     "Total Net Deposit" => "总净存款",
     "Network Tree" => "网络树",
     "Search" => "搜索",
-    "Referrer Code" => "推荐人编号",
+    "Referral Code" => "推荐人编号",
     "Referrer Email" => "推荐人电邮",
     "Account Type" => "账户类型",
     "View Upline Info" => "查看上线资料",

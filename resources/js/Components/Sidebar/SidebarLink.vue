@@ -35,7 +35,7 @@ const Tag = !props.external ? Link : 'a'
             {
                 'text-gray-400 hover:text-gray-700 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-dark-eval-2':
                     !active,
-                'text-white bg-purple-500 shadow-lg hover:bg-purple-600':
+                'text-white bg-primary-500 shadow-lg hover:bg-primary-600':
                     active,
             },
         ]"
@@ -59,7 +59,7 @@ const Tag = !props.external ? Link : 'a'
             {
                 'text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-dark-eval-2':
                     !active,
-                'text-white bg-purple-500 shadow-lg hover:bg-purple-600':
+                'text-white bg-primary-500 shadow-lg hover:bg-primary-600':
                     active,
             },
         ]"

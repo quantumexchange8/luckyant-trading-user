@@ -38,6 +38,9 @@ return new class extends Migration
             $table->string('hierarchyList')->nullable();
             $table->string('referral_code')->nullable();
             $table->string('role')->default('member');
+            $table->unsignedBigInteger('setting_rank_id')->default(1);
+            $table->string('rank_up_status')->default('auto');
+            $table->string('status')->default('Active');
             $table->string('remark')->nullable();
             $table->rememberToken();
             $table->timestamps();

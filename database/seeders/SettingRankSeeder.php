@@ -1,0 +1,111 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class SettingRankSeeder extends Seeder
+{
+    public function run(): void
+    {
+        DB::table('setting_ranks')->insert([
+            [
+                'id' => 1,
+                'name' => 'Trader',
+                'position' => 1,
+                'standard_lot' => 0,
+                'package_requirement' => 0,
+                'direct_referral' => 0,
+                'cultivate_type' => null,
+                'cultivate_member' => null,
+                'group_sales' => 0,
+                'rebate' => 0,
+                'rank_worldpool' => 0,
+                'deleted_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 2,
+                'name' => 'Introducing Broker',
+                'position' => 2,
+                'standard_lot' => 5,
+                'package_requirement' => 1000,
+                'direct_referral' => 3,
+                'cultivate_type' => null,
+                'cultivate_member' => null,
+                'group_sales' => 30000,
+                'rebate' => 5,
+                'rank_worldpool' => 0,
+                'deleted_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 3,
+                'name' => 'Senior Introducing Broker',
+                'position' => 3,
+                'standard_lot' => 8,
+                'package_requirement' => 5000,
+                'direct_referral' => 4,
+                'cultivate_type' => 'IB',
+                'cultivate_member' => 3,
+                'group_sales' => 150000,
+                'rebate' => 8,
+                'rank_worldpool' => 0,
+                'deleted_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 4,
+                'name' => 'Master Introducing Broker',
+                'position' => 4,
+                'standard_lot' => 11,
+                'package_requirement' => 10000,
+                'direct_referral' => 5,
+                'cultivate_type' => 'SIB',
+                'cultivate_member' => 3,
+                'group_sales' => 600000,
+                'rebate' => 10,
+                'rank_worldpool' => 0,
+                'deleted_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 5,
+                'name' => 'Platinum Introducing Broker',
+                'position' => 5,
+                'standard_lot' => 13,
+                'package_requirement' => 30000,
+                'direct_referral' => 6,
+                'cultivate_type' => 'MIB',
+                'cultivate_member' => 3,
+                'group_sales' => 2000000,
+                'rebate' => 5,
+                'rank_worldpool' => 1,
+                'deleted_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 6,
+                'name' => 'Diamond Introducing Broker',
+                'position' => 6,
+                'standard_lot' => 15,
+                'package_requirement' => 50000,
+                'direct_referral' => 8,
+                'cultivate_type' => 'PIB',
+                'cultivate_member' => 3,
+                'group_sales' => 6000000,
+                'rebate' => 5,
+                'rank_worldpool' => 1,
+                'deleted_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
+}

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             StateSeeder::class,
             CitySeeder::class,
             UserSeeder::class,
+            SettingRankSeeder::class,
         ]);
     }
 }

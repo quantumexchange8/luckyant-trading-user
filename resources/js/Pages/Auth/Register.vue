@@ -414,7 +414,7 @@ function startCountdown() {
                                 accept="image/*"
                                 @change="handleFrontIdentity"
                                 :class="[
-                                    'block border bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
+                                    'block border dark:bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
                                     'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
                                     {
                                         'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.front_identity,
@@ -435,7 +435,7 @@ function startCountdown() {
                                 accept="image/*"
                                 @change="handleBackIdentity"
                                 :class="[
-                                    'block border bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
+                                    'block border dark:bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
                                     'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
                                     {
                                         'border-gray-300 dark:border-dark-eval-2 focus-within:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.back_identity,

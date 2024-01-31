@@ -1,10 +1,26 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/Authenticated.vue'
-import Button from '@/Components/Button.vue'
-import { GithubIcon } from '@/Components/Icons/brands'
+import {DuplicateIcon} from "@heroicons/vue/outline"
 import {usePage} from "@inertiajs/vue3";
+import toast from "@/Composables/toast.js";
+import {trans} from "laravel-vue-i18n";
 
 const user = usePage().props.auth.user
+
+const copyReferralCode = () => {
+    const url = document.querySelector('#userReferralCode').textContent;
+
+    const tempInput = document.createElement('input');
+    tempInput.value = url;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+
+    toast.add({
+        message: trans('public.Copy Successful!'),
+    });
+}
 </script>
 
 <template>
@@ -20,20 +36,28 @@ const user = usePage().props.auth.user
         <div class="space-y-5">
             <div class="grid grid-cols-3 w-full gap-4">
                 <div class="p-6 md:col-span-2 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-dark-eval-1">
-                    <div class="flex items-center self-stretch gap-4">
+                    <div class="flex flex-col sm:flex-row items-center self-stretch gap-4">
                         <div class="flex flex-col gap-4 w-full">
                             <div class="flex flex-col">
                                 <div class="text-lg text-gray-600 dark:text-gray-400">
                                     Welcome back!
                                 </div>
-                                <div class="text-xl font-semibold">
-                                    ID: 101010
+                                <div class="text-xl font-semibold flex items-center gap-3">
+                                    Referral Code: <span id="userReferralCode">{{ user.referral_code }}</span>
+                                    <div>
+                                        <DuplicateIcon
+                                            class="w-5 hover:cursor-pointer"
+                                            @click.prevent="copyReferralCode"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div class="flex gap-3 items-center">
-                                <div class="bg-gray-400 rounded-full w-14 h-14 grow-0 shrink-0 flex justify-center items-center">
-                                    pic
-                                </div>
+                                <img
+                                    class="object-cover w-14 h-14 rounded-full"
+                                    :src="user.profile_photo ? user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                    alt="userPic"
+                                />
                                 <div>
                                     <div class="text-lg font-semibold text-gray-600 dark:text-gray-400">
                                         {{ user.name }}
@@ -45,7 +69,7 @@ const user = usePage().props.auth.user
                             </div>
                         </div>
                         <div
-                            class="cursor-pointer group overflow-hidden p-5 duration-1000 hover:duration-1000 relative w-[600px] h-52 bg-gray-100 dark:bg-dark-eval-3 rounded-xl"
+                            class="cursor-pointer group overflow-hidden p-5 duration-1000 hover:duration-1000 relative w-full sm:w-[600px] h-52 bg-gray-100 dark:bg-dark-eval-3 rounded-xl"
                         >
                             <div
                                 class="group-hover:-top-3 bg-transparent -top-8 -left-2 absolute shadow-yellow-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"

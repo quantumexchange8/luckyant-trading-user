@@ -43,17 +43,16 @@ class User extends Authenticatable implements HasMedia
 
     public function setReferralId(): void
     {
-        $characters = 'ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz';
-        $idLength = strlen((string)$this->id);
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $randomString = 'LAT';
 
-        $temp_code = substr(str_shuffle($characters), 0, 8 - $idLength);
-        $alphabetId = '';
+        $length = 10 - strlen($randomString); // Remaining length after 'LAT'
 
-        foreach (str_split((string)$this->id) as $digit) {
-            $alphabetId .= $characters[$digit];
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
 
-        $this->referral_code = $temp_code . $alphabetId;
+        $this->referral_code = $randomString;
         $this->save();
     }
 

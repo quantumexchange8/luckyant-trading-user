@@ -12,7 +12,6 @@ class RegisterRequest extends FormRequest
             'front_identity' => ['required', 'image'],
             'back_identity' => ['required', 'image'],
             'verification_code' => ['required'],
-            'referral_code' => ['required'],
         ];
     }
 
@@ -27,7 +26,6 @@ class RegisterRequest extends FormRequest
             'front_identity' => trans('public.Proof of Identity (FRONT)'),
             'back_identity' => trans('public.Proof of Identity (BACK)'),
             'verification_code' => trans('public.Verification Code'),
-            'referral_code' => trans('public.Referral Code'),
         ];
     }
 }

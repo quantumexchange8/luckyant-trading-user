@@ -29,7 +29,7 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create($referral = null): Response
     {
         $countries = Country::all();
         $formattedCountries = $countries->map(function ($country) {
@@ -41,6 +41,7 @@ class RegisteredUserController extends Controller
 
         return Inertia::render('Auth/Register', [
             'countries' => $formattedCountries,
+            'referral_code' => $referral,
         ]);
     }
 

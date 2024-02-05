@@ -15,7 +15,8 @@ import CountryLists from '/public/data/countries.json'
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
 
 const props = defineProps({
-    countries: Array
+    countries: Array,
+    referral_code: String
 })
 
 const formStep = ref(1);
@@ -51,7 +52,7 @@ const form = useForm({
     back_identity: null,
     verification_via: 'email',
     verification_code: '',
-    referral_code: '',
+    referral_code: props.referral_code ? props.referral_code : '',
     terms: '',
 });
 
@@ -169,7 +170,7 @@ function startCountdown() {
                     <div class="flex">
                         <div class="w-1/3">
                             <div class="relative mb-2">
-                                <div class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center" :class="{'bg-[#FF9E23]': formStep === 1, 'bg-gray-400 dark:bg-dark-eval-2': formStep !== 1}">
+                                <div class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center" :class="{'bg-primary-400': formStep === 1, 'bg-gray-400 dark:bg-dark-eval-2': formStep !== 1}">
                                     <span class="text-center text-white w-full font-montserrat font-semibold">1</span>
                                 </div>
                             </div>
@@ -179,11 +180,11 @@ function startCountdown() {
                             <div class="relative mb-2">
                                 <div class="absolute flex align-center items-center align-middle content-center" style="width: calc(100% - 2.5rem - 1rem); top: 50%; transform: translate(-50%, -50%)">
                                     <div class="w-full rounded items-center align-middle align-center flex-1">
-                                        <div class="w-0 pt-1 rounded" :class="{'bg-[#FF9E23]': formStep >= 2, 'bg-gray-200': formStep < 2}" style="width: 100%"></div>
+                                        <div class="w-0 pt-1 rounded" :class="{'bg-primary-400': formStep >= 2, 'bg-gray-200': formStep < 2}" style="width: 100%"></div>
                                     </div>
                                 </div>
 
-                                <div class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center" :class="{'bg-[#FF9E23]': formStep === 2, 'bg-gray-400 dark:bg-dark-eval-2': formStep !== 2}">
+                                <div class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center" :class="{'bg-primary-400': formStep === 2, 'bg-gray-400 dark:bg-dark-eval-2': formStep !== 2}">
                                     <span class="text-center text-white w-full font-montserrat font-semibold">2</span>
                                 </div>
                             </div>
@@ -193,11 +194,11 @@ function startCountdown() {
                             <div class="relative mb-2">
                                 <div class="absolute flex align-center items-center align-middle content-center" style="width: calc(100% - 2.5rem - 1rem); top: 50%; transform: translate(-50%, -50%)">
                                     <div class="w-full rounded items-center align-middle align-center flex-1">
-                                        <div class="w-0 pt-1 rounded" :class="{'bg-[#FF9E23]': formStep === 3, 'bg-gray-200': formStep !== 3}" style="width: 100%"></div>
+                                        <div class="w-0 pt-1 rounded" :class="{'bg-primary-400': formStep === 3, 'bg-gray-200': formStep !== 3}" style="width: 100%"></div>
                                     </div>
                                 </div>
 
-                                <div class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center" :class="{'bg-[#FF9E23]': formStep === 3, 'bg-gray-400 dark:bg-dark-eval-2': formStep !== 3}">
+                                <div class="w-10 h-10 mx-auto rounded-full text-lg text-white flex items-center" :class="{'bg-primary-400': formStep === 3, 'bg-gray-400 dark:bg-dark-eval-2': formStep !== 3}">
                                     <span class="text-center text-white w-full font-montserrat font-semibold">3</span>
                                 </div>
                             </div>
@@ -517,7 +518,7 @@ function startCountdown() {
 
                 <p class="text-sm text-dark-eval-4 dark:text-gray-400">
                     {{ $t('public.Already have an account?') }}
-                    <Link :href="route('login')" class="text-blue-500 hover:underline">
+                    <Link :href="route('login')" class="text-primary-600 hover:underline">
                         {{ $t('public.Login') }}
                     </Link>
                 </p>

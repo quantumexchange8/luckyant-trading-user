@@ -1,11 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/Authenticated.vue'
-import {DuplicateIcon} from "@heroicons/vue/outline"
+import {DuplicateIcon, CashIcon, RefreshIcon} from "@heroicons/vue/outline"
 import {usePage} from "@inertiajs/vue3";
 import toast from "@/Composables/toast.js";
 import {trans} from "laravel-vue-i18n";
 import Button from "@/Components/Button.vue";
 import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
+import Deposit from "@/Pages/Dashboard/Deposit.vue";
 
 const user = usePage().props.auth.user
 
@@ -73,7 +74,7 @@ const copyReferralCode = () => {
                         </div>
                         <div class="w-full flex justify-end">
                             <div
-                                class="w-96 h-52 duration-500 group overflow-hidden relative rounded-xl bg-gray-800 text-neutral-50 p-4 flex flex-col justify-evenly"
+                                class="w-96 h-52 duration-500 group overflow-hidden relative rounded-xl bg-gray-800 shadow-lg text-neutral-50 p-4 flex flex-col justify-evenly"
                             >
                                 <div
                                     class="absolute blur duration-500 group-hover:blur-none w-72 h-72 rounded-full group-hover:translate-x-12 group-hover:translate-y-12 bg-sky-800 right-1 -bottom-24"
@@ -92,13 +93,7 @@ const copyReferralCode = () => {
                                     <div class="text-2xl">
                                         $ {{ user.cash_wallet }}
                                     </div>
-                                    <Button
-                                        type="button"
-                                        variant="success"
-                                        class="w-full flex justify-center"
-                                    >
-                                        Deposit
-                                    </Button>
+                                    <Deposit />
                                 </div>
                             </div>
                         </div>
@@ -106,17 +101,14 @@ const copyReferralCode = () => {
 
                 </div>
                 <div class="p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                    trading account balance (pie chart)
-<!--                    <BalanceChart />-->
+                    Balance
+                    <BalanceChart />
                 </div>
             </div>
 
             <!-- TickerTape -->
             <iframe scrolling="no" allowtransparency="true" frameborder="0" src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22FOREXCOM%3ASPXUSD%22%2C%22title%22%3A%22S%26P%20500%22%7D%2C%7B%22proName%22%3A%22FOREXCOM%3ANSXUSD%22%2C%22title%22%3A%22US%20100%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AEURUSD%22%2C%22title%22%3A%22EUR%2FUSD%22%7D%2C%7B%22proName%22%3A%22BITSTAMP%3ABTCUSD%22%2C%22title%22%3A%22Bitcoin%22%7D%2C%7B%22proName%22%3A%22BITSTAMP%3AETHUSD%22%2C%22title%22%3A%22Ethereum%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A44%2C%22utm_source%22%3A%22currenttech.pro%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22ticker-tape%22%2C%22page-uri%22%3A%22currenttech.pro%2Fdemocrm%2Fpublic%2Fmember%2Fdashboard%22%7D" style="box-sizing: border-box; display: block; height: 50px; width: 100%;"></iframe>
 
-            <div>
-                Avatar
-            </div>
         </div>
 
     </AuthenticatedLayout>

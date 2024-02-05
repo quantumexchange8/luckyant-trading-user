@@ -63,7 +63,7 @@ const submit = () => {
                         <span class="ml-2 text-sm text-gray-600">Remember me</span>
                     </label>
 
-                    <Link v-if="canResetPassword" :href="route('password.request')" class="text-sm text-blue-500 hover:underline">
+                    <Link v-if="canResetPassword" :href="route('password.request')" class="text-sm text-primary-600 hover:underline">
                         Forgot your password?
                     </Link>
                 </div>
@@ -77,7 +77,7 @@ const submit = () => {
 
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     Don't have an account?
-                    <Link :href="route('register')" class="text-blue-500 hover:underline">
+                    <Link :href="route('register')" class="text-primary-600 hover:underline">
                         Register
                     </Link>
                 </p>

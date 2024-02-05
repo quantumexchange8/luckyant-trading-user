@@ -18,16 +18,18 @@ defineProps({
     <div
         class="flex flex-col items-center justify-center min-h-screen gap-4 py-6 bg-gray-100 dark:bg-dark-eval-0"
     >
-        <div class="flex-shrink-0">
-            <Link href="/">
-                <ApplicationLogo class="w-full h-20" />
-            </Link>
-        </div>
-
         <main class="flex items-center flex-1 w-full sm:max-w-2xl">
             <div
                 class="w-full px-6 py-4 bg-white shadow-md sm:rounded-lg dark:bg-dark-eval-1"
             >
+                <div class="flex justify-center items-center">
+                    <ApplicationLogo aria-hidden="true" class="w-20 h-20" />
+                    <div
+                        class="text-lg font-bold text-gray-800 dark:text-white"
+                    >
+                        LuckyAnt Trading
+                    </div>
+                </div>
                 <ToastList />
                 <slot />
             </div>

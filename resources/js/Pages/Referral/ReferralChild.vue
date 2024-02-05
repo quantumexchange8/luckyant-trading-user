@@ -78,7 +78,7 @@ export default {
         >
             <div class="flex items-center mb-6 gap-2">
                 <div class="flex-none">
-                    <div v-if="hasChildren">
+                    <div v-if="hasChildren && node.children.length !== 0">
                         <template v-if="expanded">
                             <!-- Show the MinusCircleIcon if expanded -->
                             <MinusCircleIcon
@@ -93,13 +93,13 @@ export default {
                                 v-if="hasChildren"
                                 aria-hidden="true"
                                 @click="nodeClicked"
-                                :class="['w-5 h-5 cursor-pointer text-pink-500']"
+                                :class="['w-5 h-5 cursor-pointer text-primary-500']"
                             />
                         </template>
                     </div>
                 </div>
                 <div class="flex">
-                    <div class="flex items-center p-2.5 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-dark-eval-3 hover:cursor-pointer dark:hover:bg-dark-eval-2 overflow-x-auto"
+                    <div class="flex items-center p-2.5 text-sm text-gray-800 border border-gray-300 shadow-lg dark:border-transparent rounded-lg bg-gray-50 dark:bg-gray-900 hover:cursor-pointer hover:border-primary-500 dark:hover:bg-gray-800 overflow-x-auto"
                          @click="openAffiliateModal(node)">
                         <div role="status" class="animate-pulse" v-if="isLoading">
                             <div class="flex items-center space-x-3">
@@ -126,7 +126,7 @@ export default {
                             <div class="flex-col ml-3">
                                 <div class="flex whitespace-nowrap gap-2 text-sm font-semibold items-center">
                                     <div class="whitespace-normal">{{ node.name }}</div>
-                                    <span class="text-xs px-2 py-0.5 rounded-full dark:bg-warning-400 dark:text-gray-800">{{$t('public.Level')}} {{ node.level }}</span>
+                                    <span class="text-xs px-2 py-0.5 rounded-full text-primary-100 bg-primary-400 dark:bg-primary-600">{{$t('public.Level')}} {{ node.level }}</span>
                                 </div>
                                 <div class="text-xs font-normal dark:text-gray-400">
                                     {{ node.email }}
@@ -149,11 +149,11 @@ export default {
                                 <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Clients')}}</span>
                             </div>
                             <div class="flex flex-col text-center">
-                                <span class="text-sm font-semibold">$ {{ formatAmount(99999) }}</span>
+                                <span class="text-sm font-semibold">$ {{ formatAmount(0) }}</span>
                                 <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Deposit')}}</span>
                             </div>
                             <div class="flex flex-col text-center">
-                                <span class="text-sm font-semibold">$ {{ formatAmount(99999) }}</span>
+                                <span class="text-sm font-semibold">$ {{ formatAmount(0) }}</span>
                                 <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Group Deposit')}}</span>
                             </div>
                         </div>
@@ -197,11 +197,11 @@ export default {
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
                     <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Total Deposit')}}</span>
-                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(99999) }}</span>
+                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(0) }}</span>
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
                     <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Total Group Deposit')}}</span>
-                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(99999) }}</span>
+                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(0) }}</span>
                 </div>
             </div>
         </Modal>

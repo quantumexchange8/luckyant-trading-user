@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, watch, watchEffect} from 'vue';
+import {onMounted, ref, watchEffect} from 'vue';
 import Chart from 'chart.js/auto';
 import {usePage} from "@inertiajs/vue3";
 
@@ -14,7 +14,7 @@ const fetchData = async () => {
     try {
         const ctx = document.getElementById('balanceChart');
 
-        const response = await axios.get('/wallet/getWalletBalance', { params: { date: date.value } });
+        const response = await axios.get('/getBalanceChart');
         const { labels, datasets } = response.data;
 
         chartData.value.labels = labels;
@@ -44,7 +44,7 @@ const fetchData = async () => {
                                 usePointStyle: true,
                                 pointStyle: 'circle',
                                 boxHeight: 6,
-                                color: '#ffffff'
+                                color: '#8695aa'
                             },
                         },
                     },
@@ -60,15 +60,10 @@ onMounted(() => {
     fetchData();
 });
 
-watchEffect(() => {
-    if (usePage().props.title !== null) {
-        fetchData();
-    }
-});
 </script>
 
 <template>
-    <div class="w-[300px] h-[200px]">
+    <div class="h-48">
         <canvas id="balanceChart"></canvas>
     </div>
 </template>

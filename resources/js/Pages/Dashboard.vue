@@ -4,11 +4,14 @@ import {DuplicateIcon} from "@heroicons/vue/outline"
 import {usePage} from "@inertiajs/vue3";
 import toast from "@/Composables/toast.js";
 import {trans} from "laravel-vue-i18n";
+import Button from "@/Components/Button.vue";
+import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
 
 const user = usePage().props.auth.user
 
 const copyReferralCode = () => {
-    const url = document.querySelector('#userReferralCode').textContent;
+    const referralCode = document.querySelector('#userReferralCode').textContent;
+    const url = window.location.origin + '/register/' + referralCode;
 
     const tempInput = document.createElement('input');
     tempInput.value = url;
@@ -35,15 +38,15 @@ const copyReferralCode = () => {
 
         <div class="space-y-5">
             <div class="grid grid-cols-3 w-full gap-4">
-                <div class="p-6 md:col-span-2 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-dark-eval-1">
+                <div class="p-6 md:col-span-2 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                     <div class="flex flex-col sm:flex-row items-center self-stretch gap-4">
                         <div class="flex flex-col gap-4 w-full">
                             <div class="flex flex-col">
                                 <div class="text-lg text-gray-600 dark:text-gray-400">
                                     Welcome back!
                                 </div>
-                                <div class="text-xl font-semibold flex items-center gap-3">
-                                    Referral Code: <span id="userReferralCode">{{ user.referral_code }}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-lg">Referral Code:</span> <span class="text-xl" id="userReferralCode">{{ user.referral_code }}</span>
                                     <div>
                                         <DuplicateIcon
                                             class="w-5 hover:cursor-pointer"
@@ -68,44 +71,43 @@ const copyReferralCode = () => {
                                 </div>
                             </div>
                         </div>
-                        <div
-                            class="cursor-pointer group overflow-hidden p-5 duration-1000 hover:duration-1000 relative w-full sm:w-[600px] h-52 bg-gray-100 dark:bg-dark-eval-3 rounded-xl"
-                        >
+                        <div class="w-full flex justify-end">
                             <div
-                                class="group-hover:-top-3 bg-transparent -top-8 -left-2 absolute shadow-yellow-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"
-                            ></div>
-                            <div
-                                class="group-hover:top-40 bg-transparent top-32 left-32 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"
-                            ></div>
-                            <div
-                                class="group-hover:-left-12 bg-transparent top-24 left-72 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"
-                            ></div>
-                            <div
-                                class="group-hover:-top-44 bg-transparent top-12 left-28 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-12 h-12"
-                            ></div>
-                            <div
-                                class="group-hover:left-44 bg-transparent top-12 left-48 absolute shadow-green-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-44 h-44"
-                            ></div>
-                            <div
-                                class="group-hover:-left-2 bg-transparent -top-24 -left-5 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-64 h-64"
-                            ></div>
-                            <div
-                                class="group-hover:top-44 bg-transparent top-24 left-12 absolute shadow-sky-500 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-4 h-4"
-                            ></div>
-                            <div
-                                class="w-full h-full shadow-xl shadow-neutral-900 p-3 bg-gray-200 dark:bg-white/30 rounded-xl flex-col gap-2 flex justify-center"
+                                class="w-96 h-52 duration-500 group overflow-hidden relative rounded-xl bg-gray-800 text-neutral-50 p-4 flex flex-col justify-evenly"
                             >
-                                <span class="text-lg text-gray-600 dark:text-gray-300">Cash Wallet</span>
-                                <p class="text-gray-900 dark:text-white text-4xl font-bold">
-                                    $ {{ user.cash_wallet }}
-                                </p>
+                                <div
+                                    class="absolute blur duration-500 group-hover:blur-none w-72 h-72 rounded-full group-hover:translate-x-12 group-hover:translate-y-12 bg-sky-800 right-1 -bottom-24"
+                                ></div>
+                                <div
+                                    class="absolute blur duration-500 group-hover:blur-none w-12 h-12 rounded-full group-hover:translate-x-12 group-hover:translate-y-2 bg-blue-800 right-12 bottom-12"
+                                ></div>
+                                <div
+                                    class="absolute blur duration-500 group-hover:blur-none w-36 h-36 rounded-full group-hover:translate-x-12 group-hover:-translate-y-12 bg-blue-900 right-1 -top-12"
+                                ></div>
+                                <div
+                                    class="absolute blur duration-500 group-hover:blur-none w-24 h-24 bg-sky-900 rounded-full group-hover:-translate-x-12"
+                                ></div>
+                                <div class="z-10 flex flex-col justify-evenly w-full h-full">
+                                    <div class="text-lg font-bold">Cash Wallet</div>
+                                    <div class="text-2xl">
+                                        $ {{ user.cash_wallet }}
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="success"
+                                        class="w-full flex justify-center"
+                                    >
+                                        Deposit
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-                <div class="p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-dark-eval-1">
+                <div class="p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                     trading account balance (pie chart)
+<!--                    <BalanceChart />-->
                 </div>
             </div>
 

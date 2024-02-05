@@ -57,10 +57,10 @@ class TradingAccount extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-//    public function accountType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-//    {
-//        return $this->belongsTo(AccountType::class, 'account_type', 'id');
-//    }
+    public function accountType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(AccountType::class, 'account_type', 'id');
+    }
 //    public function tradingUser(): \Illuminate\Database\Eloquent\Relations\HasOne
 //    {
 //        return $this->hasOne(TradingUser::class, 'meta_login', 'meta_login');

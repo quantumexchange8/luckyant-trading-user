@@ -15,7 +15,7 @@ defineProps({
     <Head :title="title"></Head>
 
     <div
-        class="min-h-screen text-gray-900 bg-gray-100 dark:bg-dark-eval-0 dark:text-gray-100"
+        class="min-h-screen text-gray-900 bg-gray-100 dark:bg-gray-950 dark:text-gray-100"
     >
         <!-- Sidebar -->
         <Sidebar />
@@ -25,7 +25,7 @@ defineProps({
             :class="[
                 'min-h-screen flex flex-col',
                 {
-                    'lg:ml-64': sidebarState.isOpen,
+                    'lg:ml-72': sidebarState.isOpen,
                     'md:ml-16': !sidebarState.isOpen,
                 },
             ]"

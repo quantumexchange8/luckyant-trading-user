@@ -24,7 +24,7 @@ import { sidebarState } from '@/Composables'
 
         <Button
             iconOnly
-            variant="secondary"
+            variant="transparent"
             type="button"
             v-slot="{ iconSizeClasses }"
             v-show="sidebarState.isOpen || sidebarState.isHovered"

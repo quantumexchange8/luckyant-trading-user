@@ -55,7 +55,7 @@ const categories = ref([
                         v-for="(category, idx) in categories"
                         :key="idx"
                         :class="[
-                            'rounded-xl bg-white dark:bg-dark-eval-1 p-3',
+                            'rounded-xl bg-white dark:bg-gray-950 p-3',
                         ]"
                     >
                         <TransactionTable

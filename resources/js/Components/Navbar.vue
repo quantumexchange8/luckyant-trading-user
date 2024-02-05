@@ -38,7 +38,7 @@ onUnmounted(() => {
     <nav
         aria-label="secondary"
         :class="[
-            'sticky top-0 z-10 px-6 py-4 bg-white flex items-center justify-between transition-transform duration-500 dark:bg-dark-eval-1',
+            'sticky top-0 z-10 px-6 py-4 bg-white flex items-center justify-between transition-transform duration-500 dark:bg-gray-950',
             {
                 '-translate-y-full': scrolling.down,
                 'translate-y-0': scrolling.up,
@@ -48,7 +48,7 @@ onUnmounted(() => {
         <div class="flex items-center gap-2">
             <Button
                 iconOnly
-                variant="secondary"
+                variant="transparent"
                 type="button"
                 @click="() => { toggleDarkMode() }"
                 v-slot="{ iconSizeClasses }"
@@ -70,7 +70,7 @@ onUnmounted(() => {
         <div class="flex items-center gap-2">
             <Button
                 iconOnly
-                variant="secondary"
+                variant="transparent"
                 type="button"
                 @click="() => { toggleDarkMode() }"
                 v-slot="{ iconSizeClasses }"
@@ -91,7 +91,7 @@ onUnmounted(() => {
 
             <Button
                 iconOnly
-                variant="secondary"
+                variant="transparent"
                 type="button"
                 @click="toggleFullScreen"
                 v-slot="{ iconSizeClasses }"
@@ -116,7 +116,7 @@ onUnmounted(() => {
                     <span class="inline-flex rounded-md">
                         <button
                             type="button"
-                            class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none focus:ring focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark-eval-1 dark:bg-dark-eval-1 dark:text-gray-400 dark:hover:text-gray-200"
+                            class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none focus:ring focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark-eval-1 dark:bg-gray-950 dark:text-gray-400 dark:hover:text-gray-200"
                         >
                             {{ $page.props.auth.user.name }}
 
@@ -158,7 +158,7 @@ onUnmounted(() => {
     <!-- Mobile bottom bar -->
     <div
         :class="[
-            'fixed inset-x-0 bottom-0 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white md:hidden dark:bg-dark-eval-1',
+            'fixed inset-x-0 bottom-0 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white md:hidden dark:bg-gray-950',
             {
                 'translate-y-full': scrolling.down,
                 'translate-y-0': scrolling.up,
@@ -167,7 +167,7 @@ onUnmounted(() => {
     >
         <Button
             iconOnly
-            variant="secondary"
+            variant="transparent"
             type="button"
             v-slot="{ iconSizeClasses }"
             srText="Search"
@@ -182,7 +182,7 @@ onUnmounted(() => {
 
         <Button
             iconOnly
-            variant="secondary"
+            variant="transparent"
             type="button"
             @click="sidebarState.isOpen = !sidebarState.isOpen"
             v-slot="{ iconSizeClasses }"

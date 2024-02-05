@@ -46,7 +46,7 @@ class AccountInfoController extends Controller
             }
         }
 
-        return TradingAccount::where('user_id', \Auth::id())->latest()->get();
+        return TradingAccount::with('accountType:id,group_id,name')->where('user_id', \Auth::id())->latest()->get();
     }
 
 }

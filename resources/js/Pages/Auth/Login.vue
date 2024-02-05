@@ -43,7 +43,7 @@ const submit = () => {
                         <template #icon>
                             <MailIcon aria-hidden="true" class="w-5 h-5" />
                         </template>
-                        <Input withIcon id="email" type="email" class="block w-full" placeholder="Email" v-model="form.email" required autofocus autocomplete="username" />
+                        <Input withIcon id="email" type="email" class="block w-full" placeholder="Email" v-model="form.email" autofocus autocomplete="username" />
                     </InputIconWrapper>
                 </div>
 
@@ -53,7 +53,7 @@ const submit = () => {
                         <template #icon>
                             <LockClosedIcon aria-hidden="true" class="w-5 h-5" />
                         </template>
-                        <Input withIcon id="password" type="password" class="block w-full" placeholder="Password" v-model="form.password" required autocomplete="current-password" />
+                        <Input withIcon id="password" type="password" class="block w-full" placeholder="Password" v-model="form.password" autocomplete="current-password" />
                     </InputIconWrapper>
                 </div>
 

@@ -11,16 +11,16 @@
 @layer base {
     :root {
         --primary-25: #faf5ff;
-        --primary-50: #f4e8ff;
-        --primary-100: #f4e8ff;
-        --primary-200: #ebd5ff;
-        --primary-300: #dab4fe;
-        --primary-400: #c184fc;
-        --primary-500: #a855f7;
-        --primary-600: #9133ea;
-        --primary-700: #7a22ce;
-        --primary-800: #6621a8;
-        --primary-900: #531c87;
-        --primary-950: #370764;
+        --primary-50: #f2f6fc;
+        --primary-100: #e1ecf8;
+        --primary-200: #c9def4;
+        --primary-300: #b3d2ef;
+        --primary-400: #79ade1;
+        --primary-500: #598fd8;
+        --primary-600: #4575cb;
+        --primary-700: #3b62ba;
+        --primary-800: #355098;
+        --primary-900: #2f4579;
+        --primary-950: #212c4a;
     }
 }

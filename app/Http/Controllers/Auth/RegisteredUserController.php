@@ -8,8 +8,10 @@ use App\Mail\SendOtp;
 use App\Models\Country;
 use App\Models\User;
 use App\Models\VerifyOtp;
+use App\Models\Wallet;
 use App\Notifications\OtpNotification;
 use App\Providers\RouteServiceProvider;
+use App\Services\RunningNumberService;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -152,6 +154,13 @@ class RegisteredUserController extends Controller
         }
 
         $user->setReferralId();
+
+        Wallet::create([
+            'user_id' => $user->id,
+            'name' => 'Cash Wallet',
+            'type' => 'cash_wallet',
+            'wallet_address' => RunningNumberService::getID('cash_wallet'),
+        ]);
         event(new Registered($user));
 
         return redirect()->route('login')->with('toast', 'Successfully Created Account');

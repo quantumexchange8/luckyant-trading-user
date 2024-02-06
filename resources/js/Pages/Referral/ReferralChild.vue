@@ -180,7 +180,7 @@ export default {
                     <div class="flex-col ml-3">
                         <div class="flex gap-2 text-sm font-semibold">
                             {{ selectedAffiliate.name }}
-                            <span class="text-xs px-2 py-0.5 rounded-full dark:bg-warning-400 dark:text-gray-800">{{$t('public.Level')}} {{ selectedAffiliate.level }}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full text-primary-100 bg-primary-400 dark:bg-primary-600">{{$t('public.Level')}} {{ selectedAffiliate.level }}</span>
                         </div>
                         <div class="text-xs font-normal dark:text-gray-400">
                             {{ selectedAffiliate.email }}

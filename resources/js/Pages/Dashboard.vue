@@ -7,8 +7,16 @@ import {trans} from "laravel-vue-i18n";
 import Button from "@/Components/Button.vue";
 import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
 import Deposit from "@/Pages/Dashboard/Deposit.vue";
+import Modal from "@/Components/Modal.vue";
+import {onMounted, ref} from "vue";
+import {transactionFormat} from "@/Composables/index.js";
 
 const user = usePage().props.auth.user
+const { formatDateTime } = transactionFormat();
+const props = defineProps({
+    announcement: Object,
+    firstTimeLogin: Number
+})
 
 const copyReferralCode = () => {
     const referralCode = document.querySelector('#userReferralCode').textContent;
@@ -25,6 +33,34 @@ const copyReferralCode = () => {
         message: trans('public.Copy Successful!'),
     });
 }
+
+const announcementModal = ref(false);
+const firstTimeLogin = ref(props.firstTimeLogin);
+
+const closeModal = () => {
+    announcementModal.value = false;
+    firstTimeLogin.value = 0; // Set the value of firstTimeLogin to 0 when closing the modal
+    setValueInSession(0); // Update the session value to 0
+}
+
+const setValueInSession = async (value) => {
+    await axios.post('/update_session', {firstTimeLogin: value})
+        .then(response => {
+            // Session value has been updated successfully
+            console.log('Session value updated:', value);
+        })
+        .catch(error => {
+            // Handle the error, if any
+            console.error('Error updating session value:', error);
+        });
+};
+
+onMounted(() => {
+    // Check if the modal has been shown already
+    if (firstTimeLogin.value === 1) {
+        announcementModal.value = true;
+    }
+});
 </script>
 
 <template>
@@ -93,7 +129,31 @@ const copyReferralCode = () => {
                                     <div class="text-2xl">
                                         $ {{ user.cash_wallet }}
                                     </div>
-                                    <Deposit />
+                                    <div class="flex justify-between w-full gap-2">
+                                        <Deposit />
+                                        <Button
+                                            type="button"
+                                            variant="danger"
+                                            size="sm"
+                                            class="flex justify-center w-full gap-1"
+                                             v-slot="{ iconSizeClasses }"
+                                        >
+                                            <CashIcon aria-hidden="true" :class="iconSizeClasses" />
+                                            Withdrawal
+                                        </Button>
+                                    </div>
+                                    <div class="flex items-center justify-center w-full">
+                                        <Button
+                                            type="button"
+                                            variant="primary"
+                                            size="sm"
+                                            class="flex justify-center w-full gap-1"
+                                             v-slot="{ iconSizeClasses }"
+                                        >
+                                            <RefreshIcon aria-hidden="true" :class="iconSizeClasses" />
+                                            Internal Transfer
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -110,6 +170,15 @@ const copyReferralCode = () => {
             <iframe scrolling="no" allowtransparency="true" frameborder="0" src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22FOREXCOM%3ASPXUSD%22%2C%22title%22%3A%22S%26P%20500%22%7D%2C%7B%22proName%22%3A%22FOREXCOM%3ANSXUSD%22%2C%22title%22%3A%22US%20100%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AEURUSD%22%2C%22title%22%3A%22EUR%2FUSD%22%7D%2C%7B%22proName%22%3A%22BITSTAMP%3ABTCUSD%22%2C%22title%22%3A%22Bitcoin%22%7D%2C%7B%22proName%22%3A%22BITSTAMP%3AETHUSD%22%2C%22title%22%3A%22Ethereum%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A44%2C%22utm_source%22%3A%22currenttech.pro%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22ticker-tape%22%2C%22page-uri%22%3A%22currenttech.pro%2Fdemocrm%2Fpublic%2Fmember%2Fdashboard%22%7D" style="box-sizing: border-box; display: block; height: 50px; width: 100%;"></iframe>
 
         </div>
+
+        <Modal :show="announcementModal" title="Details" @close="closeModal">
+            <div class="text-xs dark:text-gray-400">{{ formatDateTime(announcement.created_at) }}</div>
+            <div v-if="announcement.image !== ''" class="my-5">
+                <img class="rounded-lg w-full" :src="announcement.image" alt="announcement image" />
+            </div>
+            <div class="my-5 dark:text-white">{{ announcement.subject }}</div>
+            <div class="dark:text-gray-300 text-sm prose leading-3" v-html="announcement.details"></div>
+        </Modal>
 
     </AuthenticatedLayout>
 </template>

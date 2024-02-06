@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\TradingAccount;
 use App\Models\User;
 use Carbon\Carbon;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $announcement = Announcement::where('type', 'login')->latest()->first();
 
+        $announcement->image = $announcement->getFirstMediaUrl('announcement');
+
+        return Inertia::render('Dashboard', [
+            'announcement' => $announcement,
+            'firstTimeLogin' => \Session::get('first_time_logged_in')
+        ]);
     }
 
     public function getBalanceChart()
@@ -57,5 +66,12 @@ class DashboardController extends Controller
         $chartData['datasets'][] = $dataset;
 
         return response()->json($chartData);
+    }
+
+    public function update_session()
+    {
+        \Session::put('first_time_logged_in', 0);
+
+        return back();
     }
 }

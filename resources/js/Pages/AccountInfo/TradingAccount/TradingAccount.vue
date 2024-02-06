@@ -4,7 +4,6 @@ import Badge from "@/Components/Badge.vue";
 import {transactionFormat} from "@/Composables/index.js";
 import {CreditCardAddIcon} from "@/Components/Icons/outline.jsx";
 import {onMounted, onUnmounted, ref} from "vue";
-import {RefreshIcon} from "@heroicons/vue/solid";
 import Loading from "@/Components/Loading.vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
@@ -48,7 +47,7 @@ onMounted(() => {
 <template>
     <div
         v-if="tradingAccounts.length === 0"
-        class="flex flex-col items-start gap-3 border border-gray-400 dark:border-gray-600 rounded-lg p-5 max-w-md animate-pulse shadow-lg"
+        class="flex flex-col items-start gap-3 border border-gray-300 dark:border-gray-600 rounded-lg p-5 max-w-xl animate-pulse shadow-lg"
     >
         <div class="flex justify-between items-center self-stretch">
             <div class="flex items-center gap-3">
@@ -75,15 +74,15 @@ onMounted(() => {
 
     <div
         v-else
-        class="grid grid-cols-3 gap-5"
+        class="flex gap-5"
     >
         <div
             v-for="account in tradingAccounts"
-            class="flex flex-col items-start gap-3 border border-gray-400 dark:border-gray-600 rounded-lg p-5 max-w-md shadow-lg"
+            class="flex flex-col items-start gap-3 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg"
         >
             <div class="flex justify-between items-center self-stretch">
                 <div class="flex items-center gap-3">
-                    <div class="bg-transparent border border-gray-400 dark:border-gray-500 rounded-full w-12 h-12 flex items-center justify-center">
+                    <div class="bg-transparent border border-gray-300 dark:border-gray-500 shadow rounded-full w-12 h-12 flex items-center justify-center">
                         <ApplicationLogo class="w-12 h-12" />
                     </div>
                     <div class="flex flex-col items-start">
@@ -95,14 +94,16 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-                <Badge status="success">Active</Badge>
+                <div class="flex justify-end">
+                    <Badge variant="success">Active</Badge>
+                </div>
             </div>
             <div class="flex justify-between items-center self-stretch">
                 <div class="flex items-center gap-3">
-                    <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs">
+                    <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
                         {{ account.margin_leverage }}
                     </div>
-                    <div class="text-xs">
+                    <div class="text-xs font-normal">
                         Credit: $ {{ formatAmount(account.credit ? account.credit : 0) }}
                     </div>
                 </div>

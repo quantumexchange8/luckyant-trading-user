@@ -89,8 +89,8 @@ const leverages = [
                     <InputError :message="form.errors.leverage" />
                 </div>
                 <div class="mt-6 space-y-4">
-                    <h3 class="text-gray-500 font-bold text-sm">{{ $t('public.Terms & Conditions') }}</h3>
-                    <ol class="text-gray-500 text-xs list-decimal text-justify pl-6 mt-2">
+                    <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{ $t('public.Terms & Conditions') }}</h3>
+                    <ol class="text-gray-500 dark:text-gray-400 text-xs list-decimal text-justify pl-6 mt-2">
                         <li>{{ $t('public.Terms 1') }}</li>
                         <li>{{ $t('public.Terms 2') }}</li>
                         <li>{{ $t('public.Terms 3') }}</li>
@@ -106,7 +106,7 @@ const leverages = [
                             <Checkbox v-model="form.terms"/>
                         </div>
                         <div class="ml-3">
-                            <label for="terms" class="text-gray-500 dark:text-dark-eval-4 text-xs">{{ $t('public.I acknowledge that I have read, and do hereby accept the terms and conditions stated as above.') }}</label>
+                            <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">{{ $t('public.I acknowledge that I have read, and do hereby accept the terms and conditions stated as above.') }}</label>
                         </div>
                     </div>
                     <InputError :message="form.errors.terms"/>

@@ -1,28 +1,37 @@
 <script setup>
-import { computed } from 'vue';
+import {computed} from "vue";
 
 const props = defineProps({
-    status: String,
+    variant: {
+        type: String,
+        default: 'success',
+        validator(value) {
+            return ['success', 'danger', 'processing', 'warning'].includes(value)
+        },
+    },
 })
 
-const badgeClasses = computed(() => {
-    const baseClasses = 'text-xs font-medium px-3 py-1 rounded-full';
-    const status = props.status;
+const { variant } = props
 
-    if (status === 'warning') {
-        return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-white`;
-    } else if (status === 'success') {
-        return `${baseClasses} bg-success-100 text-green-700 dark:bg-success-200`;
-    } else if (status === 'primary') {
-        return `${baseClasses} bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-white`;
-    } else if (status === 'danger') {
-        return `${baseClasses} bg-error-100 text-red-800 dark:bg-error-500 dark:text-white`;
-    } else {
-        return baseClasses;
-    }
-});
+const baseClasses = [
+    'flex w-20 px-2 py-1 justify-center text-white mx-auto rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out',
+]
+
+const variantClasses = (variant) => ({
+    'bg-success-400 dark:bg-success-500': variant === 'success',
+    'bg-error-400 dark:bg-error-500': variant === 'danger',
+    'bg-blue-400 dark:bg-blue-500': variant === 'processing',
+    'bg-warning-400 dark:bg-warning-500': variant === 'warning',
+})
+
+const classes = computed(() => [
+    ...baseClasses,
+    variantClasses(variant)
+])
 </script>
 
 <template>
-    <span :class="badgeClasses"><slot></slot></span>
+    <div :class="classes">
+        <slot></slot>
+    </div>
 </template>

@@ -15,7 +15,8 @@ const user = usePage().props.auth.user
 const { formatDateTime } = transactionFormat();
 const props = defineProps({
     announcement: Object,
-    firstTimeLogin: Number
+    firstTimeLogin: Number,
+    cashWallet: Object
 })
 
 const copyReferralCode = () => {
@@ -125,9 +126,9 @@ onMounted(() => {
                                     class="absolute blur duration-500 group-hover:blur-none w-24 h-24 bg-sky-900 rounded-full group-hover:-translate-x-12"
                                 ></div>
                                 <div class="z-10 flex flex-col justify-evenly w-full h-full">
-                                    <div class="text-lg font-bold">Cash Wallet</div>
+                                    <div class="text-lg font-bold">{{ cashWallet.name }} ({{cashWallet.wallet_address }})</div>
                                     <div class="text-2xl">
-                                        $ {{ user.cash_wallet }}
+                                        $ {{ cashWallet.balance }}
                                     </div>
                                     <div class="flex justify-between w-full gap-2">
                                         <Deposit />

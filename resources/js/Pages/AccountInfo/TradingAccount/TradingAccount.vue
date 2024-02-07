@@ -10,7 +10,8 @@ import Action from "@/Pages/AccountInfo/TradingAccount/Action.vue";
 import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
-    walletSel: Array
+    walletSel: Array,
+    tradingAccounts: Object,
 })
 
 const { formatAmount } = transactionFormat();
@@ -59,14 +60,11 @@ watchEffect(() => {
 <template>
     <div
         v-if="tradingAccounts.length === 0"
-        class="flex flex-col items-start gap-3 border border-gray-300 dark:border-gray-600 rounded-lg p-5 max-w-xl animate-pulse shadow-lg"
+        class="flex flex-col items-start gap-3 border border-gray-300 dark:border-gray-600 rounded-lg p-5 animate-pulse w-1/2 mx-auto sm:mx-0 shadow-lg"
     >
         <div class="flex justify-between items-center self-stretch">
             <div class="flex items-center gap-3">
                 <div class="flex items-center">
-                    <svg class="w-12 h-12 me-3 text-gray-300 dark:text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
-                    </svg>
                     <div>
                         <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-32 mb-2"></div>
                         <div class="w-48 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
@@ -86,7 +84,7 @@ watchEffect(() => {
 
     <div
         v-else
-        class="flex gap-5"
+        class="grid grid-cols-1 sm:grid-cols-2 gap-5"
     >
         <div
             v-for="account in tradingAccounts"
@@ -94,11 +92,8 @@ watchEffect(() => {
         >
             <div class="flex justify-between items-center self-stretch">
                 <div class="flex items-center gap-3">
-                    <div class="bg-transparent border border-gray-300 dark:border-gray-500 shadow rounded-full w-12 h-12 flex items-center justify-center">
-                        <ApplicationLogo class="w-12 h-12" />
-                    </div>
                     <div class="flex flex-col items-start">
-                        <div class="text-sm">
+                        <div class="text-sm font-semibold">
                             {{ account.account_type.name }}
                         </div>
                         <div class="text-xs">
@@ -123,12 +118,15 @@ watchEffect(() => {
                     $ {{ formatAmount(account.balance ? account.balance : 0) }}
                 </div>
             </div>
-            <div class="flex items-center gap-3 w-full">
-                <Action
-                    :account="account"
-                    :walletSel="walletSel"
-                />
-                <div class="flex items-center gap-2 justify-end w-full">
+            <div class="flex items-center gap-10 w-full">
+                <div class="flex items-center gap-3">
+                    <Action
+                        :account="account"
+                        :walletSel="walletSel"
+                        :tradingAccounts="tradingAccounts"
+                    />
+                </div>
+                <div class="flex items-center gap-2 justify-end w-full"> <!-- Adjust the width as needed -->
                     <Loading class="w-5 h-5" />
                     <div class="text-xs">Refreshing in {{ countdown }}s</div>
                 </div>

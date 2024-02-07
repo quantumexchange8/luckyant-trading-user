@@ -13,7 +13,8 @@ import BaseListbox from "@/Components/BaseListbox.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
-    walletSel: Array
+    walletSel: Array,
+    tradingAccounts: Object
 })
 const user = usePage().props.auth.user;
 const addingTradingAccount = ref(false)
@@ -77,6 +78,7 @@ const leverages = [
 
         <TradingAccount
             :walletSel="walletSel"
+            :tradingAccounts="tradingAccounts"
         />
 
         <Modal :show="addingTradingAccount" :title="$t('public.Add Trading Account')" @close="closeModal">

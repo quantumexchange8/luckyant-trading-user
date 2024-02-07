@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddTradingAccountRequest;
+use App\Http\Requests\DepositBalanceRequest;
+use App\Http\Requests\InternalTransferBalanceRequest;
+use App\Http\Requests\WithdrawBalanceRequest;
 use App\Models\AccountType;
 use App\Models\TradingAccount;
 use App\Models\TradingUser;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Wallet;
 use App\Services\dealAction;
 use App\Services\dealType;
@@ -23,7 +27,8 @@ class AccountInfoController extends Controller
     public function index()
     {
         return Inertia::render('AccountInfo/AccountInfo', [
-            'walletSel' => (new SelectOptionService())->getWalletSelection()
+            'walletSel' => (new SelectOptionService())->getWalletSelection(),
+            'tradingAccounts' => Auth::user()->tradingAccounts
         ]);
     }
 
@@ -59,14 +64,14 @@ class AccountInfoController extends Controller
         return TradingAccount::with('accountType:id,group_id,name')->where('user_id', \Auth::id())->latest()->get();
     }
 
-    public function depositTradingAccount(Request $request)
+    public function depositTradingAccount(DepositBalanceRequest $request)
     {
         $user = Auth::user();
         $wallet = Wallet::find($request->wallet_id);
         $amount = $request->amount;
         $meta_login = $request->to_meta_login;
 
-        if ($wallet->balance < $amount || $amount == 0) {
+        if ($wallet->balance < $amount || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => trans('public.Insufficient balance')]);
         }
 
@@ -113,7 +118,7 @@ class AccountInfoController extends Controller
             ->with('success', 'Successfully deposit $' . number_format($amount, 2) . ' to LOGIN: ' . $request->to_meta_login);
     }
 
-    public function withdrawTradingAccount(Request $request)
+    public function withdrawTradingAccount(WithdrawBalanceRequest $request)
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
@@ -130,13 +135,13 @@ class AccountInfoController extends Controller
         $tradingAccount = TradingAccount::where('meta_login', $request->from_meta_login)->first();
 
         try {
-            $metaService->getUserInfo($tradingAccount);
+            $metaService->getUserInfo(collect([$tradingAccount]));
         } catch (\Exception $e) {
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
         }
 
         // Check if balance is sufficient
-        if ($tradingAccount->balance < $amount) {
+        if ($tradingAccount->balance < $amount || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => trans('public.Insufficient balance')]);
         }
         $deal = [];
@@ -176,7 +181,7 @@ class AccountInfoController extends Controller
             ->with('success', 'Successfully withdraw $' . number_format($amount, 2) . ' from LOGIN: ' . $request->from_meta_login);
     }
 
-    public function internalTransferTradingAccount(Request $request)
+    public function internalTransferTradingAccount(InternalTransferBalanceRequest $request)
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
@@ -193,13 +198,13 @@ class AccountInfoController extends Controller
         $amount = $request->amount;
 
         try {
-            $metaService->getUserInfo($from_trading_account);
+            $metaService->getUserInfo(collect([$from_trading_account]));
         } catch (\Exception $e) {
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
         }
 
         // Check if balance is sufficient
-        if ($from_trading_account->balance < $amount) {
+        if ($from_trading_account->balance < $amount || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => trans('public.Insufficient balance')]);
         }
 

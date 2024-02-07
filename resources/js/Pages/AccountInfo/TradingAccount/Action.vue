@@ -12,6 +12,7 @@ import InternalTransferBalance from "@/Pages/AccountInfo/TradingAccount/Internal
 const props = defineProps({
     account: Object,
     walletSel: Array,
+    tradingAccounts: Object,
 })
 
 const accountActionModal = ref(false);
@@ -72,6 +73,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
+                v-if="tradingAccounts.length > 1"
                 @click="openAccountActionModal('internal_transfer')"
             >
                 <div class="flex items-center gap-2">

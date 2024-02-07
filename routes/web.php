@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,25 @@ Route::middleware('auth')->group(function () {
     Route::prefix('transaction')->group(function () {
         Route::get('/transaction_listing', [TransactionController::class, 'index'])->name('transaction.transaction_listing');
         Route::get('/getTransactionData/{category}', [TransactionController::class, 'getTransactionData'])->name('transaction.getTransactionData');
+        
+        
+         /**
+         * ==============================
+         *         Wallet
+         * ==============================
+         */
+
+        Route::get('/wallet', [WalletController::class, 'wallet'])->name('transaction.wallet');
+        Route::get('/getWalletHistory', [WalletController::class, 'getWalletHistory'])->name('transaction.getWalletHistory');
+    
+         /**
+         * ==============================
+         *         Trading Account
+         * ==============================
+         */
+
+         Route::get('/trading_account', [WalletController::class, 'tradingAccount'])->name('transaction.trading_account');
+         Route::get('/getTradingHistory', [WalletController::class, 'getTradingHistory'])->name('transaction.getTradingHistory');
     });
 
     /**

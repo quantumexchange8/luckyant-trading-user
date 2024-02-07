@@ -39,10 +39,9 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon } from 
             </template>
         </SidebarLink>
 
-        <SidebarLink
+        <SidebarCollapsible
             :title="$t('public.sidebar.Transaction')"
-            :href="route('transaction.transaction_listing')"
-            :active="route().current('transaction.transaction_listing')"
+            :active="route().current('transaction.*')"
         >
             <template #icon>
                 <SwitchHorizontalIcon
@@ -50,7 +49,18 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon } from 
                     aria-hidden="true"
                 />
             </template>
-        </SidebarLink>
+
+            <SidebarCollapsibleItem
+                :href="route('transaction.wallet')"
+                title="Wallet"
+                :active="route().current('transaction.wallet')"
+            />
+            <SidebarCollapsibleItem
+                :href="route('transaction.trading_account')"
+                title="Trading Account"
+                :active="route().current('transaction.trading_account')"
+            />
+        </SidebarCollapsible>
 
         <SidebarCollapsible
             title="Referral"

@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
             'title' => session('title'),
             'success' => session('success'),
             'warning' => session('warning'),
+            'auth.user.wallets' => fn() => $request->user() ? $request->user()->wallets : null,
         ];
     }
 }

@@ -30,4 +30,29 @@ class Transaction extends Model
         'remarks',
         'handle_by',
     ];
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function from_wallet(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Wallet::class, 'from_wallet_id', 'id');
+    }
+
+    public function to_wallet(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Wallet::class, 'to_wallet_id', 'id');
+    }
+
+    public function from_meta_login(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TradingAccount::class, 'from_meta_login', 'meta_login');
+    }
+
+    public function to_meta_login(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TradingAccount::class, 'to_meta_login', 'meta_login');
+    }
 }

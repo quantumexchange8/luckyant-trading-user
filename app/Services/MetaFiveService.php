@@ -15,7 +15,9 @@ class MetaFiveService {
     private string $port = "8443";
     private string $login = "10012";
     private string $password = "Test1234.";
-    private string $baseURL = "http://luckyant-mt5.currenttech.pro:5000/api";
+//    private string $baseURL = "http://luckyant-mt5.currenttech.pro:5000/api";
+    private string $baseURL = "http://192.168.0.223:5000/api";
+
     private string $token = "6f0d6f97-3042-4389-9655-9bc321f3fc1e";
     private string $environmentName = "live";
 
@@ -59,4 +61,35 @@ class MetaFiveService {
         (new CreateTradingUser)->execute($user, $accountResponse);
         return $accountResponse;
     }
+
+    public function createDeal($meta_login, $amount, $comment, $type)
+    {
+        $dealResponse = Http::acceptJson()->post($this->baseURL . "/conduct_deal", [
+            'login' => $meta_login,
+            'amount' => $amount,
+            'imtDeal_EnDealAction' => dealType::DEAL_BALANCE,
+            'comment' => $comment,
+            'deposit' => $type,
+        ]);
+        $dealResponse = $dealResponse->json();
+        Log::debug($dealResponse);
+
+        $data = $this->getUser($meta_login);
+        (new UpdateTradingUser)->execute($meta_login, $data);
+        (new UpdateTradingAccount)->execute($meta_login, $data);
+        return $dealResponse;
+    }
+}
+
+class dealAction
+{
+    const DEPOSIT = true;
+    const WITHDRAW = false;
+}
+
+class dealType
+{
+    const DEAL_BALANCE = 2;
+    const DEAL_CREDIT = 3;
+    const DEAL_BONUS = 6;
 }

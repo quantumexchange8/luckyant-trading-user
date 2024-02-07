@@ -17,7 +17,6 @@ class UpdateTradingAccount
     public function updateTradingAccount($meta_login, $data): TradingAccount
     {
         $tradingAccount = TradingAccount::query()->where('meta_login', $meta_login)->first();
-        $tradingUser = $tradingAccount->tradingUser;
 
         $tradingAccount->currency_digits = $data['currencyDigits'];
         $tradingAccount->balance = $data['balance'];

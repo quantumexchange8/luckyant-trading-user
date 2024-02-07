@@ -36,6 +36,9 @@ class HandleInertiaRequests extends Middleware
             ],
             'auth.user.profile_photo' => fn() => $request->user() ? $request->user()->getFirstMediaUrl('profile_photo') : null,
             'toast' => session('toast'),
+            'title' => session('title'),
+            'success' => session('success'),
+            'warning' => session('warning'),
         ];
     }
 }

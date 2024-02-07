@@ -3,12 +3,17 @@ import Button from "@/Components/Button.vue";
 import Badge from "@/Components/Badge.vue";
 import {transactionFormat} from "@/Composables/index.js";
 import {CreditCardAddIcon} from "@/Components/Icons/outline.jsx";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref, watchEffect} from "vue";
 import Loading from "@/Components/Loading.vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import Action from "@/Pages/AccountInfo/TradingAccount/Action.vue";
+import {usePage} from "@inertiajs/vue3";
+
+const props = defineProps({
+    walletSel: Array
+})
 
 const { formatAmount } = transactionFormat();
-
 const tradingAccounts = ref([]);
 const countdown = ref(10);
 
@@ -42,6 +47,13 @@ onMounted(() => {
         clearInterval(countdownIntervalId);
     });
 });
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        refreshData();
+    }
+});
+
 </script>
 
 <template>
@@ -112,22 +124,10 @@ onMounted(() => {
                 </div>
             </div>
             <div class="flex items-center gap-3 w-full">
-                <Button
-                    type="button"
-                    variant="primary"
-                    class="flex justify-center gap-2"
-                    v-slot="{ iconSizeClasses }"
-                >
-                    <CreditCardAddIcon />
-                    Deposit
-                </Button>
-                <Button
-                    type="button"
-                    variant="transparent"
-                    class="flex justify-center"
-                >
-                    More
-                </Button>
+                <Action
+                    :account="account"
+                    :walletSel="walletSel"
+                />
                 <div class="flex items-center gap-2 justify-end w-full">
                     <Loading class="w-5 h-5" />
                     <div class="text-xs">Refreshing in {{ countdown }}s</div>

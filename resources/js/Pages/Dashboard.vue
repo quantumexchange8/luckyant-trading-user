@@ -12,7 +12,7 @@ import {onMounted, ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 
 const user = usePage().props.auth.user
-const { formatDateTime } = transactionFormat();
+const { formatDateTime, formatAmount } = transactionFormat();
 const props = defineProps({
     announcement: Object,
     firstTimeLogin: Number,
@@ -128,7 +128,7 @@ onMounted(() => {
                                 <div class="z-10 flex flex-col justify-evenly w-full h-full">
                                     <div class="text-lg font-bold">{{ cashWallet.name }} ({{cashWallet.wallet_address }})</div>
                                     <div class="text-2xl">
-                                        $ {{ cashWallet.balance }}
+                                        $ {{ formatAmount(cashWallet.balance) }}
                                     </div>
                                     <div class="flex justify-between w-full gap-2">
                                         <Deposit />

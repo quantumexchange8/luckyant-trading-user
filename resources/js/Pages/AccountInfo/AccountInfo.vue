@@ -12,6 +12,9 @@ import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 
+const props = defineProps({
+    walletSel: Array
+})
 const user = usePage().props.auth.user;
 const addingTradingAccount = ref(false)
 
@@ -73,6 +76,7 @@ const leverages = [
         </template>
 
         <TradingAccount
+            :walletSel="walletSel"
         />
 
         <Modal :show="addingTradingAccount" :title="$t('public.Add Trading Account')" @close="closeModal">

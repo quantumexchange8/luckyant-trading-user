@@ -162,7 +162,7 @@ onMounted(() => {
 
                 </div>
                 <div class="p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                    Balance
+                    Total Balance
                     <BalanceChart />
                 </div>
             </div>

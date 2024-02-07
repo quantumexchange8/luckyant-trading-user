@@ -29,17 +29,22 @@ class DashboardController extends Controller
         $user = \Auth::user();
 
         // Get Cash Wallet balance
-        $cashWalletBalance = $user->cash_wallet;
+        $wallets = Wallet::query()
+            ->where('user_id', $user->id)
+            ->select('id', 'name', 'type', 'balance')
+            ->get();
 
         // Get trading account balances
         $tradingAccounts = TradingAccount::where('user_id', $user->id)->get();
 
         $chartData = [
-            'labels' => ['Cash Wallet'], // Initial label for Cash Wallet
+            'labels' => $wallets->pluck('name'), // Initial label for Cash Wallet
             'datasets' => [],
         ];
 
-        $balances = [$cashWalletBalance]; // Initial balance for Cash Wallet
+        foreach ($wallets as $wallet) {
+            $balances[] = $wallet->balance;
+        }
         $backgroundColors = ['#598fd8']; // Background color for Cash Wallet
 
         // Hardcoded 10 background colors for trading accounts

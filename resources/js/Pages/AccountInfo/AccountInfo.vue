@@ -76,10 +76,23 @@ const leverages = [
             </div>
         </template>
 
-        <TradingAccount
-            :walletSel="walletSel"
-            :tradingAccounts="tradingAccounts"
-        />
+        <div v-if="tradingAccounts.length > 0">
+            <TradingAccount
+                :walletSel="walletSel"
+                :tradingAccounts="tradingAccounts"
+            />
+        </div>
+        <div
+            v-else
+            class="flex flex-col items-center w-full"
+        >
+            <div class="text-2xl text-gray-400 dark:text-gray-200">
+                {{ $t('public.No Account') }}
+            </div>
+            <div class="text-lg text-gray-400 dark:text-gray-600">
+                We will notify you once your KYC verification is completed, enabling you to add an account.
+            </div>
+        </div>
 
         <Modal :show="addingTradingAccount" :title="$t('public.Add Trading Account')" @close="closeModal">
             <form class="space-y-4">

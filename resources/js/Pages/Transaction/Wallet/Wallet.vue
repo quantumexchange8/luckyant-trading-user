@@ -7,9 +7,10 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import Deposit from "@/Pages/Dashboard/Deposit.vue";
 import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
 import {RefreshIcon} from "@/Components/Icons/outline.jsx";
+import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 
 const props = defineProps({
-    wallets: Object, 
+    wallets: Object,
 });
 </script>
 
@@ -41,16 +42,7 @@ const props = defineProps({
                         </div>
                         <div class="flex justify-between w-full gap-2">
                             <Deposit />
-                            <Button
-                                type="button"
-                                variant="danger"
-                                size="sm"
-                                class="flex justify-center w-full gap-1"
-                                    v-slot="{ iconSizeClasses }"
-                            >
-                                <!-- <CashIcon aria-hidden="true" :class="iconSizeClasses" /> -->
-                                Withdrawal
-                            </Button>
+                            <Withdrawal />
                         </div>
                         <!-- <div class="flex items-center justify-center w-full">
                             <Button
@@ -67,31 +59,46 @@ const props = defineProps({
                     </div>
                 </div>
             </div>
-            
+
             <div class="flex flex-col justify-between p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                 <div class="text-base font-semibold dark:text-gray-400">
                     Overview
                 </div>
                 <div class="flex flex-col gap-2">
-                    <div class="font-bold text-lg">
-                        Total Deposit: $ 0.00
+                    <div class="flex justify-between font-bold text-lg">
+                        <div>
+                            Total Deposit
+                        </div>
+                        <div>
+                            $ 0.00
+                        </div>
                     </div>
-                    <div class="font-bold text-lg">
-                        Total Withdrawal: $ 0.00
+                    <div class="flex justify-between font-bold text-lg">
+                        <div>
+                            Total Withdrawal
+                        </div>
+                        <div>
+                            $ 0.00
+                        </div>
                     </div>
-                    <div class="font-bold text-lg">
-                        Total Rebate: $ 0.00
+                    <div class="flex justify-between font-bold text-lg">
+                        <div>
+                            Total Rebate
+                        </div>
+                        <div>
+                            $ 0.00
+                        </div>
                     </div>
                 </div>
                <!-- <BalanceChart /> -->
             </div>
         </div>
-        
+
 
         <div class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
             <TransactionHistory/>
         </div>
-        
+
     </AuthenticatedLayout>
 
 </template>

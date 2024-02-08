@@ -120,6 +120,7 @@ class RegisteredUserController extends Controller
             'chinese_name' => $request->chinese_name,
             'email' => $request->email,
             'country' => $request->country,
+            'dial_code' => $request->dial_code,
             'phone' => $phone,
             'dob' => $request->dob,
             'password' => Hash::make($request->password),

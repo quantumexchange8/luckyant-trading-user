@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/update_session', [DashboardController::class, 'update_session']);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /**
@@ -63,8 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('transaction')->group(function () {
         Route::get('/transaction_listing', [TransactionController::class, 'index'])->name('transaction.transaction_listing');
         Route::get('/getTransactionData/{category}', [TransactionController::class, 'getTransactionData'])->name('transaction.getTransactionData');
-        
-        
+
+
          /**
          * ==============================
          *         Wallet
@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/wallet', [WalletController::class, 'wallet'])->name('transaction.wallet');
         Route::get('/getWalletHistory', [WalletController::class, 'getWalletHistory'])->name('transaction.getWalletHistory');
-    
+
          /**
          * ==============================
          *         Trading Account

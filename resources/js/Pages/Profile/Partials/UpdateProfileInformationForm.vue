@@ -5,53 +5,108 @@ import Button from '@/Components/Button.vue'
 import Input from '@/Components/Input.vue'
 import BaseListbox from "@/Components/BaseListbox.vue";
 import { Link, useForm, usePage } from '@inertiajs/vue3'
-import InputIconWrapper from '@/Components/InputIconWrapper.vue'
-import { MailIcon, PhoneIcon, KeyIcon, HomeIcon } from '@heroicons/vue/outline'
-import {computed, ref, watch} from "vue";
+import CountryLists from "../../../../../public/data/countries.json";
+import {ref} from "vue";
+import {XIcon} from '@heroicons/vue/outline'
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
     status: String,
-    countries: Array,
     frontIdentityImg: String,
     backIdentityImg: String,
     profileImg: String,
 })
 
 const user = usePage().props.auth.user
+const kycApproval = usePage().props.auth.user.kyc_approval
 
 const form = useForm({
     name: user.name,
     email: user.email,
-    country: user.country,
+    dial_code: user.dial_code,
     phone: user.phone,
-    address_1: user.address_1,
-    address_2: user.address_2,
-    kyc_approval: user.kyc_approval,
-    // proof_front: props.frontIdentityImg,
-    // proof_back: props.backIdentityImg,
-    // profile_photo: props.profileImg,
+    proof_front: null,
+    proof_back: null,
+    profile_photo: null,
 })
-
-const selectedCountry = ref(form.country);
-
-function onchangeDropdown() {
-    const selectedCountryName = selectedCountry.value;
-    const country = props.countries.find((country) => country.label === selectedCountryName);
-
-    if (country) {
-        form.phone = `${country.phone_code}`;
-        form.country = selectedCountry;
-    }
-}
 
 const submit = () => {
     form.post(route('profile.update'))
 }
 
-watch(selectedCountry, () => {
-    onchangeDropdown();
-});
+const selectedProofFrontFile = ref(null);
+const selectedProofFrontFileName = ref(null);
+const handleProofFront = (event) => {
+    const frontProofInput = event.target;
+    const file = frontProofInput.files[0];
+
+    if (file) {
+        // Display the selected image
+        const reader = new FileReader();
+        reader.onload = () => {
+            selectedProofFrontFile.value = reader.result;
+        };
+        reader.readAsDataURL(file);
+        selectedProofFrontFileName.value = file.name;
+        form.proof_front = event.target.files[0];
+    } else {
+        selectedProofFrontFile.value = null;
+    }
+};
+
+const removeProofFront = () => {
+    selectedProofFrontFile.value = null;
+};
+
+const selectedProofBackFile = ref(null);
+const selectedProofBackFileName = ref(null);
+const handleProofBack = (event) => {
+    const backProofInput = event.target;
+    const file = backProofInput.files[0];
+
+    if (file) {
+        // Display the selected image
+        const reader = new FileReader();
+        reader.onload = () => {
+            selectedProofBackFile.value = reader.result;
+        };
+        reader.readAsDataURL(file);
+        selectedProofBackFileName.value = file.name;
+        form.proof_back = event.target.files[0];
+    } else {
+        selectedProofBackFile.value = null;
+    }
+};
+
+const removeProofBack = () => {
+    selectedProofBackFile.value = null;
+};
+
+const selectedProfilePhotoFile = ref(null);
+const selectedProfilePhotoFileName = ref(null);
+const handleProfilePhoto = (event) => {
+    const profilePhotoInput = event.target;
+    const file = profilePhotoInput.files[0];
+
+    if (file) {
+        // Display the selected image
+        const reader = new FileReader();
+        reader.onload = () => {
+            selectedProfilePhotoFile.value = reader.result;
+        };
+        reader.readAsDataURL(file);
+        selectedProfilePhotoFileName.value = file.name;
+        form.profile_photo = event.target.files[0];
+    } else {
+        selectedProfilePhotoFile.value = null;
+    }
+};
+
+const removeProfilePhoto = () => {
+    selectedProfilePhotoFile.value = null;
+};
+
+
 </script>
 
 <template>
@@ -66,63 +121,33 @@ watch(selectedCountry, () => {
             </p>
         </header>
 
-        <form
-            @submit.prevent="form.patch(route('profile.update'))"
-        >
+        <form>
             <section class="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div class="mt-6 space-y-6">
-                    <div>
+                    <div class="space-y-1.5">
                         <Label for="name" value="Name" />
 
                         <Input
                             id="name"
                             type="text"
-                            class="mt-1 block w-full"
+                            class="block w-full"
                             v-model="form.name"
                             required
                             autofocus
                             autocomplete="name"
+                            :disabled="kycApproval === 'Verified'"
                         />
 
                         <InputError class="mt-2" :message="form.errors.name" />
                     </div>
 
-                    <div>
-                        <Label class="text-[14px] dark:text-white mb-2" for="country" value="Country" />
-
-                        <BaseListbox
-                            v-model="selectedCountry"
-                            :options="props.countries"
-                            :error="form.errors.country"
-                            disabled
-                        />
-
-                        <InputError class="mt-2" :message="form.errors.country" />
-                    </div>
-                    
-                    <div>
-                        <Label class="text-[14px] dark:text-white mb-2" for="phone" value="Phone Number" />
-
-                        <InputIconWrapper>
-                            <template #icon>
-                                <PhoneIcon aria-hidden="true" class="w-5 h-5 text-gray-400" />
-                            </template>
-                            <Input
-                                withIcon id="phone" type="text" :placeholder="$t('public.profile.phone_number_placeholder')" class="block w-full" v-model="form.phone" required disabled autocomplete="phone"
-                                :class="form.errors.phone ? 'border border-error-500 dark:border-error-500' : 'border border-gray-400 dark:border-gray-600'"
-                            />
-                        </InputIconWrapper>
-
-                        <InputError class="mt-2" :message="form.errors.phone" />
-                    </div>
-
-                    <div>
+                    <div class="space-y-1.5">
                         <Label for="email" value="Email" />
 
                         <Input
                             id="email"
                             type="email"
-                            class="mt-1 block w-full"
+                            class="block w-full"
                             v-model="form.email"
                             required
                             autocomplete="email"
@@ -155,55 +180,175 @@ watch(selectedCountry, () => {
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-4">
-                        <Button :disabled="form.processing">Save</Button>
+                    <div class="space-y-1.5">
+                        <Label
+                            for="phone"
+                            :value="$t('public.Mobile Phone')"
+                        />
+                        <div class="flex gap-3">
+                            <BaseListbox
+                                class="w-[180px]"
+                                :options="CountryLists"
+                                v-model="form.dial_code"
+                                with-img
+                                is-phone-code
+                                :error="!!form.errors.phone"
+                            />
+                            <Input
+                                id="phone"
+                                type="text"
+                                class="block w-full"
+                                placeholder="123456789"
+                                v-model="form.phone"
+                                :invalid="form.errors.phone"
+                            />
+                        </div>
+                        <InputError :message="form.errors.phone"/>
+                    </div>
 
-                        <Transition
-                            enter-from-class="opacity-0"
-                            leave-to-class="opacity-0"
-                            class="transition ease-in-out"
-                        >
-                            <p
-                                v-if="form.recentlySuccessful"
-                                class="text-sm text-gray-600 dark:text-gray-400"
-                            >
-                                Saved.
-                            </p>
-                        </Transition>
+                    <div class="flex items-center gap-4">
+                        <Button @click="submit" :disabled="form.processing">Save</Button>
                     </div>
                 </div>
                 <div class="mt-6 space-y-6">
-                    <div>
-                        <Label class="text-[14px] dark:text-white mb-2" for="proof_front" value="Proof of Identity (Front)" />
-                        <Input
-                            id="proof_front"
-                            type="file"
-                            class="mt-1 block w-full"
-                            v-model="form.proof_front"
-                        />
-                        <InputError :message="form.errors.proof_front" class="mt-2" />
+                    <div class="space-y-1.5">
+                        <Label class="text-sm dark:text-white" for="proof_front" value="Proof of Identity (Front)" />
+                        <div class="flex gap-3">
+                            <input
+                                ref="frontProofInput"
+                                id="proof_front"
+                                type="file"
+                                class="hidden"
+                                accept="image/*"
+                                @change="handleProofFront"
+                            />
+                            <Button
+                                type="button"
+                                variant="primary"
+                                @click="$refs.frontProofInput.click()"
+                                :disabled="kycApproval === 'Verified'"
+                            >
+                                Browse
+                            </Button>
+                            <InputError :message="form.errors.proof_front" class="mt-2" />
+                        </div>
+                        <div
+                            v-if="selectedProofFrontFile"
+                            class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
+                            :class="[
+                                    {
+                                          'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.proof_front,
+                                          'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_front,
+                                    }
+                                ]"
+                        >
+                            <div class="inline-flex items-center gap-3">
+                                <img :src="selectedProofFrontFile" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
+                                <div class="text-gray-light-900 dark:text-gray-dark-50">
+                                    {{ selectedProofFrontFileName }}
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="transparent"
+                                @click="removeProofFront"
+                            >
+                                <XIcon class="text-gray-700 w-5 h-5" />
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <Label class="text-[14px] dark:text-white mb-2" for="proof_back" value="Proof of Identity (Back)" />
 
-                        <Input
-                            id="proof_back"
-                            type="file"
-                            class="mt-1 block w-full"
-                            v-model="form.proof_back"
-                        />
+                    <div class="space-y-1.5">
+                        <Label class="text-sm dark:text-white" for="proof_back" value="Proof of Identity (Back)" />
+                        <div class="flex gap-3">
+                            <input
+                                ref="backProofInput"
+                                id="proof_back"
+                                type="file"
+                                class="hidden"
+                                accept="image/*"
+                                @change="handleProofBack"
+                            />
+                            <Button
+                                type="button"
+                                variant="primary"
+                                @click="$refs.backProofInput.click()"
+                                :disabled="kycApproval === 'Verified'"
+                            >
+                                Browse
+                            </Button>
                             <InputError :message="form.errors.proof_back" class="mt-2" />
+                        </div>
+                        <div
+                            v-if="selectedProofBackFile"
+                            class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
+                            :class="[
+                                    {
+                                          'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.proof_back,
+                                          'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_back,
+                                    }
+                                ]"
+                        >
+                            <div class="inline-flex items-center gap-3">
+                                <img :src="selectedProofBackFile" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
+                                <div class="text-gray-light-900 dark:text-gray-dark-50">
+                                    {{ selectedProofBackFileName }}
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="transparent"
+                                @click="removeProofBack"
+                            >
+                                <XIcon class="text-gray-700 w-5 h-5" />
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <Label class="text-[14px] dark:text-white mb-2" for="profile_photo" value="Profile Photo" />
 
-                        <Input
-                            id="profile_photo"
-                            type="file"
-                            class="mt-1 block w-full"
-                            v-model="form.profile_photo"
-                        />
-                        <InputError :message="form.errors.profile_photo" class="mt-2" />
+                    <div class="space-y-1.5">
+                        <Label class="text-sm dark:text-white" for="profile_photo" value="Profile Photo" />
+                        <div class="flex gap-3">
+                            <input
+                                ref="profilePhotoInput"
+                                id="profile_photo"
+                                type="file"
+                                class="hidden"
+                                accept="image/*"
+                                @change="handleProfilePhoto"
+                            />
+                            <Button
+                                type="button"
+                                variant="primary"
+                                @click="$refs.profilePhotoInput.click()"
+                            >
+                                Browse
+                            </Button>
+                            <InputError :message="form.errors.profile_photo" class="mt-2" />
+                        </div>
+                        <div
+                            v-if="selectedProfilePhotoFile"
+                            class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
+                            :class="[
+                                    {
+                                          'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.profile_photo,
+                                          'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.profile_photo,
+                                    }
+                                ]"
+                        >
+                            <div class="inline-flex items-center gap-3">
+                                <img :src="selectedProfilePhotoFile" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
+                                <div class="text-gray-light-900 dark:text-gray-dark-50">
+                                    {{ selectedProfilePhotoFileName }}
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="transparent"
+                                @click="removeProfilePhoto"
+                            >
+                                <XIcon class="text-gray-700 w-5 h-5" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </section>

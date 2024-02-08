@@ -76,24 +76,16 @@ wallets.value.forEach(wallet => {
                 <template #icon>
                     <SearchIcon aria-hidden="true" class="w-5 h-5" />
                 </template>
-                <!-- <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.report.search_placeholder')" v-model="search" /> -->
                 <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" placeholder="search" v-model="search" />
             </InputIconWrapper>
         </div>
         <div class="w-full">
-            <!-- <vue-tailwind-datepicker
-                :placeholder="$t('public.report.date_picker_placeholder')"
-                :formatter="formatter"
-                separator=" - "
-                v-model="date"
-                input-classes="py-2.5 border-gray-400 w-full rounded-lg text-sm placeholder:text-base dark:placeholder:text-gray-400 focus:border-gray-400 focus:border-pink-700 focus:ring focus:ring-pink-500 focus:ring-offset-0 focus:ring-offset-white dark:border-gray-600 dark:bg-gray-600 dark:text-white"
-            /> -->
             <vue-tailwind-datepicker
                 placeholder="Select Date"
                 :formatter="formatter"
                 separator=" - "
                 v-model="date"
-                input-classes="py-2.5 border-gray-300 w-full rounded-lg text-sm placeholder:text-base dark:placeholder:text-gray-400 focus:border-gray-400 focus:border-pink-700 focus:ring focus:ring-pink-500 focus:ring-offset-0 focus:ring-offset-white dark:border-transparent dark:bg-dark-eval-2 dark:text-white"
+                input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-dark-eval-2"
             />
         </div>
         <div class="w-full">
@@ -138,13 +130,13 @@ wallets.value.forEach(wallet => {
                     </button>
                 </Tab>
             </TabList>
-            
+
             <TabPanels class="mt-2">
                 <TabPanel
                     v-for="(wallets, idx) in Object.values(categories)"
                     :key="idx"
                 >
-                    <div 
+                    <div
                         v-for="wallet in wallets"
                         class="relative overflow-x-auto sm:rounded-lg"
                     >

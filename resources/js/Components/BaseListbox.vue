@@ -79,7 +79,7 @@ const labelWithValue = computed(() => labelWithImg.value.map(item => item.value)
                 ]"
         >
             <ListboxButton
-                class="relative w-full cursor-default rounded-lg border shadow-xs bg-white dark:bg-dark-eval-2 py-2.5 pl-4 pr-10 text-left focus:ring-1 focus:outline-none"
+                class="relative w-full cursor-default rounded-lg border shadow-xs bg-white dark:bg-gray-700 py-2.5 pl-4 pr-10 text-left focus:ring-1 focus:outline-none"
                 :class="[
                     {
                         'border-transparent focus-within:ring-error-300 focus:border-error-300 focus:shadow-error-light dark:border-transparent dark:focus:ring-error-600 dark:focus:border-error-600 dark:focus:shadow-error-dark': error,
@@ -118,7 +118,7 @@ const labelWithValue = computed(() => labelWithImg.value.map(item => item.value)
                 leave-to-class="opacity-0"
             >
                 <ListboxOptions
-                    class="z-10 absolute border border-gray-300 dark:border-dark-eval-2 mt-2 max-h-52 w-full overflow-auto rounded-lg bg-white dark:bg-dark-eval-2 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                    class="z-10 absolute border border-gray-300 dark:border-dark-eval-2 mt-2 max-h-52 w-full overflow-auto rounded-lg bg-white dark:bg-gray-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                     :style="{ width: isPhoneCode ? '360px' : '' }"
                 >
                     <ListboxOption

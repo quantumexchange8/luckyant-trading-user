@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Country;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -43,19 +45,59 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = Auth::user();
+        $dial_code = $request->dial_code;
+        $phone = $request->phone;
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Remove leading '+' from dial code if present
+        $dial_code = ltrim($dial_code, '+');
+
+        // Remove leading '+' from phone number if present
+        $phone = ltrim($phone, '+');
+
+        // Check if phone number already starts with dial code
+        if (!str_starts_with($phone, $dial_code)) {
+            // Concatenate dial code and phone number
+            $phone_number = '+' . $dial_code . $phone;
+        } else {
+            // If phone number already starts with dial code, use the phone number directly
+            $phone_number = '+' . $phone;
         }
 
-        $request->user()->save();
+        $users = User::where('dial_code', $request->dial_code)
+            ->whereNot('id', $user->id)
+            ->where('role', 'member')
+            ->where('status', 'Active')
+            ->get();
 
-        // $this->processImage($request);
+        foreach ($users as $user_phone) {
+            if ($user_phone->phone == $phone_number) {
+                throw ValidationException::withMessages(['phone' => 'Invalid Mobile Phone']);
+            }
+        }
 
-        return Redirect::route('profile.edit');
+        $user->update([
+            'name' => $request->name,
+            'dial_code' => $dial_code,
+            'phone' => $phone_number,
+        ]);
+
+        if ($request->hasFile('proof_front')) {
+            $user->clearMediaCollection('front_identity');
+            $user->addMedia($request->proof_front)->toMediaCollection('front_identity');
+        }
+        if ($request->hasFile('proof_back')) {
+            $user->clearMediaCollection('back_identity');
+            $user->addMedia($request->proof_back)->toMediaCollection('back_identity');
+        }
+        if ($request->hasFile('profile_photo')) {
+            $user->clearMediaCollection('profile_photo');
+            $user->addMedia($request->profile_photo)->toMediaCollection('profile_photo');
+        }
+
+        return Redirect::route('profile.edit')->with('title', 'Success update')->with('success', trans('public.Successfully Updated Profile'));
     }
 
     /**

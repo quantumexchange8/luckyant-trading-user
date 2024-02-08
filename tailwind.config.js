@@ -122,7 +122,7 @@ module.exports = {
                 indigo: '#5856D6',
                 cyan: '#32ADE6',
                 mint: '#00C7BE',
-                "vtd-primary": colors.purple,
+                "vtd-primary": colors.sky,
                 "vtd-secondary": colors.zinc,
             },
 

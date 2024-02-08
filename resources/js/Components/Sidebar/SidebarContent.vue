@@ -27,19 +27,6 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarLink>
 
         <SidebarLink
-            title="Profile"
-            :href="route('profile.edit')"
-            :active="route().current('profile.edit')"
-        >
-            <template #icon>
-                <UserIcon
-                    class="flex-shrink-0 w-6 h-6"
-                    aria-hidden="true"
-                />
-            </template>
-        </SidebarLink>
-
-        <SidebarLink
             :title="$t('public.sidebar.Account Info')"
             :href="route('account_info.account_info')"
             :active="route().current('account_info.account_info')"
@@ -92,6 +79,19 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
                 :active="route().current('referral.index')"
             />
         </SidebarCollapsible>
+
+        <SidebarLink
+            title="Profile"
+            :href="route('profile.edit')"
+            :active="route().current('profile.edit')"
+        >
+            <template #icon>
+                <UserIcon
+                    class="flex-shrink-0 w-6 h-6"
+                    aria-hidden="true"
+                />
+            </template>
+        </SidebarLink>
 
 <!--        <SidebarCollapsible-->
 <!--            title="Components"-->

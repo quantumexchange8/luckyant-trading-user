@@ -15,7 +15,9 @@ class DashboardController extends Controller
     {
         $announcement = Announcement::where('type', 'login')->latest()->first();
 
-        $announcement->image = $announcement->getFirstMediaUrl('announcement');
+        if (!empty($announcement)) {
+            $announcement->image = $announcement->getFirstMediaUrl('announcement');
+        }
 
         return Inertia::render('Dashboard', [
             'announcement' => $announcement,

@@ -4,7 +4,7 @@ import SidebarLink from '@/Components/Sidebar/SidebarLink.vue'
 import { DashboardIcon } from '@/Components/Icons/outline'
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
-import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon } from '@heroicons/vue/outline'
+import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
 </script>
 
 <template>
@@ -20,6 +20,19 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon } from 
         >
             <template #icon>
                 <DashboardIcon
+                    class="flex-shrink-0 w-6 h-6"
+                    aria-hidden="true"
+                />
+            </template>
+        </SidebarLink>
+
+        <SidebarLink
+            title="Profile"
+            :href="route('profile.edit')"
+            :active="route().current('profile.edit')"
+        >
+            <template #icon>
+                <UserIcon
                     class="flex-shrink-0 w-6 h-6"
                     aria-hidden="true"
                 />

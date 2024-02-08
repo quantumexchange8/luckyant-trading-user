@@ -7,6 +7,8 @@ import {trans} from "laravel-vue-i18n";
 import Button from "@/Components/Button.vue";
 import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
 import Deposit from "@/Pages/Dashboard/Deposit.vue";
+import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
+import InternalTransfer from "@/Pages/Dashboard/InternalTransfer.vue";
 import Modal from "@/Components/Modal.vue";
 import {onMounted, ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
@@ -132,28 +134,10 @@ onMounted(() => {
                                     </div>
                                     <div class="flex justify-between w-full gap-2">
                                         <Deposit />
-                                        <Button
-                                            type="button"
-                                            variant="danger"
-                                            size="sm"
-                                            class="flex justify-center w-full gap-1"
-                                             v-slot="{ iconSizeClasses }"
-                                        >
-                                            <CashIcon aria-hidden="true" :class="iconSizeClasses" />
-                                            Withdrawal
-                                        </Button>
+                                        <Withdrawal />
                                     </div>
                                     <div class="flex items-center justify-center w-full">
-                                        <Button
-                                            type="button"
-                                            variant="primary"
-                                            size="sm"
-                                            class="flex justify-center w-full gap-1"
-                                             v-slot="{ iconSizeClasses }"
-                                        >
-                                            <RefreshIcon aria-hidden="true" :class="iconSizeClasses" />
-                                            Internal Transfer
-                                        </Button>
+                                        <InternalTransfer />
                                     </div>
                                 </div>
                             </div>

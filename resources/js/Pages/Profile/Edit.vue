@@ -7,6 +7,10 @@ import DeleteUserForm from './Partials/DeleteUserForm.vue'
 defineProps({
     mustVerifyEmail: Boolean,
     status: String,
+    countries: Object,
+    frontIdentityImg: String,
+    backIdentityImg: String,
+    profileImg: String,
 })
 </script>
 
@@ -22,23 +26,26 @@ defineProps({
 
         <div class="space-y-6">
             <div
-                class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg"
+                class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
             >
                 <UpdateProfileInformationForm
                     :must-verify-email="mustVerifyEmail"
                     :status="status"
-                    class="max-w-xl"
+                    :countries="countries"
+                    :frontIdentityImg="frontIdentityImg"
+                    :backIdentityImg="backIdentityImg"
+                    :profileImg="profileImg"
                 />
             </div>
 
             <div
-                class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg"
+                class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
             >
                 <UpdatePasswordForm class="max-w-xl" />
             </div>
 
             <div
-                class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg"
+                class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
             >
                 <DeleteUserForm class="max-w-xl" />
             </div>

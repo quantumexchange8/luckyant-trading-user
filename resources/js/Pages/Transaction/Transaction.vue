@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Button from "@/Components/Button.vue";
 import { ref } from 'vue'
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import TransactionTable from "@/Pages/Transaction/TransactionTable.vue";
+// import TransactionTable from "@/Pages/Transaction/TransactionTable.vue";
 
 const categories = ref([
     {
@@ -58,9 +58,9 @@ const categories = ref([
                             'rounded-xl bg-white dark:bg-gray-950 p-3',
                         ]"
                     >
-                        <TransactionTable
+                        <!-- <TransactionTable
                             :category="category.category"
-                        />
+                        /> -->
                     </TabPanel>
                 </TabPanels>
             </TabGroup>

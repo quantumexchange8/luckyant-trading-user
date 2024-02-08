@@ -101,7 +101,7 @@ const statusVariant = (transactionStatus) => {
             <Loading />
         </div>
         <table v-else class="w-[650px] md:w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-5">
-            <thead class="text-xs font-medium text-gray-400 uppercase bg-gray-50 dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
+            <thead class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
                 <tr>
                     <th scope="col" class="p-3">
                         Date

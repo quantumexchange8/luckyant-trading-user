@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,8 +44,8 @@ class ReferralController extends Controller
             'level' => $level,
             'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
-//            'self_deposit' => $this->getSelfDeposit($user),
-//            'valid_affiliate_deposit' => $this->getValidAffiliateDeposit($user),
+            'self_deposit' => $this->getSelfDeposit($user),
+            'total_group_deposit' => $this->getTotalGroupDeposit($user),
             'children' => $users->map(function ($user) {
                 return $this->mapUser($user, 0);
             })
@@ -66,8 +67,8 @@ class ReferralController extends Controller
             'email' => $user->email,
             'level' => $level + 1,
             'total_affiliate' => count($user->getChildrenIds()),
-//            'self_deposit' => $this->getSelfDeposit($user),
-//            'valid_affiliate_deposit' => $this->getValidAffiliateDeposit($user),
+            'self_deposit' => $this->getSelfDeposit($user),
+            'total_group_deposit' => $this->getTotalGroupDeposit($user),
         ];
 
         // Add 'children' only if there are children
@@ -77,4 +78,25 @@ class ReferralController extends Controller
 
         return $mappedUser;
     }
+
+    protected function getSelfDeposit($user)
+    {
+        return Transaction::query()
+            ->where('user_id', $user->id)
+            ->where('category', 'wallet')
+            ->where('transaction_type', 'Deposit')
+            ->sum('amount');
+    }
+
+    protected function getTotalGroupDeposit($user)
+    {
+        $ids = $user->getChildrenIds();
+
+        return Transaction::query()
+            ->whereIn('user_id', $ids)
+            ->where('category', 'wallet')
+            ->where('transaction_type', 'Deposit')
+            ->sum('amount');
+    }
+
 }

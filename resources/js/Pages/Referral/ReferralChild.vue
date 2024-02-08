@@ -149,11 +149,11 @@ export default {
                                 <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Clients')}}</span>
                             </div>
                             <div class="flex flex-col text-center">
-                                <span class="text-sm font-semibold">$ {{ formatAmount(0) }}</span>
+                                <span class="text-sm font-semibold">$ {{ formatAmount(node.self_deposit) }}</span>
                                 <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Deposit')}}</span>
                             </div>
                             <div class="flex flex-col text-center">
-                                <span class="text-sm font-semibold">$ {{ formatAmount(0) }}</span>
+                                <span class="text-sm font-semibold">$ {{ formatAmount(node.total_group_deposit) }}</span>
                                 <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Group Deposit')}}</span>
                             </div>
                         </div>
@@ -197,11 +197,11 @@ export default {
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
                     <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Total Deposit')}}</span>
-                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(0) }}</span>
+                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(selectedAffiliate.self_deposit) }}</span>
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
                     <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Total Group Deposit')}}</span>
-                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(0) }}</span>
+                    <span class="text-black dark:text-white py-2">$ {{ formatAmount(selectedAffiliate.total_group_deposit) }}</span>
                 </div>
             </div>
         </Modal>

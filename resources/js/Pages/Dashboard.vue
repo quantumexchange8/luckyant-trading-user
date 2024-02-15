@@ -18,7 +18,8 @@ const { formatDateTime, formatAmount } = transactionFormat();
 const props = defineProps({
     announcement: Object,
     firstTimeLogin: Number,
-    cashWallet: Object
+    cashWallet: Object,
+    walletSel: Array,
 })
 
 const copyReferralCode = () => {
@@ -133,7 +134,9 @@ onMounted(() => {
                                         $ {{ formatAmount(cashWallet.balance) }}
                                     </div>
                                     <div class="flex justify-between w-full gap-2">
-                                        <Deposit />
+                                        <Deposit
+                                            :walletSel="walletSel"
+                                        />
                                         <Withdrawal />
                                     </div>
                                     <div class="flex items-center justify-center w-full">

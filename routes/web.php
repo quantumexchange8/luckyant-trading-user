@@ -25,6 +25,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('update_transaction', [WalletController::class, 'depositReturn']);
+Route::get('transaction_result', [WalletController::class, 'depositCallback']);
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/getBalanceChart', [DashboardController::class, 'getBalanceChart']);
@@ -73,6 +76,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/wallet', [WalletController::class, 'wallet'])->name('transaction.wallet');
         Route::get('/getWalletHistory', [WalletController::class, 'getWalletHistory'])->name('transaction.getWalletHistory');
+
+        Route::post('/deposit', [WalletController::class, 'deposit'])->name('transaction.deposit');
 
          /**
          * ==============================

@@ -6,6 +6,7 @@ use App\Models\Announcement;
 use App\Models\TradingAccount;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Services\SelectOptionService;
 use Carbon\Carbon;
 use Inertia\Inertia;
 
@@ -22,7 +23,8 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'announcement' => $announcement,
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
-            'cashWallet' => Wallet::where('user_id', \Auth::id())->where('type', 'cash_wallet')->first()
+            'cashWallet' => Wallet::where('user_id', \Auth::id())->where('type', 'cash_wallet')->first(),
+            'walletSel' => (new SelectOptionService())->getWalletSelection(),
         ]);
     }
 

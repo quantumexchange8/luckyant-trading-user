@@ -118,7 +118,21 @@ onUnmounted(() => {
                             type="button"
                             class="inline-flex items-center px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out bg-white border border-transparent rounded-md hover:text-gray-700 focus:outline-none focus:ring focus:ring-primary-500 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark-eval-1 dark:bg-gray-950 dark:text-gray-400 dark:hover:text-gray-200"
                         >
-                            {{ $page.props.auth.user.name }}
+                            <img
+                                class="h-10 w-10 rounded-full mr-4"
+                                :src="$page.props.auth.user.profile_photo ? $page.props.auth.user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                alt="ProfilePic"
+                            >
+                            <span class="bottom-1 left-9 absolute" v-if="$page.props.auth.user.kyc_approval === 'Verified'">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4.62782C6.99207 3.93274 9.00567 3.36562 12.0043 2C14.7389 3.28721 16.7869 3.75207 21 4.62782V10.0169C21 15.6811 17.3751 20.7097 12.0013 22.5002C6.62605 20.7097 3 15.68 3 10.0143V4.62782Z" fill="#05C46B"/><path d="M8.5 12L11.0923 14.5923C11.3075 14.8075 11.6633 14.7822 11.8459 14.5388L16 9" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+                            </span>
+                            <span class="bottom-1 left-9 absolute" v-else>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4.62782C6.99207 3.93274 9.00567 3.36562 12.0043 2C14.7389 3.28721 16.7869 3.75207 21 4.62782V10.0169C21 15.6811 17.3751 20.7097 12.0013 22.5002C6.62605 20.7097 3 15.68 3 10.0143V4.62782Z" fill="#FF3F34"/><path d="M13.0002 17C13.0002 17.5523 12.5524 18 12.0001 18C11.4478 18 11 17.5523 11 17C11 16.4477 11.4478 16 12.0001 16C12.5524 16 13.0002 16.4477 13.0002 17Z" fill="white"/><path d="M12 13V7" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+                            </span>
+                            <div class="flex flex-col text-left">
+                                <span class="text-gray-900 dark:text-white">{{ $page.props.auth.user.name }}</span>
+                                <span>{{ $page.props.auth.user.email }}</span>
+                            </div>
 
                             <svg
                                 class="ml-2 -mr-0.5 h-4 w-4"

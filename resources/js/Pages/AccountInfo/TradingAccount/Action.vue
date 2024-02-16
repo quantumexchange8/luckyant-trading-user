@@ -1,6 +1,6 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CreditCardAddIcon, CreditCardDownIcon, SwitchHorizontalRightIcon} from "@/Components/Icons/outline.jsx";
+import {CreditCardAddIcon, CreditCardDownIcon, SwitchHorizontalRightIcon, UserUp01Icon} from "@/Components/Icons/outline.jsx";
 import {ref} from "vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -8,6 +8,7 @@ import Modal from "@/Components/Modal.vue";
 import DepositBalance from "@/Pages/AccountInfo/TradingAccount/DepositBalance.vue";
 import WithdrawBalance from "@/Pages/AccountInfo/TradingAccount/WithdrawBalance.vue";
 import InternalTransferBalance from "@/Pages/AccountInfo/TradingAccount/InternalTransferBalance.vue";
+import BecomeMaster from "@/Pages/AccountInfo/TradingAccount/BecomeMaster.vue";
 
 const props = defineProps({
     account: Object,
@@ -28,6 +29,9 @@ const openAccountActionModal = (action) => {
     }
     else if (action === 'internal_transfer') {
         modalComponent.value = 'Internal Transfer';
+    }
+    else if (action === 'become_master') {
+        modalComponent.value = 'Become Master';
     }
 }
 
@@ -83,6 +87,16 @@ const closeModal = () => {
                     </div>
                 </div>
             </DropdownLink>
+            <DropdownLink
+                @click="openAccountActionModal('become_master')"
+            >
+                <div class="flex items-center gap-2">
+                    <UserUp01Icon class="w-5 h-5" />
+                    <div>
+                        Become Master
+                    </div>
+                </div>
+            </DropdownLink>
         </template>
     </Dropdown>
 
@@ -105,6 +119,13 @@ const closeModal = () => {
 
         <template v-if="modalComponent === 'Internal Transfer'">
             <InternalTransferBalance
+                :account="account"
+                @update:accountActionModal="accountActionModal = $event"
+            />
+        </template>
+
+        <template v-if="modalComponent === 'Become Master'">
+            <BecomeMaster
                 :account="account"
                 @update:accountActionModal="accountActionModal = $event"
             />

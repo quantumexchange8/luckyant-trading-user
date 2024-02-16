@@ -126,7 +126,7 @@ watchEffect(() => {
                         :tradingAccounts="tradingAccounts"
                     />
                 </div>
-                <div class="flex items-center gap-2 justify-end w-full"> <!-- Adjust the width as needed -->
+                <div class="flex items-center gap-2 justify-end w-full">
                     <Loading class="w-5 h-5" />
                     <div class="text-xs">Refreshing in {{ countdown }}s</div>
                 </div>

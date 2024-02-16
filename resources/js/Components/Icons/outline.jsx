@@ -163,11 +163,24 @@ export const alertTriangle = defineComponent({
         )
     }
 })
+
 export const RefreshIcon = defineComponent({
     setup() {
         return () => (
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15.8307 17.5013V12.5013M13.3307 15.0013H18.3307M18.3307 8.33464H1.66406M18.3307 10.0013V6.83464C18.3307 5.90122 18.3307 5.43451 18.1491 5.07799C17.9893 4.76438 17.7343 4.50941 17.4207 4.34963C17.0642 4.16797 16.5975 4.16797 15.6641 4.16797H4.33073C3.39731 4.16797 2.9306 4.16797 2.57408 4.34962C2.26048 4.50941 2.00551 4.76438 1.84572 5.07798C1.66406 5.4345 1.66406 5.90121 1.66406 6.83464V13.168C1.66406 14.1014 1.66406 14.5681 1.84572 14.9246C2.00551 15.2382 2.26047 15.4932 2.57408 15.653C2.9306 15.8346 3.39731 15.8346 4.33073 15.8346H9.9974" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        )
+    },
+})
+
+export const UserUp01Icon = defineComponent({
+    setup() {
+        return () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M16 18L19 15M19 15L22 18M19 15V21M12 15.5H7.5C6.10444 15.5 5.40665 15.5 4.83886 15.6722C3.56045 16.06 2.56004 17.0605 2.17224 18.3389C2 18.9067 2 19.6044 2 21M14.5 7.5C14.5 9.98528 12.4853 12 10 12C7.51472 12 5.5 9.98528 5.5 7.5C5.5 5.01472 7.51472 3 10 3C12.4853 3 14.5 5.01472 14.5 7.5Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         )
     },

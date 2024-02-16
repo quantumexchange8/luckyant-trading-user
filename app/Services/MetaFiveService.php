@@ -15,8 +15,8 @@ class MetaFiveService {
     private string $port = "8443";
     private string $login = "10012";
     private string $password = "Test1234.";
-    private string $baseURL = "http://luckyant-mt5.currenttech.pro:5000/api";
-//    private string $baseURL = "http://192.168.0.223:5000/api";
+//    private string $baseURL = "http://luckyant-mt5.currenttech.pro:5000/api";
+    private string $baseURL = "http://192.168.0.223:5000/api";
 
     private string $token = "6f0d6f97-3042-4389-9655-9bc321f3fc1e";
     private string $environmentName = "live";

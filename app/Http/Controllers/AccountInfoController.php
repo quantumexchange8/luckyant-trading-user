@@ -7,6 +7,7 @@ use App\Http\Requests\DepositBalanceRequest;
 use App\Http\Requests\InternalTransferBalanceRequest;
 use App\Http\Requests\WithdrawBalanceRequest;
 use App\Models\AccountType;
+use App\Models\MasterRequest;
 use App\Models\TradingAccount;
 use App\Models\TradingUser;
 use App\Models\Transaction;
@@ -264,5 +265,19 @@ class AccountInfoController extends Controller
                 'label' => $tradingAccount->meta_login . ' ($' . number_format($tradingAccount->balance, 2) . ')',
             ];
         });
+    }
+
+    public function becomeMaster(Request $request)
+    {
+        $trading_account = TradingAccount::where('meta_login', $request->meta_login)->first();
+
+        MasterRequest::create([
+            'user_id' =>  Auth::id(),
+            'trading_account_id' =>  $trading_account->id,
+        ]);
+
+        return redirect()->back()
+            ->with('title', 'Success submission')
+            ->with('success', 'Successfully submit request to become Master Account for LOGIN: ' . $request->meta_login);
     }
 }

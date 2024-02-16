@@ -25,10 +25,11 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('update_transaction', [WalletController::class, 'depositReturn']);
 Route::get('transaction_result', [WalletController::class, 'depositCallback']);
 
 Route::middleware('auth')->group(function () {
+    Route::get('update_transaction', [WalletController::class, 'depositReturn']);
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/getBalanceChart', [DashboardController::class, 'getBalanceChart']);
     Route::post('/update_session', [DashboardController::class, 'update_session']);
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/depositTradingAccount', [AccountInfoController::class, 'depositTradingAccount'])->name('account_info.depositTradingAccount');
         Route::post('/withdrawTradingAccount', [AccountInfoController::class, 'withdrawTradingAccount'])->name('account_info.withdrawTradingAccount');
         Route::post('/internalTransferTradingAccount', [AccountInfoController::class, 'internalTransferTradingAccount'])->name('account_info.internalTransferTradingAccount');
+        Route::post('/becomeMaster', [AccountInfoController::class, 'becomeMaster'])->name('account_info.becomeMaster');
 
 //        Route::post('change-leverage', [AccountInfoController::class, 'change_leverage'])->name('account_info.change_leverage');
 //

@@ -21,6 +21,7 @@ use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
 use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -328,5 +329,34 @@ class AccountInfoController extends Controller
         return redirect()->back()
             ->with('title', 'Success configure setting')
             ->with('success', 'Successfully configure requirements to follow Master Account for LOGIN: ' . $master->meta_login);
+    }
+
+    public function getRequestHistory(Request $request)
+    {
+        $user = Auth::user();
+
+        $masterRequest = MasterRequest::with(['trading_account:id,meta_login'])
+            ->where('user_id', $user->id)
+            ->when($request->filled('date'), function ($query) use ($request) {
+                $date = $request->input('date');
+                $dateRange = explode(' - ', $date);
+                $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+                $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = '%' . $request->input('search') . '%';
+                $query->whereHas('trading_account', function ($q) use ($search) {
+                    $q->where('meta_login', 'like', $search);
+                });
+            })
+            ->when($request->filled('type'), function ($query) use ($request) {
+                $type = $request->input('type');
+                $query->where('status', $type);
+            })
+            ->latest()
+            ->paginate(10);
+
+        return response()->json($masterRequest);
     }
 }

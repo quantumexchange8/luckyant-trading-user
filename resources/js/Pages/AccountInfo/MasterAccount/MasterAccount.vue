@@ -8,6 +8,7 @@ import Loading from "@/Components/Loading.vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Action from "@/Pages/AccountInfo/TradingAccount/Action.vue";
 import {usePage} from "@inertiajs/vue3";
+import MasterRequestHistory from "@/Pages/AccountInfo/MasterAccount/MasterRequestHistory.vue";
 
 const props = defineProps({
     walletSel: Array,
@@ -134,6 +135,9 @@ watchEffect(() => {
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
+        <MasterRequestHistory />
     </div>
 </template>

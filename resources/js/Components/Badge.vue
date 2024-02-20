@@ -14,7 +14,7 @@ const props = defineProps({
 const { variant } = props
 
 const baseClasses = [
-    'flex w-20 px-2 py-1 justify-center text-white mx-auto rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out',
+    'flex w-20 px-2 py-1 justify-center text-white rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out',
 ]
 
 const variantClasses = (variant) => ({

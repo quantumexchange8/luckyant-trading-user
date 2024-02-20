@@ -61,7 +61,7 @@ const leverages = [
 <template>
     <AuthenticatedLayout :title="$t('public.sidebar.Account Info')">
         <template #header>
-            <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-col gap-2 md:flex-row md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
                     {{ $t('public.sidebar.Account Info') }}
                 </h2>
@@ -70,6 +70,7 @@ const leverages = [
                     v-if="user.kyc_approval === 'Verified'"
                     type="button"
                     variant="primary"
+                    size="sm"
                     class="items-center gap-2 max-w-xs"
                     v-slot="{ iconSizeClasses }"
                     @click="addTradingAccount"

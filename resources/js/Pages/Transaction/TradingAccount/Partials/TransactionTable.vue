@@ -126,9 +126,9 @@ const statusVariant = (transactionStatus) => {
                         No History
                     </th>
                 </tr>
-                <tr 
+                <tr
                     v-for="transaction in transactions.data"
-                    class="bg-white dark:bg-transparent text-xs text-gray-900 dark:text-white border-b dark:border-gray-800 hover:cursor-pointer dark:hover:bg-gray-600"
+                    class="bg-white dark:bg-transparent text-xs text-gray-900 dark:text-white border-b dark:border-gray-800 hover:cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-600"
                     @click="openHistoryModal(transaction)"
                 >
                     <td class="pl-5 py-2">
@@ -145,7 +145,7 @@ const statusVariant = (transactionStatus) => {
                     <td class="p-3">
                         $ {{ transaction.amount }}
                     </td>
-                    <td class="p-3 text-center">
+                    <td class="p-3 flex items-center justify-center">
                         <Badge :variant="statusVariant(transaction.status)">{{ transaction.status }}</Badge>
                     </td>
                 </tr>

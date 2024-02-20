@@ -88,6 +88,17 @@ const clearFilter = () => {
                 class="w-full"
             />
         </div>
+
+        <div class="w-full sm:w-auto">
+            <Button
+                type="button"
+                variant="transparent"
+                @click="clearFilter"
+                class="w-full justify-center"
+            >
+                Clear
+            </Button>
+        </div>
     </div>
 
     <div class="w-full pt-5">

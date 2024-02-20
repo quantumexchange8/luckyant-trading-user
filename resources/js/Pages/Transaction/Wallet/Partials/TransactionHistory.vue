@@ -99,7 +99,7 @@ wallets.value.forEach(wallet => {
         <div class="w-full sm:w-auto">
             <Button
                 type="button"
-                variant="secondary"
+                variant="transparent"
                 @click="clearFilter"
                 class="w-full justify-center"
             >

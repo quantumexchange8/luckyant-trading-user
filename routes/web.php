@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
         Route::get('/refreshTradingAccountsData', [AccountInfoController::class, 'refreshTradingAccountsData'])->name('account_info.refreshTradingAccountsData');
         Route::get('/getTradingAccounts', [AccountInfoController::class, 'getTradingAccounts'])->name('account_info.getTradingAccounts');
-        Route::get('/master_configuration/{meta_login}', [AccountInfoController::class, 'master_configuration'])->name('account_info.master_configuration');
+        Route::get('/master_profile/{meta_login}', [AccountInfoController::class, 'master_profile'])->name('account_info.master_profile');
 
         Route::post('/add-trading-account', [AccountInfoController::class, 'add_trading_account'])->name('account_info.add_trading_account');
         Route::post('/depositTradingAccount', [AccountInfoController::class, 'depositTradingAccount'])->name('account_info.depositTradingAccount');

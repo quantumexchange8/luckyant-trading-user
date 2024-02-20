@@ -297,11 +297,11 @@ class AccountInfoController extends Controller
             ->with('success', 'Successfully submit request to become Master Account for LOGIN: ' . $request->meta_login);
     }
 
-    public function master_configuration(Request $request, $meta_login)
+    public function master_profile(Request $request, $meta_login)
     {
         $masterAccount = Master::with('tradingAccount.accountType:id,group_id,name')->where('meta_login', $meta_login)->first();
 
-       return Inertia::render('AccountInfo/MasterAccount/MasterConfiguration', [
+       return Inertia::render('AccountInfo/MasterAccount/MasterProfile', [
            'masterAccount' => $masterAccount
        ]);
     }

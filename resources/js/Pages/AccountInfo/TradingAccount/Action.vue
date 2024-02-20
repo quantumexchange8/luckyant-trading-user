@@ -101,12 +101,12 @@ const closeModal = () => {
             </DropdownLink>
             <DropdownLink
                 v-if="masterAccountLogin.includes(account.meta_login)"
-                :href="'/account_info/master_configuration/' + account.meta_login"
+                :href="'/account_info/master_profile/' + account.meta_login"
             >
                 <div class="flex items-center gap-2">
                     <UserSquareIcon class="w-5 h-5" />
                     <div>
-                        Master Configuration
+                        Master Profile
                     </div>
                 </div>
             </DropdownLink>

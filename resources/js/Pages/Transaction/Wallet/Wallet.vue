@@ -11,6 +11,7 @@ import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 
 const props = defineProps({
     wallets: Object,
+    walletSel: Array
 });
 </script>
 
@@ -41,7 +42,9 @@ const props = defineProps({
                             $ {{ wallet.balance }}
                         </div>
                         <div class="flex justify-between w-full gap-2">
-                            <Deposit />
+                            <Deposit
+                                :walletSel="walletSel"
+                            />
                             <Withdrawal />
                         </div>
                         <!-- <div class="flex items-center justify-center w-full">

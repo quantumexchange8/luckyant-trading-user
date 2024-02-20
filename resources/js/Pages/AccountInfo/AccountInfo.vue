@@ -11,10 +11,13 @@ import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import Checkbox from "@/Components/Checkbox.vue";
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import MasterAccount from "@/Pages/AccountInfo/MasterAccount/MasterAccount.vue";
 
 const props = defineProps({
     walletSel: Array,
-    tradingAccounts: Object
+    accountCounts: Number,
+    masterAccountLogin: Array,
 })
 const user = usePage().props.auth.user;
 const addingTradingAccount = ref(false)
@@ -52,6 +55,7 @@ const leverages = [
     { label: '1:400', value: 400 },
     { label: '1:500', value: 500 },
 ]
+
 </script>
 
 <template>
@@ -76,11 +80,68 @@ const leverages = [
             </div>
         </template>
 
-        <div v-if="tradingAccounts.length > 0">
-            <TradingAccount
-                :walletSel="walletSel"
-                :tradingAccounts="tradingAccounts"
-            />
+        <div v-if="accountCounts > 0">
+            <div class="w-full">
+                <TabGroup>
+                    <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 max-w-md">
+                        <Tab
+                            as="template"
+                            v-slot="{ selected }"
+                        >
+                            <button
+                                :class="[
+                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                                     'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
+                                     selected
+                                     ? 'bg-white text-primary-800 shadow'
+                                     : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
+                                ]"
+                            >
+                                Trading Accounts
+                            </button>
+                        </Tab>
+
+                        <Tab
+                            as="template"
+                            v-slot="{ selected }"
+                        >
+                            <button
+                                :class="[
+                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                                     'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
+                                     selected
+                                     ? 'bg-white text-primary-800 shadow'
+                                     : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
+                                ]"
+                            >
+                                Master Accounts
+                            </button>
+                        </Tab>
+                    </TabList>
+
+                    <TabPanels class="mt-2">
+                        <TabPanel
+                            class="py-3"
+                        >
+                            <TradingAccount
+                                :walletSel="walletSel"
+                                :accountCounts="accountCounts"
+                                :masterAccountLogin="masterAccountLogin"
+                            />
+                        </TabPanel>
+
+                        <TabPanel
+                            class="py-3"
+                        >
+                            <MasterAccount
+                                :walletSel="walletSel"
+                                :accountCounts="accountCounts"
+                                :masterAccountLogin="masterAccountLogin"
+                            />
+                        </TabPanel>
+                    </TabPanels>
+                </TabGroup>
+            </div>
         </div>
         <div
             v-else

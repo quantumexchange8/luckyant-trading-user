@@ -1,7 +1,7 @@
 <script setup>
 import PerfectScrollbar from '@/Components/PerfectScrollbar.vue'
 import SidebarLink from '@/Components/Sidebar/SidebarLink.vue'
-import { DashboardIcon } from '@/Components/Icons/outline'
+import { DashboardIcon, CoinsHandIcon } from '@/Components/Icons/outline'
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
 import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
@@ -29,7 +29,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         <SidebarLink
             :title="$t('public.sidebar.Account Info')"
             :href="route('account_info.account_info')"
-            :active="route().current('account_info.account_info')"
+            :active="route().current('account_info.*')"
         >
             <template #icon>
                 <ViewGridIcon
@@ -38,6 +38,24 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
                 />
             </template>
         </SidebarLink>
+
+        <SidebarCollapsible
+            :title="$t('public.sidebar.Trading')"
+            :active="route().current('trading.*')"
+        >
+            <template #icon>
+                <CoinsHandIcon
+                    class="flex-shrink-0 w-6 h-6"
+                    aria-hidden="true"
+                />
+            </template>
+
+            <SidebarCollapsibleItem
+                :href="route('trading.master_configuration')"
+                title="Master Account"
+                :active="route().current('trading.master_configuration')"
+            />
+        </SidebarCollapsible>
 
         <SidebarCollapsible
             :title="$t('public.sidebar.Transaction')"

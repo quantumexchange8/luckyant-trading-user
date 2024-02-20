@@ -1,6 +1,6 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CreditCardAddIcon, CreditCardDownIcon, SwitchHorizontalRightIcon, UserUp01Icon} from "@/Components/Icons/outline.jsx";
+import {CreditCardAddIcon, CreditCardDownIcon, SwitchHorizontalRightIcon, UserUp01Icon, UserSquareIcon} from "@/Components/Icons/outline.jsx";
 import {ref} from "vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -13,7 +13,8 @@ import BecomeMaster from "@/Pages/AccountInfo/TradingAccount/BecomeMaster.vue";
 const props = defineProps({
     account: Object,
     walletSel: Array,
-    tradingAccounts: Object,
+    accountCounts: Number,
+    masterAccountLogin: Array,
 })
 
 const accountActionModal = ref(false);
@@ -77,7 +78,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
-                v-if="tradingAccounts.length > 1"
+                v-if="accountCounts > 1"
                 @click="openAccountActionModal('internal_transfer')"
             >
                 <div class="flex items-center gap-2">
@@ -88,12 +89,24 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
+                v-if="!masterAccountLogin.includes(account.meta_login)"
                 @click="openAccountActionModal('become_master')"
             >
                 <div class="flex items-center gap-2">
                     <UserUp01Icon class="w-5 h-5" />
                     <div>
                         Become Master
+                    </div>
+                </div>
+            </DropdownLink>
+            <DropdownLink
+                v-if="masterAccountLogin.includes(account.meta_login)"
+                :href="'/account_info/master_configuration/' + account.meta_login"
+            >
+                <div class="flex items-center gap-2">
+                    <UserSquareIcon class="w-5 h-5" />
+                    <div>
+                        Master Configuration
                     </div>
                 </div>
             </DropdownLink>

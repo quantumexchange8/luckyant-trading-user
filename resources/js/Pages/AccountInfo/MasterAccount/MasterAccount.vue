@@ -16,13 +16,13 @@ const props = defineProps({
 })
 
 const { formatAmount } = transactionFormat();
-const tradingAccounts = ref([]);
+const masterAccounts = ref([]);
 const countdown = ref(10);
 
 const refreshData = async () => {
     try {
         const response = await axios.get('/account_info/refreshTradingAccountsData');
-        tradingAccounts.value = response.data.tradingAccounts;
+        masterAccounts.value = response.data.masterAccounts;
     } catch (error) {
         console.error('Error refreshing trading accounts data:', error);
     }
@@ -60,7 +60,7 @@ watchEffect(() => {
 
 <template>
     <div
-        v-if="tradingAccounts.length === 0"
+        v-if="masterAccounts.length === 0"
         class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 animate-pulse w-1/2 mx-auto sm:mx-0 shadow-lg"
     >
         <div class="flex justify-between items-center self-stretch">
@@ -88,14 +88,14 @@ watchEffect(() => {
         class="grid grid-cols-1 sm:grid-cols-2 gap-5"
     >
         <div
-            v-for="account in tradingAccounts"
+            v-for="account in masterAccounts"
             class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg"
         >
             <div class="flex justify-between items-center self-stretch">
                 <div class="flex items-center gap-3">
                     <div class="flex flex-col items-start">
                         <div class="text-sm font-semibold">
-                            {{ account.account_type.name }}
+                            {{ account.trading_account.account_type.name }}
                         </div>
                         <div class="text-xs">
                             {{ account.meta_login }}
@@ -109,20 +109,20 @@ watchEffect(() => {
             <div class="flex justify-between items-center self-stretch">
                 <div class="flex items-center gap-3">
                     <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
-                        {{ account.margin_leverage }}
+                        {{ account.trading_account.margin_leverage }}
                     </div>
                     <div class="text-xs font-normal">
-                        Credit: $ {{ formatAmount(account.credit ? account.credit : 0) }}
+                        Credit: $ {{ formatAmount(account.trading_account.credit ? account.trading_account.credit : 0) }}
                     </div>
                 </div>
                 <div class="text-xl">
-                    $ {{ formatAmount(account.balance ? account.balance : 0) }}
+                    $ {{ formatAmount(account.trading_account.balance ? account.trading_account.balance : 0) }}
                 </div>
             </div>
             <div class="flex items-center gap-10 w-full">
                 <div class="flex items-center gap-3">
                     <Action
-                        :account="account"
+                        :account="account.trading_account"
                         :walletSel="walletSel"
                         :accountCounts="accountCounts"
                         :masterAccountLogin="masterAccountLogin"

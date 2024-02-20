@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountInfoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\TradingController;
 use App\Http\Controllers\TransactionController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
@@ -48,16 +49,32 @@ Route::middleware('auth')->group(function () {
         Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
         Route::get('/refreshTradingAccountsData', [AccountInfoController::class, 'refreshTradingAccountsData'])->name('account_info.refreshTradingAccountsData');
         Route::get('/getTradingAccounts', [AccountInfoController::class, 'getTradingAccounts'])->name('account_info.getTradingAccounts');
+        Route::get('/master_configuration/{meta_login}', [AccountInfoController::class, 'master_configuration'])->name('account_info.master_configuration');
 
         Route::post('/add-trading-account', [AccountInfoController::class, 'add_trading_account'])->name('account_info.add_trading_account');
         Route::post('/depositTradingAccount', [AccountInfoController::class, 'depositTradingAccount'])->name('account_info.depositTradingAccount');
         Route::post('/withdrawTradingAccount', [AccountInfoController::class, 'withdrawTradingAccount'])->name('account_info.withdrawTradingAccount');
         Route::post('/internalTransferTradingAccount', [AccountInfoController::class, 'internalTransferTradingAccount'])->name('account_info.internalTransferTradingAccount');
         Route::post('/becomeMaster', [AccountInfoController::class, 'becomeMaster'])->name('account_info.becomeMaster');
+        Route::post('/updateMasterConfiguration', [AccountInfoController::class, 'updateMasterConfiguration'])->name('account_info.updateMasterConfiguration');
 
 //        Route::post('change-leverage', [AccountInfoController::class, 'change_leverage'])->name('account_info.change_leverage');
 //
 //        Route::get('/getTradingAccounts', [AccountInfoController::class, 'getTradingAccounts'])->name('account_info.getTradingAccounts');
+    });
+
+    /**
+     * ==============================
+     *           Trading
+     * ==============================
+     */
+    /**
+     * ==============================
+     *           Referral
+     * ==============================
+     */
+    Route::prefix('trading')->group(function () {
+        Route::get('/master_configuration', [TradingController::class, 'master_configuration'])->name('trading.master_configuration');
     });
 
     /**

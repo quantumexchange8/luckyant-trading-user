@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\RunningNumberService;
+use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
 use App\Models\Wallet;
 use App\Models\Transaction;
@@ -22,6 +23,7 @@ class WalletController extends Controller
 
         return Inertia::render('Transaction/Wallet/Wallet', [
             'wallets' => $wallets,
+            'walletSel' => (new SelectOptionService())->getWalletSelection(),
         ]);
     }
 

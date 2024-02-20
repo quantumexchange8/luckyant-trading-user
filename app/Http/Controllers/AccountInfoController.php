@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddTradingAccountRequest;
 use App\Http\Requests\DepositBalanceRequest;
 use App\Http\Requests\InternalTransferBalanceRequest;
+use App\Http\Requests\MasterConfigurationRequest;
 use App\Http\Requests\WithdrawBalanceRequest;
 use App\Models\AccountType;
+use App\Models\Master;
 use App\Models\MasterRequest;
 use App\Models\TradingAccount;
 use App\Models\TradingUser;
@@ -29,7 +31,8 @@ class AccountInfoController extends Controller
     {
         return Inertia::render('AccountInfo/AccountInfo', [
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
-            'tradingAccounts' => Auth::user()->tradingAccounts
+            'accountCounts' => Auth::user()->tradingAccounts->count(),
+            'masterAccountLogin' => Master::where('user_id', Auth::id())->pluck('meta_login')->toArray()
         ]);
     }
 
@@ -62,7 +65,20 @@ class AccountInfoController extends Controller
             }
         }
 
-        return TradingAccount::with('accountType:id,group_id,name')->where('user_id', \Auth::id())->latest()->get();
+        $tradingAccounts = TradingAccount::with('accountType:id,group_id,name')
+            ->where('user_id', \Auth::id())
+            ->whereDoesntHave('masterAccount', function ($query) {
+                $query->whereNotNull('trading_account_id');
+            })
+            ->latest()
+            ->get();
+
+        $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name'])->where('user_id', \Auth::id())->get();
+
+        return response()->json([
+            'tradingAccounts' => $tradingAccounts,
+            'masterAccounts' => $masterAccounts
+        ]);
     }
 
     public function depositTradingAccount(DepositBalanceRequest $request)
@@ -279,5 +295,38 @@ class AccountInfoController extends Controller
         return redirect()->back()
             ->with('title', 'Success submission')
             ->with('success', 'Successfully submit request to become Master Account for LOGIN: ' . $request->meta_login);
+    }
+
+    public function master_configuration(Request $request, $meta_login)
+    {
+        $masterAccount = Master::with('tradingAccount.accountType:id,group_id,name')->where('meta_login', $meta_login)->first();
+
+       return Inertia::render('AccountInfo/MasterAccount/MasterConfiguration', [
+           'masterAccount' => $masterAccount
+       ]);
+    }
+
+    public function updateMasterConfiguration(MasterConfigurationRequest $request)
+    {
+        $master = Master::find($request->master_id);
+
+        $master->update([
+            'min_join_equity' => $request->min_join_equity,
+            'sharing_profit' => $request->sharing_profit,
+            'subscription_fee' => $request->subscription_fee,
+            'signal_status' => $request->signal_status,
+        ]);
+
+        if ($master->min_join_equity != null &&
+            $master->sharing_profit != null &&
+            $master->subscription_fee != null) {
+            $master->update([
+                'status' => 'Active',
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('title', 'Success configure setting')
+            ->with('success', 'Successfully configure requirements to follow Master Account for LOGIN: ' . $master->meta_login);
     }
 }

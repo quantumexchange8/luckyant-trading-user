@@ -150,6 +150,7 @@ class WalletController extends Controller
             'category' => 'wallet',
             'user_id' => $user->id,
             'to_wallet_id' => $wallet->id,
+            'txn_hash' => $request->txn_hash,
             'transaction_number' => $transaction_number,
             'transaction_type' => 'Deposit',
             'amount' => $amount,
@@ -157,6 +158,10 @@ class WalletController extends Controller
             'transaction_amount' => $amount,
             'status' => 'Processing',
         ]);
+
+        if ($request->hasfile('receipt')){
+            $transaction->addMedia($request->receipt)->toMediaCollection('receipt');
+        }
 
         $paymentGateway = config('payment-gateway');
         $intAmount = intval($amount * 100);

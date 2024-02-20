@@ -1,6 +1,7 @@
 <script setup>
 import Button from "@/Components/Button.vue";
 import {CurrencyDollarIcon, MailIcon} from "@heroicons/vue/outline";
+import { XIcon } from "@/Components/Icons/outline.jsx"
 import {ref} from "vue";
 import Modal from "@/Components/Modal.vue";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
@@ -24,10 +25,36 @@ const closeModal = () => {
     depositModal.value = false;
 }
 
+const selectedReceipt = ref(null);
+const selectedReceiptName = ref(null);
+
 const form = useForm({
     wallet_id: props.walletSel[0].value,
     amount: '',
+    receipt: null,
+    txn_hash: '',
 })
+
+const onReceiptChanges = (event) => {
+    const receiptInput = event.target;
+    const file = receiptInput.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            selectedReceipt.value = reader.result
+        };
+        reader.readAsDataURL(file);
+        selectedReceiptName.value = file.name;
+        form.receipt = event.target.files[0];
+    } else {
+        selectedReceipt.value = null;
+    }
+}
+
+const removeReceipt = () => {
+    selectedReceipt.value = null;
+}
 
 const submit = () => {
     form.post(route('transaction.deposit'), {
@@ -78,6 +105,64 @@ const submit = () => {
                         :invalid="form.errors.amount"
                     />
                     <InputError :message="form.errors.amount" class="mt-2" />
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="txn_hash" value="Txn Hash" />
+                <div class="flex flex-col w-full">
+                    <Input
+                        id="txn_hash"
+                        type="text"
+                        min="0"
+                        placeholder="txn hash"
+                        class="block w-full"
+                        v-model="form.txn_hash"
+                        :invalid="form.errors.txn_hash"
+                    />
+                    <InputError :message="form.errors.txn_hash" class="mt-2" />
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                <Label for="receipt" class="text-sm dark:text-white md:w-1/4" value="Payment Slip"/>
+                <div v-if="selectedReceipt == null" class="flex gap-3 w-full">
+                    <input
+                        ref="receiptInput"
+                        id="receipt"
+                        type="file"
+                        class="hidden"
+                        accept="image/*"
+                        @change="onReceiptChanges"
+                    />
+                    <Button
+                        type="button"
+                        variant="primary"
+                        @click="$refs.receiptInput.click()"
+                        class="justify-center gap-2"
+                    >
+                        <span>Browse</span>
+                    </Button>
+                </div>
+                <div
+                    v-if="selectedReceipt"
+                    class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
+                    
+                >
+                    <div class="inline-flex items-center gap-3">
+                        <img :src="selectedReceipt" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
+                        <div class="text-gray-light-900 dark:text-white">
+                            {{ selectedReceiptName }}
+                        </div>
+                    </div>
+                    <Button
+                        type="button"
+                        variant="transparent"
+                        pill
+                        @click="removeReceipt"
+                    >
+                        <XIcon/>
+                    </Button>
                 </div>
             </div>
 

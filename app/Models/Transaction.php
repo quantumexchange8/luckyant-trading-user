@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\HasMedia;
 
-class Transaction extends Model
+class Transaction extends Model implements HasMedia
 {
-    use SoftDeletes;
+    use SoftDeletes, InteractsWithMedia;
 
     protected $fillable = [
         'user_id',

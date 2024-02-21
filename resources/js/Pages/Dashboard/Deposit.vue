@@ -13,6 +13,7 @@ import BaseListbox from "@/Components/BaseListbox.vue";
 
 const props = defineProps({
     walletSel: Array,
+    PaymentDetails: Object,
 })
 
 const depositModal = ref(false);
@@ -80,6 +81,76 @@ const submit = () => {
     </Button>
 
     <Modal :show="depositModal" title="Deposit" @close="closeModal">
+        <div class="flex flex-col p-2.5 mb-3 text-sm text-gray-800 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white">
+            <div class="text-lg font-semibold">
+                Payment Information
+            </div>
+            <div v-if="props.PaymentDetails.payment_method == 'Bank'" class="py-2">
+                <div class="flex items-center gap-3 pb-1">
+                    <div>Payment Method:</div>
+                    <div>
+                        {{ props.PaymentDetails.payment_method }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pb-1">
+                    <div>
+                        Bank:
+                    </div>
+                    <div>
+                        {{ props.PaymentDetails.payment_platform_name }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pb-1">
+                    <div>
+                        Account No:
+                    </div>
+                    <div>
+                        {{ props.PaymentDetails.account_no }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pb-1">
+                    <div>
+                        Account Name:
+                    </div>
+                    <div>
+                        {{ props.PaymentDetails.payment_account_name }}
+                    </div>
+                </div>
+            </div>
+            <div v-else-if="props.PaymentDetails.payment_method == 'Crypto'" class="py-2">
+                <div class="flex items-center gap-3 pb-1">
+                    <div>Payment Method:</div>
+                    <div>
+                        {{ props.PaymentDetails.payment_method }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pb-1">
+                    <div>
+                        Tether:
+                    </div>
+                    <div>
+                        {{ props.PaymentDetails.payment_platform_name }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pb-1">
+                    <div>
+                        Wallet Address:
+                    </div>
+                    <div>
+                        {{ props.PaymentDetails.account_no }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pb-1">
+                    <div>
+                        Wallet Name:
+                    </div>
+                    <div>
+                        {{ props.PaymentDetails.payment_account_name }}
+                    </div>
+                </div>
+            </div>
+            
+        </div>
         <form class="space-y-2">
             <div class="flex flex-col sm:flex-row gap-4">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" value="Wallet" />
@@ -108,7 +179,7 @@ const submit = () => {
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-4 pt-2">
+            <!-- <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="txn_hash" value="Txn Hash" />
                 <div class="flex flex-col w-full">
                     <Input
@@ -122,7 +193,7 @@ const submit = () => {
                     />
                     <InputError :message="form.errors.txn_hash" class="mt-2" />
                 </div>
-            </div>
+            </div> -->
 
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label for="receipt" class="text-sm dark:text-white md:w-1/4" value="Payment Slip"/>

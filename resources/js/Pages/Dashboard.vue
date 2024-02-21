@@ -20,6 +20,7 @@ const props = defineProps({
     firstTimeLogin: Number,
     cashWallet: Object,
     walletSel: Array,
+    PaymentDetails: Object,
 })
 
 const copyReferralCode = () => {
@@ -136,6 +137,7 @@ onMounted(() => {
                                     <div class="flex justify-between w-full gap-2">
                                         <Deposit
                                             :walletSel="walletSel"
+                                            :PaymentDetails="PaymentDetails"
                                         />
                                         <Withdrawal />
                                     </div>

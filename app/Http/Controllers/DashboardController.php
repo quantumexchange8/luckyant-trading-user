@@ -6,6 +6,7 @@ use App\Models\Announcement;
 use App\Models\TradingAccount;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Models\SettingPaymentMethod;
 use App\Services\SelectOptionService;
 use Carbon\Carbon;
 use Inertia\Inertia;
@@ -16,6 +17,8 @@ class DashboardController extends Controller
     {
         $announcement = Announcement::where('type', 'login')->latest()->first();
 
+        $PaymentDetails = SettingPaymentMethod::where('status', 'Active')->latest()->first();
+
         if (!empty($announcement)) {
             $announcement->image = $announcement->getFirstMediaUrl('announcement');
         }
@@ -25,6 +28,7 @@ class DashboardController extends Controller
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
             'cashWallet' => Wallet::where('user_id', \Auth::id())->where('type', 'cash_wallet')->first(),
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
+            'PaymentDetails' => $PaymentDetails,
         ]);
     }
 

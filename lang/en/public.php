@@ -116,7 +116,7 @@ return [
     "Total Group Deposit" => "Total Group Deposit",
     "Total Group Withdrawal" => "Total Group Withdrawal",
     "Total Net Deposit" => "Total Net Deposit",
-    "Network Tree" => "Network Tree",
+    "Network Tree" => "Referral Tree",
     "Search" => "Search",
     "Referral Code" => "Referral Code",
     "Referrer Email" => "Referrer Email",

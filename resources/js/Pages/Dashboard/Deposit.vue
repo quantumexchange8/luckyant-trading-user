@@ -182,7 +182,7 @@ const submit = () => {
                         type="button"
                         variant="primary"
                         @click="$refs.receiptInput.click()"
-                        class="justify-center gap-2"
+                        class="justify-center gap-2 w-full sm:max-w-24"
                     >
                         <span>Browse</span>
                     </Button>

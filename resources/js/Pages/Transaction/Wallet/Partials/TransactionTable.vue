@@ -5,6 +5,8 @@ import debounce from "lodash/debounce.js";
 import Loading from "@/Components/Loading.vue";
 import Modal from "@/Components/Modal.vue";
 import Badge from "@/Components/Badge.vue";
+import {ArrowLeftIcon, ArrowRightIcon} from "@heroicons/vue/outline";
+import {TailwindPagination} from "laravel-vue-pagination";
 
 const props = defineProps({
     walletId: Number,
@@ -91,9 +93,16 @@ const closeModal = () => {
 const statusVariant = (transactionStatus) => {
     if (transactionStatus === 'Processing') return 'processing';
     if (transactionStatus === 'Success') return 'success';
-    if (transactionStatus === 'Failed') return 'danger';
+    if (transactionStatus === 'Rejected') return 'danger';
 }
 
+const paginationClass = [
+    'bg-transparent border-0 text-gray-600 dark:text-gray-400 dark:enabled:hover:text-white'
+];
+
+const paginationActiveClass = [
+    'border dark:border-gray-600 dark:bg-gray-600 rounded-full text-primary-500 dark:text-primary-300'
+];
 </script>
 
 <template>
@@ -152,6 +161,22 @@ const statusVariant = (transactionStatus) => {
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div class="flex justify-center mt-4" v-if="!transactionLoading">
+        <TailwindPagination
+            :item-classes=paginationClass
+            :active-classes=paginationActiveClass
+            :data="transactions"
+            :limit=2
+            @pagination-change-page="handlePageChange"
+        >
+            <template #prev-nav>
+                <span class="flex gap-2"><ArrowLeftIcon class="w-5 h-5" /> <span class="hidden sm:flex">Previous</span></span>
+            </template>
+            <template #next-nav>
+                <span class="flex gap-2"><span class="hidden sm:flex">Next</span> <ArrowRightIcon class="w-5 h-5" /></span>
+            </template>
+        </TailwindPagination>
     </div>
 
     <Modal :show="transactionModal" title="Transaction Details" @close="closeModal">

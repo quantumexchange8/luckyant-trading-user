@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Setting;
 use App\Models\TradingAccount;
 use App\Models\User;
 use App\Models\Wallet;
@@ -29,6 +30,7 @@ class DashboardController extends Controller
             'cashWallet' => Wallet::where('user_id', \Auth::id())->where('type', 'cash_wallet')->first(),
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'PaymentDetails' => $PaymentDetails,
+            'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
         ]);
     }
 

@@ -1,17 +1,85 @@
 <script setup>
 import Button from "@/Components/Button.vue";
 import {CurrencyDollarIcon} from "@heroicons/vue/outline";
-import {ref} from "vue";
+import {ref, computed, watch} from "vue";
 import Modal from "@/Components/Modal.vue";
+import Label from "@/Components/Label.vue";
+import {XIcon} from "@/Components/Icons/outline.jsx";
+import BaseListbox from "@/Components/BaseListbox.vue";
+import Input from "@/Components/Input.vue";
+import InputError from "@/Components/InputError.vue";
+import {useForm} from "@inertiajs/vue3";
+import {transactionFormat} from "@/Composables/index.js";
 
+const props = defineProps({
+    walletSel: Array,
+    withdrawalFee: Object,
+})
 const withdrawalModal = ref(false);
+const { formatAmount } = transactionFormat();
+const withdrawalAmount = ref();
+const selectedWallet = ref(props.walletSel[0].value);
 
 const openWithdrawalModal = () => {
     withdrawalModal.value = true;
 }
 
+const form = useForm({
+    wallet_id: '',
+    amount: '',
+    wallet_address: '',
+    transaction_charges: '',
+})
+
+const submit = () => {
+    form.wallet_id = selectedWallet.value;
+    form.amount = withdrawalAmount.value;
+    form.transaction_charges = transactionFee.value;
+
+    form.post(route('transaction.withdrawal'), {
+        onSuccess: () => {
+            closeModal();
+            form.reset();
+        },
+    });
+}
+
 const closeModal = () => {
     withdrawalModal.value = false;
+}
+
+const transactionFee = ref(props.withdrawalFee.value);
+const calculatedBalance = ref();
+
+watch(withdrawalAmount, (newValue) => {
+    const calculatedMinimumFee = newValue * (props.withdrawalFee.value / 100);
+
+    if (calculatedMinimumFee <= props.withdrawalFee.value) {
+        transactionFee.value = props.withdrawalFee.value;
+        const calculated = newValue - props.withdrawalFee.value;
+        calculatedBalance.value = calculated <= 0 ? 0 : calculated;
+    } else {
+        transactionFee.value = newValue * (props.withdrawalFee.value / 100);
+        calculatedBalance.value = newValue * ((100 - props.withdrawalFee.value) / 100);
+    }
+});
+
+const handleButtonClick = () => {
+    if (!withdrawalAmount.value) {
+        // Find the selected wallet in props.walletSel
+        const selectedWalletId = selectedWallet.value;
+        const foundWallet = props.walletSel.find(wallet => wallet.value === selectedWalletId);
+
+        if (foundWallet) {
+            // Set withdrawal amount to the balance of the selected wallet
+            withdrawalAmount.value = foundWallet.balance;
+        } else {
+            console.error('Selected wallet not found');
+        }
+    } else {
+        // Clear withdrawal amount
+        withdrawalAmount.value = '';
+    }
 }
 </script>
 
@@ -29,13 +97,88 @@ const closeModal = () => {
     </Button>
 
     <Modal :show="withdrawalModal" title="Withdrawal" @close="closeModal">
-        <div class="p-6 flex flex-col items-center justify-center">
-            <div class="text-2xl text-gray-400 dark:text-gray-200">
-                Coming SOON
+        <form class="space-y-2 mt-5">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" value="Wallet" />
+                <div class="flex flex-col w-full">
+                    <BaseListbox
+                        :options="walletSel"
+                        v-model="selectedWallet"
+                        :error="!!form.errors.wallet_id"
+                    />
+                </div>
             </div>
-            <div class="text-lg text-gray-400 dark:text-gray-600">
-                We're working hard to improve the user experience. Stay tuned!
+
+            <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.Amount')  + ' ($)'" />
+                <div class="relative flex flex-col w-full">
+                    <div class="relative">
+                        <Input
+                            id="amount"
+                            type="number"
+                            min="0"
+                            :placeholder="'$ ' + formatAmount(withdrawalFee.value)"
+                            class="block w-full"
+                            v-model="withdrawalAmount"
+                            :invalid="form.errors.amount"
+                        />
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                            <Button
+                                type="button"
+                                variant="primary-opacity"
+                                size="sm"
+                                class="flex justify-center"
+                                :class="{
+                                        'bg-gray-400 hover:bg-gray-500 text-white dark:bg-gray-500 dark:hover:bg-gray-700' : !withdrawalAmount,
+                                        'bg-error-600 text-white hover:bg-error-700' : withdrawalAmount
+                                    }"
+                                @click="handleButtonClick"
+                            >
+                                {{ !withdrawalAmount ? 'Full Amount' : 'Clear' }}
+                            </Button>
+                        </div>
+                    </div>
+                    <InputError :message="form.errors.amount" class="mt-2" />
+                </div>
             </div>
-        </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 pt-2 pb-5">
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet_address" value="Wallet Address" />
+                <div class="flex flex-col w-full">
+                    <Input
+                        id="wallet_address"
+                        type="text"
+                        min="0"
+                        placeholder="Wallet Address"
+                        class="block w-full"
+                        v-model="form.wallet_address"
+                        :invalid="form.errors.wallet_address"
+                    />
+                    <InputError :message="form.errors.wallet_address" class="mt-2" />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 border-t border-gray-300">
+                <div class="flex items-start justify-between mt-5">
+                    <span class="text-sm dark:text-gray-400 font-Inter">Withdrawal Charges ({{ withdrawalFee.value }}%)</span>
+                    <div class="flex flex-col">
+                        <span class="text-sm dark:text-white text-right">$ {{ formatAmount(transactionFee) }}</span>
+                        <span class="text-xs text-gray-500 dark:text-white">Minimum charges: $ {{ formatAmount(withdrawalFee.value) }}</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-2">
+                    <span class="text-sm dark:text-gray-400 font-Inter">{{$t('public.rightbar.Withdrawal Amount')}}</span>
+                    <span class="text-sm dark:text-white">$&nbsp;{{ calculatedBalance ? formatAmount(calculatedBalance) : '0.00' }}</span>
+                </div>
+            </div>
+
+
+            <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+                <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
+                    {{$t('public.Cancel')}}
+                </Button>
+                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
+            </div>
+        </form>
     </Modal>
 </template>

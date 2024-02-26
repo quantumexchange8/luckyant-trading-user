@@ -14,6 +14,7 @@ class SelectOptionService
             return [
                 'value' => $wallet->id,
                 'label' => $wallet->name . ' ($' . number_format($wallet->balance, 2) . ')',
+                'balance' => $wallet->balance,
             ];
         });
     }

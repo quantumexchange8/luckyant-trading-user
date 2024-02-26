@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/getWalletHistory', [WalletController::class, 'getWalletHistory'])->name('transaction.getWalletHistory');
 
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('transaction.deposit');
+        Route::post('/withdrawal', [WalletController::class, 'withdrawal'])->name('transaction.withdrawal');
 
          /**
          * ==============================

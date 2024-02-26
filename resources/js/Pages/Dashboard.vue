@@ -21,6 +21,7 @@ const props = defineProps({
     cashWallet: Object,
     walletSel: Array,
     PaymentDetails: Object,
+    withdrawalFee: Object,
 })
 
 const copyReferralCode = () => {
@@ -139,7 +140,10 @@ onMounted(() => {
                                             :walletSel="walletSel"
                                             :PaymentDetails="PaymentDetails"
                                         />
-                                        <Withdrawal />
+                                        <Withdrawal
+                                            :walletSel="walletSel"
+                                            :withdrawalFee="withdrawalFee"
+                                        />
                                     </div>
                                     <div class="flex items-center justify-center w-full">
                                         <InternalTransfer />

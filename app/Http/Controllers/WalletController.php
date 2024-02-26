@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DepositRequest;
+use App\Http\Requests\WithdrawalRequest;
+use App\Models\Setting;
+use App\Models\SettingPaymentMethod;
 use App\Services\RunningNumberService;
 use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
 use App\Models\Wallet;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Auth;
@@ -25,6 +29,8 @@ class WalletController extends Controller
         return Inertia::render('Transaction/Wallet/Wallet', [
             'wallets' => $wallets,
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
+            'PaymentDetails' => SettingPaymentMethod::where('status', 'Active')->latest()->first(),
+            'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
         ]);
     }
 
@@ -319,5 +325,37 @@ class WalletController extends Controller
             }
         }
 
+    }
+
+    public function withdrawal(WithdrawalRequest $request)
+    {
+        $user = \Auth::user();
+        $amount = number_format(floatval($request->amount), 2, '.', '');
+        $wallet = Wallet::find($request->wallet_id);
+        if ($wallet->balance < $amount) {
+            throw ValidationException::withMessages(['amount' => trans('Insufficient balance')]);
+        }
+        $withdrawal_fee = $request->transaction_charges;
+        $final_amount = $amount - $withdrawal_fee;
+        $wallet->balance -= $amount;
+        $wallet->save();
+
+        $transaction_number = RunningNumberService::getID('transaction');
+
+        Transaction::create([
+            'category' => 'wallet',
+            'user_id' => $user->id,
+            'from_wallet_id' => $wallet->id,
+            'transaction_number' => $transaction_number,
+            'to_wallet_address' => $request->wallet_address,
+            'transaction_type' => 'Withdrawal',
+            'amount' => $amount,
+            'transaction_charges' => $withdrawal_fee,
+            'transaction_amount' => $final_amount,
+            'new_wallet_amount' => $wallet->balance,
+            'status' => 'Processing',
+        ]);
+
+        return redirect()->back()->with('title', trans('public.Submitted'))->with('success', trans('public.Successfully Submitted Withdrawal Request'));
     }
 }

@@ -68,7 +68,7 @@ function handleKeyDown(event) {
         <template #header>
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    {{ $t('public.Member Tree') }}
+                    {{ $t('public.Network Tree') }}
                 </h2>
             </div>
         </template>

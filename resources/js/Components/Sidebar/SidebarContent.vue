@@ -81,7 +81,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarCollapsible>
 
         <SidebarCollapsible
-            title="Referral"
+            title="Referral Program"
             :active="route().current('referral.*')"
         >
             <template #icon>
@@ -93,7 +93,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 
             <SidebarCollapsibleItem
                 :href="route('referral.index')"
-                title="Network Tree"
+                title="Referral Tree"
                 :active="route().current('referral.index')"
             />
         </SidebarCollapsible>

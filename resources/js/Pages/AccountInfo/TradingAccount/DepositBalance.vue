@@ -62,7 +62,7 @@ const submit = () => {
             </div>
         </div>
 
-        <div class="py-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+        <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
                 {{$t('public.Cancel')}}
             </Button>

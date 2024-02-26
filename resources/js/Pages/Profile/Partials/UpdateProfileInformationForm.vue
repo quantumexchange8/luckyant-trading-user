@@ -221,6 +221,7 @@ const removeProfilePhoto = () => {
                                 class="hidden"
                                 accept="image/*"
                                 @change="handleProofFront"
+                                :disabled="kycApproval === 'Verified'"
                             />
                             <Button
                                 type="button"
@@ -268,6 +269,7 @@ const removeProfilePhoto = () => {
                                 class="hidden"
                                 accept="image/*"
                                 @change="handleProofBack"
+                                :disabled="kycApproval === 'Verified'"
                             />
                             <Button
                                 type="button"

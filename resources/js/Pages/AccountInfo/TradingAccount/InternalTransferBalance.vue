@@ -37,7 +37,7 @@ const submit = () => {
 
 const getTradingAccounts = async () => {
     try {
-        const response = await axios.get('/account_info/getTradingAccounts?meta_login=' + props.account.meta_login);
+        const response = await axios.get('/account_info/getTradingAccounts?type=internal_transfer&meta_login=' + props.account.meta_login);
         tradingAccountsSel.value = response.data;
         form.to_meta_login = tradingAccountsSel.value.length > 0 ? tradingAccountsSel.value[0].value : null;
     } catch (error) {
@@ -92,7 +92,7 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="py-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+        <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
                 {{$t('public.Cancel')}}
             </Button>

@@ -39,23 +39,23 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
             </template>
         </SidebarLink>
 
-        <SidebarCollapsible
-            :title="$t('public.sidebar.Trading')"
-            :active="route().current('trading.*')"
-        >
-            <template #icon>
-                <CoinsHandIcon
-                    class="flex-shrink-0 w-6 h-6"
-                    aria-hidden="true"
-                />
-            </template>
+<!--        <SidebarCollapsible-->
+<!--            :title="$t('public.sidebar.Trading')"-->
+<!--            :active="route().current('trading.*')"-->
+<!--        >-->
+<!--            <template #icon>-->
+<!--                <CoinsHandIcon-->
+<!--                    class="flex-shrink-0 w-6 h-6"-->
+<!--                    aria-hidden="true"-->
+<!--                />-->
+<!--            </template>-->
 
-            <SidebarCollapsibleItem
-                :href="route('trading.master_configuration')"
-                title="Master Account"
-                :active="route().current('trading.master_configuration')"
-            />
-        </SidebarCollapsible>
+<!--            <SidebarCollapsibleItem-->
+<!--                :href="route('trading.master_listing')"-->
+<!--                title="Master Listing"-->
+<!--                :active="route().current('trading.master_listing')"-->
+<!--            />-->
+<!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
             :title="$t('public.sidebar.Transaction')"

@@ -265,7 +265,18 @@ class AccountInfoController extends Controller
 
     public function getTradingAccounts(Request $request)
     {
-        $tradingAccount = TradingAccount::where('user_id', Auth::id())->whereNot('meta_login', $request->meta_login)->get();
+        $tradingAccount = null;
+
+        if ($request->type == 'internal_transfer') {
+            $tradingAccount = TradingAccount::where('user_id', Auth::id())->whereNot('meta_login', $request->meta_login)->get();
+        } elseif ($request->type == 'subscribe') {
+            $tradingAccount = TradingAccount::where('user_id', Auth::id())
+                ->whereDoesntHave('masterAccount', function ($query) {
+                    $query->whereNotNull('trading_account_id');
+                })
+                ->whereNot('meta_login', $request->meta_login)
+                ->get();
+        }
 
         $connection = (new MetaFiveService())->getConnectionStatus();
         if ($connection == 0) {
@@ -279,7 +290,7 @@ class AccountInfoController extends Controller
         return $tradingAccount->map(function ($tradingAccount) {
             return [
                 'value' => $tradingAccount->meta_login,
-                'label' => $tradingAccount->meta_login . ' ($' . number_format($tradingAccount->balance, 2) . ')',
+                'label' => $tradingAccount->meta_login . ' ($' . number_format($tradingAccount->equity, 2) . ')',
             ];
         });
     }

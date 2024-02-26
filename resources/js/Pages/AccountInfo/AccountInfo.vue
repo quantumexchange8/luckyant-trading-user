@@ -184,7 +184,7 @@ const leverages = [
 
                     <div class="flex items-center">
                         <div class="flex items-center h-5">
-                            <Checkbox v-model="form.terms"/>
+                            <Checkbox id="terms" v-model="form.terms"/>
                         </div>
                         <div class="ml-3">
                             <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">{{ $t('public.I acknowledge that I have read, and do hereby accept the terms and conditions stated as above.') }}</label>

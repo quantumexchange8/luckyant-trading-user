@@ -69,13 +69,11 @@ Route::middleware('auth')->group(function () {
      *           Trading
      * ==============================
      */
-    /**
-     * ==============================
-     *           Referral
-     * ==============================
-     */
     Route::prefix('trading')->group(function () {
-        Route::get('/master_configuration', [TradingController::class, 'master_configuration'])->name('trading.master_configuration');
+        Route::get('/master_listing', [TradingController::class, 'master_listing'])->name('trading.master_listing');
+        Route::get('/getMasterAccounts', [TradingController::class, 'getMasterAccounts'])->name('trading.getMasterAccounts');
+
+//        Route::post('/subscribeMaster', [TradingController::class, 'subscribeMaster'])->name('trading.subscribeMaster');
     });
 
     /**

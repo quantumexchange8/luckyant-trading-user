@@ -1,10 +1,10 @@
 <script>
-import {PlusCircleIcon, MinusCircleIcon} from "@heroicons/vue/solid";
+import {PlusIcon, MinusSmIcon} from "@heroicons/vue/solid";
 import {ref} from "vue";
 import Modal from "@/Components/Modal.vue";
 export default {
     name: 'Tree',
-    components: { PlusCircleIcon, MinusCircleIcon, ref, Modal},
+    components: { PlusIcon, MinusSmIcon, ref, Modal},
     props: {
         node: Object,
         depth: {
@@ -80,21 +80,30 @@ export default {
                 <div class="flex-none">
                     <div v-if="hasChildren && node.children.length !== 0">
                         <template v-if="expanded">
-                            <!-- Show the MinusCircleIcon if expanded -->
-                            <MinusCircleIcon
-                                aria-hidden="true"
+                            <!-- Show the MinusSmIcon if expanded -->
+                            <div
+                                class="w-5 h-5 rounded-full shrink-0 grow-0 cursor-pointer hover:bg-gray-500 dark:hover:bg-gray-600 bg-gray-400 dark:bg-gray-700 flex items-center justify-center"
                                 @click="nodeClicked"
-                                :class="['w-5 h-5 cursor-pointer text-gray-600']"
-                            />
+                            >
+                                <MinusSmIcon
+                                    aria-hidden="true"
+                                    :class="['w-4 h-4 text-white']"
+                                />
+                            </div>
                         </template>
+
                         <template v-else>
-                            <!-- Show the PlusCircleIcon if not expanded -->
-                            <PlusCircleIcon
+                            <!-- Show the PlusIcon if not expanded -->
+                            <div
                                 v-if="hasChildren"
-                                aria-hidden="true"
+                                class="w-5 h-5 rounded-full shrink-0 grow-0 cursor-pointer hover:bg-primary-600 bg-primary-500 flex items-center justify-center"
                                 @click="nodeClicked"
-                                :class="['w-5 h-5 cursor-pointer text-primary-500']"
-                            />
+                            >
+                                <PlusIcon
+                                    aria-hidden="true"
+                                    :class="['w-4 h-4 text-white']"
+                                />
+                            </div>
                         </template>
                     </div>
                 </div>

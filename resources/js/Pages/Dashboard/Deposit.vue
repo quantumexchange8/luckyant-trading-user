@@ -33,7 +33,8 @@ const form = useForm({
     wallet_id: props.walletSel[0].value,
     amount: '',
     receipt: null,
-    txn_hash: '',
+    payment_method: props.PaymentDetails.payment_method,
+    account_no: props.PaymentDetails.account_no,
 })
 
 const onReceiptChanges = (event) => {
@@ -81,77 +82,48 @@ const submit = () => {
     </Button>
 
     <Modal :show="depositModal" title="Deposit" @close="closeModal">
-        <div class="flex flex-col p-2.5 mb-3 text-sm text-gray-800 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white">
-            <div class="text-lg font-semibold">
-                Payment Information
-            </div>
-            <div v-if="props.PaymentDetails.payment_method == 'Bank'" class="py-2">
-                <div class="flex items-center gap-3 pb-1">
-                    <div>Payment Method:</div>
-                    <div>
-                        {{ props.PaymentDetails.payment_method }}
+
+        <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+            <div class="flex flex-col items-start gap-3 self-stretch">
+                <div class="text-lg font-semibold">
+                    Payment Information
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        Payment Method
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ PaymentDetails.payment_method }}
                     </div>
                 </div>
-                <div class="flex items-center gap-3 pb-1">
-                    <div>
-                        Bank:
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ PaymentDetails.payment_method === 'Bank' ? 'Bank Name' : 'Tether' }}
                     </div>
-                    <div>
-                        {{ props.PaymentDetails.payment_platform_name }}
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 pb-1">
-                    <div>
-                        Account No:
-                    </div>
-                    <div>
-                        {{ props.PaymentDetails.account_no }}
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ PaymentDetails.payment_platform_name }}
                     </div>
                 </div>
-                <div class="flex items-center gap-3 pb-1">
-                    <div>
-                        Account Name:
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ PaymentDetails.payment_method === 'Bank' ? 'Account No' : 'Wallet Address' }}
                     </div>
-                    <div>
-                        {{ props.PaymentDetails.payment_account_name }}
-                    </div>
-                </div>
-            </div>
-            <div v-else-if="props.PaymentDetails.payment_method == 'Crypto'" class="py-2">
-                <div class="flex items-center gap-3 pb-1">
-                    <div>Payment Method:</div>
-                    <div>
-                        {{ props.PaymentDetails.payment_method }}
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ PaymentDetails.account_no }}
                     </div>
                 </div>
-                <div class="flex items-center gap-3 pb-1">
-                    <div>
-                        Tether:
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ PaymentDetails.payment_method === 'Bank' ? 'Account Name' : 'Wallet Name' }}
                     </div>
-                    <div>
-                        {{ props.PaymentDetails.payment_platform_name }}
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 pb-1">
-                    <div>
-                        Wallet Address:
-                    </div>
-                    <div>
-                        {{ props.PaymentDetails.account_no }}
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 pb-1">
-                    <div>
-                        Wallet Name:
-                    </div>
-                    <div>
-                        {{ props.PaymentDetails.payment_account_name }}
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ PaymentDetails.payment_account_name }}
                     </div>
                 </div>
             </div>
-            
         </div>
-        <form class="space-y-2">
+
+        <form class="space-y-2 mt-5">
             <div class="flex flex-col sm:flex-row gap-4">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" value="Wallet" />
                 <div class="flex flex-col w-full">
@@ -197,7 +169,7 @@ const submit = () => {
 
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label for="receipt" class="text-sm dark:text-white md:w-1/4" value="Payment Slip"/>
-                <div v-if="selectedReceipt == null" class="flex gap-3 w-full">
+                <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
                     <input
                         ref="receiptInput"
                         id="receipt"
@@ -214,11 +186,12 @@ const submit = () => {
                     >
                         <span>Browse</span>
                     </Button>
+                    <InputError :message="form.errors.receipt"/>
                 </div>
                 <div
                     v-if="selectedReceipt"
                     class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
-                    
+
                 >
                     <div class="inline-flex items-center gap-3">
                         <img :src="selectedReceipt" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
@@ -237,7 +210,7 @@ const submit = () => {
                 </div>
             </div>
 
-            <div class="py-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+            <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
                     {{$t('public.Cancel')}}
                 </Button>

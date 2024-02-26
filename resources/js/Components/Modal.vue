@@ -67,7 +67,7 @@ const maxWidthClass = computed(() => {
         <transition leave-active-class="duration-200">
             <div
                 v-show="show"
-                class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50"
+                class="fixed inset-0 px-4 py-6 sm:px-0 z-50"
                 scroll-region
             >
                 <transition
@@ -99,7 +99,7 @@ const maxWidthClass = computed(() => {
                 >
                     <div
                         v-show="show"
-                        class="mb-6 bg-white dark:bg-gray-800 rounded-xl overflow-y-auto max-h-full shadow-xl transform transition-all sm:w-full sm:mx-auto"
+                        class="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-xl transform transition-all sm:w-full sm:mx-auto"
                         :class="maxWidthClass"
                     >
                         <div
@@ -115,7 +115,7 @@ const maxWidthClass = computed(() => {
                                 </button>
                             </h2>
                         </div>
-                        <div class="px-5 pb-5">
+                        <div class="px-5 pb-5 max-h-full overflow-y-auto">
                             <slot v-if="show"/>
                         </div>
                     </div>

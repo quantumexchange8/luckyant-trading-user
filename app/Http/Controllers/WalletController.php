@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DepositRequest;
 use App\Services\RunningNumberService;
 use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
@@ -138,7 +139,7 @@ class WalletController extends Controller
         return response()->json($results);
     }
 
-    public function deposit(Request $request)
+    public function deposit(DepositRequest $request)
     {
         $user = Auth::user();
         $wallet = Wallet::find($request->wallet_id);
@@ -150,8 +151,9 @@ class WalletController extends Controller
             'category' => 'wallet',
             'user_id' => $user->id,
             'to_wallet_id' => $wallet->id,
-            'txn_hash' => $request->txn_hash,
+            'payment_method' => $request->payment_method,
             'transaction_number' => $transaction_number,
+            'to_wallet_address' => $request->account_no,
             'transaction_type' => 'Deposit',
             'amount' => $amount,
             'transaction_charges' => 0,
@@ -163,24 +165,28 @@ class WalletController extends Controller
             $transaction->addMedia($request->receipt)->toMediaCollection('receipt');
         }
 
-        $paymentGateway = config('payment-gateway');
-        $intAmount = intval($amount * 100);
+        return redirect()->back()
+            ->with('title', 'Success request deposit')
+            ->with('success', 'Successfully submit a deposit request, we will email you once the deposit is processed');
 
-        // vCode
-        $vCode = md5($intAmount . $paymentGateway['staging']['appId'] . $transaction_number . $paymentGateway['staging']['vKey']);
-
-        $params = [
-            'amount' => $intAmount,
-            'orderNumber' => $transaction_number,
-            'userId' => $user->id,
-            'vCode' => $vCode,
-        ];
-
-        // Send response
-        $baseUrl = $paymentGateway['staging']['paymentUrl'];
-        $redirectUrl = $baseUrl . "?" . http_build_query($params);
-
-        return Inertia::location($redirectUrl);
+//        $paymentGateway = config('payment-gateway');
+//        $intAmount = intval($amount * 100);
+//
+//        // vCode
+//        $vCode = md5($intAmount . $paymentGateway['staging']['appId'] . $transaction_number . $paymentGateway['staging']['vKey']);
+//
+//        $params = [
+//            'amount' => $intAmount,
+//            'orderNumber' => $transaction_number,
+//            'userId' => $user->id,
+//            'vCode' => $vCode,
+//        ];
+//
+//        // Send response
+//        $baseUrl = $paymentGateway['staging']['paymentUrl'];
+//        $redirectUrl = $baseUrl . "?" . http_build_query($params);
+//
+//        return Inertia::location($redirectUrl);
     }
 
     public function depositReturn(Request $request)

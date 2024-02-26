@@ -19,14 +19,22 @@ class ReferralController extends Controller
     {
         $searchUser = null;
         $searchTerm = $request->input('search');
+        $childrenIds = Auth::user()->getChildrenIds();
+        $childrenIds[] = Auth::id();
 
         if ($searchTerm) {
+
             $searchUser = User::where('name', 'like', '%' . $searchTerm . '%')
                 ->orWhere('email', 'like', '%' . $searchTerm . '%')
+                ->whereIn('id', $childrenIds)
                 ->first();
 
             if (!$searchUser) {
-                return response()->json(['error' => 'User not found for the given search term.'], 404);
+                return Auth::user();
+            }
+
+            if (!in_array($searchUser->id, $childrenIds)) {
+                return Auth::user();
             }
         }
 
@@ -34,7 +42,7 @@ class ReferralController extends Controller
 
         $users = User::whereHas('upline', function ($query) use ($user) {
             $query->where('id', $user->id);
-        })->get();
+        })->whereIn('id', $childrenIds)->get();
 
         $level = 0;
         $rootNode = [
@@ -66,6 +74,7 @@ class ReferralController extends Controller
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level + 1,
+            'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
             'self_deposit' => $this->getSelfDeposit($user),
             'total_group_deposit' => $this->getTotalGroupDeposit($user),

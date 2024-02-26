@@ -15,8 +15,8 @@ class MetaFiveService {
     private string $port = "8443";
     private string $login = "10012";
     private string $password = "Test1234.";
-    private string $baseURL = "http://luckyant-mt5.currenttech.pro:5000/api";
-//    private string $baseURL = "http://192.168.0.223:5000/api";
+//    private string $baseURL = "http://luckyant-mt5.currenttech.pro:5000/api";
+    private string $baseURL = "http://192.168.0.223:5000/api";
 
     private string $token = "6f0d6f97-3042-4389-9655-9bc321f3fc1e";
     private string $environmentName = "live";
@@ -32,7 +32,12 @@ class MetaFiveService {
         }
     }
 
-    public function getUser($meta_login)
+    public function getMetaUser($meta_login)
+    {
+        return Http::acceptJson()->get($this->baseURL . "/m_user/{$meta_login}")->json();
+    }
+
+    public function getMetaAccount($meta_login)
     {
         return Http::acceptJson()->get($this->baseURL . "/trade_acc/{$meta_login}")->json();
     }
@@ -40,10 +45,11 @@ class MetaFiveService {
     public function getUserInfo($tradingAccounts): void
     {
         foreach ($tradingAccounts as $row) {
-            $data = $this->getUser($row->meta_login);
-            if($data) {
-                (new UpdateTradingAccount)->execute($row->meta_login, $data);
-                (new UpdateTradingUser)->execute($row->meta_login, $data);
+            $userData = $this->getMetaUser($row->meta_login);
+            $metaAccountData = $this->getMetaAccount($row->meta_login);
+            if($userData && $metaAccountData) {
+                (new UpdateTradingAccount)->execute($row->meta_login, $metaAccountData);
+                (new UpdateTradingUser)->execute($row->meta_login, $userData);
             }
         }
     }
@@ -78,6 +84,19 @@ class MetaFiveService {
         (new UpdateTradingUser)->execute($meta_login, $data);
         (new UpdateTradingAccount)->execute($meta_login, $data);
         return $dealResponse;
+    }
+
+    public function disableTrade($meta_login)
+    {
+        $disableTrade = Http::acceptJson()->get($this->baseURL . "/disable_trade/{$meta_login}")->json();
+        Log::debug($disableTrade);
+
+        $userData = $this->getMetaUser($meta_login);
+        $metaAccountData = $this->getMetaAccount($meta_login);
+        (new UpdateTradingAccount)->execute($meta_login, $metaAccountData);
+        (new UpdateTradingUser)->execute($meta_login, $userData);
+
+        return $disableTrade;
     }
 }
 

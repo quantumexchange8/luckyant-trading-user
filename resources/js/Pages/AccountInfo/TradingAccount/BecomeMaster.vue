@@ -51,7 +51,7 @@ const submit = () => {
             After submitting your request, please note that your account will undergo a verification process to become a Master Account. This process may take several working days. Thank you for your patience and understanding.
         </div>
 
-        <div class="py-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+        <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
                 {{$t('public.Cancel')}}
             </Button>

@@ -7,6 +7,7 @@ import Modal from "@/Components/Modal.vue";
 import Badge from "@/Components/Badge.vue";
 import {ArrowLeftIcon, ArrowRightIcon} from "@heroicons/vue/outline";
 import {TailwindPagination} from "laravel-vue-pagination";
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     walletId: Number,
@@ -103,6 +104,12 @@ const paginationClass = [
 const paginationActiveClass = [
     'border dark:border-gray-600 dark:bg-gray-600 rounded-full text-primary-500 dark:text-primary-300'
 ];
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getResults();
+    }
+});
 </script>
 
 <template>

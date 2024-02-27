@@ -80,9 +80,10 @@ class MetaFiveService {
         $dealResponse = $dealResponse->json();
         Log::debug($dealResponse);
 
-        $data = $this->getUser($meta_login);
-        (new UpdateTradingUser)->execute($meta_login, $data);
-        (new UpdateTradingAccount)->execute($meta_login, $data);
+        $userData = $this->getMetaUser($meta_login);
+        $metaAccountData = $this->getMetaAccount($meta_login);
+        (new UpdateTradingAccount)->execute($meta_login, $metaAccountData);
+        (new UpdateTradingUser)->execute($meta_login, $userData);
         return $dealResponse;
     }
 

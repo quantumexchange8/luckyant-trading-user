@@ -72,4 +72,9 @@ class TradingAccount extends Model
     {
         return $this->hasOne(Master::class, 'trading_account_id', 'id');
     }
+
+    public function subscriber(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Subscriber::class, 'trading_account_id', 'id');
+    }
 }

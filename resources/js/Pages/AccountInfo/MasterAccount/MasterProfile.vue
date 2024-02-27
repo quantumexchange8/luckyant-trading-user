@@ -5,7 +5,8 @@ import MasterConfiguration from "@/Pages/AccountInfo/MasterAccount/MasterConfigu
 import {transactionFormat} from "@/Composables/index.js";
 
 const props = defineProps({
-    masterAccount: Object
+    masterAccount: Object,
+    subscriberCount: Number,
 })
 const { formatAmount } = transactionFormat();
 </script>
@@ -37,7 +38,7 @@ const { formatAmount } = transactionFormat();
                         Total Subscribers
                     </div>
                     <div class="text-base font-semibold">
-                        0
+                        {{ subscriberCount }}
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">

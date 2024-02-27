@@ -86,7 +86,7 @@ const submit = () => {
                         Sharing Profit (%)
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ formatAmount(masterAccount.sharing_profit) }} %
+                        {{ formatAmount(masterAccount.sharing_profit, 0) }} %
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">

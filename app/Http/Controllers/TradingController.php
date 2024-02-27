@@ -30,7 +30,11 @@ class TradingController extends Controller
                 $search = '%' . $request->input('search') . '%';
                 $query->whereHas('tradingAccount', function ($q) use ($search) {
                     $q->where('meta_login', 'like', $search);
-                });
+                })
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('name', 'like', $search)
+                            ->orWhere('email', 'like', $search);
+                    });
             })
             ->when($request->filled('type'), function ($query) use ($request) {
                 $type = $request->input('type');
@@ -93,16 +97,16 @@ class TradingController extends Controller
             // Create diff subscriptions data
             $subscriptionData = [
                 'user_id' => $user->id,
-                'trading_account_id' => $user->id,
-                'meta_login' => $user->id,
+                'trading_account_id' => $tradingAccount->id,
+                'meta_login' => $meta_login,
                 'transaction_id' => $user->id,
                 'next_pay_date' => $user->id, // calculate
             ];
         } else {
             $subscriptionData = [
                 'user_id' => $user->id,
-                'trading_account_id' => $user->id,
-                'meta_login' => $user->id,
+                'trading_account_id' => $tradingAccount->id,
+                'meta_login' => $meta_login,
             ];
         }
 
@@ -113,6 +117,7 @@ class TradingController extends Controller
             'trading_account_id' => $tradingAccount->id,
             'meta_login' => $meta_login,
             'master_id' => $masterAccount->id,
+            'master_meta_login' => $masterAccount->meta_login,
             'subscription_id' => $subscription->id,
         ]);
 

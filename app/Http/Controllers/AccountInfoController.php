@@ -66,7 +66,7 @@ class AccountInfoController extends Controller
             }
         }
 
-        $tradingAccounts = TradingAccount::with('accountType:id,group_id,name')
+        $tradingAccounts = TradingAccount::with(['accountType:id,group_id,name', 'subscriber:id,trading_account_id'])
             ->where('user_id', \Auth::id())
             ->whereDoesntHave('masterAccount', function ($query) {
                 $query->whereNotNull('trading_account_id');
@@ -274,6 +274,9 @@ class AccountInfoController extends Controller
                 ->whereDoesntHave('masterAccount', function ($query) {
                     $query->whereNotNull('trading_account_id');
                 })
+                ->whereDoesntHave('subscriber', function ($query) {
+                    $query->whereNotNull('trading_account_id');
+                })
                 ->whereNot('meta_login', $request->meta_login)
                 ->get();
         }
@@ -314,7 +317,8 @@ class AccountInfoController extends Controller
         $masterAccount = Master::with('tradingAccount.accountType:id,group_id,name')->where('meta_login', $meta_login)->first();
 
        return Inertia::render('AccountInfo/MasterAccount/MasterProfile', [
-           'masterAccount' => $masterAccount
+           'masterAccount' => $masterAccount,
+           'subscriberCount' => $masterAccount->subscribers->count(),
        ]);
     }
 

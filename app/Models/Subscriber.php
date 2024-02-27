@@ -14,6 +14,7 @@ class Subscriber extends Model
         'trading_account_id',
         'meta_login',
         'master_id',
+        'master_meta_login',
         'subscription_id',
         'status',
     ];

@@ -55,15 +55,15 @@ const closeModal = () => {
     </Button>
     <Dropdown align="right" width="48">
         <template #trigger>
-                    <span class="inline-flex rounded-md">
-                        <Button
-                            type="button"
-                            variant="transparent"
-                            class="flex justify-center"
-                        >
-                            More
-                        </Button>
-                    </span>
+            <span class="inline-flex rounded-md">
+                <Button
+                    type="button"
+                    variant="transparent"
+                    class="flex justify-center"
+                >
+                    More
+                </Button>
+            </span>
         </template>
 
         <template #content>

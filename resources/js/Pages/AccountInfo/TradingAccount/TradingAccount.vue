@@ -120,7 +120,7 @@ watchEffect(() => {
                 </div>
             </div>
             <div class="flex items-center gap-10 w-full">
-                <div class="flex items-center gap-3">
+                <div v-if="!account.subscriber" class="flex items-center gap-3">
                     <Action
                         :account="account"
                         :walletSel="walletSel"

@@ -125,7 +125,7 @@ const badgeVariant = (status) => {
             <div class="space-y-2">
                 <Label
                     for="signal_status"
-                    value="Trade Signal Status"
+                    value="Copy Trading Status"
                 />
                 <RadioGroup v-model="selected">
                     <RadioGroupLabel class="sr-only">Signal Status</RadioGroupLabel>

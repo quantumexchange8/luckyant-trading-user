@@ -220,5 +220,9 @@ const paginationActiveClass = [
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Date & Time</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ formatDateTime(transactionDetails.created_at) }}</span>
         </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Remarks</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.remarks ? transactionDetails.remarks : '-' }}</span>
+        </div>
     </Modal>
 </template>

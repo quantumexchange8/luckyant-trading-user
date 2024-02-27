@@ -9,9 +9,10 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'front_identity' => ['required', 'image'],
-            'back_identity' => ['required', 'image'],
+//            'front_identity' => ['required', 'image'],
+//            'back_identity' => ['required', 'image'],
             'verification_code' => ['required'],
+            'terms' => ['accepted']
         ];
     }
 
@@ -23,9 +24,10 @@ class RegisterRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'front_identity' => trans('public.Proof of Identity (FRONT)'),
-            'back_identity' => trans('public.Proof of Identity (BACK)'),
+//            'front_identity' => trans('public.Proof of Identity (FRONT)'),
+//            'back_identity' => trans('public.Proof of Identity (BACK)'),
             'verification_code' => trans('public.Verification Code'),
+            'terms' => trans('public.Terms & Conditions'),
         ];
     }
 }

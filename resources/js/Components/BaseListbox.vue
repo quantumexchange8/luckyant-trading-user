@@ -79,7 +79,7 @@ const labelWithValue = computed(() => labelWithImg.value.map(item => item.value)
                 ]"
         >
             <ListboxButton
-                class="relative w-full cursor-default rounded-lg border shadow-xs bg-white dark:bg-gray-700 py-2.5 pl-4 pr-10 text-left focus:ring-1 focus:outline-none"
+                class="relative w-full cursor-default rounded-lg border shadow-xs bg-white dark:bg-gray-700 py-2.5 pl-4 pr-10 text-left focus:ring-1 focus:outline-none disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900"
                 :class="[
                     {
                         'border-transparent focus-within:ring-error-300 focus:border-error-300 focus:shadow-error-light dark:border-transparent dark:focus:ring-error-600 dark:focus:border-error-600 dark:focus:shadow-error-dark': error,

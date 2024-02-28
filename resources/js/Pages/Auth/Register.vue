@@ -13,6 +13,7 @@ import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import CountryLists from '/public/data/countries.json'
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
+import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
     countries: Array,
@@ -53,7 +54,7 @@ const form = useForm({
     verification_via: 'email',
     verification_code: '',
     referral_code: props.referral_code ? props.referral_code : '',
-    terms: '',
+    terms: false,
 });
 
 const handleFrontIdentity = (event) => {
@@ -382,7 +383,7 @@ function startCountdown() {
                             separator=" - "
                             v-model="form.dob"
                             as-single
-                            :input-classes="`py-3 w-full rounded-lg text-sm placeholder:text-base dark:placeholder:text-gray-400 focus:ring-0 focus:ring-primary-500 focus:ring-offset-0 focus:ring-offset-white dark:bg-dark-eval-2 dark:text-white border ${form.errors.dob ? 'border-error-500 dark:border-error-500' : 'border-gray-300 dark:border-dark-eval-2'}`"
+                            :input-classes="`py-3 w-full rounded-lg text-sm placeholder:text-base dark:placeholder:text-gray-400 bg-white dark:bg-gray-700 dark:text-white border ${form.errors.dob ? 'border-error-500 dark:border-error-500' : 'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500'}`"
                         />
                         <InputError :message="form.errors.dob" />
                     </div>
@@ -401,53 +402,53 @@ function startCountdown() {
                 </div>
 
                 <!-- Page 3 -->
-                <div v-show="formStep === 3" class="space-y-4">
-                    <div class="grid w-full gap-6 md:grid-cols-2">
-                        <div class="space-y-1.5">
-                            <Label
-                                for="front_identity"
-                            >
-                                {{ $t('public.Proof of Identity (FRONT)') }}
-                            </Label>
-                            <input
-                                type="file"
-                                id="front_identity"
-                                accept="image/*"
-                                @change="handleFrontIdentity"
-                                :class="[
-                                    'block border dark:bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
-                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
-                                    {
-                                        'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.front_identity,
-                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.front_identity,
-                                    }
-                                ]"
-                            />
-                            <InputError :message="form.errors.front_identity"/>
-                        </div>
+                <div v-show="formStep === 3" class="flex sm:flex-row flex-col gap-4">
+<!--                    <div class="grid w-full gap-6 md:grid-cols-2">-->
+<!--                        <div class="space-y-1.5">-->
+<!--                            <Label-->
+<!--                                for="front_identity"-->
+<!--                            >-->
+<!--                                {{ $t('public.Proof of Identity (FRONT)') }}-->
+<!--                            </Label>-->
+<!--                            <input-->
+<!--                                type="file"-->
+<!--                                id="front_identity"-->
+<!--                                accept="image/*"-->
+<!--                                @change="handleFrontIdentity"-->
+<!--                                :class="[-->
+<!--                                    'block border dark:bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',-->
+<!--                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',-->
+<!--                                    {-->
+<!--                                        'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.front_identity,-->
+<!--                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.front_identity,-->
+<!--                                    }-->
+<!--                                ]"-->
+<!--                            />-->
+<!--                            <InputError :message="form.errors.front_identity"/>-->
+<!--                        </div>-->
 
-                        <div class="space-y-1.5">
-                            <Label
-                                for="back_identity"
-                                class="text-white">{{ $t('public.Proof of Identity (BACK)') }}</Label>
-                            <input
-                                type="file"
-                                id="back_identity"
-                                accept="image/*"
-                                @change="handleBackIdentity"
-                                :class="[
-                                    'block border dark:bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',
-                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
-                                    {
-                                        'border-gray-300 dark:border-dark-eval-2 focus-within:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.back_identity,
-                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.back_identity,
-                                    }
-                                ]"
-                            />
-                            <InputError :message="form.errors.back_identity"/>
-                        </div>
-                    </div>
-                    <div class="space-y-1.5">
+<!--                        <div class="space-y-1.5">-->
+<!--                            <Label-->
+<!--                                for="back_identity"-->
+<!--                                class="text-white">{{ $t('public.Proof of Identity (BACK)') }}</Label>-->
+<!--                            <input-->
+<!--                                type="file"-->
+<!--                                id="back_identity"-->
+<!--                                accept="image/*"-->
+<!--                                @change="handleBackIdentity"-->
+<!--                                :class="[-->
+<!--                                    'block border dark:bg-dark-eval-2 w-full rounded-lg text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:border-transparent file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600',-->
+<!--                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',-->
+<!--                                    {-->
+<!--                                        'border-gray-300 dark:border-dark-eval-2 focus-within:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.back_identity,-->
+<!--                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.back_identity,-->
+<!--                                    }-->
+<!--                                ]"-->
+<!--                            />-->
+<!--                            <InputError :message="form.errors.back_identity"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="space-y-1.5 w-full">
                         <Label
                             for="verification_code"
                             :value="$t('public.Verification Code')"
@@ -478,7 +479,7 @@ function startCountdown() {
                         <InputError :message="form.errors.verification_code"/>
                     </div>
 
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5 w-full">
                         <Label
                             for="referral_code"
                             :value="$t('public.Referral Code')"
@@ -493,6 +494,14 @@ function startCountdown() {
                         />
                         <InputError :message="form.errors.referral_code" />
                     </div>
+                </div>
+
+                <div v-if="formStep === 3" class="flex flex-col gap-1">
+                    <label class="flex items-center">
+                        <Checkbox name="remember" v-model:checked="form.terms" />
+                        <span class="ml-2 text-sm text-gray-600">I have read and agreed to the Terms of use.</span>
+                    </label>
+                    <InputError :message="form.errors.terms" />
                 </div>
 
                 <div class="flex items-center justify-center gap-8 mt-4">

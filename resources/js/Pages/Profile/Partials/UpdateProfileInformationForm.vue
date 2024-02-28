@@ -8,6 +8,9 @@ import { Link, useForm, usePage } from '@inertiajs/vue3'
 import CountryLists from "../../../../../public/data/countries.json";
 import {ref} from "vue";
 import {XIcon} from '@heroicons/vue/outline'
+import Badge from "@/Components/Badge.vue";
+import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
+import AvatarInput from "@/Pages/Profile/Partials/AvatarInput.vue";
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
@@ -15,6 +18,7 @@ const props = defineProps({
     frontIdentityImg: String,
     backIdentityImg: String,
     profileImg: String,
+    nationalities: Array,
 })
 
 const user = usePage().props.auth.user
@@ -25,12 +29,17 @@ const form = useForm({
     email: user.email,
     dial_code: user.dial_code,
     phone: user.phone,
+    gender: user.gender,
+    address: user.address_1,
+    nationality: user.nationality,
+    identification_number: user.identification_number,
     proof_front: null,
     proof_back: null,
     profile_photo: null,
 })
 
 const submit = () => {
+    form.gender = selected.value.value
     form.post(route('profile.update'))
 }
 
@@ -82,30 +91,27 @@ const removeProofBack = () => {
     selectedProofBackFile.value = null;
 };
 
-const selectedProfilePhotoFile = ref(null);
-const selectedProfilePhotoFileName = ref(null);
-const handleProfilePhoto = (event) => {
-    const profilePhotoInput = event.target;
-    const file = profilePhotoInput.files[0];
+const statusVariant = (userKyc) => {
+    if (userKyc === 'Pending') return 'warning';
+    if (userKyc === 'Verified') return 'success';
+    if (userKyc === 'Unverified') return 'danger';
+}
 
-    if (file) {
-        // Display the selected image
-        const reader = new FileReader();
-        reader.onload = () => {
-            selectedProfilePhotoFile.value = reader.result;
-        };
-        reader.readAsDataURL(file);
-        selectedProfilePhotoFileName.value = file.name;
-        form.profile_photo = event.target.files[0];
-    } else {
-        selectedProfilePhotoFile.value = null;
-    }
-};
+const genders = [
+    {
+        name: 'Male',
+        value: 'male',
+    },
+    {
+        name: 'Female',
+        value: 'female',
+    },
+]
 
-const removeProfilePhoto = () => {
-    selectedProfilePhotoFile.value = null;
-};
-
+const getUserGender = (user_gender) => {
+    return genders.find(gender => gender.value === user_gender);
+}
+const selected = ref(getUserGender(user.gender));
 
 </script>
 
@@ -121,18 +127,41 @@ const removeProfilePhoto = () => {
             </p>
         </header>
 
-        <form>
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="mt-6 space-y-6">
+        <div class="flex flex-col sm:flex-row gap-5">
+            <div class="flex flex-col gap-4 items-center justify-center w-full sm:w-1/3">
+                <AvatarInput class="h-24 w-24 rounded-full" v-model="form.profile_photo" :default-src="profileImg ? profileImg : 'https://img.freepik.com/free-icon/user_318-159711.jpg'" />
+                <div class="flex flex-col items-center">
+                    <div class="font-semibold text-gray-800 dark:text-white">
+                        {{ user.name }}
+                    </div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ user.email }}
+                    </div>
+                </div>
+                <div class="flex gap-2 w-full items-center justify-center">
+                    <Badge
+                        variant="primary"
+                        width="auto"
+                    >
+                        <span class="text-sm">{{ user.rank.name }}</span>
+                    </Badge>
+                    <Badge
+                        :variant="statusVariant(user.kyc_approval)"
+                    >
+                        <span class="text-sm">{{ user.kyc_approval }}</span>
+                    </Badge>
+                </div>
+            </div>
+            <form class="w-full sm:w-2/3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
-                        <Label for="name" value="Name" />
+                        <Label for="name" :value="$t('public.Name')" />
 
                         <Input
                             id="name"
                             type="text"
                             class="block w-full"
                             v-model="form.name"
-                            required
                             autofocus
                             autocomplete="name"
                             :disabled="kycApproval === 'Verified'"
@@ -142,42 +171,18 @@ const removeProfilePhoto = () => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <Label for="email" value="Email" />
+                        <Label for="email" :value="$t('public.Email')" />
 
                         <Input
                             id="email"
                             type="email"
                             class="block w-full"
                             v-model="form.email"
-                            required
                             autocomplete="email"
                             disabled
                         />
 
                         <InputError class="mt-2" :message="form.errors.email" />
-                    </div>
-
-                    <div
-                        v-if="props.mustVerifyEmail && user.email_verified_at === null"
-                    >
-                        <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                            Your email address is unverified.
-                            <Link
-                                :href="route('verification.send')"
-                                method="post"
-                                as="button"
-                                class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                            >
-                                Click here to re-send the verification email.
-                            </Link>
-                        </p>
-
-                        <div
-                            v-show="props.status === 'verification-link-sent'"
-                            class="mt-2 font-medium text-sm text-green-600 dark:text-green-400"
-                        >
-                            A new verification link has been sent to your email address.
-                        </div>
                     </div>
 
                     <div class="space-y-1.5">
@@ -187,7 +192,7 @@ const removeProfilePhoto = () => {
                         />
                         <div class="flex gap-3">
                             <BaseListbox
-                                class="w-[180px]"
+                                class="w-[240px]"
                                 :options="CountryLists"
                                 v-model="form.dial_code"
                                 with-img
@@ -206,11 +211,88 @@ const removeProfilePhoto = () => {
                         <InputError :message="form.errors.phone"/>
                     </div>
 
-                    <div class="flex items-center gap-4">
-                        <Button @click="submit" :disabled="form.processing">Save</Button>
+                    <div class="space-y-1.5">
+                        <Label
+                            for="gender"
+                            :value="$t('public.Gender')"
+                        />
+                        <RadioGroup v-model="selected">
+                            <RadioGroupLabel class="sr-only">Signal Status</RadioGroupLabel>
+                            <div class="flex gap-3 items-center self-stretch w-full">
+                                <RadioGroupOption
+                                    as="template"
+                                    v-for="(gender, index) in genders"
+                                    :key="index"
+                                    :value="gender"
+                                    v-slot="{ active, checked }"
+                                >
+                                    <div
+                                        :class="[
+                                    active
+                                      ? 'ring-0 ring-white ring-offset-0'
+                                      : '',
+                                    checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
+                                ]"
+                                        class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none w-full"
+                                    >
+                                        <div class="flex items-center w-full">
+                                            <div class="text-sm flex flex-col gap-3 w-full">
+                                                <RadioGroupLabel
+                                                    as="div"
+                                                    class="font-medium"
+                                                >
+                                                    <div class="flex justify-center items-center gap-3">
+                                                        {{ gender.name }}
+                                                    </div>
+                                                </RadioGroupLabel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </RadioGroupOption>
+                            </div>
+                            <InputError :message="form.errors.gender" class="mt-2" />
+                        </RadioGroup>
                     </div>
-                </div>
-                <div class="mt-6 space-y-6">
+
+                    <div class="space-y-1.5 sm:col-span-2">
+                        <Label for="address" :value="$t('public.Address')" />
+                        <Input
+                            id="address"
+                            type="text"
+                            class="block w-full"
+                            v-model="form.address"
+                            autocomplete="address"
+                        />
+                        <InputError class="mt-2" :message="form.errors.address" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <Label
+                            for="nationality"
+                            :value="$t('public.Nationality')"
+                        />
+                        <BaseListbox
+                            v-model="form.nationality"
+                            :options="nationalities"
+                            placeholder="Nationality"
+                            class="w-full"
+                            :error="!!form.errors.nationality"
+                            :disabled="kycApproval === 'Verified'"
+                        />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <Label for="identification_number" :value="$t('public.Identification No')" />
+                        <Input
+                            id="identification_number"
+                            type="text"
+                            class="block w-full"
+                            v-model="form.identification_number"
+                            :disabled="kycApproval === 'Verified'"
+                        />
+                        <InputError class="mt-2" :message="form.errors.identification_number" />
+                    </div>
+
                     <div class="space-y-1.5">
                         <Label class="text-sm dark:text-white" for="proof_front" value="Proof of Identity (Front)" />
                         <div class="flex gap-3">
@@ -306,54 +388,12 @@ const removeProfilePhoto = () => {
                             </Button>
                         </div>
                     </div>
-
-                    <div class="space-y-1.5">
-                        <Label class="text-sm dark:text-white" for="profile_photo" value="Profile Photo" />
-                        <div class="flex gap-3">
-                            <input
-                                ref="profilePhotoInput"
-                                id="profile_photo"
-                                type="file"
-                                class="hidden"
-                                accept="image/*"
-                                @change="handleProfilePhoto"
-                            />
-                            <Button
-                                type="button"
-                                variant="primary"
-                                @click="$refs.profilePhotoInput.click()"
-                            >
-                                Browse
-                            </Button>
-                            <InputError :message="form.errors.profile_photo" class="mt-2" />
-                        </div>
-                        <div
-                            v-if="selectedProfilePhotoFile"
-                            class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
-                            :class="[
-                                    {
-                                          'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.profile_photo,
-                                          'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.profile_photo,
-                                    }
-                                ]"
-                        >
-                            <div class="inline-flex items-center gap-3">
-                                <img :src="selectedProfilePhotoFile" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
-                                <div class="text-gray-light-900 dark:text-gray-dark-50">
-                                    {{ selectedProfilePhotoFileName }}
-                                </div>
-                            </div>
-                            <Button
-                                type="button"
-                                variant="transparent"
-                                @click="removeProfilePhoto"
-                            >
-                                <XIcon class="text-gray-700 w-5 h-5" />
-                            </Button>
-                        </div>
-                    </div>
                 </div>
-            </section>
-        </form>
+            </form>
+        </div>
+        <div class="flex justify-end mt-8">
+            <Button @click="submit" :disabled="form.processing">Save</Button>
+        </div>
+
     </section>
 </template>

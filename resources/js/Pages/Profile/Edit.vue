@@ -10,6 +10,7 @@ defineProps({
     frontIdentityImg: String,
     backIdentityImg: String,
     profileImg: String,
+    nationalities: Array,
 })
 </script>
 
@@ -33,6 +34,7 @@ defineProps({
                     :frontIdentityImg="frontIdentityImg"
                     :backIdentityImg="backIdentityImg"
                     :profileImg="profileImg"
+                    :nationalities="nationalities"
                 />
             </div>
 

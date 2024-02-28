@@ -33,7 +33,7 @@ onMounted(() => {
         :class="[
             'py-2.5 rounded-lg text-base font-normal shadow-xs border placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-50',
             'bg-white dark:bg-gray-700',
-            'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
+            'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900 disabled:text-gray-400 dark:disabled:text-gray-500',
             {
                 'px-4': !withIcon,
                 'pl-11 pr-4': withIcon,

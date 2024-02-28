@@ -26,16 +26,15 @@ class ProfileController extends Controller
         // Map the data to match the structure of the countries array
         $formattedCountries = $settingCountries->map(function ($country) {
             return [
-                'value' => $country->id,
-                'label' => $country->name,
-                'phone_code' => $country->phone_code,
+                'value' => $country->nationality,
+                'label' => $country->nationality,
             ];
         });
 
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
-            'countries' => $formattedCountries,
+            'nationalities' => $formattedCountries,
             'frontIdentityImg' => Auth::user()->getFirstMediaUrl('front_identity'),
             'backIdentityImg' => Auth::user()->getFirstMediaUrl('back_identity'),
             'profileImg' => Auth::user()->getFirstMediaUrl('profile_photo'),
@@ -82,6 +81,10 @@ class ProfileController extends Controller
             'name' => $request->name,
             'dial_code' => $dial_code,
             'phone' => $phone_number,
+            'nationality' => $request->nationality,
+            'gender' => $request->gender,
+            'address_1' => $request->address,
+            'identification_number' => $request->identification_number,
         ]);
 
         if ($request->hasFile('proof_front')) {

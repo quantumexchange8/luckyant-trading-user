@@ -138,38 +138,38 @@ watch(
             </div>
 
             <div class="grid grid-cols-2 gap-4 w-full">
-                <div class="space-y-2">
-                    <div class="text-xs flex justify-center">
-                        Current Month P/L
-                    </div>
-                    <div class="flex justify-center rounded-md border border-success-500">
-                        <span class="text-success-500 font-semibold">+200%</span>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <div class="text-xs flex justify-center">
-                        Growth Since 2024
-                    </div>
-                    <div class="flex justify-center rounded-md border border-error-500">
-                        <span class="text-error-500 font-semibold">-10%</span>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <div class="text-xs flex justify-center">
-                        Month Average
-                    </div>
-                    <div class="flex justify-center rounded-md border border-success-500">
-                        <span class="text-success-500 font-semibold">+200%</span>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <div class="text-xs flex justify-center">
-                        Draw down
-                    </div>
-                    <div class="flex justify-center rounded-md border border-gray-300">
-                        <span class="text-gray-400 font-semibold">-2%</span>
-                    </div>
-                </div>
+<!--                <div class="space-y-2">-->
+<!--                    <div class="text-xs flex justify-center">-->
+<!--                        Current Month P/L-->
+<!--                    </div>-->
+<!--                    <div class="flex justify-center rounded-md border border-success-500">-->
+<!--                        <span class="text-success-500 font-semibold">+200%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="space-y-2">-->
+<!--                    <div class="text-xs flex justify-center">-->
+<!--                        Growth Since 2024-->
+<!--                    </div>-->
+<!--                    <div class="flex justify-center rounded-md border border-error-500">-->
+<!--                        <span class="text-error-500 font-semibold">-10%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="space-y-2">-->
+<!--                    <div class="text-xs flex justify-center">-->
+<!--                        Month Average-->
+<!--                    </div>-->
+<!--                    <div class="flex justify-center rounded-md border border-success-500">-->
+<!--                        <span class="text-success-500 font-semibold">+200%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="space-y-2">-->
+<!--                    <div class="text-xs flex justify-center">-->
+<!--                        Draw down-->
+<!--                    </div>-->
+<!--                    <div class="flex justify-center rounded-md border border-gray-300">-->
+<!--                        <span class="text-gray-400 font-semibold">-2%</span>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
                        Subscribers

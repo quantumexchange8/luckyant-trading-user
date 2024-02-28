@@ -16,6 +16,7 @@ class Subscription extends Model
         'transaction_id',
         'master_id',
         'type',
+        'subscription_number',
         'subscription_period',
         'subscription_fee',
         'next_pay_date',

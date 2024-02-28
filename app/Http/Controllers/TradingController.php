@@ -6,7 +6,10 @@ use App\Models\Master;
 use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\TradingAccount;
+use App\Models\Transaction;
+use App\Services\dealAction;
 use App\Services\MetaFiveService;
+use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -93,24 +96,50 @@ class TradingController extends Controller
 
         if ($masterAccount->subscription_fee > 0) {
             // Create transaction
+            $deal = [];
+            try {
+                $deal = (new MetaFiveService())->createDeal($meta_login, $masterAccount->subscription_fee, 'Subscription Fee for COPYTRADE', dealAction::WITHDRAW);
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
+
+            $transaction_number = RunningNumberService::getID('transaction');
+
+            $transaction = Transaction::create([
+                'category' => 'trading_account',
+                'user_id' => $user->id,
+                'from_meta_login' => $meta_login,
+                'ticket' => $deal['deal_Id'],
+                'transaction_number' => $transaction_number,
+                'transaction_type' => 'SubscriptionFee',
+                'amount' => $masterAccount->subscription_fee,
+                'transaction_charges' => 0,
+                'transaction_amount' => $masterAccount->subscription_fee,
+                'status' => 'Success',
+                'comment' => $deal['conduct_Deal']['comment'],
+            ]);
 
             // Create diff subscriptions data
             $subscriptionData = [
                 'user_id' => $user->id,
                 'trading_account_id' => $tradingAccount->id,
                 'meta_login' => $meta_login,
-                'transaction_id' => $user->id,
-                'next_pay_date' => $user->id, // calculate
+                'transaction_id' => $transaction->id,
+                'next_pay_date' => $transaction->created_at->addMonth()
             ];
         } else {
             $subscriptionData = [
                 'user_id' => $user->id,
                 'trading_account_id' => $tradingAccount->id,
-                'meta_login' => $meta_login,
+                'meta_login' => $meta_login
             ];
         }
 
-        $subscription = Subscription::create($subscriptionData);
+        $subscription_number = RunningNumberService::getID('subscription');
+
+        $subscription = Subscription::create($subscriptionData + [
+            'subscription_number' => $subscription_number,
+        ]);
 
         Subscriber::create([
             'user_id' => $user->id,
@@ -123,7 +152,6 @@ class TradingController extends Controller
 
         $metaService->disableTrade($meta_login);
 
-        //block user deposit and withdraw to account
         return redirect()->back()
             ->with('title', 'Success subscribe')
             ->with('success', 'Successfully subscribe to LOGIN: ' . $masterAccount->meta_login);

@@ -67,6 +67,11 @@ watch(
         getResults(1, searchValue, typeValue, dateValue);
     }, 300)
 );
+
+const clearFilter = () => {
+    search.value = '';
+    type.value = '';
+}
 </script>
 
 <template>

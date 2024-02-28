@@ -138,6 +138,7 @@ class TradingController extends Controller
         $subscription_number = RunningNumberService::getID('subscription');
 
         $subscription = Subscription::create($subscriptionData + [
+            'master_id' => $masterAccount->id,
             'subscription_number' => $subscription_number,
         ]);
 
@@ -155,5 +156,47 @@ class TradingController extends Controller
         return redirect()->back()
             ->with('title', 'Success subscribe')
             ->with('success', 'Successfully subscribe to LOGIN: ' . $masterAccount->meta_login);
+    }
+
+    public function getSubscriptions(Request $request)
+    {
+        $masterAccounts = Subscriber::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'subscription'])
+            ->where('user_id', Auth::id())
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = '%' . $request->input('search') . '%';
+                $query->whereHas('master', function ($q) use ($search) {
+                    $q->where('meta_login', 'like', $search);
+                })
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('name', 'like', $search)
+                            ->orWhere('email', 'like', $search);
+                    });
+            })
+            ->when($request->filled('type'), function ($query) use ($request) {
+                $type = $request->input('type');
+                switch ($type) {
+                    case 'max_equity':
+                        $query->orderByDesc('min_join_equity');
+                        break;
+                    case 'min_equity':
+                        $query->orderBy('min_join_equity');
+                        break;
+                    case 'max_sub':
+                        $query->withCount('subscribers')->orderByDesc('subscribers_count');
+                        break;
+                    case 'min_sub':
+                        $query->withCount('subscribers')->orderBy('subscribers_count');
+                        break;
+                    // Add more cases as needed for other 'type' values
+                }
+            })
+            ->latest()
+            ->paginate(10);
+
+        $masterAccounts->each(function ($subscriber) {
+            $subscriber->master->user->profile_photo = $subscriber->master->user->getFirstMediaUrl('profile_photo');
+        });
+
+        return response()->json($masterAccounts);
     }
 }

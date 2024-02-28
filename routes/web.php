@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('trading')->group(function () {
         Route::get('/master_listing', [TradingController::class, 'master_listing'])->name('trading.master_listing');
         Route::get('/getMasterAccounts', [TradingController::class, 'getMasterAccounts'])->name('trading.getMasterAccounts');
+        Route::get('/getSubscriptions', [TradingController::class, 'getSubscriptions'])->name('trading.getSubscriptions');
 
         Route::post('/subscribeMaster', [TradingController::class, 'subscribeMaster'])->name('trading.subscribeMaster');
     });

@@ -89,7 +89,7 @@ class MetaFiveService {
 
     public function disableTrade($meta_login)
     {
-        $disableTrade = Http::acceptJson()->get($this->baseURL . "/disable_trade/{$meta_login}")->json();
+        $disableTrade = Http::acceptJson()->patch($this->baseURL . "/disable_trade/{$meta_login}")->json();
         Log::debug($disableTrade);
 
         $userData = $this->getMetaUser($meta_login);

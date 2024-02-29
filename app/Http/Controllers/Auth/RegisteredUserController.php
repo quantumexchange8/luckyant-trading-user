@@ -100,19 +100,19 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $otp = VerifyOtp::where('email', $request->email)->first();
-
-        $expirationTime = Carbon::parse($otp->updated_at)->addMinutes(5);
-
-        if (Carbon::now()->greaterThan($expirationTime)) {
-            throw ValidationException::withMessages([
-                'verification_code' => 'The Verification Code expired.'
-            ]);
-        }
-
-        if($otp->otp != $request->verification_code){
-            throw ValidationException::withMessages(['verification_code' => 'Invalid Verification Code']);
-        }
+//        $otp = VerifyOtp::where('email', $request->email)->first();
+//
+//        $expirationTime = Carbon::parse($otp->updated_at)->addMinutes(5);
+//
+//        if (Carbon::now()->greaterThan($expirationTime)) {
+//            throw ValidationException::withMessages([
+//                'verification_code' => 'The Verification Code expired.'
+//            ]);
+//        }
+//
+//        if($otp->otp != $request->verification_code){
+//            throw ValidationException::withMessages(['verification_code' => 'Invalid Verification Code']);
+//        }
 
         $phone = $request->dial_code . $request->phone;
         $userData = [
@@ -164,7 +164,9 @@ class RegisteredUserController extends Controller
         ]);
         event(new Registered($user));
 
-        return redirect()->route('login')->with('toast', 'Successfully Created Account');
+        return redirect()->route('login')
+            ->with('title', 'Success registration')
+            ->with('success', 'Successfully Created Account');
     }
 
     public function sendOtp(Request $request)

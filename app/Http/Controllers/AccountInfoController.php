@@ -43,7 +43,16 @@ class AccountInfoController extends Controller
         $group = AccountType::with('metaGroup')->where('id', 1)->get()->value('metaGroup.meta_group_name');
         $leverage = $request->leverage;
 
-        $metaAccount = (new MetaFiveService())->createUser($user, $group, $leverage);
+        $metaService = new MetaFiveService();
+        $connection = $metaService->getConnectionStatus();
+
+        if ($connection != 0) {
+            return redirect()->back()
+                ->with('title', 'Server under maintenance')
+                ->with('warning', 'Please try again later');
+        }
+
+        $metaAccount = $metaService->createUser($user, $group, $leverage);
 
         return back()->with('toast', trans('public.Successfully Created Trading Account'));
     }

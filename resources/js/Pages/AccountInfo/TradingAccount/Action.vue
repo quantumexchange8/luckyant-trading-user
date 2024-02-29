@@ -23,10 +23,10 @@ const modalComponent = ref('');
 const openAccountActionModal = (action) => {
     accountActionModal.value = true;
     if (action === 'deposit') {
-        modalComponent.value = 'Deposit';
+        modalComponent.value = 'Balance In';
     }
     else if (action === 'withdrawal') {
-        modalComponent.value = 'Withdrawal';
+        modalComponent.value = 'Balance Out';
     }
     else if (action === 'internal_transfer') {
         modalComponent.value = 'Internal Transfer';
@@ -51,7 +51,7 @@ const closeModal = () => {
         @click="openAccountActionModal('deposit')"
     >
         <CreditCardAddIcon />
-        Deposit
+        Balance In
     </Button>
     <Dropdown align="right" width="48">
         <template #trigger>
@@ -73,7 +73,7 @@ const closeModal = () => {
                 <div class="flex items-center gap-2">
                     <CreditCardDownIcon class="w-5 h-5" />
                     <div>
-                        Withdrawal
+                        Balance Out
                     </div>
                 </div>
             </DropdownLink>
@@ -114,7 +114,7 @@ const closeModal = () => {
     </Dropdown>
 
     <Modal :show="accountActionModal" :title="modalComponent" @close="closeModal">
-        <template v-if="modalComponent === 'Deposit'">
+        <template v-if="modalComponent === 'Balance In'">
             <DepositBalance
                 :account="account"
                 :walletSel="walletSel"
@@ -122,7 +122,7 @@ const closeModal = () => {
             />
         </template>
 
-        <template v-if="modalComponent === 'Withdrawal'">
+        <template v-if="modalComponent === 'Balance Out'">
             <WithdrawBalance
                 :account="account"
                 :walletSel="walletSel"

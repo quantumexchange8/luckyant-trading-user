@@ -9,6 +9,7 @@ import ValidationErrors from '@/Components/ValidationErrors.vue'
 import Button from '@/Components/Button.vue'
 import {ref} from "vue";
 import RegisterCaption from "@/Components/Auth/RegisterCaption.vue";
+import ReferralPic from "@/Components/Auth/ReferralPic.vue";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import CountryLists from '/public/data/countries.json'
@@ -51,8 +52,8 @@ const form = useForm({
     country: 132,
     front_identity: null,
     back_identity: null,
-    verification_via: 'email',
-    verification_code: '',
+    // verification_via: 'email',
+    // verification_code: '',
     referral_code: props.referral_code ? props.referral_code : '',
     terms: false,
 });
@@ -123,43 +124,43 @@ const passwordValidation = () => {
     return { valid, messages };
 };
 
-function generateOTP() {
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    return otp.toString();
-}
-
-function startCountdown() {
-    isButtonDisabled.value = true;
-    buttonText.value = '180';
-
-    let count = 180;
-    const countdownInterval = setInterval(() => {
-        count--;
-        buttonText.value = count.toString();
-
-        if (count === 0) {
-            clearInterval(countdownInterval);
-            isButtonDisabled.value = false;
-            buttonText.value = 'Button';
-        }
-
-        // Generate OTP
-        if (count === 179) {
-            const otp = generateOTP();
-            const email = form.email;
-            let url = 'register/send-otp';
-            // if (props.referral_code) {
-            //     url = `register/${props.referral_code}/send-otp`;
-            // }
-            axios
-                .post(url, { otp, email })
-                .catch(error => {
-                    // Handle the error if needed
-                    console.log(error);
-                });
-        }
-    }, 1000);
-}
+// function generateOTP() {
+//     const otp = Math.floor(100000 + Math.random() * 900000);
+//     return otp.toString();
+// }
+//
+// function startCountdown() {
+//     isButtonDisabled.value = true;
+//     buttonText.value = '180';
+//
+//     let count = 180;
+//     const countdownInterval = setInterval(() => {
+//         count--;
+//         buttonText.value = count.toString();
+//
+//         if (count === 0) {
+//             clearInterval(countdownInterval);
+//             isButtonDisabled.value = false;
+//             buttonText.value = 'Button';
+//         }
+//
+//         // Generate OTP
+//         if (count === 179) {
+//             const otp = generateOTP();
+//             const email = form.email;
+//             let url = 'register/send-otp';
+//             // if (props.referral_code) {
+//             //     url = `register/${props.referral_code}/send-otp`;
+//             // }
+//             axios
+//                 .post(url, { otp, email })
+//                 .catch(error => {
+//                     // Handle the error if needed
+//                     console.log(error);
+//                 });
+//         }
+//     }, 1000);
+// }
 </script>
 
 <template>
@@ -402,7 +403,7 @@ function startCountdown() {
                 </div>
 
                 <!-- Page 3 -->
-                <div v-show="formStep === 3" class="flex sm:flex-row flex-col gap-4">
+                <div v-show="formStep === 3" class="flex flex-col">
 <!--                    <div class="grid w-full gap-6 md:grid-cols-2">-->
 <!--                        <div class="space-y-1.5">-->
 <!--                            <Label-->
@@ -448,35 +449,38 @@ function startCountdown() {
 <!--                            <InputError :message="form.errors.back_identity"/>-->
 <!--                        </div>-->
 <!--                    </div>-->
-                    <div class="space-y-1.5 w-full">
-                        <Label
-                            for="verification_code"
-                            :value="$t('public.Verification Code')"
-                        />
-                        <div class="flex rounded-md shadow-sm">
-                            <button
-                                type="button"
-                                class="py-2 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-l-lg border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
-                                :disabled="isButtonDisabled"
-                                @click="startCountdown"
-                            >
-                                {{ buttonText }}
-                            </button>
-                            <input
-                                type="number"
-                                id="verification_code"
-                                :class="[
-                                    'py-2.5 w-full rounded-r-lg text-base font-normal shadow-xs border placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-50',
-                                    'bg-white dark:bg-dark-eval-2',
-                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
-                                    {
-                                        'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.verification_code,
-                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.verification_code,
-                                    }
-                                ]"
-                                v-model="form.verification_code">
-                        </div>
-                        <InputError :message="form.errors.verification_code"/>
+<!--                    <div class="space-y-1.5 w-full">-->
+<!--                        <Label-->
+<!--                            for="verification_code"-->
+<!--                            :value="$t('public.Verification Code')"-->
+<!--                        />-->
+<!--                        <div class="flex rounded-md shadow-sm">-->
+<!--                            <button-->
+<!--                                type="button"-->
+<!--                                class="py-2 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-l-lg border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"-->
+<!--                                :disabled="isButtonDisabled"-->
+<!--                                @click="startCountdown"-->
+<!--                            >-->
+<!--                                {{ buttonText }}-->
+<!--                            </button>-->
+<!--                            <input-->
+<!--                                type="number"-->
+<!--                                id="verification_code"-->
+<!--                                :class="[-->
+<!--                                    'py-2.5 w-full rounded-r-lg text-base font-normal shadow-xs border placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-50',-->
+<!--                                    'bg-white dark:bg-dark-eval-2',-->
+<!--                                    'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',-->
+<!--                                    {-->
+<!--                                        'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500' :!form.errors.verification_code,-->
+<!--                                        'border-error-300 focus:ring-error-300 hover:border-error-300 focus:border-error-300 dark:border-error-600 dark:focus:ring-error-600 dark:hover:border-error-600 dark:focus:border-error-600' :form.errors.verification_code,-->
+<!--                                    }-->
+<!--                                ]"-->
+<!--                                v-model="form.verification_code">-->
+<!--                        </div>-->
+<!--                        <InputError :message="form.errors.verification_code"/>-->
+<!--                    </div>-->
+                    <div class="flex justify-center">
+                        <ReferralPic class="w-full" />
                     </div>
 
                     <div class="space-y-1.5 w-full">

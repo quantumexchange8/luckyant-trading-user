@@ -11,7 +11,7 @@ class RegisterRequest extends FormRequest
         return [
 //            'front_identity' => ['required', 'image'],
 //            'back_identity' => ['required', 'image'],
-            'verification_code' => ['required'],
+//            'verification_code' => ['required'],
             'terms' => ['accepted']
         ];
     }
@@ -26,7 +26,7 @@ class RegisterRequest extends FormRequest
         return [
 //            'front_identity' => trans('public.Proof of Identity (FRONT)'),
 //            'back_identity' => trans('public.Proof of Identity (BACK)'),
-            'verification_code' => trans('public.Verification Code'),
+//            'verification_code' => trans('public.Verification Code'),
             'terms' => trans('public.Terms & Conditions'),
         ];
     }

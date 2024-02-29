@@ -121,7 +121,7 @@ watchEffect(() => {
                 </div>
             </div>
             <div class="flex items-center gap-10 w-full">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 w-full">
                     <Action
                         :account="account.trading_account"
                         :walletSel="walletSel"

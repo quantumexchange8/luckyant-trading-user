@@ -67,7 +67,6 @@ const leverages = [
                 </h2>
 
                 <Button
-                    v-if="user.kyc_approval === 'Verified'"
                     type="button"
                     variant="primary"
                     size="sm"
@@ -152,7 +151,7 @@ const leverages = [
                 {{ $t('public.No Account') }}
             </div>
             <div class="text-lg text-gray-400 dark:text-gray-600">
-                We will notify you once your KYC verification is completed, enabling you to add an account.
+                Create an account today to kickstart your trading experience.
             </div>
         </div>
 

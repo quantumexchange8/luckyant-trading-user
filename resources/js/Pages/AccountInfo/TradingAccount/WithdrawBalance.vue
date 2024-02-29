@@ -5,6 +5,7 @@ import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
 import Button from "@/Components/Button.vue";
 import {transactionFormat} from "@/Composables/index.js";
+import {BanIcon} from "@heroicons/vue/outline"
 
 const props = defineProps({
     account: Object,
@@ -34,7 +35,7 @@ const submit = () => {
 </script>
 
 <template>
-    <form class="space-y-2">
+    <form v-if="$page.props.auth.user.kyc_approval === 'Verified'" class="space-y-2">
         <div class="flex flex-col sm:flex-row gap-4">
             <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.Amount')  + ' ($)'" />
             <div class="flex flex-col w-full">
@@ -59,4 +60,32 @@ const submit = () => {
             <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
         </div>
     </form>
+
+    <div
+        v-else
+        class="flex flex-col gap-4 items-center justify-center w-full"
+    >
+        <div class="bg-error-400 rounded-full w-20 h-20">
+            <BanIcon class="text-white" />
+        </div>
+        <div class="flex flex-col items-center">
+            <div class="text-xl text-gray-800 font-semibold">
+                Account verification required
+            </div>
+            <div class="text-gray-500">
+                No balance withdrawal permitted until verified.
+            </div>
+        </div>
+        <div class="flex justify-center w-full">
+            <Button
+                external
+                type="button"
+                variant="primary"
+                class="items-center gap-2 max-w-xs"
+                :href="route('profile.edit')"
+            >
+                Verify Account
+            </Button>
+        </div>
+    </div>
 </template>

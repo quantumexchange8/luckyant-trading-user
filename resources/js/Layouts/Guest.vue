@@ -1,15 +1,40 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
+import {Head, Link, usePage} from '@inertiajs/vue3'
 import { MoonIcon, SunIcon } from '@heroicons/vue/outline'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import PageFooter from '@/Components/PageFooter.vue'
 import Button from '@/Components/Button.vue'
 import { toggleDarkMode, isDark } from '@/Composables'
 import ToastList from "@/Components/ToastList.vue";
+import Alert from "@/Components/Alert.vue";
+import {ref} from "vue";
+import {Inertia} from "@inertiajs/inertia";
 
 defineProps({
     title: String
 })
+const page = usePage();
+const showAlert = ref(false);
+const intent = ref(null);
+const alertTitle = ref('');
+const alertMessage = ref(null);
+const alertButton = ref(null);
+
+let removeFinishEventListener = Inertia.on("finish", () => {
+    if (page.props.success) {
+        showAlert.value = true
+        intent.value = 'success'
+        alertTitle.value = page.props.title
+        alertMessage.value = page.props.success
+        alertButton.value = page.props.alertButton
+    } else if (page.props.warning) {
+        showAlert.value = true
+        intent.value = 'warning'
+        alertTitle.value = page.props.title
+        alertMessage.value = page.props.warning
+        alertButton.value = page.props.alertButton
+    }
+});
 </script>
 
 <template>
@@ -30,6 +55,15 @@ defineProps({
                         LuckyAnt Trading
                     </div>
                 </div>
+                <Alert
+                    :show="showAlert"
+                    :on-dismiss="() => showAlert = false"
+                    :title="alertTitle"
+                    :intent="intent"
+                    :alertButton="alertButton"
+                >
+                    {{ alertMessage }}
+                </Alert>
                 <ToastList />
                 <slot />
             </div>

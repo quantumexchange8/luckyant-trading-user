@@ -12,6 +12,7 @@ import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 const props = defineProps({
     wallets: Object,
     walletSel: Array,
+    paymentAccountSel: Array,
     withdrawalFee: Object,
     PaymentDetails: Object,
 });
@@ -51,6 +52,7 @@ const props = defineProps({
                             <Withdrawal
                                 :walletSel="walletSel"
                                 :withdrawalFee="withdrawalFee"
+                                :paymentAccountSel="paymentAccountSel"
                             />
                         </div>
                         <!-- <div class="flex items-center justify-center w-full">

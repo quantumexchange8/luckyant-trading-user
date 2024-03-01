@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentAccountRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Country;
+use App\Models\PaymentAccount;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -21,23 +23,38 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        $settingCountries = Country::all();
-
-        // Map the data to match the structure of the countries array
-        $formattedCountries = $settingCountries->map(function ($country) {
+        $formattedNationalities = Country::all()->map(function ($country) {
             return [
                 'value' => $country->nationality,
                 'label' => $country->nationality,
             ];
         });
 
+        $formattedCountries = Country::all()->map(function ($country) {
+            return [
+                'value' => $country->name,
+                'label' => $country->name,
+                'currency' => $country->currency,
+            ];
+        });
+
+        $formattedCurrencies = Country::whereIn('id', [132, 233])->get()->map(function ($country) {
+            return [
+                'value' => $country->currency,
+                'label' => $country->currency_name . ' (' . $country->currency . ')',
+            ];
+        });
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
-            'nationalities' => $formattedCountries,
+            'nationalities' => $formattedNationalities,
             'frontIdentityImg' => Auth::user()->getFirstMediaUrl('front_identity'),
             'backIdentityImg' => Auth::user()->getFirstMediaUrl('back_identity'),
             'profileImg' => Auth::user()->getFirstMediaUrl('profile_photo'),
+            'paymentAccounts' => PaymentAccount::where('user_id', Auth::id())->latest()->get(),
+            'countries' => $formattedCountries,
+            'currencies' => $formattedCurrencies,
         ]);
     }
 
@@ -122,6 +139,35 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function addPaymentAccount(PaymentAccountRequest $request)
+    {
+        $user = Auth::user();
+        $payment_method = $request->payment_method;
+
+        $data = [
+            'user_id' => $user->id,
+            'payment_account_name' => $request->payment_account_name,
+            'payment_platform' => $request->payment_method,
+            'payment_platform_name' => $request->payment_platform_name,
+            'account_no' => $request->account_no,
+        ];
+
+        if ($payment_method == 'Bank') {
+            $data['bank_branch_address'] = $request->bank_branch_address;
+            $data['bank_swift_code'] = $request->bank_swift_code;
+            $data['bank_code'] = $request->bank_code;
+            $data['bank_code_type'] = $request->bank_code_type;
+            $data['country'] = $request->country;
+            $data['currency'] = $request->currency;
+        } elseif ($payment_method == 'Crypto') {
+            $data['currency'] = 'USDT';
+        }
+
+        PaymentAccount::create($data);
+
+        return back()->with('title', trans('public.Successfully Created Account'))->with('success', trans('public.Your payment account has been created successfully!'));
     }
 
     // protected function processImage(Request $request): void

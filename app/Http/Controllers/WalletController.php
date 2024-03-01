@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DepositRequest;
 use App\Http\Requests\WithdrawalRequest;
+use App\Models\CurrencyConversionRate;
+use App\Models\PaymentAccount;
 use App\Models\Setting;
 use App\Models\SettingPaymentMethod;
 use App\Services\RunningNumberService;
@@ -29,6 +31,7 @@ class WalletController extends Controller
         return Inertia::render('Transaction/Wallet/Wallet', [
             'wallets' => $wallets,
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
+            'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
             'PaymentDetails' => SettingPaymentMethod::where('status', 'Active')->latest()->first(),
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
         ]);
@@ -331,6 +334,9 @@ class WalletController extends Controller
     {
         $user = \Auth::user();
         $amount = number_format(floatval($request->amount), 2, '.', '');
+        $paymentAccount = PaymentAccount::find($request->wallet_address);
+        $conversion_rate = CurrencyConversionRate::where('base_currency', $paymentAccount->currency)->first();
+
         $wallet = Wallet::find($request->wallet_id);
         if ($wallet->balance < $amount) {
             throw ValidationException::withMessages(['amount' => trans('Insufficient balance')]);
@@ -340,6 +346,7 @@ class WalletController extends Controller
         $wallet->balance -= $amount;
         $wallet->save();
 
+        $transaction_amount = $final_amount * $conversion_rate->withdrawal_rate;
         $transaction_number = RunningNumberService::getID('transaction');
 
         Transaction::create([
@@ -347,11 +354,14 @@ class WalletController extends Controller
             'user_id' => $user->id,
             'from_wallet_id' => $wallet->id,
             'transaction_number' => $transaction_number,
-            'to_wallet_address' => $request->wallet_address,
+            'payment_account_id' => $paymentAccount->id,
+            'payment_method' => $paymentAccount->payment_platform,
+            'to_wallet_address' => $paymentAccount->account_no,
             'transaction_type' => 'Withdrawal',
             'amount' => $amount,
+            'conversion_rate' => $conversion_rate->withdrawal_rate,
             'transaction_charges' => $withdrawal_fee,
-            'transaction_amount' => $final_amount,
+            'transaction_amount' => $transaction_amount,
             'new_wallet_amount' => $wallet->balance,
             'status' => 'Processing',
         ]);

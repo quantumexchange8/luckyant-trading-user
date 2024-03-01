@@ -35,16 +35,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/getBalanceChart', [DashboardController::class, 'getBalanceChart']);
     Route::post('/update_session', [DashboardController::class, 'update_session']);
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    /**
+     * ==============================
+     *           Profile
+     * ==============================
+     */
+    Route::prefix('profile')->group(function () {
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+
+        Route::post('/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/addPaymentAccount', [ProfileController::class, 'addPaymentAccount'])->name('profile.addPaymentAccount');
+        Route::delete('/delete_profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
+
 
     /**
      * ==============================
      *         Account Info
      * ==============================
      */
-
     Route::prefix('account_info')->group(function () {
         Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
         Route::get('/refreshTradingAccountsData', [AccountInfoController::class, 'refreshTradingAccountsData'])->name('account_info.refreshTradingAccountsData');

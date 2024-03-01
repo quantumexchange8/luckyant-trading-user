@@ -29,6 +29,7 @@ class DashboardController extends Controller
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
             'cashWallet' => Wallet::where('user_id', \Auth::id())->where('type', 'cash_wallet')->first(),
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
+            'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
             'PaymentDetails' => $PaymentDetails,
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
         ]);

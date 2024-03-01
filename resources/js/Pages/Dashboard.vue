@@ -20,6 +20,7 @@ const props = defineProps({
     firstTimeLogin: Number,
     cashWallet: Object,
     walletSel: Array,
+    paymentAccountSel: Array,
     PaymentDetails: Object,
     withdrawalFee: Object,
 })
@@ -143,6 +144,7 @@ onMounted(() => {
                                         <Withdrawal
                                             :walletSel="walletSel"
                                             :withdrawalFee="withdrawalFee"
+                                            :paymentAccountSel="paymentAccountSel"
                                         />
                                     </div>
                                     <div class="flex items-center justify-center w-full">

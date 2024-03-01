@@ -13,15 +13,20 @@ import {transactionFormat} from "@/Composables/index.js";
 
 const props = defineProps({
     walletSel: Array,
+    paymentAccountSel: Array,
     withdrawalFee: Object,
 })
 const withdrawalModal = ref(false);
 const { formatAmount } = transactionFormat();
 const withdrawalAmount = ref();
 const selectedWallet = ref(props.walletSel[0].value);
+const selectedPaymentAccount = ref(null);
 
 const openWithdrawalModal = () => {
     withdrawalModal.value = true;
+    if (props.paymentAccountSel.length > 0) {
+        selectedPaymentAccount.value = props.paymentAccountSel[0].value;
+    }
 }
 
 const form = useForm({
@@ -33,6 +38,7 @@ const form = useForm({
 
 const submit = () => {
     form.wallet_id = selectedWallet.value;
+    form.wallet_address = selectedPaymentAccount.value;
     form.amount = withdrawalAmount.value;
     form.transaction_charges = transactionFee.value;
 
@@ -97,7 +103,10 @@ const handleButtonClick = () => {
     </Button>
 
     <Modal :show="withdrawalModal" title="Withdrawal" @close="closeModal">
-        <form class="space-y-2 mt-5">
+        <form
+            v-if="paymentAccountSel.length > 0"
+            class="space-y-2 mt-5"
+        >
             <div class="flex flex-col sm:flex-row gap-4">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" value="Wallet" />
                 <div class="flex flex-col w-full">
@@ -143,18 +152,13 @@ const handleButtonClick = () => {
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4 pt-2 pb-5">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet_address" value="Wallet Address" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet_address" value="To Account" />
                 <div class="flex flex-col w-full">
-                    <Input
-                        id="wallet_address"
-                        type="text"
-                        min="0"
-                        placeholder="Wallet Address"
-                        class="block w-full"
-                        v-model="form.wallet_address"
-                        :invalid="form.errors.wallet_address"
+                    <BaseListbox
+                        :options="paymentAccountSel"
+                        v-model="selectedPaymentAccount"
+                        :error="!!form.errors.wallet_address"
                     />
-                    <InputError :message="form.errors.wallet_address" class="mt-2" />
                 </div>
             </div>
 
@@ -180,5 +184,25 @@ const handleButtonClick = () => {
                 <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
             </div>
         </form>
+
+        <div
+            v-else
+            class="flex flex-col items-center justify-center"
+        >
+            <div class="text-2xl text-gray-400 dark:text-gray-200">
+                No Payment Account
+            </div>
+            <div class="text-lg text-gray-400 dark:text-gray-600">
+                Click the button below to add new payment account.
+            </div>
+            <Button
+                type="button"
+                class="mt-5"
+                external
+                :href="route('profile.edit', {status:'paymentAccount'})"
+            >
+                Add Payment Account
+            </Button>
+        </div>
     </Modal>
 </template>

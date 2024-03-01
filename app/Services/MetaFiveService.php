@@ -16,7 +16,7 @@ class MetaFiveService {
     private string $login = "10012";
     private string $password = "Test1234.";
 //    private string $baseURL = "http://202.190.52.106:5000/api";
-    private string $baseURL = "http://219.93.129.12:5000/api/";
+    private string $baseURL = "http://219.93.129.12:5000/api";
 
     private string $token = "6f0d6f97-3042-4389-9655-9bc321f3fc1e";
     private string $environmentName = "live";

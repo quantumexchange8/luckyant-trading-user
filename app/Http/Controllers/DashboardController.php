@@ -24,14 +24,17 @@ class DashboardController extends Controller
             $announcement->image = $announcement->getFirstMediaUrl('announcement');
         }
 
+        $registerUrl = route('register');
+        $registerLink = $registerUrl . '/' . \Auth::user()->referral_code;
+
         return Inertia::render('Dashboard', [
             'announcement' => $announcement,
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
-            'cashWallet' => Wallet::where('user_id', \Auth::id())->where('type', 'cash_wallet')->first(),
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
-            'PaymentDetails' => $PaymentDetails,
+            'paymentDetails' => $PaymentDetails,
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
+            'registerLink' => $registerLink,
         ]);
     }
 
@@ -91,5 +94,12 @@ class DashboardController extends Controller
         \Session::put('first_time_logged_in', 0);
 
         return back();
+    }
+
+    public function getWallets()
+    {
+        $user = \Auth::user();
+
+        return response()->json($user->wallets);
     }
 }

@@ -13,7 +13,7 @@ import BaseListbox from "@/Components/BaseListbox.vue";
 
 const props = defineProps({
     walletSel: Array,
-    PaymentDetails: Object,
+    paymentDetails: Object,
 })
 
 const depositModal = ref(false);
@@ -33,8 +33,8 @@ const form = useForm({
     wallet_id: props.walletSel[0].value,
     amount: '',
     receipt: null,
-    payment_method: props.PaymentDetails.payment_method,
-    account_no: props.PaymentDetails.account_no,
+    payment_method: props.paymentDetails.payment_method,
+    account_no: props.paymentDetails.account_no,
 })
 
 const onReceiptChanges = (event) => {
@@ -93,31 +93,31 @@ const submit = () => {
                         Payment Method
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ PaymentDetails.payment_method }}
+                        {{ paymentDetails.payment_method }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ PaymentDetails.payment_method === 'Bank' ? 'Bank Name' : 'Tether' }}
+                        {{ paymentDetails.payment_method === 'Bank' ? 'Bank Name' : 'Tether' }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ PaymentDetails.payment_platform_name }}
+                        {{ paymentDetails.payment_platform_name }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ PaymentDetails.payment_method === 'Bank' ? 'Account No' : 'Wallet Address' }}
+                        {{ paymentDetails.payment_method === 'Bank' ? 'Account No' : 'Wallet Address' }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ PaymentDetails.account_no }}
+                        {{ paymentDetails.account_no }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ PaymentDetails.payment_method === 'Bank' ? 'Account Name' : 'Wallet Name' }}
+                        {{ paymentDetails.payment_method === 'Bank' ? 'Account Name' : 'Wallet Name' }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ PaymentDetails.payment_account_name }}
+                        {{ paymentDetails.payment_account_name }}
                     </div>
                 </div>
             </div>

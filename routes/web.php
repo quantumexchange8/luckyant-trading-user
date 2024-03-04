@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/getBalanceChart', [DashboardController::class, 'getBalanceChart']);
+    Route::get('/getWallets', [DashboardController::class, 'getWallets']);
     Route::post('/update_session', [DashboardController::class, 'update_session']);
 
     /**

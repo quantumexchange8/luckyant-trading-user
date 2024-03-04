@@ -4,33 +4,32 @@ import {DuplicateIcon, CashIcon, RefreshIcon} from "@heroicons/vue/outline"
 import {usePage} from "@inertiajs/vue3";
 import toast from "@/Composables/toast.js";
 import {trans} from "laravel-vue-i18n";
-import Button from "@/Components/Button.vue";
-import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
-import Deposit from "@/Pages/Dashboard/Deposit.vue";
-import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
-import InternalTransfer from "@/Pages/Dashboard/InternalTransfer.vue";
 import Modal from "@/Components/Modal.vue";
 import {onMounted, ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
+import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
+import QrcodeVue from 'qrcode.vue';
+import Tooltip from "@/Components/Tooltip.vue";
+import Button from "@/Components/Button.vue";
+import Input from "@/Components/Input.vue";
 
 const user = usePage().props.auth.user
 const { formatDateTime, formatAmount } = transactionFormat();
 const props = defineProps({
     announcement: Object,
     firstTimeLogin: Number,
-    cashWallet: Object,
     walletSel: Array,
     paymentAccountSel: Array,
-    PaymentDetails: Object,
+    paymentDetails: Object,
     withdrawalFee: Object,
+    registerLink: String,
 })
 
 const copyReferralCode = () => {
     const referralCode = document.querySelector('#userReferralCode').textContent;
-    const url = window.location.origin + '/register/' + referralCode;
 
     const tempInput = document.createElement('input');
-    tempInput.value = url;
+    tempInput.value = referralCode;
     document.body.appendChild(tempInput);
     tempInput.select();
     document.execCommand('copy');
@@ -68,6 +67,37 @@ onMounted(() => {
         announcementModal.value = true;
     }
 });
+
+const tooltipContent = ref('copy');
+
+const copyReferralLink = () => {
+    const referralCodeCopy = document.querySelector('#userReferralLink').value;
+    const tempInput = document.createElement('input');
+    tempInput.value = referralCodeCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        if (successful) {
+            tooltipContent.value = 'copied';
+            setTimeout(() => {
+                tooltipContent.value = 'copy'; // Reset tooltip content to 'Copy' after 2 seconds
+            }, 1000);
+        } else {
+            tooltipContent.value = 'try_again_later';
+        }
+
+    } catch (err) {
+        alert('copy_error');
+    }
+    document.body.removeChild(tempInput);
+    window.getSelection().removeAllRanges()
+
+    toast.add({
+        message: trans('public.Copy Successful!'),
+    });
+}
 </script>
 
 <template>
@@ -81,14 +111,70 @@ onMounted(() => {
         </template>
 
         <div class="space-y-5">
-            <div class="grid grid-cols-3 w-full gap-4">
-                <div class="p-6 md:col-span-2 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                    <div class="flex flex-col sm:flex-row items-center self-stretch gap-4">
-                        <div class="flex flex-col gap-4 w-full">
-                            <div class="flex flex-col">
-                                <div class="text-lg text-gray-600 dark:text-gray-400">
-                                    Welcome back!
+            <div class="flex sm:flex-row flex-col items-stretch gap-5">
+                <div class="flex flex-col gap-5 w-full">
+                    <div class="p-6 w-full flex flex-col justify-center overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+                        <div class="flex flex-col sm:flex-row items-center self-stretch gap-4">
+                            <div class="flex flex-col gap-4 w-full">
+                                <div class="flex flex-col">
+                                    <div class="text-lg text-gray-600 dark:text-white">
+                                        Welcome back!
+                                    </div>
                                 </div>
+                                <div class="flex gap-3 items-center">
+                                    <img
+                                        class="object-cover w-14 h-14 rounded-full"
+                                        :src="user.profile_photo ? user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                        alt="userPic"
+                                    />
+                                    <div>
+                                        <div class="text-lg font-semibold text-gray-600 dark:text-gray-400">
+                                            {{ user.name }}
+                                        </div>
+                                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ user.email }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 w-full flex flex-col justify-center overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+                        <div class="flex flex-col">
+                            <div class="text-lg text-gray-600 dark:text-white">
+                                Referral Program
+                            </div>
+                        </div>
+                        <div class="flex sm:flex-row flex-col gap-5 w-full">
+                            <div class="flex flex-col justify-center gap-5 w-full sm:w-3/5">
+                                <div class="text-gray-400 dark:text-gray-500">
+                                    Share your referral link through QR link
+                                </div>
+                                <div class="flex w-full rounded-md shadow-sm">
+                                    <button
+                                        type="button"
+                                        class="py-2 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-l-lg border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm uppercase"
+                                        @click="copyReferralLink"
+                                    >
+                                        Copy
+                                    </button>
+                                    <input
+                                        ref="referralLinkInput"
+                                        type="text"
+                                        id="userReferralLink"
+                                        readonly
+                                        :class="[
+                                            'py-2.5 w-full rounded-r-lg text-base font-normal shadow-xs border placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-500 dark:text-gray-400',
+                                            'bg-white dark:bg-dark-eval-2',
+                                            'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
+                                            'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500',
+                                        ]"
+                                        :value="registerLink">
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-4 items-center justify-center w-full sm:w-2/5">
+                                <qrcode-vue :class="['border-4 border-white']" :value="registerLink" :size="150"></qrcode-vue>
+
                                 <div class="flex items-center gap-3">
                                     <span class="text-lg">Referral Code:</span> <span class="text-xl" id="userReferralCode">{{ user.referral_code }}</span>
                                     <div>
@@ -99,66 +185,16 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex gap-3 items-center">
-                                <img
-                                    class="object-cover w-14 h-14 rounded-full"
-                                    :src="user.profile_photo ? user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
-                                    alt="userPic"
-                                />
-                                <div>
-                                    <div class="text-lg font-semibold text-gray-600 dark:text-gray-400">
-                                        {{ user.name }}
-                                    </div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-400">
-                                        {{ user.email }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full flex justify-end">
-                            <div
-                                class="w-96 h-52 duration-500 group overflow-hidden relative rounded-xl bg-gray-800 shadow-lg text-neutral-50 p-4 flex flex-col justify-evenly"
-                            >
-                                <div
-                                    class="absolute blur duration-500 group-hover:blur-none w-72 h-72 rounded-full group-hover:translate-x-12 group-hover:translate-y-12 bg-sky-800 right-1 -bottom-24"
-                                ></div>
-                                <div
-                                    class="absolute blur duration-500 group-hover:blur-none w-12 h-12 rounded-full group-hover:translate-x-12 group-hover:translate-y-2 bg-blue-800 right-12 bottom-12"
-                                ></div>
-                                <div
-                                    class="absolute blur duration-500 group-hover:blur-none w-36 h-36 rounded-full group-hover:translate-x-12 group-hover:-translate-y-12 bg-blue-900 right-1 -top-12"
-                                ></div>
-                                <div
-                                    class="absolute blur duration-500 group-hover:blur-none w-24 h-24 bg-sky-900 rounded-full group-hover:-translate-x-12"
-                                ></div>
-                                <div class="z-10 flex flex-col justify-evenly w-full h-full">
-                                    <div class="text-lg font-bold">{{ cashWallet.name }} ({{cashWallet.wallet_address }})</div>
-                                    <div class="text-2xl">
-                                        $ {{ formatAmount(cashWallet.balance) }}
-                                    </div>
-                                    <div class="flex justify-between w-full gap-2">
-                                        <Deposit
-                                            :walletSel="walletSel"
-                                            :PaymentDetails="PaymentDetails"
-                                        />
-                                        <Withdrawal
-                                            :walletSel="walletSel"
-                                            :withdrawalFee="withdrawalFee"
-                                            :paymentAccountSel="paymentAccountSel"
-                                        />
-                                    </div>
-                                    <div class="flex items-center justify-center w-full">
-                                        <InternalTransfer />
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
-
                 </div>
-                <div class="p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                    Total Balance
-                    <BalanceChart />
+                <div class="flex flex-col gap-5 w-full sm:w-[600px]">
+                    <DashboardWallets
+                        :walletSel="walletSel"
+                        :paymentAccountSel="paymentAccountSel"
+                        :paymentDetails="paymentDetails"
+                        :withdrawalFee="withdrawalFee"
+                    />
                 </div>
             </div>
 

@@ -162,6 +162,13 @@ class RegisteredUserController extends Controller
             'type' => 'cash_wallet',
             'wallet_address' => RunningNumberService::getID('cash_wallet'),
         ]);
+
+        Wallet::create([
+            'user_id' => $user->id,
+            'name' => 'Rebate Wallet',
+            'type' => 'rebate_wallet',
+            'wallet_address' => RunningNumberService::getID('rebate_wallet'),
+        ]);
         event(new Registered($user));
 
         return redirect()->route('login')

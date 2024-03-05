@@ -8,13 +8,14 @@ import Deposit from "@/Pages/Dashboard/Deposit.vue";
 import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
 import {RefreshIcon} from "@/Components/Icons/outline.jsx";
 import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
+import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
 
 const props = defineProps({
     wallets: Object,
     walletSel: Array,
     paymentAccountSel: Array,
     withdrawalFee: Object,
-    PaymentDetails: Object,
+    paymentDetails: Object,
 });
 </script>
 
@@ -29,47 +30,12 @@ const props = defineProps({
         </template>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 w-full gap-5">
-            <div v-for="wallet in wallets" class="flex flex-col sm:flex-row p-5 items-center self-stretch gap-[60px] bg-white rounded-xl shadow-md dark:bg-gray-700 sm:col-span-1 col-span-2">
-                <div class="flex flex-col justify-center items-start gap-8 self-stretch w-full">
-                    <div class="flex flex-col items-start gap-3">
-                        <div class="text-base font-semibold dark:text-gray-400">
-                            Total Balance
-                        </div>
-                        <div class="text-[28px] font-semibold dark:text-white">
-                            <!-- $&nbsp;{{ props.totalBalance }} -->
-                        </div>
-                    </div>
-                    <div class="z-10 flex flex-col gap-1 justify-evenly w-full h-full">
-                        <div class="text-lg font-bold">{{ wallet.name }} ({{wallet.wallet_address }})</div>
-                        <div class="text-2xl">
-                            $ {{ wallet.balance }}
-                        </div>
-                        <div class="flex justify-between w-full gap-2">
-                            <Deposit
-                                :walletSel="walletSel"
-                                :PaymentDetails="PaymentDetails"
-                            />
-                            <Withdrawal
-                                :walletSel="walletSel"
-                                :withdrawalFee="withdrawalFee"
-                                :paymentAccountSel="paymentAccountSel"
-                            />
-                        </div>
-                        <!-- <div class="flex items-center justify-center w-full">
-                            <Button
-                                type="button"
-                                variant="primary"
-                                size="sm"
-                                class="flex justify-center w-full gap-1"
-                                    v-slot="{ iconSizeClasses }"
-                            >
-                                <RefreshIcon aria-hidden="true" :class="iconSizeClasses" />
-                                Internal Transfer
-                            </Button>
-                        </div> -->
-                    </div>
-                </div>
-            </div>
+            <DashboardWallets
+                :walletSel="walletSel"
+                :paymentAccountSel="paymentAccountSel"
+                :paymentDetails="paymentDetails"
+                :withdrawalFee="withdrawalFee"
+            />
 
             <div class="flex flex-col justify-between p-6 sm:col-span-1 col-span-2 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                 <div class="text-base font-semibold dark:text-gray-400">

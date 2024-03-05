@@ -19,7 +19,7 @@ const closeModal = () => {
     <Button
         type="button"
         size="sm"
-        variant="primary"
+        variant="purple"
         class="w-full flex justify-center gap-1"
         v-slot="{ iconSizeClasses }"
         @click="openApplyRebateModal"

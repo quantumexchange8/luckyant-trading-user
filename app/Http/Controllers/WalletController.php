@@ -32,7 +32,7 @@ class WalletController extends Controller
             'wallets' => $wallets,
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
-            'PaymentDetails' => SettingPaymentMethod::where('status', 'Active')->latest()->first(),
+            'paymentDetails' => SettingPaymentMethod::where('status', 'Active')->latest()->first(),
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
         ]);
     }

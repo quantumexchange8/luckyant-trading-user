@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use App\Models\Setting;
 use App\Models\TradingAccount;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\SettingPaymentMethod;
@@ -101,5 +102,17 @@ class DashboardController extends Controller
         $user = \Auth::user();
 
         return response()->json($user->wallets);
+    }
+
+    public function getTotalTransactions()
+    {
+        $user = \Auth::user();
+
+        $transaction = Transaction::where('user_id', $user->id)->where('category', 'wallet');
+
+        return response()->json([
+            'totalDeposit' => $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount'),
+            'totalWithdrawal' => $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount'),
+        ]);
     }
 }

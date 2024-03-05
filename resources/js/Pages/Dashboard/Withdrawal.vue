@@ -1,6 +1,6 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CurrencyDollarIcon} from "@heroicons/vue/outline";
+import {BanIcon, CurrencyDollarIcon} from "@heroicons/vue/outline";
 import {ref, computed, watch} from "vue";
 import Modal from "@/Components/Modal.vue";
 import Label from "@/Components/Label.vue";
@@ -103,8 +103,36 @@ const handleButtonClick = () => {
     </Button>
 
     <Modal :show="withdrawalModal" title="Withdrawal" @close="closeModal">
+
+        <div
+            v-if="$page.props.auth.user.kyc_approval !== 'Verified'"
+            class="flex flex-col gap-4 items-center justify-center w-full"
+        >
+            <div class="bg-error-400 rounded-full w-20 h-20">
+                <BanIcon class="text-white" />
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="text-xl text-gray-800 font-semibold">
+                    Account verification required
+                </div>
+                <div class="text-gray-500">
+                    No balance withdrawal permitted until verified.
+                </div>
+            </div>
+            <div class="flex justify-center w-full">
+                <Button
+                    external
+                    type="button"
+                    variant="primary"
+                    class="items-center gap-2 max-w-xs"
+                    :href="route('profile.edit')"
+                >
+                    Verify Account
+                </Button>
+            </div>
+        </div>
         <form
-            v-if="paymentAccountSel.length > 0"
+            v-else-if="paymentAccountSel.length > 0"
             class="space-y-2 mt-5"
         >
             <div class="flex flex-col sm:flex-row gap-4">
@@ -117,7 +145,6 @@ const handleButtonClick = () => {
                     />
                 </div>
             </div>
-
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.Amount')  + ' ($)'" />
                 <div class="relative flex flex-col w-full">

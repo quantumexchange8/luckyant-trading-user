@@ -224,7 +224,7 @@ getTotalTransactions();
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <div class="text-gray-400 dark:text-gray-500">
+                                    <div class="text-gray-400 text-sm dark:text-gray-500">
                                         Share your referral link through QR link
                                     </div>
                                     <div class="flex w-full rounded-md">
@@ -243,7 +243,7 @@ getTotalTransactions();
                                             id="userReferralLink"
                                             readonly
                                             :class="[
-                                            'py-2.5 w-full rounded-r-lg text-base font-normal shadow-xs border placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-500 dark:text-gray-400',
+                                            'py-2.5 w-full rounded-r-lg text-sm font-normal shadow-xs border placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-500 dark:text-gray-400',
                                             'bg-white dark:bg-dark-eval-2',
                                             'disabled:bg-gray-50 disabled:cursor-not-allowed dark:disabled:bg-gray-900',
                                             'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:focus:border-primary-500',

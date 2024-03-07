@@ -1,8 +1,8 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CurrencyDollarIcon, MailIcon} from "@heroicons/vue/outline";
+import {CurrencyDollarIcon, DuplicateIcon} from "@heroicons/vue/outline";
 import { XIcon } from "@/Components/Icons/outline.jsx"
-import {ref, computed} from "vue";
+import {ref, computed, watch} from "vue";
 import Modal from "@/Components/Modal.vue";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import Input from "@/Components/Input.vue";
@@ -10,18 +10,18 @@ import Label from "@/Components/Label.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
-import PaymentDetails from "@/Pages/Dashboard/PaymentDetails.vue"
 import {
   RadioGroup,
   RadioGroupLabel,
   RadioGroupDescription,
   RadioGroupOption,
 } from '@headlessui/vue'
-
+import QrcodeVue from 'qrcode.vue';
+import Tooltip from "@/Components/Tooltip.vue";
+import {transactionFormat} from "@/Composables/index.js";
 
 const props = defineProps({
     walletSel: Array,
-    paymentDetails: Array,
     countries: Array,
 })
 
@@ -34,8 +34,15 @@ const paymentType = [
   }
 ]
 
+const { formatAmount } = transactionFormat();
 const depositModal = ref(false);
 const selected = ref(null);
+const selectBank = ref(null);
+const paymentDetails = ref([]);
+const tooltipContent = ref('Copy');
+const initialAmount = ref(null);
+const conversionRate = ref(0);
+const calculatedAmount = ref(0);
 
 const openDepositModal = () => {
     depositModal.value = true;
@@ -43,6 +50,8 @@ const openDepositModal = () => {
 
 const closeModal = () => {
     depositModal.value = false;
+    selected.value = null
+    selectBank.value = null
 }
 
 const selectedReceipt = ref(null);
@@ -50,10 +59,13 @@ const selectedReceiptName = ref(null);
 
 const form = useForm({
     wallet_id: props.walletSel[0].value,
+    setting_payment_id: '',
     amount: '',
+    transaction_amount: 0,
     receipt: null,
-    payment_method: props.paymentDetails.payment_method,
-    account_no: props.paymentDetails.account_no,
+    payment_method: '',
+    account_no: '',
+    conversion_rate: 0,
 })
 
 const onReceiptChanges = (event) => {
@@ -77,13 +89,95 @@ const removeReceipt = () => {
     selectedReceipt.value = null;
 }
 
+const getPaymentDetails = async (settingPaymentValue) => {
+    try {
+        let url = '/getPaymentDetails';
+
+        if (selected.value.name === 'Bank') {
+            url += `?id=${settingPaymentValue}`;
+        } else {
+            url += `?type=${settingPaymentValue}`;
+        }
+
+        const response = await axios.get(url);
+        paymentDetails.value = response.data.settingPayment;
+        conversionRate.value = response.data.conversionRate;
+
+        if (selected.value.name === 'Bank') {
+            calculatedAmount.value = initialAmount.value * conversionRate.value.deposit_rate;
+        }
+
+    } catch (error) {
+        console.error('Error getting payment data:', error);
+    }
+}
+
+watch(selected, (newType) => {
+    if (newType) {
+        if (newType.name === 'Crypto') {
+            getPaymentDetails(newType.name)
+            selectBank.value = null
+        } else {
+            paymentDetails.value = []
+        }
+    }
+})
+
+watch(selectBank, (newValue) => {
+    if (newValue) {
+        if (selected.value.name === 'Bank') {
+            getPaymentDetails(newValue);
+        }
+    }
+})
+
+watch(initialAmount, (newAmount) => {
+    if (newAmount && selected.value.name === 'Bank') {
+        calculatedAmount.value = newAmount * conversionRate.value.deposit_rate;
+    }
+})
+
 const submit = () => {
+    form.setting_payment_id = paymentDetails.value.id;
+    form.payment_method = paymentDetails.value.payment_method;
+    form.account_no = paymentDetails.value.account_no;
+    form.amount = initialAmount.value;
+    if (selected.value.name === 'Bank') {
+        form.transaction_amount = calculatedAmount.value
+        form.conversion_rate = conversionRate.value.deposit_rate
+    }
+
     form.post(route('transaction.deposit'), {
         onSuccess: () => {
             closeModal();
             form.reset();
         },
     });
+}
+
+const copyWalletAddress = () => {
+    let walletAddressCopy = document.querySelector('#cryptoWalletAddress');
+    walletAddressCopy.setAttribute('type', 'text');
+    walletAddressCopy.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        if (successful) {
+            tooltipContent.value = 'Copied!';
+            setTimeout(() => {
+                tooltipContent.value = 'Copy'; // Reset tooltip content to 'Copy' after 2 seconds
+            }, 1000);
+        } else {
+            tooltipContent.value = 'Try Again Later!';
+        }
+
+    } catch (err) {
+        alert('Oops, unable to copy');
+    }
+
+    /* unselect the range */
+    walletAddressCopy.setAttribute('type', 'hidden')
+    window.getSelection().removeAllRanges()
 }
 </script>
 
@@ -110,7 +204,7 @@ const submit = () => {
                 </div>
             </div>
 
-            <div class="w-full px-4 py-4">
+            <div v-if="!selected" class="w-full py-4">
                 <div class="mx-auto w-full">
                     <RadioGroup v-model="selected">
                         <RadioGroupLabel class="sr-only">Payment Method</RadioGroupLabel>
@@ -150,31 +244,40 @@ const submit = () => {
                     </RadioGroup>
                 </div>
             </div>
-        </div>
 
-        <!-- show country -->
-        <div v-if="selected != null ? selected.name == 'Bank' : '' " class="p-5 mt-3 bg-gray-100 dark:bg-gray-600 rounded-lg">
-            <PaymentDetails :countries="countries"/>
-        </div>
-        <!-- <div v-if="selected.name == 'Crypto'" class="p-5 mt-3 bg-gray-100 dark:bg-gray-600 rounded-lg">
-            
-        </div> -->
+            <!-- show banks -->
+            <div v-if="selected != null ? selected.name === 'Bank' : '' " class="space-y-2">
+                <Label
+                    for="bank"
+                    value="Select a bank"
+                />
+                <BaseListbox
+                    class="w-full"
+                    :options="countries"
+                    v-model="selectBank"
+                    with-img
+                    :error="!!form.errors.payment_method"
+                />
+            </div>
 
-        <!-- show payment information -->
-        <div v-if="selected !== null" class="p-5 mt-3 bg-gray-100 dark:bg-gray-600 rounded-lg">
-            <div class="flex flex-col items-start gap-3 self-stretch">
-                <div class="text-lg font-semibold">
+            <div v-if="selected != null ? selected.name === 'Crypto' : '' " class="space-y-2">
+                <div class="flex flex-col items-center justify-center gap-2">
+                    <qrcode-vue :class="['border-4 border-white']" :value="paymentDetails.account_no" :size="200"></qrcode-vue>
+                    <input type="hidden" id="cryptoWalletAddress" :value="paymentDetails.account_no">
+                    <div class="flex items-center gap-1">
+                        <span class="text-base text-gray-800 dark:text-white font-semibold">{{ paymentDetails.account_no }}</span>
+                        <Tooltip :content="tooltipContent" placement="top">
+                            <DuplicateIcon class="w-5 h-5 mt-1 text-gray-600 hover:cursor-pointer" @click="copyWalletAddress" />
+                        </Tooltip>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="selected" class="flex flex-col mt-5 items-start gap-3 self-stretch">
+                <div v-if="paymentDetails.payment_method" class="text-lg font-semibold">
                     Payment Information
                 </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Payment Method
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ paymentDetails.payment_method }}
-                    </div>
-                </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
+                <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                         {{ paymentDetails.payment_method === 'Bank' ? 'Bank Name' : 'Tether' }}
                     </div>
@@ -182,20 +285,38 @@ const submit = () => {
                         {{ paymentDetails.payment_platform_name }}
                     </div>
                 </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
+                <div v-if="paymentDetails.payment_method === 'Bank'" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ paymentDetails.payment_method === 'Bank' ? 'Account No' : 'Wallet Address' }}
+                        Account No
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ paymentDetails.account_no }}
                     </div>
                 </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
+                <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                         {{ paymentDetails.payment_method === 'Bank' ? 'Account Name' : 'Wallet Name' }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ paymentDetails.payment_account_name }}
+                    </div>
+                </div>
+                <div v-if="paymentDetails.payment_method === 'Bank'" class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        Country
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ paymentDetails.country.name }}
+                    </div>
+                </div>
+                <div v-if="paymentDetails.payment_method === 'Bank'" class="border-t border-gray-300 w-full py-3">
+                    <div class="flex items-center justify-between gap-2 self-stretch">
+                        <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                            Amount to transfer
+                        </div>
+                        <div class="text-base text-gray-800 dark:text-white font-semibold">
+                            {{ paymentDetails.currency }} {{ formatAmount(calculatedAmount) }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -222,7 +343,7 @@ const submit = () => {
                         min="0"
                         placeholder="$ 30.00"
                         class="block w-full"
-                        v-model="form.amount"
+                        v-model="initialAmount"
                         :invalid="form.errors.amount"
                     />
                     <InputError :message="form.errors.amount" class="mt-2" />

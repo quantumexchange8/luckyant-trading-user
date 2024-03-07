@@ -8,6 +8,7 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 import {CheckIcon, ChevronDownIcon} from '@heroicons/vue/solid'
+import BankImg from "/public/assets/bank.jpg"
 
 const props = defineProps({
     options: Array,
@@ -93,7 +94,7 @@ const labelWithValue = computed(() => labelWithImg.value.map(item => item.value)
                         <span class="block truncate">{{ labelWithValue }}</span>
                     </template>
                     <template v-else-if="shouldShowLabelWithImg && withImg && !isPhoneCode">
-                        <img v-for="item in labelWithImg" :key="item.label" :src="item.imgUrl" width="24" alt="img">
+                        <img v-for="item in labelWithImg" class="rounded-full" :key="item.label" :src="item.imgUrl ? item.imgUrl : BankImg" width="24" alt="img">
                         <span class="block truncate">{{ labelWithImgString }}</span>
                     </template>
                     <template v-else-if="!withImg && label">
@@ -141,7 +142,7 @@ const labelWithValue = computed(() => labelWithImg.value.map(item => item.value)
                                         'block truncate',
                                       ]"
                                  >
-                                     <span class="flex items-center gap-2"><img :key="option.label" :src="option.imgUrl" width="24" alt="img">{{ option.label }} <span v-if="isPhoneCode">({{ option.value }})</span></span></span>
+                                     <span class="flex items-center gap-2"><img class="rounded-full" :key="option.label" :src="option.imgUrl ? option.imgUrl : BankImg" width="24" alt="img">{{ option.label }} <span v-if="isPhoneCode">({{ option.value }})</span></span></span>
                             </template>
                             <template v-else>
                                  <span

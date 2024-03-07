@@ -22,6 +22,7 @@ class Transaction extends Model implements HasMedia
         'ticket',
         'transaction_number',
         'payment_account_id',
+        'setting_payment_method_id',
         'payment_method',
         'to_wallet_address',
         'txn_hash',

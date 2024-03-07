@@ -160,13 +160,15 @@ class WalletController extends Controller
             'category' => 'wallet',
             'user_id' => $user->id,
             'to_wallet_id' => $wallet->id,
+            'setting_payment_method_id' => $request->setting_payment_id,
             'payment_method' => $request->payment_method,
             'transaction_number' => $transaction_number,
             'to_wallet_address' => $request->account_no,
             'transaction_type' => 'Deposit',
             'amount' => $amount,
             'transaction_charges' => 0,
-            'transaction_amount' => $amount,
+            'conversion_rate' => $request->conversion_rate ?? 0,
+            'transaction_amount' => $request->transaction_amount > 0 ? $request->transaction_amount : $amount,
             'status' => 'Processing',
         ]);
 
@@ -198,7 +200,7 @@ class WalletController extends Controller
 //        return Inertia::location($redirectUrl);
     }
 
-    public function depositReturn(Request $request)
+    public function  depositReturn(Request $request)
     {
         $data = $request->all();
 
@@ -378,7 +380,7 @@ class WalletController extends Controller
             ->with(['country']);
 
         $results = $paymentDetails->latest()->get();
-        
+
         return response()->json($results);
     }
 }

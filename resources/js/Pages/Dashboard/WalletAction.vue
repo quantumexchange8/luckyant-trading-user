@@ -22,7 +22,6 @@ const props = defineProps({
         <div class="flex justify-between w-full gap-2">
             <Deposit
                 :walletSel="walletSel"
-                :paymentDetails="paymentDetails"
                 :countries="countries"
             />
             <Withdrawal

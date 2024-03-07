@@ -9,7 +9,7 @@ class SelectOptionService
 {
     public function getWalletSelection(): \Illuminate\Support\Collection
     {
-        $wallets = Wallet::where('user_id', \Auth::id());
+        $wallets = Wallet::where('user_id', \Auth::id())->where('type', 'cash_wallet');
 
         return $wallets->get()->map(function ($wallet) {
             return [

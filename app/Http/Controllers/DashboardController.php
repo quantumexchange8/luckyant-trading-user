@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\CurrencyConversionRate;
 use App\Models\Setting;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
@@ -12,6 +13,7 @@ use App\Models\SettingPaymentMethod;
 use App\Models\Country;
 use App\Services\SelectOptionService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -22,16 +24,16 @@ class DashboardController extends Controller
 
         $PaymentBankDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();
         $PaymentCryptoDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();
-        
+
         if (!empty($announcement)) {
             $announcement->image = $announcement->getFirstMediaUrl('announcement');
         }
 
-        $formattedCurrencies = Country::whereIn('id', [132, 233, 102, 101, 45, 240])->get()->map(function ($country) {
+        $formattedCurrencies = SettingPaymentMethod::whereNotNull('country')->get()->map(function ($country) {
             return [
-                'id' => $country->id,
-                'value' => $country->currency,
-                'label' => $country->currency_name . ' (' . $country->currency . ')',
+                'value' => $country->id,
+                'label' => $country->payment_platform_name,
+                'imgUrl' => $country->getFirstMediaUrl('payment_logo'),
             ];
         });
 
@@ -120,11 +122,30 @@ class DashboardController extends Controller
     {
         $user = \Auth::user();
 
-        $transaction = Transaction::where('user_id', $user->id)->where('category', 'wallet');
+        $transaction = Transaction::where('user_id', $user->id)->where('category', 'wallet')->where('status', 'Success');
 
         return response()->json([
             'totalDeposit' => $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount'),
             'totalWithdrawal' => $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount'),
+        ]);
+    }
+
+    public function getPaymentDetails(Request $request)
+    {
+        $settingPaymentId = $request->id;
+        $settingPaymentType = $request->type;
+
+        if ($settingPaymentId) {
+            $settingPayment = SettingPaymentMethod::with('country:id,name')->find($request->id);
+        } else {
+            $settingPayment = SettingPaymentMethod::with('country:id,name')->where('payment_method', $settingPaymentType)->inRandomOrder()->first();
+        }
+
+        $conversionRate = CurrencyConversionRate::where('base_currency', $settingPayment->currency)->first();
+
+        return response()->json([
+            'settingPayment' => $settingPayment,
+            'conversionRate' => $conversionRate,
         ]);
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\SettingPaymentMethod;
+use App\Models\Country;
 use App\Services\SelectOptionService;
 use Carbon\Carbon;
 use Inertia\Inertia;
@@ -19,11 +20,20 @@ class DashboardController extends Controller
     {
         $announcement = Announcement::where('type', 'login')->latest()->first();
 
-        $PaymentDetails = SettingPaymentMethod::where('status', 'Active')->latest()->first();
-
+        $PaymentBankDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();
+        $PaymentCryptoDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();
+        
         if (!empty($announcement)) {
             $announcement->image = $announcement->getFirstMediaUrl('announcement');
         }
+
+        $formattedCurrencies = Country::whereIn('id', [132, 233, 102, 101, 45, 240])->get()->map(function ($country) {
+            return [
+                'id' => $country->id,
+                'value' => $country->currency,
+                'label' => $country->currency_name . ' (' . $country->currency . ')',
+            ];
+        });
 
         $registerUrl = route('register');
         $registerLink = $registerUrl . '/' . \Auth::user()->referral_code;
@@ -33,7 +43,9 @@ class DashboardController extends Controller
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
-            'paymentDetails' => $PaymentDetails,
+            'paymentDetails' => $PaymentBankDetails,
+            'PaymentCryptoDetails' => $PaymentCryptoDetails,
+            'countries' => $formattedCurrencies,
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
             'registerLink' => $registerLink,
         ]);

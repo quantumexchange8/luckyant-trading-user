@@ -9,6 +9,7 @@ const props = defineProps({
     paymentAccountSel: Array,
     paymentDetails: Object,
     withdrawalFee: Object,
+    countries: Array,
 })
 
 const wallets = ref([]);
@@ -46,6 +47,7 @@ getWallets();
             :paymentAccountSel="paymentAccountSel"
             :paymentDetails="paymentDetails"
             :withdrawalFee="withdrawalFee"
+            :countries="countries"
         />
     </div>
 </template>

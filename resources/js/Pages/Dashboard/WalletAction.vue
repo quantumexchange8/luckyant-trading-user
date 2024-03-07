@@ -10,6 +10,7 @@ const props = defineProps({
     paymentAccountSel: Array,
     paymentDetails: Object,
     withdrawalFee: Object,
+    countries: Array,
 })
 </script>
 
@@ -22,6 +23,7 @@ const props = defineProps({
             <Deposit
                 :walletSel="walletSel"
                 :paymentDetails="paymentDetails"
+                :countries="countries"
             />
             <Withdrawal
                 :walletSel="walletSel"

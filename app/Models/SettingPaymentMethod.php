@@ -22,4 +22,9 @@ class SettingPaymentMethod extends Model
         'status',
         'handle_by'
     ];
+
+    public function country(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country', 'id');
+    }
 }

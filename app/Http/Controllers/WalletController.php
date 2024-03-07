@@ -368,4 +368,17 @@ class WalletController extends Controller
 
         return redirect()->back()->with('title', trans('public.Submitted'))->with('success', trans('public.Successfully Submitted Withdrawal Request'));
     }
+
+    public function getPaymentDetails(Request $request)
+    {
+
+        $paymentDetails = SettingPaymentMethod::query()
+            ->where('country', $request->countryId)
+            ->where('status', 'Active')
+            ->with(['country']);
+
+        $results = $paymentDetails->latest()->get();
+        
+        return response()->json($results);
+    }
 }

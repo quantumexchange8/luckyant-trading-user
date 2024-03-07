@@ -25,6 +25,7 @@ const props = defineProps({
     paymentDetails: Object,
     withdrawalFee: Object,
     registerLink: String,
+    countries: Array,
 })
 
 const copyReferralCode = () => {
@@ -261,6 +262,7 @@ getTotalTransactions();
                         :paymentAccountSel="paymentAccountSel"
                         :paymentDetails="paymentDetails"
                         :withdrawalFee="withdrawalFee"
+                        :countries="countries"
                     />
                 </div>
             </div>

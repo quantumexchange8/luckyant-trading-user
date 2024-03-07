@@ -2,7 +2,7 @@
 import Button from "@/Components/Button.vue";
 import {CurrencyDollarIcon, MailIcon} from "@heroicons/vue/outline";
 import { XIcon } from "@/Components/Icons/outline.jsx"
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import Modal from "@/Components/Modal.vue";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import Input from "@/Components/Input.vue";
@@ -10,13 +10,32 @@ import Label from "@/Components/Label.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
+import PaymentDetails from "@/Pages/Dashboard/PaymentDetails.vue"
+import {
+  RadioGroup,
+  RadioGroupLabel,
+  RadioGroupDescription,
+  RadioGroupOption,
+} from '@headlessui/vue'
+
 
 const props = defineProps({
     walletSel: Array,
-    paymentDetails: Object,
+    paymentDetails: Array,
+    countries: Array,
 })
 
+const paymentType = [
+  {
+    name: 'Bank',
+  },
+  {
+    name: 'Crypto',
+  }
+]
+
 const depositModal = ref(false);
+const selected = ref(null);
 
 const openDepositModal = () => {
     depositModal.value = true;
@@ -83,7 +102,66 @@ const submit = () => {
 
     <Modal :show="depositModal" title="Deposit" @close="closeModal">
 
+        <!-- select payment method first -->
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+            <div class="flex flex-col items-start gap-3 self-stretch">
+                <div class="text-lg font-semibold">
+                    Payment Methods
+                </div>
+            </div>
+
+            <div class="w-full px-4 py-4">
+                <div class="mx-auto w-full">
+                    <RadioGroup v-model="selected">
+                        <RadioGroupLabel class="sr-only">Payment Method</RadioGroupLabel>
+                        <div class="flex gap-3 items-center self-stretch w-full">
+                            <RadioGroupOption
+                                as="template"
+                                v-for="(type, index) in paymentType"
+                                :key="index"
+                                :value="type"
+                                v-slot="{ active, checked }"
+                            >
+                                <div
+                                    :class="[
+                                active
+                                    ? 'ring-0 ring-white ring-offset-0'
+                                    : '',
+                                checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
+                            ]"
+                                    class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none w-full"
+                                >
+                                    <div class="flex items-center w-full">
+                                        <div class="text-sm flex flex-col gap-3 w-full">
+                                            <RadioGroupLabel
+                                                as="div"
+                                                class="font-medium"
+                                            >
+                                                <div class="flex justify-center items-center gap-3">
+                                                    {{ type.name }}
+                                                </div>
+                                            </RadioGroupLabel>
+                                        </div>
+                                    </div>
+                                </div>
+                            </RadioGroupOption>
+                        </div>
+                        <InputError :message="form.errors.gender" class="mt-2" />
+                    </RadioGroup>
+                </div>
+            </div>
+        </div>
+
+        <!-- show country -->
+        <div v-if="selected != null ? selected.name == 'Bank' : '' " class="p-5 mt-3 bg-gray-100 dark:bg-gray-600 rounded-lg">
+            <PaymentDetails :countries="countries"/>
+        </div>
+        <!-- <div v-if="selected.name == 'Crypto'" class="p-5 mt-3 bg-gray-100 dark:bg-gray-600 rounded-lg">
+            
+        </div> -->
+
+        <!-- show payment information -->
+        <div v-if="selected !== null" class="p-5 mt-3 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold">
                     Payment Information

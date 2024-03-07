@@ -5,6 +5,7 @@ import InputError from "@/Components/InputError.vue";
 import Input from "@/Components/Input.vue";
 import {useForm} from "@inertiajs/vue3";
 import {ref, watch} from "vue";
+import BaseListbox from "@/Components/BaseListbox.vue";
 import {
     RadioGroup,
     RadioGroupLabel,
@@ -21,6 +22,7 @@ const form = useForm({
     min_join_equity: props.masterAccount.min_join_equity,
     sharing_profit: props.masterAccount.sharing_profit,
     subscription_fee: props.masterAccount.subscription_fee,
+    roi_period: props.masterAccount.roi_period,
     signal_status: ''
 })
 
@@ -52,6 +54,12 @@ const badgeVariant = (status) => {
         return 'bg-warning-400 dark:bg-warning-500'
     }
 };
+
+const roiPeriod = [
+    { label: 'Weekly', value: 7 },
+    { label: '2 Week', value: 14 },
+    { label: 'Monthly', value: 30 },
+]
 </script>
 
 <template>
@@ -108,7 +116,7 @@ const badgeVariant = (status) => {
             <div class="space-y-2">
                 <Label
                     for="subscription_fee"
-                    value="Subscription Fee (Month)"
+                    value="Subscription Fee"
                 />
                 <Input
                     id="subscription_fee"
@@ -120,6 +128,19 @@ const badgeVariant = (status) => {
                     :invalid="form.errors.subscription_fee"
                 />
                 <InputError :message="form.errors.subscription_fee" />
+            </div>
+
+            <div class="space-y-2">
+                <Label
+                    for="roi_period"
+                    value="ROI Period"
+                />
+                <BaseListbox
+                    :options="roiPeriod"
+                    v-model="form.roi_period"
+                />
+                
+                <InputError :message="form.errors.roi_period" />
             </div>
 
             <div class="space-y-2">

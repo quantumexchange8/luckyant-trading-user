@@ -17,6 +17,7 @@ class UpdateTradingUser
     {
         $tradingUser = TradingUser::query()->where('meta_login', $meta_login)->first();
 
+        $tradingUser->name = $data['name'];
         $tradingUser->leverage = $data['leverage'];
         $tradingUser->balance = $data['balance'];
         $tradingUser->credit = $data['credit'];

@@ -18,6 +18,7 @@ class CreateTradingUser
     {
         $tradingUser = new TradingUser();
         $tradingUser->user_id = $user->id;
+        $tradingUser->name = $data['name'];
         $tradingUser->meta_login = $data['login'];
         $tradingUser->meta_group = 'JS';
         $tradingUser->account_type = 1;

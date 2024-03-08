@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DepositRequest;
-use App\Http\Requests\WithdrawalRequest;
-use App\Models\CurrencyConversionRate;
-use App\Models\PaymentAccount;
-use App\Models\Setting;
-use App\Models\SettingPaymentMethod;
-use App\Services\RunningNumberService;
-use App\Services\SelectOptionService;
-use Illuminate\Http\Request;
-use App\Models\Wallet;
-use App\Models\Transaction;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Carbon\Carbon;
 use Auth;
+use Carbon\Carbon;
+use Inertia\Inertia;
+use App\Models\Wallet;
+use App\Models\Setting;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
+use App\Models\PaymentAccount;
+use App\Models\TradeRebateSummary;
+use Illuminate\Support\Facades\Log;
+use App\Models\SettingPaymentMethod;
+use App\Http\Requests\DepositRequest;
+use App\Services\SelectOptionService;
+use App\Models\CurrencyConversionRate;
+use App\Services\RunningNumberService;
+use App\Http\Requests\WithdrawalRequest;
+use Illuminate\Validation\ValidationException;
 
 class WalletController extends Controller
 {
@@ -28,16 +29,36 @@ class WalletController extends Controller
 
         $wallets = Wallet::where('user_id', $user->id)->get();
 
+        $totalDeposit = Transaction::where('user_id', $user->id)
+            ->where('category', 'wallet')
+            ->where('transaction_type', 'Deposit')
+            ->where('status', 'Success')
+            ->sum('transaction_amount');
+
+        $totalWithdrawal = Transaction::where('user_id', $user->id)
+            ->where('category', 'wallet')
+            ->where('transaction_type', 'Withdrawal')
+            ->where('status', 'Success')
+            ->sum('transaction_amount');
+
+        $totalRebate = TradeRebateSummary::where('upline_user_id', $user->id)
+            ->where('status', 'Approved')
+            ->sum('rebate');
+
+
         return Inertia::render('Transaction/Wallet/Wallet', [
             'wallets' => $wallets,
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
             'paymentDetails' => SettingPaymentMethod::where('status', 'Active')->latest()->first(),
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
+            'totalDeposit' => $totalDeposit,
+            'totalWithdrawal' => $totalWithdrawal,
+            'totalRebate' => $totalRebate,
         ]);
     }
 
-    public function getWalletHistory(Request $request)
+    public function getWalletHistory(Request $request, $wallet_id)
     {
 
         $user = \Auth::user();
@@ -51,7 +72,9 @@ class WalletController extends Controller
             'to_wallet:id,name,type,balance,wallet_address',
             'from_meta_login:id,meta_login',
             'to_meta_login:id,meta_login',
-        ]);
+        ])
+        ->where('transactions.to_wallet_id', $wallet_id)
+        ->orWhere('transactions.from_wallet_id', $wallet_id);
 
         // $wallet = $wallet->whereNotNull('from_wallet_id')->orWhereNotNull('to_wallet_id')->get();
         // dd($wallet);
@@ -384,5 +407,42 @@ class WalletController extends Controller
         $results = $paymentDetails->latest()->get();
 
         return response()->json($results);
+    }
+
+    public function getBalanceChart()
+    {
+        $user = \Auth::user();
+    
+        $wallets = Wallet::query()
+            ->where('user_id', $user->id)
+            ->select('id', 'name', 'type', 'balance')
+            ->get();
+    
+        $walletColors = [
+            'Cash Wallet' => '#598fd8',
+            'Rebate Wallet' => '#a855f7',
+        ];
+    
+        $chartData = [
+            'labels' => $wallets->pluck('name'),
+            'datasets' => [],
+        ];
+    
+        foreach ($wallets as $wallet) {
+            $balances[] = $wallet->balance;
+    
+            $backgroundColors[] = $walletColors[$wallet->name] ?? '#000000';
+        }
+    
+        $dataset = [
+            'data' => $balances,
+            'backgroundColor' => $backgroundColors,
+            'offset' => 5,
+            'borderColor' => 'transparent'
+        ];
+    
+        $chartData['datasets'][] = $dataset;
+    
+        return response()->json($chartData);
     }
 }

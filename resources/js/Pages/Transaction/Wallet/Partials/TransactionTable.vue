@@ -37,7 +37,7 @@ watch(
 const getResults = async (page = 1, search = '', type = '', date = '') => {
     transactionLoading.value = true
     try {
-        let url = `/transaction/getWalletHistory?page=${page}`;
+        let url = `/transaction/getWalletHistory/` + props.walletId + `?page=${page}`;
 
         if (search) {
             url += `&search=${search}`;

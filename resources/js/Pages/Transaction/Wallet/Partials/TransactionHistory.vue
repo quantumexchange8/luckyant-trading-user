@@ -10,10 +10,6 @@ import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import {usePage} from "@inertiajs/vue3";
 import TransactionTable from "@/Pages/Transaction/Wallet/Partials/TransactionTable.vue";
 
-const props = defineProps({
-    conversion_rate: Object,
-});
-
 const formatter = ref({
     date: 'YYYY-MM-DD',
     month: 'MM'

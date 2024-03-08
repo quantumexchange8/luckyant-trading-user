@@ -5,10 +5,10 @@ import Button from "@/Components/Button.vue";
 import { ref } from 'vue'
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import Deposit from "@/Pages/Dashboard/Deposit.vue";
-import BalanceChart from "@/Pages/Dashboard/BalanceChart.vue";
 import {RefreshIcon} from "@/Components/Icons/outline.jsx";
 import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
+import BalanceChart from "@/Pages/Transaction/Wallet/Partials/BalanceChart.vue";
 
 const props = defineProps({
     wallets: Object,
@@ -16,6 +16,9 @@ const props = defineProps({
     paymentAccountSel: Array,
     withdrawalFee: Object,
     paymentDetails: Object,
+    totalDeposit: [String,Number],
+    totalWithdrawal: [String,Number],
+    totalRebate: [String,Number],
 });
 </script>
 
@@ -30,14 +33,7 @@ const props = defineProps({
         </template>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 w-full gap-5">
-            <DashboardWallets
-                :walletSel="walletSel"
-                :paymentAccountSel="paymentAccountSel"
-                :paymentDetails="paymentDetails"
-                :withdrawalFee="withdrawalFee"
-            />
-
-            <div class="flex flex-col justify-between p-6 sm:col-span-1 col-span-2 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+            <div class="flex flex-col justify-around p-6 sm:col-span-1 col-span-2 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                 <div class="text-base font-semibold dark:text-gray-400">
                     Overview
                 </div>
@@ -47,7 +43,7 @@ const props = defineProps({
                             Total Deposit
                         </div>
                         <div>
-                            $ 0.00
+                            $ {{props.totalDeposit}}
                         </div>
                     </div>
                     <div class="flex justify-between font-bold text-lg">
@@ -55,19 +51,25 @@ const props = defineProps({
                             Total Withdrawal
                         </div>
                         <div>
-                            $ 0.00
+                            $ {{props.totalWithdrawal}}
                         </div>
                     </div>
                     <div class="flex justify-between font-bold text-lg">
                         <div>
-                            Total Rebate
+                            Total Rebate Earn
                         </div>
                         <div>
-                            $ 0.00
+                            $ {{props.totalRebate}}
                         </div>
                     </div>
                 </div>
-               <!-- <BalanceChart /> -->
+            </div>
+
+            <div class="flex flex-col justify-between p-6 sm:col-span-1 col-span-2 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+                <div class="text-base font-semibold dark:text-gray-400">
+                    Balance Chart
+                </div>
+                <BalanceChart />
             </div>
         </div>
 

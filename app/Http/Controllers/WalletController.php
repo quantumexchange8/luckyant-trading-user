@@ -176,7 +176,7 @@ class WalletController extends Controller
             $transaction->addMedia($request->receipt)->toMediaCollection('receipt');
         }
 
-        if ($request->payment_method == 'Auto Payment') {
+        if ($request->payment_method == 'Payment Merchant') {
             $paymentGateway = config('payment-gateway');
             $intAmount = intval($amount * 100);
 

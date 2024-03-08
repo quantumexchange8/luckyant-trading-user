@@ -176,7 +176,7 @@ class WalletController extends Controller
             $transaction->addMedia($request->receipt)->toMediaCollection('receipt');
         }
 
-        if ($request->payment_method == 'Payment Merchant') {
+        if ($request->payment_method == 'Auto Payment') {
             $paymentGateway = config('payment-gateway');
             $intAmount = intval($amount * 100);
 
@@ -214,7 +214,7 @@ class WalletController extends Controller
             'vCode' => $data['vCode'],
             'orderNumber' => $data['orderNumber'],
             'transactionId' => $data['transactionId'],
-//            'walletAddress' => $data['walletAddress'],
+            'walletAddress' => $data['walletAddress'],
             'status' => $data['status'],
             'sCode' => $data['sCode'],
             'transactionHash' => $data['transactionHash'],
@@ -226,7 +226,7 @@ class WalletController extends Controller
 
         $paymentGateway = config('payment-gateway');
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
-        $sCode2 = md5($sCode1 . $paymentGateway['staging']['appId'] . $paymentGateway['staging']['sKey']);
+        $sCode2 = md5($result['walletAddress'] . $sCode1 . $paymentGateway['staging']['appId'] . $paymentGateway['staging']['sKey']);
 
         if ($result['sCode'] == $sCode2) {
             $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
@@ -280,7 +280,7 @@ class WalletController extends Controller
             'vCode' => $data['vCode'],
             'orderNumber' => $data['orderNumber'],
             'transactionId' => $data['transactionId'],
-//            'walletAddress' => $data['walletAddress'],
+            'walletAddress' => $data['walletAddress'],
             'status' => $data['status'],
             'sCode' => $data['sCode'],
             'transactionHash' => $data['transactionHash'],
@@ -292,7 +292,7 @@ class WalletController extends Controller
 
         $paymentGateway = config('payment-gateway');
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
-        $sCode2 = md5($sCode1 . $paymentGateway['staging']['appId'] . $paymentGateway['staging']['sKey']);
+        $sCode2 = md5($result['walletAddress'] . $sCode1 . $paymentGateway['staging']['appId'] . $paymentGateway['staging']['sKey']);
 
         if ($result['sCode'] == $sCode2) {
             $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();

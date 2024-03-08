@@ -250,7 +250,7 @@ const copyWalletAddress = () => {
                                 </div>
                             </RadioGroupOption>
                         </div>
-                        <InputError :message="form.errors.gender" class="mt-2" />
+                        <InputError :message="form.errors.payment_method" class="mt-2" />
                     </RadioGroup>
                 </div>
             </div>
@@ -338,7 +338,7 @@ const copyWalletAddress = () => {
             </div>
         </div>
 
-        <form class="space-y-2 mt-5">
+        <form v-if="selected" class="space-y-2 mt-5">
             <div class="flex flex-col sm:flex-row gap-4">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" value="Wallet" />
                 <div class="flex flex-col w-full">

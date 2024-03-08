@@ -9,6 +9,7 @@ import {RefreshIcon} from "@/Components/Icons/outline.jsx";
 import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
 import BalanceChart from "@/Pages/Transaction/Wallet/Partials/BalanceChart.vue";
+import {transactionFormat} from "@/Composables/index.js";
 
 const props = defineProps({
     wallets: Object,
@@ -20,10 +21,12 @@ const props = defineProps({
     totalWithdrawal: [String,Number],
     totalRebate: [String,Number],
 });
+
+const { formatAmount } = transactionFormat();
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.sidebar.Transaction')">
+    <AuthenticatedLayout title="Wallet">
         <template #header>
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
@@ -33,34 +36,29 @@ const props = defineProps({
         </template>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 w-full gap-5">
-            <div class="flex flex-col justify-around p-6 sm:col-span-1 col-span-2 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                <div class="text-base font-semibold dark:text-gray-400">
-                    Overview
+            <div class="flex flex-col gap-4 sm:col-span-1 col-span-2">
+                <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
+                    <div class="text-sm">
+                        Total Deposit
+                    </div>
+                    <div class="text-base font-semibold">
+                        $ {{ totalDeposit }}
+                    </div>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <div class="flex justify-between font-bold text-lg">
-                        <div>
-                            Total Deposit
-                        </div>
-                        <div>
-                            $ {{props.totalDeposit}}
-                        </div>
+                <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
+                    <div class="text-sm">
+                        Total Withdrawal
                     </div>
-                    <div class="flex justify-between font-bold text-lg">
-                        <div>
-                            Total Withdrawal
-                        </div>
-                        <div>
-                            $ {{props.totalWithdrawal}}
-                        </div>
+                    <div class="text-base font-semibold">
+                        $ {{ formatAmount(totalWithdrawal) }}
                     </div>
-                    <div class="flex justify-between font-bold text-lg">
-                        <div>
-                            Total Rebate Earn
-                        </div>
-                        <div>
-                            $ {{props.totalRebate}}
-                        </div>
+                </div>
+                <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
+                    <div class="text-sm">
+                        Total Rebate Earn
+                    </div>
+                    <div class="text-base font-semibold">
+                        $ {{ formatAmount(totalRebate) }}
                     </div>
                 </div>
             </div>

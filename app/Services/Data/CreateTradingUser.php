@@ -21,8 +21,6 @@ class CreateTradingUser
         $tradingUser->meta_login = $data['login'];
         $tradingUser->meta_group = 'JS';
         $tradingUser->account_type = 1;
-        $tradingUser->main_password = Hash::make($data['mainPassword']);
-        $tradingUser->invest_password = Hash::make($data['investPassword']);
         $tradingUser->leverage = $data['leverage'];
 
         DB::transaction(function () use ($tradingUser) {

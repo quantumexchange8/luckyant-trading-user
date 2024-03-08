@@ -118,8 +118,8 @@ wallets.value.forEach(wallet => {
                             'w-full py-2.5 text-sm font-semibold dark:text-gray-400',
                             'ring-white ring-offset-0 focus:outline-none focus:ring-0',
                             selected
-                            ? 'dark:text-white border-b-2'
-                            : 'border-b border-gray-400',
+                            ? 'dark:text-white border-b-2 border-primary-400'
+                            : 'border-b border-gray-300',
                         ]"
                     >
                         {{ walletName }}

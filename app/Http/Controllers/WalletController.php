@@ -200,11 +200,18 @@ class WalletController extends Controller
         }
 
         if ($request->payment_method == 'Payment Merchant') {
+            $domain = $_SERVER['HTTP_HOST'];
             $paymentGateway = config('payment-gateway');
             $intAmount = intval($amount * 100);
 
+            if ($domain === 'member.luckyantfxasia.com') {
+                $selectedPaymentGateway = $paymentGateway['live'];
+            } else {
+                $selectedPaymentGateway = $paymentGateway['staging'];
+            }
+
             // vCode
-            $vCode = md5($intAmount . $paymentGateway['staging']['appId'] . $transaction_number . $paymentGateway['staging']['vKey']);
+            $vCode = md5($intAmount . $selectedPaymentGateway['appId'] . $transaction_number . $selectedPaymentGateway['vKey']);
 
             $params = [
                 'amount' => $intAmount,
@@ -214,7 +221,7 @@ class WalletController extends Controller
             ];
 
             // Send response
-            $baseUrl = $paymentGateway['staging']['paymentUrl'];
+            $baseUrl = $selectedPaymentGateway['paymentUrl'];
             $redirectUrl = $baseUrl . "?" . http_build_query($params);
 
             return Inertia::location($redirectUrl);
@@ -225,7 +232,7 @@ class WalletController extends Controller
             ->with('success', 'Successfully submit a deposit request, we will email you once the deposit is processed');
     }
 
-    public function  depositReturn(Request $request)
+    public function depositReturn(Request $request)
     {
         $data = $request->all();
 
@@ -247,9 +254,17 @@ class WalletController extends Controller
             'receivedAmount' => $data['receivedAmount'],
         ];
 
+        $domain = $_SERVER['HTTP_HOST'];
         $paymentGateway = config('payment-gateway');
+
+        if ($domain === 'member.luckyantfxasia.com') {
+            $selectedPaymentGateway = $paymentGateway['live'];
+        } else {
+            $selectedPaymentGateway = $paymentGateway['staging'];
+        }
+
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
-        $sCode2 = md5($result['walletAddress'] . $sCode1 . $paymentGateway['staging']['appId'] . $paymentGateway['staging']['sKey']);
+        $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway['appId'] . $selectedPaymentGateway['sKey']);
 
         if ($result['sCode'] == $sCode2) {
             $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
@@ -313,9 +328,17 @@ class WalletController extends Controller
             'receivedAmount' => $data['receivedAmount'],
         ];
 
+        $domain = $_SERVER['HTTP_HOST'];
         $paymentGateway = config('payment-gateway');
+
+        if ($domain === 'member.luckyantfxasia.com') {
+            $selectedPaymentGateway = $paymentGateway['live'];
+        } else {
+            $selectedPaymentGateway = $paymentGateway['staging'];
+        }
+
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
-        $sCode2 = md5($result['walletAddress'] . $sCode1 . $paymentGateway['staging']['appId'] . $paymentGateway['staging']['sKey']);
+        $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway['appId'] . $selectedPaymentGateway['sKey']);
 
         if ($result['sCode'] == $sCode2) {
             $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
@@ -412,37 +435,37 @@ class WalletController extends Controller
     public function getBalanceChart()
     {
         $user = \Auth::user();
-    
+
         $wallets = Wallet::query()
             ->where('user_id', $user->id)
             ->select('id', 'name', 'type', 'balance')
             ->get();
-    
+
         $walletColors = [
             'Cash Wallet' => '#598fd8',
             'Rebate Wallet' => '#a855f7',
         ];
-    
+
         $chartData = [
             'labels' => $wallets->pluck('name'),
             'datasets' => [],
         ];
-    
+
         foreach ($wallets as $wallet) {
             $balances[] = $wallet->balance;
-    
+
             $backgroundColors[] = $walletColors[$wallet->name] ?? '#000000';
         }
-    
+
         $dataset = [
             'data' => $balances,
             'backgroundColor' => $backgroundColors,
             'offset' => 5,
             'borderColor' => 'transparent'
         ];
-    
+
         $chartData['datasets'][] = $dataset;
-    
+
         return response()->json($chartData);
     }
 }

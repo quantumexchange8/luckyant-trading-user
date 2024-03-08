@@ -15,6 +15,7 @@ use App\Models\TradingUser;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Notifications\AddTradingAccountNotification;
 use App\Services\dealAction;
 use App\Services\dealType;
 use App\Services\MetaFiveService;
@@ -23,6 +24,7 @@ use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -53,6 +55,9 @@ class AccountInfoController extends Controller
         }
 
         $metaAccount = $metaService->createUser($user, $group, $leverage);
+
+        Notification::route('mail', $user->email)
+            ->notify(new AddTradingAccountNotification($metaAccount, $user));
 
         return back()->with('toast', trans('public.Successfully Created Trading Account'));
     }

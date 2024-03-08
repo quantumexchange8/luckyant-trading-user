@@ -62,7 +62,7 @@ watchEffect(() => {
 <template>
     <div
         v-if="masterAccounts.length === 0"
-        class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 animate-pulse w-1/2 mx-auto sm:mx-0 shadow-lg"
+        class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 animate-pulse sm:w-1/2 mx-auto sm:mx-0 shadow-lg"
     >
         <div class="flex justify-between items-center self-stretch">
             <div class="flex items-center gap-3">

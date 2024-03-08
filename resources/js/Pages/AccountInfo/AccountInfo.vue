@@ -70,7 +70,7 @@ const leverages = [
                     type="button"
                     variant="primary"
                     size="sm"
-                    class="items-center gap-2 max-w-xs"
+                    class="flex justify-center items-center gap-2 sm:max-w-xs"
                     v-slot="{ iconSizeClasses }"
                     @click="addTradingAccount"
                 >

@@ -31,6 +31,9 @@ const paymentType = [
   },
   {
     name: 'Crypto',
+  },
+  {
+    name: 'Auto Payment',
   }
 ]
 
@@ -139,7 +142,7 @@ watch(initialAmount, (newAmount) => {
 
 const submit = () => {
     form.setting_payment_id = paymentDetails.value.id;
-    form.payment_method = paymentDetails.value.payment_method;
+    form.payment_method = selected.value.name;
     form.account_no = paymentDetails.value.account_no;
     form.amount = initialAmount.value;
     if (selected.value.name === 'Bank') {
@@ -273,6 +276,12 @@ const copyWalletAddress = () => {
                 </div>
             </div>
 
+            <div v-if="selected != null ? selected.name === 'Auto Payment' : '' " class="space-y-2">
+                <div class="flex gap-2">
+                   Crypto Payment - USDT
+                </div>
+            </div>
+
             <div v-if="selected" class="flex flex-col mt-5 items-start gap-3 self-stretch">
                 <div v-if="paymentDetails.payment_method" class="text-lg font-semibold">
                     Payment Information
@@ -366,7 +375,7 @@ const copyWalletAddress = () => {
                 </div>
             </div> -->
 
-            <div class="flex flex-col sm:flex-row gap-4 pt-2">
+            <div v-if="selected !== null && selected.name !== 'Auto Payment'" class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label for="receipt" class="text-sm dark:text-white md:w-1/4" value="Payment Slip"/>
                 <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
                     <input

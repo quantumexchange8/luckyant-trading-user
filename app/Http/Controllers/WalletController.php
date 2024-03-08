@@ -176,28 +176,30 @@ class WalletController extends Controller
             $transaction->addMedia($request->receipt)->toMediaCollection('receipt');
         }
 
+        if ($request->payment_method == 'Auto Payment') {
+            $paymentGateway = config('payment-gateway');
+            $intAmount = intval($amount * 100);
+
+            // vCode
+            $vCode = md5($intAmount . $paymentGateway['staging']['appId'] . $transaction_number . $paymentGateway['staging']['vKey']);
+
+            $params = [
+                'amount' => $intAmount,
+                'orderNumber' => $transaction_number,
+                'userId' => $user->id,
+                'vCode' => $vCode,
+            ];
+
+            // Send response
+            $baseUrl = $paymentGateway['staging']['paymentUrl'];
+            $redirectUrl = $baseUrl . "?" . http_build_query($params);
+
+            return Inertia::location($redirectUrl);
+        }
+
         return redirect()->back()
             ->with('title', 'Success request deposit')
             ->with('success', 'Successfully submit a deposit request, we will email you once the deposit is processed');
-
-//        $paymentGateway = config('payment-gateway');
-//        $intAmount = intval($amount * 100);
-//
-//        // vCode
-//        $vCode = md5($intAmount . $paymentGateway['staging']['appId'] . $transaction_number . $paymentGateway['staging']['vKey']);
-//
-//        $params = [
-//            'amount' => $intAmount,
-//            'orderNumber' => $transaction_number,
-//            'userId' => $user->id,
-//            'vCode' => $vCode,
-//        ];
-//
-//        // Send response
-//        $baseUrl = $paymentGateway['staging']['paymentUrl'];
-//        $redirectUrl = $baseUrl . "?" . http_build_query($params);
-//
-//        return Inertia::location($redirectUrl);
     }
 
     public function  depositReturn(Request $request)

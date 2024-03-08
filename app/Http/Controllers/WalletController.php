@@ -244,7 +244,7 @@ class WalletController extends Controller
             'vCode' => $data['vCode'],
             'orderNumber' => $data['orderNumber'],
             'transactionId' => $data['transactionId'],
-            'walletAddress' => $data['walletAddress'],
+            'walletAddress' => $data['walletAddress'] ?? null,
             'status' => $data['status'],
             'sCode' => $data['sCode'],
             'transactionHash' => $data['transactionHash'],
@@ -265,6 +265,10 @@ class WalletController extends Controller
 
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
         $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway['appId'] . $selectedPaymentGateway['sKey']);
+
+        if($result['status'] == 'PENDING') {
+            return to_route('dashboard');
+        }
 
         if ($result['sCode'] == $sCode2) {
             $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
@@ -318,7 +322,7 @@ class WalletController extends Controller
             'vCode' => $data['vCode'],
             'orderNumber' => $data['orderNumber'],
             'transactionId' => $data['transactionId'],
-            'walletAddress' => $data['walletAddress'],
+            'walletAddress' => $data['walletAddress'] ?? null,
             'status' => $data['status'],
             'sCode' => $data['sCode'],
             'transactionHash' => $data['transactionHash'],
@@ -339,9 +343,16 @@ class WalletController extends Controller
 
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
         $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway['appId'] . $selectedPaymentGateway['sKey']);
+        $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
+
+        if($result['status'] == 'EXPIRED') {
+            $transaction->update([
+                'status' => 'Rejected'
+            ]);
+        }
 
         if ($result['sCode'] == $sCode2) {
-            $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
+
             $wallet = Wallet::find($transaction->to_wallet_id);
 
             if ($transaction->status == 'Processing') {

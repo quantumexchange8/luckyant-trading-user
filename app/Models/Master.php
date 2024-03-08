@@ -34,4 +34,10 @@ class Master extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function tradingUser(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(TradingUser::class, 'meta_login', 'meta_login');
+    }
+
 }

@@ -19,6 +19,9 @@ import {
 import QrcodeVue from 'qrcode.vue';
 import Tooltip from "@/Components/Tooltip.vue";
 import {transactionFormat} from "@/Composables/index.js";
+import BankImg from "/public/assets/bank.jpg"
+import cryptoImg from "/public/assets/cryptocurrency.svg"
+import paymentMerchantImg from "/public/assets/payment_merchant.svg"
 
 const props = defineProps({
     walletSel: Array,
@@ -27,13 +30,16 @@ const props = defineProps({
 
 const paymentType = [
   {
-    name: 'Bank',
+      name: 'Bank',
+      imgUrl: BankImg
   },
   {
-    name: 'Crypto',
+      name: 'Crypto',
+      imgUrl: cryptoImg
   },
   {
-    name: 'Auto Payment',
+      name: 'Payment Merchant',
+      imgUrl: paymentMerchantImg
   }
 ]
 
@@ -211,7 +217,7 @@ const copyWalletAddress = () => {
                 <div class="mx-auto w-full">
                     <RadioGroup v-model="selected">
                         <RadioGroupLabel class="sr-only">Payment Method</RadioGroupLabel>
-                        <div class="flex gap-3 items-center self-stretch w-full">
+                        <div class="flex sm:flex-row flex-col gap-3 items-center self-stretch w-full">
                             <RadioGroupOption
                                 as="template"
                                 v-for="(type, index) in paymentType"
@@ -234,7 +240,8 @@ const copyWalletAddress = () => {
                                                 as="div"
                                                 class="font-medium"
                                             >
-                                                <div class="flex justify-center items-center gap-3">
+                                                <div class="flex flex-col justify-center items-center gap-1">
+                                                    <img class="rounded-full w-12 h-12" :src="type.imgUrl" alt="payment-image">
                                                     {{ type.name }}
                                                 </div>
                                             </RadioGroupLabel>
@@ -276,7 +283,7 @@ const copyWalletAddress = () => {
                 </div>
             </div>
 
-            <div v-if="selected != null ? selected.name === 'Auto Payment' : '' " class="space-y-2">
+            <div v-if="selected != null ? selected.name === 'Payment Merchant' : '' " class="space-y-2">
                 <div class="flex gap-2">
                    Crypto Payment - USDT
                 </div>
@@ -375,7 +382,7 @@ const copyWalletAddress = () => {
                 </div>
             </div> -->
 
-            <div v-if="selected !== null && selected.name !== 'Auto Payment'" class="flex flex-col sm:flex-row gap-4 pt-2">
+            <div v-if="selected !== null && selected.name !== 'Payment Merchant'" class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label for="receipt" class="text-sm dark:text-white md:w-1/4" value="Payment Slip"/>
                 <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
                     <input

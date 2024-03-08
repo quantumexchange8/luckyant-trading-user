@@ -16,6 +16,7 @@ class Master extends Model
         'min_join_equity',
         'sharing_profit',
         'subscription_fee',
+        'roi_period',
         'signal_status',
         'status',
     ];

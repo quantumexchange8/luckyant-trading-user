@@ -344,11 +344,13 @@ class AccountInfoController extends Controller
             'min_join_equity' => $request->min_join_equity,
             'sharing_profit' => $request->sharing_profit,
             'subscription_fee' => $request->subscription_fee,
+            'roi_period' => $request->roi_period,
             'signal_status' => $request->signal_status,
         ]);
 
         if ($master->min_join_equity != null &&
             $master->sharing_profit != null &&
+            $master->roi_period != null &&
             $master->subscription_fee != null) {
             $master->update([
                 'status' => 'Active',

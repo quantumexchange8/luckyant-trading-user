@@ -91,7 +91,7 @@ const submit = () => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Subscription Fee (Monthly)
+                        Subscription Fee ({{ masterAccount.roi_period }} Days)
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         $ {{ formatAmount(masterAccount.subscription_fee) }}

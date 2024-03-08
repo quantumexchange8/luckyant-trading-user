@@ -13,6 +13,7 @@ class Subscription extends Model
         'user_id',
         'trading_account_id',
         'meta_login',
+        'meta_balance',
         'transaction_id',
         'master_id',
         'type',

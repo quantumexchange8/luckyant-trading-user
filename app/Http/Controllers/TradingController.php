@@ -124,14 +124,15 @@ class TradingController extends Controller
                 'user_id' => $user->id,
                 'trading_account_id' => $tradingAccount->id,
                 'meta_login' => $meta_login,
+                'meta_balance' => $tradingAccount->balance,
                 'transaction_id' => $transaction->id,
-                'next_pay_date' => $transaction->created_at->addMonth()
             ];
         } else {
             $subscriptionData = [
                 'user_id' => $user->id,
                 'trading_account_id' => $tradingAccount->id,
-                'meta_login' => $meta_login
+                'meta_login' => $meta_login,
+                'meta_balance' => $tradingAccount->balance,
             ];
         }
 
@@ -140,6 +141,8 @@ class TradingController extends Controller
         $subscription = Subscription::create($subscriptionData + [
             'master_id' => $masterAccount->id,
             'subscription_number' => $subscription_number,
+            'subscription_period' => $masterAccount->roi_period,
+            'next_pay_date' => today()->addDays($masterAccount->roi_period)
         ]);
 
         Subscriber::create([

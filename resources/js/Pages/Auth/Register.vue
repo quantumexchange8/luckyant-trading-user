@@ -26,6 +26,8 @@ const props = defineProps({
 const formStep = ref(1);
 const showPassword = ref(false);
 const showPassword2 = ref(false);
+const selectedCountry = ref(132);
+const selectedNationality = ref('Malaysian');
 const isButtonDisabled = ref(false)
 const buttonText = ref('Send OTP')
 const formatter = ref({
@@ -67,11 +69,7 @@ const form = useForm({
 });
 
 watch(() => [form.terms, form.market, form.responsible, form.compensate], ([terms, market, responsible, compensate]) => {
-    if (terms && market && responsible && compensate) {
-        form.all = true; // If all other checkboxes are checked, check the "All" checkbox
-    } else {
-        form.all = false; // If any of the other checkboxes are unchecked, uncheck the "All" checkbox
-    }
+    form.all = terms && market && responsible && compensate;
 }, { deep: true });
 
 watch(() => form.all, (newValue, oldValue) => {
@@ -89,8 +87,14 @@ watch(() => [form.terms, form.market, form.responsible, form.compensate], ([term
     }
 }, { deep: true });
 
-
-
+watch(selectedCountry, (newCountry) => {
+    const foundNationality = props.nationality.find(nationality => nationality.id === newCountry);
+    if (foundNationality) {
+        selectedNationality.value = foundNationality.value;
+    } else {
+        selectedNationality.value = null; // Reset if not found
+    }
+})
 
 const handleFrontIdentity = (event) => {
     form.front_identity = event.target.files[0];
@@ -101,6 +105,9 @@ const handleBackIdentity = (event) => {
 };
 
 const submit = () => {
+    form.country = selectedCountry.value;
+    form.nationality = selectedNationality.value;
+
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     })
@@ -430,7 +437,7 @@ const passwordValidation = () => {
                         />
                         <BaseListbox
                             :options="countries"
-                            v-model="form.country"
+                            v-model="selectedCountry"
                         />
                         <InputError :message="form.errors.country" />
                     </div>
@@ -442,7 +449,7 @@ const passwordValidation = () => {
                         />
                         <BaseListbox
                             :options="nationality"
-                            v-model="form.nationality"
+                            v-model="selectedNationality"
                         />
                         <InputError :message="form.errors.nationality" />
                     </div>

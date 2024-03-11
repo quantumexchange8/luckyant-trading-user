@@ -7,7 +7,7 @@ import Input from '@/Components/Input.vue'
 import Label from '@/Components/Label.vue'
 import ValidationErrors from '@/Components/ValidationErrors.vue'
 import Button from '@/Components/Button.vue'
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import RegisterCaption from "@/Components/Auth/RegisterCaption.vue";
 import ReferralPic from "@/Components/Auth/ReferralPic.vue";
 import InputError from "@/Components/InputError.vue";
@@ -15,9 +15,11 @@ import BaseListbox from "@/Components/BaseListbox.vue";
 import CountryLists from '/public/data/countries.json'
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import Checkbox from "@/Components/Checkbox.vue";
+import Terms from "@/Components/Terms.vue";
 
 const props = defineProps({
     countries: Array,
+    nationality: Array,
     referral_code: String
 })
 
@@ -30,6 +32,7 @@ const formatter = ref({
     date: 'YYYY-MM-DD',
     month: 'MM'
 });
+const signUpTerm = 'register';
 
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value;
@@ -56,7 +59,38 @@ const form = useForm({
     // verification_code: '',
     referral_code: props.referral_code ? props.referral_code : '',
     terms: false,
+    market: false,
+    responsible: false,
+    compensate: false,
+    all: false,
+    nationality: 'Malaysian',
 });
+
+watch(() => [form.terms, form.market, form.responsible, form.compensate], ([terms, market, responsible, compensate]) => {
+    if (terms && market && responsible && compensate) {
+        form.all = true; // If all other checkboxes are checked, check the "All" checkbox
+    } else {
+        form.all = false; // If any of the other checkboxes are unchecked, uncheck the "All" checkbox
+    }
+}, { deep: true });
+
+watch(() => form.all, (newValue, oldValue) => {
+    if (newValue && !oldValue) {
+        form.terms = true;
+        form.market = true;
+        form.responsible = true;
+        form.compensate = true;
+    }
+});
+
+watch(() => [form.terms, form.market, form.responsible, form.compensate], ([terms, market, responsible, compensate]) => {
+    if (!terms || !market || !responsible || !compensate) {
+        form.all = false; // If any individual checkbox is unchecked, uncheck the "All" checkbox
+    }
+}, { deep: true });
+
+
+
 
 const handleFrontIdentity = (event) => {
     form.front_identity = event.target.files[0];
@@ -400,6 +434,18 @@ const passwordValidation = () => {
                         />
                         <InputError :message="form.errors.country" />
                     </div>
+
+                    <div class="space-y-1.5">
+                        <Label
+                            for="nationality"
+                            :value="$t('public.Nationality')"
+                        />
+                        <BaseListbox
+                            :options="nationality"
+                            v-model="form.nationality"
+                        />
+                        <InputError :message="form.errors.nationality" />
+                    </div>
                 </div>
 
                 <!-- Page 3 -->
@@ -501,11 +547,49 @@ const passwordValidation = () => {
                 </div>
 
                 <div v-if="formStep === 3" class="flex flex-col gap-1">
-                    <label class="flex items-center">
-                        <Checkbox name="remember" v-model:checked="form.terms" />
-                        <span class="ml-2 text-sm text-gray-600">I have read and agreed to the Terms of use.</span>
+                    <label class="flex items-start gap-2">
+                        <div class="flex">
+                            <Checkbox name="remember" v-model:checked="form.terms" />
+                            <span class="ml-2 text-xs text-gray-600 dark:text-white">
+                                By proceeding, I acknowledge that I have thoroughly read, comprehended, and accepted the terms and conditions.
+                                <!-- <Terms :type=signUpTerm /> -->
+                            </span>
+                        </div>
                     </label>
-                    <InputError :message="form.errors.terms" />
+                    <label class="flex items-start gap-2">
+                        <div class="flex">
+                            <Checkbox name="remember" v-model:checked="form.market" />
+                            <span class="ml-2 text-xs text-gray-600 dark:text-white">
+                                I confirm that any market recommendations, signals, or information provided by third parties do not constitute an offer or solicitation to buy or sell any transaction on behalf of Lucky Ant Trading.
+                            </span>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-2">
+                        <div class="flex">
+                            <Checkbox name="remember" v-model:checked="form.responsible" />
+                            <span class="ml-2 text-xs text-gray-600 dark:text-white">
+                                I am aware that I am solely responsible for assessing the merits and risks of any trade I may enter into.
+                            </span>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-2">
+                        <div class="flex">
+                            <Checkbox name="remember" v-model:checked="form.compensate" />
+                            <span class="ml-2 text-xs text-gray-600 dark:text-white">
+                                I understand that Lucky Ant Trading may compensate third parties with referral fees, either as a one-time or recurring payment.
+                            </span>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-2">
+                        <div class="flex items-center">
+                            <Checkbox name="remember" v-model:checked="form.all" />
+                            <span class="ml-2 font-semibold text-sm text-gray-600 dark:text-white">
+                                I accept all the terms and conditions.
+                            </span>
+                        </div>
+                    </label>
+
+                    <InputError :message="form.errors.all" />
                 </div>
 
                 <div class="flex items-center justify-center gap-8 mt-4">

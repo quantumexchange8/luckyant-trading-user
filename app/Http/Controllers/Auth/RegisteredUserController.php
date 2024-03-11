@@ -41,8 +41,17 @@ class RegisteredUserController extends Controller
             ];
         });
 
+        $formattedNationalities = $countries->map(function ($country) {
+            return [
+                'id' => $country->id,
+                'value' => $country->nationality,
+                'label' => $country->nationality,
+            ];
+        });
+
         return Inertia::render('Auth/Register', [
             'countries' => $formattedCountries,
+            'nationality' => $formattedNationalities,
             'referral_code' => $referral,
         ]);
     }
@@ -73,7 +82,8 @@ class RegisteredUserController extends Controller
                 'name' => 'required|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u|max:255',
                 'chinese_name' => 'nullable|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u',
                 'dob' => 'required',
-                'country' => 'required'
+                'country' => 'required',
+                'nationality' => 'required',
             ];
             $rules = array_merge($rules, $additionalRules);
 
@@ -82,6 +92,7 @@ class RegisteredUserController extends Controller
                 'chinese_name' => trans('public.Chinese Name'),
                 'dob' => trans('public.Date Of Birth'),
                 'country' => trans('public.Country'),
+                'nationality' => trans('public.Nationality'),
             ];
             $attributes = array_merge($attributes, $additionalAttributes);
 
@@ -120,6 +131,7 @@ class RegisteredUserController extends Controller
             'chinese_name' => $request->chinese_name,
             'email' => $request->email,
             'country' => $request->country,
+            'nationality' => $request->nationality,
             'dial_code' => $request->dial_code,
             'phone' => $phone,
             'dob' => $request->dob,
@@ -168,6 +180,13 @@ class RegisteredUserController extends Controller
             'name' => 'Bonus Wallet',
             'type' => 'bonus_wallet',
             'wallet_address' => RunningNumberService::getID('bonus_wallet'),
+        ]);
+
+        Wallet::create([
+            'user_id' => $user->id,
+            'name' => 'E-Wallet',
+            'type' => 'e_wallet',
+            'wallet_address' => RunningNumberService::getID('e_wallet'),
         ]);
         event(new Registered($user));
 

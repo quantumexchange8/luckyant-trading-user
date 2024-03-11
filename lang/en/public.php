@@ -1,5 +1,7 @@
 <?php
 return [
+    'tnc' => 'Terms and Conditions',
+    'all tnc' => 'Terms and Conditions',
     'Email' => 'Email',
     'Password' => 'Password',
     'Forgot Password' => 'Forgot Password?',

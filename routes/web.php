@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\TradingController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TermController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -26,6 +27,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/getTerms', [TermController::class, 'getTerms'])->name('getTerms');
 Route::get('transaction_result', [WalletController::class, 'depositCallback']);
 
 Route::middleware('auth')->group(function () {

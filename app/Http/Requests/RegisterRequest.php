@@ -12,7 +12,11 @@ class RegisterRequest extends FormRequest
 //            'front_identity' => ['required', 'image'],
 //            'back_identity' => ['required', 'image'],
 //            'verification_code' => ['required'],
-            'terms' => ['accepted']
+            // 'terms' => ['accepted'],
+            // 'market' => ['accepted'],
+            // 'responsible' => ['accepted'],
+            // 'compensate' => ['accepted'],
+            'all' => ['accepted'],
         ];
     }
 
@@ -27,7 +31,11 @@ class RegisterRequest extends FormRequest
 //            'front_identity' => trans('public.Proof of Identity (FRONT)'),
 //            'back_identity' => trans('public.Proof of Identity (BACK)'),
 //            'verification_code' => trans('public.Verification Code'),
-            'terms' => trans('public.Terms & Conditions'),
+            // 'terms' => trans('public.Terms & Conditions'),
+            // 'market' => trans('public.Terms & Conditions'),
+            // 'responsible' => trans('public.Terms & Conditions'),
+            // 'compensate' => trans('public.Terms & Conditions'),
+            'all' => trans('public.Terms & Conditions'),
         ];
     }
 }

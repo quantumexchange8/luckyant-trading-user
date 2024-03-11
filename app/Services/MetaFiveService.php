@@ -63,6 +63,8 @@ class MetaFiveService {
         ]);
         $accountResponse = $accountResponse->json();
 
+        Log::debug($accountResponse);
+
         (new CreateTradingAccount)->execute($user, $accountResponse);
         (new CreateTradingUser)->execute($user, $accountResponse);
         return $accountResponse;

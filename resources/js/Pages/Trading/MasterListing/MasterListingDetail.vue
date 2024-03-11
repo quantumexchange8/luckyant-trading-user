@@ -17,11 +17,11 @@ const { formatAmount } = transactionFormat();
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row items-center">
                 <h2 class="text-xl font-semibold leading-tight">
-                    <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/trading/master_listing">{{ $t('public.sidebar.Trading') }}</a>
+                    <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/trading/master_listing">Copy Trading</a>
                 </h2>
                 <ChevronRightIcon aria-hidden="true" class="w-5 h-5" />
                 <h2 class="text-xl font-semibold leading-tight">
-                    Master Listing - {{ masterListingDetail.id }}
+                    Master Profile - {{ masterListingDetail.meta_login }}
                 </h2>
             </div>
         </template>
@@ -31,7 +31,7 @@ const { formatAmount } = transactionFormat();
                 <div class="flex justify-between items-center self-stretch border-b border-gray-300 dark:border-gray-500 pb-2">
             <div class="flex items-center gap-3">
                 <div class="text-lg">
-                    Master Listing Detail
+                    Master Detail
                 </div>
             </div>
         </div>

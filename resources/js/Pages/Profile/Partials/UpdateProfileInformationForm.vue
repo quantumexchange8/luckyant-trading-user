@@ -39,7 +39,9 @@ const form = useForm({
 })
 
 const submit = () => {
-    form.gender = selected.value.value
+    if (selected.value) {
+        form.gender = selected.value.value
+    }
     form.post(route('profile.update'))
 }
 
@@ -262,6 +264,7 @@ const selected = ref(getUserGender(user.gender));
                             class="block w-full"
                             v-model="form.address"
                             autocomplete="address"
+                            :invalid="form.errors.address"
                         />
                         <InputError class="mt-2" :message="form.errors.address" />
                     </div>
@@ -279,6 +282,7 @@ const selected = ref(getUserGender(user.gender));
                             :error="!!form.errors.nationality"
                             :disabled="kycApproval === 'Verified'"
                         />
+                        <InputError class="mt-2" :message="form.errors.nationality" />
                     </div>
 
                     <div class="space-y-1.5">
@@ -289,6 +293,7 @@ const selected = ref(getUserGender(user.gender));
                             class="block w-full"
                             v-model="form.identification_number"
                             :disabled="kycApproval === 'Verified'"
+                            :invalid="form.errors.identification_number"
                         />
                         <InputError class="mt-2" :message="form.errors.identification_number" />
                     </div>

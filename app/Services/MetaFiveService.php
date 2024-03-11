@@ -60,6 +60,7 @@ class MetaFiveService {
             'name' => $user->name,
             'group' => $group,
             'leverage' => $leverage,
+            'eMail' => $user->email,
         ]);
         $accountResponse = $accountResponse->json();
 

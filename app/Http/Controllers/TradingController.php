@@ -146,7 +146,8 @@ class TradingController extends Controller
             'subscription_number' => $subscription_number,
             'subscription_period' => $masterAccount->roi_period,
             'subscription_fee' => $masterAccount->subscription_fee,
-            'next_pay_date' => today()->addDays($masterAccount->roi_period)
+            'next_pay_date' => today()->addDays($masterAccount->roi_period),
+            'status' => 'Pending'
         ]);
 
         Subscriber::create([

@@ -139,7 +139,7 @@ class RegisteredUserController extends Controller
             'role' => 'member',
         ];
 
-        if ($request->has('referral_code')) {
+        if ($request->referral_code) {
             $referral_code = $request->input('referral_code');
             $check_referral_code = User::where('referral_code', $referral_code)->first();
 

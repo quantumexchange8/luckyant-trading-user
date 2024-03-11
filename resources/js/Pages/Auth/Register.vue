@@ -595,7 +595,7 @@ const passwordValidation = () => {
                 <div class="flex items-center justify-center gap-8 mt-4">
                     <Button
                         type="button"
-                        variant="white"
+                        variant="transparent"
                         :disabled="formStep === 1"
                         @click="prevStep"
                         class="px-12"

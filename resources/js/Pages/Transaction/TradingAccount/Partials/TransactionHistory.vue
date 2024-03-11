@@ -29,6 +29,8 @@ const typeFilter = [
     {value: 'Deposit', label:"Deposit"},
     {value: 'Withdrawal', label:"Withdrawal"},
     {value: 'InternalTransfer', label:"Internal Transfer"},
+    {value: 'SubscriptionFee', label:"Subscription Fee"},
+    {value: 'WalletAdjustment', label:"Wallet Adjustment"},
 ];
 
 const categories = ref({});

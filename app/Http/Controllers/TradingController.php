@@ -202,4 +202,20 @@ class TradingController extends Controller
 
         return response()->json($masterAccounts);
     }
+
+    public function masterListingDetail($masterListingDetail)
+    {
+
+        $masterListingDetail = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity'])
+            ->where('status', 'Active')
+            ->where('signal_status', 1)
+            ->whereNot('user_id', \Auth::id())
+            ->where('id', $masterListingDetail)
+            ->first();
+
+        return Inertia::render('Trading/MasterListing/MasterListingDetail', [
+            'masterListingDetail' => $masterListingDetail,
+        ]);
+    }
+
 }

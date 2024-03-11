@@ -8,7 +8,7 @@ import Label from "@/Components/Label.vue";
 const props = defineProps({
     masterListingDetail: Object,
 })
-console.log(props.masterListingDetail);
+
 const { formatAmount } = transactionFormat();
 </script>
 
@@ -29,12 +29,12 @@ const { formatAmount } = transactionFormat();
         <div class="flex gap-5 items-stretch">
             <div class="flex flex-col gap-4 items-start bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-3/4 rounded-lg shadow-lg">
                 <div class="flex justify-between items-center self-stretch border-b border-gray-300 dark:border-gray-500 pb-2">
-        <div class="flex items-center gap-3">
-            <div class="text-lg">
-                Master Listing Detail
+            <div class="flex items-center gap-3">
+                <div class="text-lg">
+                    Master Listing Detail
+                </div>
             </div>
         </div>
-    </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <div class="space-y-2">

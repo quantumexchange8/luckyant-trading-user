@@ -43,15 +43,15 @@ class MasterController extends Controller
         });
 
 
-            
+
         // $metaAccount = $metaService->getMetaUser($master->meta_login);
 
-        
+
         return response()->json([
             'status' => 'success',
             'metaUser' => $MetaData
         ]);
     }
 
-    
+
 }

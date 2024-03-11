@@ -165,9 +165,9 @@ class RegisteredUserController extends Controller
 
         Wallet::create([
             'user_id' => $user->id,
-            'name' => 'Rebate Wallet',
-            'type' => 'rebate_wallet',
-            'wallet_address' => RunningNumberService::getID('rebate_wallet'),
+            'name' => 'Bonus Wallet',
+            'type' => 'bonus_wallet',
+            'wallet_address' => RunningNumberService::getID('bonus_wallet'),
         ]);
         event(new Registered($user));
 

@@ -53,7 +53,7 @@ getWallets();
         class="w-full bg-white dark:bg-gray-900 rounded-lg border-t-8 px-4 py-5 flex flex-col gap-2 justify-around shadow-md"
         :class="[
             { 'border-primary-600 dark:border-primary-400': wallet.type === 'cash_wallet' },
-            { 'border-purple-500 dark:border-purple-400': wallet.type === 'rebate_wallet' },
+            { 'border-purple-500 dark:border-purple-400': wallet.type === 'bonus_wallet' },
         ]"
     >
         <div class="text-lg text-gray-600 dark:text-gray-400 font-bold">{{ wallet.name }} ({{wallet.wallet_address }})</div>

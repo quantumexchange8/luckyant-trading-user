@@ -61,8 +61,11 @@ class TradingController extends Controller
             ->paginate(10);
 
         $masterAccounts->each(function ($master) {
+            $totalSubscriptionsFee = Subscription::where('master_id', $master->id)->where('status', 'Active')->sum('meta_balance');
+
             $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
             $master->subscribersCount = $master->subscribers->count();
+            $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
         });
 
         return response()->json($masterAccounts);
@@ -142,6 +145,7 @@ class TradingController extends Controller
             'master_id' => $masterAccount->id,
             'subscription_number' => $subscription_number,
             'subscription_period' => $masterAccount->roi_period,
+            'subscription_fee' => $masterAccount->subscription_fee,
             'next_pay_date' => today()->addDays($masterAccount->roi_period)
         ]);
 

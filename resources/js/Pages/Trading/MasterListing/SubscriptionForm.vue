@@ -83,10 +83,26 @@ const submit = () => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Sharing Profit (%)
+                        Percentage of Sharing Profit
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ formatAmount(masterAccount.sharing_profit, 0) }} %
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        Estimated Monthly Returns
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ formatAmount(masterAccount.estimated_monthly_returns) }} %
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        Estimated Lot Size
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ formatAmount(masterAccount.estimated_lot_size) }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
@@ -97,6 +113,31 @@ const submit = () => {
                         $ {{ formatAmount(masterAccount.subscription_fee) }}
                     </div>
                 </div>
+                <div class="flex flex-col gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        Total Fund
+                    </div>
+                    <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
+                        <div
+                            :style="{ width: `${masterAccount.totalFundWidth}%` }"
+                            class="rounded-full bg-gradient-to-r from-primary-300 to-primary-600 dark:from-primary-500 dark:to-primary-800 transition-all duration-500 ease-out"
+                        >
+                        </div>
+                    </div>
+                    <div class="mb-2 flex items-center justify-between text-xs">
+                        <div class="dark:text-gray-400">
+                            $ 1
+                        </div>
+                        <div class="dark:text-gray-400">
+                            $ {{ formatAmount(masterAccount.total_fund/3) }}
+                        </div>
+                        <div class="dark:text-gray-400">
+                            $ {{ formatAmount(masterAccount.total_fund/(3/2)) }}
+                        </div>
+                        <div class="dark:text-gray-400">$ {{ masterAccount.total_fund }}</div>
+                    </div>
+                </div>
+
             </div>
         </div>
 

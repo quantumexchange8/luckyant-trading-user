@@ -40,7 +40,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarLink>
 
         <SidebarCollapsible
-            :title="$t('public.sidebar.Trading')"
+            title="Copy Trading"
             :active="route().current('trading.*')"
         >
             <template #icon>
@@ -52,7 +52,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 
             <SidebarCollapsibleItem
                 :href="route('trading.master_listing')"
-                title="Master Listing"
+                title="Master Trader’s Listing"
                 :active="route().current('trading.master_listing')"
             />
         </SidebarCollapsible>

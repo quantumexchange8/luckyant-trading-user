@@ -1,6 +1,6 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CurrencyDollarIcon} from "@heroicons/vue/outline";
+import {CreditCardRefreshIcon} from "@/Components/Icons/outline";
 import {ref} from "vue";
 import Modal from "@/Components/Modal.vue";
 
@@ -24,8 +24,8 @@ const closeModal = () => {
         v-slot="{ iconSizeClasses }"
         @click="openInternalTransferModal"
     >
-        <CurrencyDollarIcon aria-hidden="true" :class="iconSizeClasses" />
-        InternalTransfer
+        <CreditCardRefreshIcon aria-hidden="true" :class="iconSizeClasses" />
+        Internal Transfer
     </Button>
 
     <Modal :show="internalTransferModal" title="Internal Transfer" @close="closeModal">

@@ -31,14 +31,17 @@ const props = defineProps({
 const paymentType = [
   {
       name: 'Bank',
+      value: 'Bank',
       imgUrl: BankImg
   },
   {
-      name: 'Crypto',
+      name: 'Tether',
+      value: 'Crypto',
       imgUrl: cryptoImg
   },
   {
       name: 'Payment Merchant',
+      value: 'Payment Merchant',
       imgUrl: paymentMerchantImg
   }
 ]
@@ -123,8 +126,8 @@ const getPaymentDetails = async (settingPaymentValue) => {
 
 watch(selected, (newType) => {
     if (newType) {
-        if (newType.name === 'Crypto') {
-            getPaymentDetails(newType.name)
+        if (newType.name === 'Tether') {
+            getPaymentDetails(newType.value)
             selectBank.value = null
         } else {
             paymentDetails.value = []
@@ -148,7 +151,7 @@ watch(initialAmount, (newAmount) => {
 
 const submit = () => {
     form.setting_payment_id = paymentDetails.value.id;
-    form.payment_method = selected.value.name;
+    form.payment_method = selected.value.value;
     form.account_no = paymentDetails.value.account_no;
     form.amount = initialAmount.value;
     if (selected.value.name === 'Bank') {
@@ -270,7 +273,7 @@ const copyWalletAddress = () => {
                 />
             </div>
 
-            <div v-if="selected != null ? selected.name === 'Crypto' : '' " class="space-y-2">
+            <div v-if="selected != null ? selected.name === 'Tether' : '' " class="space-y-2">
                 <div class="flex flex-col items-center justify-center gap-2">
                     <qrcode-vue :class="['border-4 border-white']" :value="paymentDetails.account_no" :size="200"></qrcode-vue>
                     <input type="hidden" id="cryptoWalletAddress" :value="paymentDetails.account_no">
@@ -285,7 +288,7 @@ const copyWalletAddress = () => {
 
             <div v-if="selected != null ? selected.name === 'Payment Merchant' : '' " class="space-y-2">
                 <div class="flex gap-2">
-                   Crypto Payment - USDT
+                   Tether Payment - USDT
                 </div>
             </div>
 
@@ -382,7 +385,7 @@ const copyWalletAddress = () => {
                 </div>
             </div> -->
 
-            <div v-if="selected !== null && selected.name !== 'Payment Merchant'" class="flex flex-col sm:flex-row gap-4 pt-2">
+            <div v-if="selected.name !== 'Payment Merchant'" class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label for="receipt" class="text-sm dark:text-white md:w-1/4" value="Payment Slip"/>
                 <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
                     <input

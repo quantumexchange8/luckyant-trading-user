@@ -29,7 +29,7 @@ class MasterController extends Controller
                 ];
             });
             return response()->json([
-                'status' => 'Failed!',
+                'status' => 'failed',
                 'meta_user' =>  $metaMaster,
                 // 'subscriber' => $metaMaster->,
             ]);

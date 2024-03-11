@@ -3,6 +3,8 @@ import Deposit from "@/Pages/Dashboard/Deposit.vue";
 import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 import InternalTransfer from "@/Pages/Dashboard/InternalTransfer.vue";
 import ApplyRebate from "@/Pages/Dashboard/ApplyRebate.vue";
+import DepositToMeta from "@/Pages/Dashboard/DepositToMeta.vue";
+import DepositBalance from "@/Pages/AccountInfo/TradingAccount/DepositBalance.vue";
 
 const props = defineProps({
     wallet: Object,
@@ -15,26 +17,32 @@ const props = defineProps({
 </script>
 
 <template>
-    <div
-        v-if="wallet.type === 'cash_wallet'"
-        class="flex flex-col gap-2"
-    >
-        <div class="flex justify-between w-full gap-2">
-            <Deposit
-                :walletSel="walletSel"
-                :countries="countries"
-            />
-            <Withdrawal
-                :walletSel="walletSel"
-                :withdrawalFee="withdrawalFee"
-                :paymentAccountSel="paymentAccountSel"
-            />
-        </div>
-        <div class="flex items-center justify-center w-full">
+    <div class="flex flex-col gap-2">
+        <template v-if="wallet.type === 'cash_wallet'">
+            <div class="flex justify-between w-full gap-2">
+                <Deposit
+                    :walletSel="walletSel"
+                    :countries="countries"
+                />
+                <Withdrawal
+                    :walletSel="walletSel"
+                    :withdrawalFee="withdrawalFee"
+                    :paymentAccountSel="paymentAccountSel"
+                />
+            </div>
+            <div class="flex items-center justify-center w-full">
+                <InternalTransfer />
+            </div>
+        </template>
+        <template v-else-if="wallet.type === 'bonus_wallet'">
+            <ApplyRebate />
             <InternalTransfer />
-        </div>
-    </div>
-    <div v-else>
-        <ApplyRebate />
+        </template>
+        <template v-else-if="wallet.type === 'e_wallet'">
+            <DepositToMeta
+                :walletSel="walletSel"
+                :wallet="wallet"
+            />
+        </template>
     </div>
 </template>

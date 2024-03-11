@@ -75,7 +75,7 @@ const leverages = [
                     @click="addTradingAccount"
                 >
                     <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
-                    <span>{{ $t('public.Add Trading Account') }}</span>
+                    <span>Add Real Account</span>
                 </Button>
             </div>
         </template>

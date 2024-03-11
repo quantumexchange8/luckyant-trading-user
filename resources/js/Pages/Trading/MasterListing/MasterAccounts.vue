@@ -126,7 +126,6 @@ const openDetails = (masterAccountID) => {
         <div
             v-for="masterAccount in masterAccounts.data"
             class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg hover:cursor-pointer hover:bg-gray-50 hover:shadow-primary-300"
-            @click="openDetails(masterAccount.id)"
         >
             <div class="flex justify-between w-full">
                 <img
@@ -200,10 +199,18 @@ const openDetails = (masterAccountID) => {
                 </div>
             </div>
 
-            <div class="flex w-full justify-center items-center">
+            <div class="flex w-full gap-2 items-center">
                 <SubscriptionForm
                     :masterAccount="masterAccount"
                 />
+                <Button
+                    type="button"
+                    variant="transparent"
+                    class="w-full flex justify-center"
+                    @click.prevent="openDetails(masterAccount.id)"
+                >
+                    View Details
+                </Button>
             </div>
 
         </div>

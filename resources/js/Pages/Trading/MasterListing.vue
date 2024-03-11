@@ -11,11 +11,11 @@ import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vu
 </script>
 
 <template>
-    <AuthenticatedLayout title="Master Configuration">
+    <AuthenticatedLayout title="Master Trader's Listing">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    Master Listings
+                    Master Trader's Listing
                 </h2>
             </div>
         </template>

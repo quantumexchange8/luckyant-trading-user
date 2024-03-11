@@ -53,7 +53,7 @@ const closeModal = () => {
         <CreditCardAddIcon />
         Balance In
     </Button>
-    <Dropdown align="right" width="48">
+    <Dropdown v-if="!account.subscriber" align="right" width="48">
         <template #trigger>
             <span class="inline-flex rounded-md">
                 <Button

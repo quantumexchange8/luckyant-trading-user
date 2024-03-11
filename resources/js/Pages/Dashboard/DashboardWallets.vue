@@ -1,8 +1,9 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {ref} from "vue";
+import {ref, watchEffect} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import WalletAction from "@/Pages/Dashboard/WalletAction.vue";
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     walletSel: Array,
@@ -30,6 +31,11 @@ const getWallets = async () => {
 
 getWallets();
 
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getWallets();
+    }
+});
 </script>
 
 <template>

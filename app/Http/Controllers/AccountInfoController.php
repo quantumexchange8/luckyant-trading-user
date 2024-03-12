@@ -80,7 +80,7 @@ class AccountInfoController extends Controller
             }
         }
 
-        $tradingAccounts = TradingAccount::with(['accountType:id,group_id,name', 'subscriber:id,trading_account_id'])
+        $tradingAccounts = TradingAccount::with(['accountType:id,group_id,name', 'subscriber:id,trading_account_id', 'masterRequest:id,trading_account_id,status'])
             ->where('user_id', \Auth::id())
             ->whereDoesntHave('masterAccount', function ($query) {
                 $query->whereNotNull('trading_account_id');

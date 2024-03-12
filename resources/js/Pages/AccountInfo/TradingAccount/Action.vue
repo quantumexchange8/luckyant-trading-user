@@ -89,7 +89,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
-                v-if="!masterAccountLogin.includes(account.meta_login)"
+                v-if="!masterAccountLogin.includes(account.meta_login) && (!account.master_request || account.master_request.status !== 'Pending')"
                 @click="openAccountActionModal('become_master')"
             >
                 <div class="flex items-center gap-2">

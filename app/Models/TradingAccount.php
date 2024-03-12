@@ -68,6 +68,11 @@ class TradingAccount extends Model
         return $this->hasOne(TradingUser::class, 'meta_login', 'meta_login');
     }
 
+    public function masterRequest(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(MasterRequest::class, 'trading_account_id', 'id');
+    }
+
     public function masterAccount(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Master::class, 'trading_account_id', 'id');

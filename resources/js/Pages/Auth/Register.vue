@@ -23,7 +23,7 @@ const props = defineProps({
     referral_code: String
 })
 
-const formStep = ref(1);
+const formStep = ref(3);
 const showPassword = ref(false);
 const showPassword2 = ref(false);
 const selectedCountry = ref(132);
@@ -45,7 +45,7 @@ const togglePasswordVisibilityConfirm = () => {
 }
 
 const form = useForm({
-    form_step: 1,
+    form_step: 3,
     name: '',
     chinese_name: '',
     email: '',
@@ -68,24 +68,16 @@ const form = useForm({
     nationality: 'Malaysian',
 });
 
-watch(() => [form.terms, form.market, form.responsible, form.compensate], ([terms, market, responsible, compensate]) => {
-    form.all = terms && market && responsible && compensate;
-}, { deep: true });
-
-watch(() => form.all, (newValue, oldValue) => {
-    if (newValue && !oldValue) {
-        form.terms = true;
-        form.market = true;
-        form.responsible = true;
-        form.compensate = true;
-    }
+watch(() => [form.terms, form.market, form.responsible, form.compensate], (newValues) => {
+    form.all = newValues.every(value => value);
 });
 
-watch(() => [form.terms, form.market, form.responsible, form.compensate], ([terms, market, responsible, compensate]) => {
-    if (!terms || !market || !responsible || !compensate) {
-        form.all = false; // If any individual checkbox is unchecked, uncheck the "All" checkbox
-    }
-}, { deep: true });
+watch(() => form.all, (newValue) => {
+    form.terms = newValue;
+    form.market = newValue;
+    form.responsible = newValue;
+    form.compensate = newValue;
+});
 
 watch(selectedCountry, (newCountry) => {
     const foundNationality = props.nationality.find(nationality => nationality.id === newCountry);

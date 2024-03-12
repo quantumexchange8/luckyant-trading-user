@@ -6,6 +6,8 @@ use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\TradingController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TermController;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -22,6 +24,12 @@ use App\Http\Controllers\WalletController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('locale/{locale}', function ($locale) {
+    App::setLocale($locale);
+    Session::put("locale", $locale);
+
+    return redirect()->back();
+});
 
 Route::get('/', function () {
     return redirect()->route('login');

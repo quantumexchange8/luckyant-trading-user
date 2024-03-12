@@ -12,6 +12,7 @@ import Badge from "@/Components/Badge.vue";
 import {TailwindPagination} from "laravel-vue-pagination";
 import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
+import Modal from "@/Components/Modal.vue";
 
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -90,14 +91,17 @@ const handlePageChange = (newPage) => {
 //     }
 // });
 
-// const openHistoryModal = (transaction) => {
-//     transactionModal.value = true
-//     transactionDetails.value = transaction
-// }
-//
-// const closeModal = () => {
-//     transactionModal.value = false
-// }
+const subscriptionHistoryModal = ref(false);
+const subscriptionHistoryDetail = ref()
+
+const openSubscriptionHistoryModal = (subscription) => {
+    subscriptionHistoryModal.value = true
+    subscriptionHistoryDetail.value = subscription
+}
+
+const closeModal = () => {
+    subscriptionHistoryModal.value = false
+}
 
 const clearFilter = () => {
     search.value = '';
@@ -211,6 +215,7 @@ watchEffect(() => {
             <tr
                 v-for="subscription in subscriptions.data"
                 class="bg-white dark:bg-transparent text-xs text-gray-900 dark:text-white border-b dark:border-gray-800 hover:cursor-pointer hover:bg-primary-50 dark:hover:bg-gray-600"
+                @click="openSubscriptionHistoryModal(subscription)"
             >
                 <td class="p-3">
                     <div class="inline-flex items-center gap-2">
@@ -252,4 +257,47 @@ watchEffect(() => {
             </template>
         </TailwindPagination>
     </div>
+
+    <Modal :show="subscriptionHistoryModal" title="Subscription Details" @close="closeModal">
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Subscription Date</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ formatDateTime(subscriptionHistoryDetail.created_at, false) }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Account Number</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.meta_login }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Status</span>
+            <Badge class="w-36" :variant="statusVariant(subscriptionHistoryDetail.status)">{{ subscriptionHistoryDetail.status }}</Badge>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Approval Date</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.approval_date ? formatDateTime(subscriptionHistoryDetail.approval_date, false) : '-' }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Subscription Number</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.subscription_number }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Master Account</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.master.meta_login }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Subscription Fee</span>
+            <span class="col-span-2 text-black dark:text-white py-2">$ {{ subscriptionHistoryDetail.subscription_fee ? formatAmount(subscriptionHistoryDetail.subscription_fee) : '0.00' }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">ROI Period</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.subscription_period }} {{ $t('public.days') }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Renew Date</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.expired_date ? formatDateTime(subscriptionHistoryDetail.expired_date, false) : '-' }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Remarks</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.remarks ? subscriptionHistoryDetail.remarks : '-' }}</span>
+        </div>
+    </Modal>
 </template>

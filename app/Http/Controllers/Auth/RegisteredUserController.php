@@ -60,17 +60,15 @@ class RegisteredUserController extends Controller
     public function firstStep(Request $request)
     {
         $rules = [
-            'country' => 'required',
             'email' => 'required|string|email|max:255|unique:' . User::class,
             'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:8|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
 
         $attributes = [
-            'country' => trans('public.Country'),
-            'email' => trans('public.Email'),
-            'phone' => trans('public.Mobile Phone'),
-            'password' => trans('public.Password'),
+            'email' => trans('public.email'),
+            'phone' => trans('public.mobile_phone'),
+            'password' => trans('public.password'),
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -89,11 +87,11 @@ class RegisteredUserController extends Controller
             $rules = array_merge($rules, $additionalRules);
 
             $additionalAttributes = [
-                'name'=> trans('public.Name'),
-                'chinese_name' => trans('public.Chinese Name'),
-                'dob' => trans('public.Date Of Birth'),
-                'country' => trans('public.Country'),
-                'nationality' => trans('public.Nationality'),
+                'name'=> trans('public.name'),
+                'chinese_name' => trans('public.chinese_name'),
+                'dob' => trans('public.date_of_birth'),
+                'country' => trans('public.country'),
+                'nationality' => trans('public.nationality'),
             ];
             $attributes = array_merge($attributes, $additionalAttributes);
 

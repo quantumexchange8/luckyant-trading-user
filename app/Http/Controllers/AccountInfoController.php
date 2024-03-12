@@ -91,10 +91,12 @@ class AccountInfoController extends Controller
         $tradingAccounts->each(function ($tradingAccount) {
             if ($tradingAccount->subscriber) {
                 if ($tradingAccount->subscriber->unsubscribe_date < now()) {
-                    $tradingAccount->subscriber->balance_out = false;
+                    $tradingAccount->balance_out = false;
                 } else {
-                    $tradingAccount->subscriber->balance_out = true;
+                    $tradingAccount->balance_out = true;
                 }
+            } else {
+                $tradingAccount->balance_out = true;
             }
         });
 

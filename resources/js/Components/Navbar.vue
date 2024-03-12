@@ -21,7 +21,8 @@ import Button from '@/Components/Button.vue'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
-import { ArrowsInnerIcon } from '@/Components/Icons/outline'
+import { TranslateIcon } from '@/Components/Icons/outline'
+import {loadLanguageAsync, trans} from "laravel-vue-i18n";
 
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen()
 
@@ -32,6 +33,15 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('scroll', handleScroll)
 })
+
+const changeLanguage = async (langVal) => {
+    try {
+        await loadLanguageAsync(langVal);
+        await axios.get(`/locale/${langVal}`);
+    } catch (error) {
+        console.error('Error changing locale:', error);
+    }
+};
 </script>
 
 <template>
@@ -89,26 +99,35 @@ onUnmounted(() => {
                 />
             </Button>
 
-            <Button
-                iconOnly
-                variant="transparent"
-                type="button"
-                @click="toggleFullScreen"
-                v-slot="{ iconSizeClasses }"
-                class="hidden md:inline-flex"
-                srText="Toggle dark mode"
-            >
-                <ArrowsExpandIcon
-                    v-show="!isFullscreen"
-                    aria-hidden="true"
-                    :class="iconSizeClasses"
-                />
-                <ArrowsInnerIcon
-                    v-show="isFullscreen"
-                    aria-hidden="true"
-                    :class="iconSizeClasses"
-                />
-            </Button>
+            <Dropdown align="right">
+                <template #trigger>
+                    <Button
+                        iconOnly
+                        variant="transparent"
+                        type="button"
+                        v-slot="{ iconSizeClasses }"
+                        class="hidden md:inline-flex"
+                        srText="Toggle dark mode"
+                    >
+                        <TranslateIcon
+                            aria-hidden="true"
+                            :class="iconSizeClasses"
+                        />
+                    </Button>
+                </template>
+                <template #content>
+                    <DropdownLink @click="changeLanguage('en')">
+                        <div class="inline-flex items-center gap-2">
+                            English
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('cn')">
+                        <div class="inline-flex items-center gap-2">
+                            中文
+                        </div>
+                    </DropdownLink>
+                </template>
+            </Dropdown>
 
             <!-- Dropdwon -->
             <Dropdown align="right" width="48">

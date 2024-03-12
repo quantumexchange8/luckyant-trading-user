@@ -73,7 +73,7 @@ const closeModal = () => {
 
         <template #content>
             <DropdownLink
-                v-if="account.subscriber && account.subscriber.balance_out"
+                v-if="!account.subscriber || account.balance_out"
                 @click="openAccountActionModal('withdrawal')"
             >
                 <div class="flex items-center gap-2">
@@ -84,7 +84,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
-                v-if="accountCounts > 1"
+                v-if="accountCounts > 1 && (!account.subscriber || account.balance_out)"
                 @click="openAccountActionModal('internal_transfer')"
             >
                 <div class="flex items-center gap-2">

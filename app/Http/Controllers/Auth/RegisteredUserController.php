@@ -9,6 +9,7 @@ use App\Models\Country;
 use App\Models\User;
 use App\Models\VerifyOtp;
 use App\Models\Wallet;
+use App\Notifications\NewUserWelcomeNotification;
 use App\Notifications\OtpNotification;
 use App\Providers\RouteServiceProvider;
 use App\Services\RunningNumberService;
@@ -189,6 +190,9 @@ class RegisteredUserController extends Controller
             'wallet_address' => RunningNumberService::getID('e_wallet'),
         ]);
         event(new Registered($user));
+
+        Notification::route('mail', $user->email)
+            ->notify(new NewUserWelcomeNotification($user));
 
         return redirect()->route('login')
             ->with('title', 'Success registration')

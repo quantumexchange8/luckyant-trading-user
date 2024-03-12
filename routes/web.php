@@ -88,8 +88,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/master_listing/{masterAccountID}', [TradingController::class, 'masterListingDetail'])->name('trading.masterListingDetail');
         Route::get('/getMasterAccounts', [TradingController::class, 'getMasterAccounts'])->name('trading.getMasterAccounts');
         Route::get('/getSubscriptions', [TradingController::class, 'getSubscriptions'])->name('trading.getSubscriptions');
+        Route::get('/getSubscriptionHistories', [TradingController::class, 'getSubscriptionHistories'])->name('trading.getSubscriptionHistories');
 
         Route::post('/subscribeMaster', [TradingController::class, 'subscribeMaster'])->name('trading.subscribeMaster');
+        Route::post('/terminateSubscription', [TradingController::class, 'terminateSubscription'])->name('trading.terminateSubscription');
     });
 
     /**

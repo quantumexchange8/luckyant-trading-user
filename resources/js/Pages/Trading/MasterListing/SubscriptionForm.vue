@@ -129,10 +129,7 @@ const submit = () => {
                             $ 1
                         </div>
                         <div class="dark:text-gray-400">
-                            $ {{ formatAmount(masterAccount.total_fund/3) }}
-                        </div>
-                        <div class="dark:text-gray-400">
-                            $ {{ formatAmount(masterAccount.total_fund/(3/2)) }}
+                            $ {{ formatAmount(masterAccount.total_fund/2) }}
                         </div>
                         <div class="dark:text-gray-400">$ {{ masterAccount.total_fund }}</div>
                     </div>

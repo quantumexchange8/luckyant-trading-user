@@ -20,7 +20,11 @@ class Subscription extends Model
         'subscription_number',
         'subscription_period',
         'subscription_fee',
+        'termination_date',
         'next_pay_date',
+        'expired_date',
+        'approval_date',
+        'remarks',
         'status',
         'handle_by',
     ];

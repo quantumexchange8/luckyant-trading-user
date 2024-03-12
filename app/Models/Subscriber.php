@@ -17,6 +17,7 @@ class Subscriber extends Model
         'master_meta_login',
         'subscription_id',
         'status',
+        'unsubscribe_date',
     ];
 
     public function tradingAccount(): \Illuminate\Database\Eloquent\Relations\BelongsTo

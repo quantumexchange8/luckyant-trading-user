@@ -5,11 +5,14 @@ import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import {SearchIcon} from "@heroicons/vue/outline";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import Input from "@/Components/Input.vue";
-import {ref, watch} from "vue";
+import {ref, watch, watchEffect} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
 import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
 import Badge from "@/Components/Badge.vue";
+import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
+import {usePage} from "@inertiajs/vue3";
+import SubscriptionHistory from "@/Pages/Trading/MasterListing/SubscriptionHistory.vue";
 
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -72,6 +75,18 @@ watch(
 const clearFilter = () => {
     search.value = '';
 }
+
+const statusVariant = (status) => {
+    if (status === 'Pending') return 'processing';
+    if (status === 'Active') return 'success';
+    if (status === 'Rejected' || 'Terminated') return 'danger';
+}
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getResults();
+    }
+});
 </script>
 
 <template>
@@ -148,7 +163,7 @@ const clearFilter = () => {
                     <div class="text-sm font-semibold">{{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%</div>
                 </div>
                 <div class="flex gap-1">
-                    <div class="text-sm">Monthly Fee:</div>
+                    <div class="text-sm">Subscription Fee:</div>
                     <div class="text-sm font-semibold">$ {{ subscriberAccount.master.subscription_fee % 1 === 0 ? formatAmount(subscriberAccount.master.subscription_fee, 0) : formatAmount(subscriberAccount.master.subscription_fee) }}</div>
                 </div>
             </div>
@@ -188,26 +203,35 @@ const clearFilter = () => {
                 <!--                </div>-->
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        Subscriptions
+                        Estimated ROI
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.meta_login }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ formatAmount(subscriberAccount.master.estimated_monthly_returns) }}%</span>
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        Master Balance
+                        ROI Return
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.trading_account.equity) }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} Days</span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex w-full justify-center items-center">
-                <Badge width="full">{{ subscriberAccount.subscription.status }}</Badge>
+            <div class="flex w-full gap-2 items-center">
+                <Badge :variant="statusVariant(subscriberAccount.subscription.status)" width="full">{{ subscriberAccount.subscription.status }}</Badge>
+                <TerminateSubscription
+                    v-if="subscriberAccount.subscription.status === 'Active'"
+                    :subscriberAccount="subscriberAccount"
+                />
             </div>
 
         </div>
+    </div>
+
+    <div class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
+        <SubscriptionHistory
+        />
     </div>
 </template>

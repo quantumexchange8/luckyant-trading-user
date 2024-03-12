@@ -53,7 +53,7 @@ const closeModal = () => {
         <CreditCardAddIcon />
         Balance In
     </Button>
-    <Dropdown v-if="!account.subscriber" align="right" width="48">
+    <Dropdown v-if="!account.subscriber || account.subscriber.status === 'Unsubscribed'" align="right" width="48">
         <template #trigger>
             <span class="inline-flex rounded-md">
                 <Button
@@ -68,6 +68,7 @@ const closeModal = () => {
 
         <template #content>
             <DropdownLink
+                v-if="account.subscriber && account.subscriber.balance_out"
                 @click="openAccountActionModal('withdrawal')"
             >
                 <div class="flex items-center gap-2">

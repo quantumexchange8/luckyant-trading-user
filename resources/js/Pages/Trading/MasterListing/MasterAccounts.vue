@@ -191,10 +191,10 @@ const openDetails = (masterAccountID) => {
                 </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        Account Balance
+                        ROI Period
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(masterAccount.trading_account.equity) }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ masterAccount.roi_period }} Days</span>
                     </div>
                 </div>
             </div>

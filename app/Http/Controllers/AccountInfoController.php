@@ -80,13 +80,23 @@ class AccountInfoController extends Controller
             }
         }
 
-        $tradingAccounts = TradingAccount::with(['accountType:id,group_id,name', 'subscriber:id,trading_account_id', 'masterRequest:id,trading_account_id,status'])
+        $tradingAccounts = TradingAccount::with(['accountType:id,group_id,name', 'subscriber', 'masterRequest:id,trading_account_id,status'])
             ->where('user_id', \Auth::id())
             ->whereDoesntHave('masterAccount', function ($query) {
                 $query->whereNotNull('trading_account_id');
             })
             ->latest()
             ->get();
+
+        $tradingAccounts->each(function ($tradingAccount) {
+            if ($tradingAccount->subscriber) {
+                if ($tradingAccount->subscriber->unsubscribe_date < now()) {
+                    $tradingAccount->subscriber->balance_out = false;
+                } else {
+                    $tradingAccount->subscriber->balance_out = true;
+                }
+            }
+        });
 
         $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name'])->where('user_id', \Auth::id())->get();
 
@@ -211,12 +221,17 @@ class AccountInfoController extends Controller
         $user = Auth::user();
         $wallet = Wallet::find($request->to_wallet_id);
         $amount = $request->amount;
-        $tradingAccount = TradingAccount::where('meta_login', $request->from_meta_login)->first();
+        $tradingAccount = TradingAccount::with('subscriber')->where('meta_login', $request->from_meta_login)->first();
 
         try {
             $metaService->getUserInfo(collect([$tradingAccount]));
         } catch (\Exception $e) {
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        }
+
+        // Check if balance is sufficient
+        if ($tradingAccount->subscriber->unsubscribe_date < now()) {
+            throw ValidationException::withMessages(['amount' => 'Termination within 24 hours']);
         }
 
         // Check if balance is sufficient
@@ -326,17 +341,23 @@ class AccountInfoController extends Controller
 
     public function getTradingAccounts(Request $request)
     {
-        $tradingAccount = null;
-
         if ($request->type == 'internal_transfer') {
             $tradingAccount = TradingAccount::where('user_id', Auth::id())->whereNot('meta_login', $request->meta_login)->get();
         } elseif ($request->type == 'subscribe') {
             $tradingAccount = TradingAccount::where('user_id', Auth::id())
-                ->whereDoesntHave('masterAccount', function ($query) {
-                    $query->whereNotNull('trading_account_id');
+                ->where(function ($query) {
+                    $query->whereDoesntHave('masterAccount', function ($subQuery) {
+                        $subQuery->whereNotNull('trading_account_id');
+                    })
+                        ->whereDoesntHave('subscriber', function ($subQuery) {
+                            $subQuery->whereNotNull('trading_account_id');
+                        });
                 })
-                ->whereDoesntHave('subscriber', function ($query) {
-                    $query->whereNotNull('trading_account_id');
+                ->orWhere(function ($query) {
+                    $query->whereHas('subscriber', function ($subQuery) {
+                        $subQuery->where('user_id', Auth::id())
+                            ->whereNot('status', 'Subscribing');
+                    });
                 })
                 ->whereNot('meta_login', $request->meta_login)
                 ->get();

@@ -7,6 +7,7 @@ use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
+use App\Models\Wallet;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
@@ -75,6 +76,7 @@ class TradingController extends Controller
     {
         $user = Auth::user();
         $meta_login = $request->meta_login;
+        $wallet = Wallet::where('user_id', $user->id)->first();
         $masterAccount = Master::find($request->master_id);
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
@@ -98,28 +100,20 @@ class TradingController extends Controller
         }
 
         if ($masterAccount->subscription_fee > 0) {
-            // Create transaction
-            $deal = [];
-            try {
-                $deal = (new MetaFiveService())->createDeal($meta_login, $masterAccount->subscription_fee, 'Subscription Fee for COPYTRADE', dealAction::WITHDRAW);
-            } catch (\Exception $e) {
-                \Log::error('Error fetching trading accounts: '. $e->getMessage());
-            }
-
             $transaction_number = RunningNumberService::getID('transaction');
 
             $transaction = Transaction::create([
                 'category' => 'trading_account',
                 'user_id' => $user->id,
-                'from_meta_login' => $meta_login,
-                'ticket' => $deal['deal_Id'],
+                'from_wallet_id' => $wallet->id,
+//                'ticket' => $deal['deal_Id'],
                 'transaction_number' => $transaction_number,
                 'transaction_type' => 'SubscriptionFee',
                 'amount' => $masterAccount->subscription_fee,
                 'transaction_charges' => 0,
                 'transaction_amount' => $masterAccount->subscription_fee,
-                'status' => 'Success',
-                'comment' => $deal['conduct_Deal']['comment'],
+                'status' => 'Processing',
+//                'comment' => $deal['conduct_Deal']['comment'],
             ]);
 
             // Create diff subscriptions data
@@ -170,6 +164,7 @@ class TradingController extends Controller
     {
         $masterAccounts = Subscriber::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'subscription'])
             ->where('user_id', Auth::id())
+            ->where('status', 'Subscribing')
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
                 $query->whereHas('master', function ($q) use ($search) {
@@ -223,4 +218,58 @@ class TradingController extends Controller
         ]);
     }
 
+    public function terminateSubscription(Request $request)
+    {
+        $subscription = Subscription::find($request->subscription_id);
+        $subscriber = Subscriber::where('subscription_id', $subscription->id)->first();
+
+        if ($subscription->status == 'Terminated') {
+            return redirect()->back()
+                ->with('title', 'Terminated Subscription')
+                ->with('warning', 'Please try again later');
+        }
+
+        $subscription->update([
+            'termination_date' => now(),
+            'status' => 'Terminated'
+        ]);
+
+        $subscriber->update([
+            'unsubscribe_date' => now(),
+            'status' => 'Unsubscribed'
+        ]);
+
+        return redirect()->back()
+            ->with('title', 'Success terminate')
+            ->with('success', 'Successfully terminated subscription number: ' . $subscription->subscription_number);
+    }
+
+    public function getSubscriptionHistories(Request $request)
+    {
+        $subscriptionHistories = Subscription::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master'])
+            ->where('user_id', Auth::id())
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = '%' . $request->input('search') . '%';
+                $query->where('meta_login','like', $search);
+            })
+            ->when($request->filled('date'), function ($query) use ($request) {
+                $date = $request->input('date');
+                $dateRange = explode(' - ', $date);
+                $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+                $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            })
+            ->when($request->filled('type'), function ($query) use ($request) {
+                $type = $request->input('type');
+                $query->where('status', $type);
+            })
+            ->latest()
+            ->paginate(10);
+
+        $subscriptionHistories->each(function ($subscriber) {
+            $subscriber->master->user->profile_photo = $subscriber->master->user->getFirstMediaUrl('profile_photo');
+        });
+
+        return response()->json($subscriptionHistories);
+    }
 }

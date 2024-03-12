@@ -6,11 +6,11 @@ import TransactionHistory from "@/Pages/Transaction/TradingAccount/Partials/Tran
 
 <template>
 
-    <AuthenticatedLayout :title="$t('public.sidebar.Transaction')">
+    <AuthenticatedLayout :title="$t('public.sidebar.transaction')">
         <template #header>
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    Trading Account
+                    {{ $t('public.trading_account') }}
                 </h2>
             </div>
         </template>

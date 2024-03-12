@@ -71,13 +71,13 @@ const closeModal = () => {
         @click="openInternalTransferModal"
     >
         <CreditCardUpIcon aria-hidden="true" :class="iconSizeClasses" />
-        Deposit To Account
+        {{ $t('public.deposit') + ' ' + $t('public.to_account') }}
     </Button>
 
-    <Modal :show="internalTransferModal" title="Deposit To Account" @close="closeModal">
+    <Modal :show="internalTransferModal" :title="$t('public.deposit') + ' ' + $t('public.to_account')" @close="closeModal">
         <form class="space-y-2">
             <div class="flex flex-col sm:flex-row gap-4">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="trading_account" value="Account Number" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="trading_account" :value="$t('public.account_number')" />
                 <div class="flex flex-col w-full">
                     <div v-if="tradingAccountsSel">
                         <BaseListbox
@@ -100,13 +100,13 @@ const closeModal = () => {
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4 pt-2 pb-5">
-                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.Amount')  + ' ($)'" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
                 <div class="flex flex-col w-full">
                     <Input
                         id="amount"
                         type="number"
                         min="0"
-                        placeholder="$ 30.00"
+                        :placeholder="$t('public.amount_transfer_placeholder')"
                         class="block w-full"
                         v-model="form.amount"
                         :invalid="form.errors.amount"
@@ -136,9 +136,9 @@ const closeModal = () => {
 
             <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                    {{$t('public.Cancel')}}
+                    {{$t('public.cancel')}}
                 </Button>
-                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
+                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
             </div>
         </form>
     </Modal>

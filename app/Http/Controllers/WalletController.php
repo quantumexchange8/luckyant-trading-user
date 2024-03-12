@@ -228,8 +228,8 @@ class WalletController extends Controller
         }
 
         return redirect()->back()
-            ->with('title', 'Success request deposit')
-            ->with('success', 'Successfully submit a deposit request, we will email you once the deposit is processed');
+            ->with('title', trans('public.success_request_deposit'))
+            ->with('success', trans('public.successfully_request_deposit'));
     }
 
     public function depositReturn(Request $request)
@@ -400,7 +400,7 @@ class WalletController extends Controller
 
         $wallet = Wallet::find($request->wallet_id);
         if ($wallet->balance < $amount) {
-            throw ValidationException::withMessages(['amount' => trans('Insufficient balance')]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
         }
         $withdrawal_fee = $request->transaction_charges;
         $final_amount = $amount - $withdrawal_fee;
@@ -427,7 +427,7 @@ class WalletController extends Controller
             'status' => 'Processing',
         ]);
 
-        return redirect()->back()->with('title', trans('public.Submitted'))->with('success', trans('public.Successfully Submitted Withdrawal Request'));
+        return redirect()->back()->with('title', trans('public.success_submit_withdrawal_request'))->with('success', trans('public.successfully_submit_withdrawal_request'));
     }
 
     public function getPaymentDetails(Request $request)

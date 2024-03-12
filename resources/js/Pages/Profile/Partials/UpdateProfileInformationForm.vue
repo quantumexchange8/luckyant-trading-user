@@ -121,11 +121,11 @@ const selected = ref(getUserGender(user.gender));
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Details
+                {{ $t('public.details') }}
             </h2>
 
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Update your account's profile information and email address.
+                {{ $t('public.profile_update_message') }}
             </p>
         </header>
 
@@ -157,7 +157,7 @@ const selected = ref(getUserGender(user.gender));
             <form class="w-full sm:w-2/3">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
-                        <Label for="name" :value="$t('public.Name')" />
+                        <Label for="name" :value="$t('public.name')" />
 
                         <Input
                             id="name"
@@ -173,7 +173,7 @@ const selected = ref(getUserGender(user.gender));
                     </div>
 
                     <div class="space-y-1.5">
-                        <Label for="email" :value="$t('public.Email')" />
+                        <Label for="email" :value="$t('public.email')" />
 
                         <Input
                             id="email"
@@ -190,7 +190,7 @@ const selected = ref(getUserGender(user.gender));
                     <div class="space-y-1.5">
                         <Label
                             for="phone"
-                            :value="$t('public.Mobile Phone')"
+                            :value="$t('public.mobile_phone')"
                         />
                         <div class="flex gap-3">
                             <BaseListbox
@@ -205,7 +205,7 @@ const selected = ref(getUserGender(user.gender));
                                 id="phone"
                                 type="text"
                                 class="block w-full"
-                                placeholder="123456789"
+                                :placeholder="$t('public.phone_placeholder')"
                                 v-model="form.phone"
                                 :invalid="form.errors.phone"
                             />
@@ -216,10 +216,10 @@ const selected = ref(getUserGender(user.gender));
                     <div class="space-y-1.5">
                         <Label
                             for="gender"
-                            :value="$t('public.Gender')"
+                            :value="$t('public.gender')"
                         />
                         <RadioGroup v-model="selected">
-                            <RadioGroupLabel class="sr-only">Signal Status</RadioGroupLabel>
+                            <RadioGroupLabel class="sr-only">{{ $t('public.signal_status') }}</RadioGroupLabel>
                             <div class="flex gap-3 items-center self-stretch w-full">
                                 <RadioGroupOption
                                     as="template"
@@ -257,7 +257,7 @@ const selected = ref(getUserGender(user.gender));
                     </div>
 
                     <div class="space-y-1.5 sm:col-span-2">
-                        <Label for="address" :value="$t('public.Address')" />
+                        <Label for="address" :value="$t('public.address')" />
                         <Input
                             id="address"
                             type="text"
@@ -272,12 +272,12 @@ const selected = ref(getUserGender(user.gender));
                     <div class="space-y-1.5">
                         <Label
                             for="nationality"
-                            :value="$t('public.Nationality')"
+                            :value="$t('public.nationality')"
                         />
                         <BaseListbox
                             v-model="form.nationality"
                             :options="nationalities"
-                            placeholder="Nationality"
+                            :placeholder="$t('public.nationality')"
                             class="w-full"
                             :error="!!form.errors.nationality"
                             :disabled="kycApproval === 'Verified'"
@@ -286,7 +286,7 @@ const selected = ref(getUserGender(user.gender));
                     </div>
 
                     <div class="space-y-1.5">
-                        <Label for="identification_number" :value="$t('public.Identification No')" />
+                        <Label for="identification_number" :value="$t('public.identification_no')" />
                         <Input
                             id="identification_number"
                             type="text"
@@ -299,7 +299,7 @@ const selected = ref(getUserGender(user.gender));
                     </div>
 
                     <div class="space-y-1.5">
-                        <Label class="text-sm dark:text-white" for="proof_front" value="Proof of Identity (Front)" />
+                        <Label class="text-sm dark:text-white" for="proof_front" :value="$t('public.proof_of_identity') + ' (' + $t('public.front') + ')'" />
                         <div class="flex gap-3">
                             <input
                                 ref="frontProofInput"
@@ -316,7 +316,7 @@ const selected = ref(getUserGender(user.gender));
                                 @click="$refs.frontProofInput.click()"
                                 :disabled="kycApproval === 'Verified'"
                             >
-                                Browse
+                                {{ $t('public.browse') }}
                             </Button>
                             <InputError :message="form.errors.proof_front" class="mt-2" />
                         </div>
@@ -347,7 +347,7 @@ const selected = ref(getUserGender(user.gender));
                     </div>
 
                     <div class="space-y-1.5">
-                        <Label class="text-sm dark:text-white" for="proof_back" value="Proof of Identity (Back)" />
+                        <Label class="text-sm dark:text-white" for="proof_back" :value="$t('public.proof_of_identity') + ' (' + $t('public.back') + ')'" />
                         <div class="flex gap-3">
                             <input
                                 ref="backProofInput"
@@ -364,7 +364,7 @@ const selected = ref(getUserGender(user.gender));
                                 @click="$refs.backProofInput.click()"
                                 :disabled="kycApproval === 'Verified'"
                             >
-                                Browse
+                                {{ $t('public.browse') }}
                             </Button>
                             <InputError :message="form.errors.proof_back" class="mt-2" />
                         </div>
@@ -397,7 +397,7 @@ const selected = ref(getUserGender(user.gender));
             </form>
         </div>
         <div class="flex justify-end mt-8">
-            <Button @click="submit" :disabled="form.processing">Save</Button>
+            <Button @click="submit" :disabled="form.processing">{{ $t('public.save') }}</Button>
         </div>
 
     </section>

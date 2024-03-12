@@ -59,7 +59,7 @@ wallets.value.forEach(wallet => {
 
 <template>
     <div class="flex justify-between mb-3">
-        <h4 class="font-semibold dark:text-white">Transaction History</h4>
+        <h4 class="font-semibold dark:text-white">{{ $t('public.transaction_history')}}</h4>
         <!-- <RefreshIcon
             :class="{ 'animate-spin': isLoading }"
             class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white"
@@ -74,12 +74,12 @@ wallets.value.forEach(wallet => {
                 <template #icon>
                     <SearchIcon aria-hidden="true" class="w-5 h-5" />
                 </template>
-                <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" placeholder="search" v-model="search" />
+                <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.search')" v-model="search" />
             </InputIconWrapper>
         </div>
         <div class="w-full">
             <vue-tailwind-datepicker
-                placeholder="Select Date"
+                :placeholder="$t('public.date_placeholder')"
                 :formatter="formatter"
                 separator=" - "
                 v-model="date"
@@ -90,7 +90,7 @@ wallets.value.forEach(wallet => {
             <BaseListbox
                 v-model="type"
                 :options="typeFilter"
-                placeholder="Filters"
+                :placeholder="$t('public.filters_placeholder')"
                 class="w-full"
             />
         </div>
@@ -101,7 +101,7 @@ wallets.value.forEach(wallet => {
                 @click="clearFilter"
                 class="w-full justify-center"
             >
-                Clear
+                {{ $t('public.clear') }}
             </Button>
         </div>
     </div>

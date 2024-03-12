@@ -35,7 +35,7 @@ class RegisterRequest extends FormRequest
             // 'market' => trans('public.Terms & Conditions'),
             // 'responsible' => trans('public.Terms & Conditions'),
             // 'compensate' => trans('public.Terms & Conditions'),
-            'all' => trans('public.Terms & Conditions'),
+            'all' => trans('public.terms_and_conditions'),
         ];
     }
 }

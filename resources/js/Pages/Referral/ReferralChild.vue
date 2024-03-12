@@ -120,7 +120,7 @@ export default {
                                     <div class="w-48 h-2 bg-gray-200 rounded-full dark:bg-gray-600"></div>
                                 </div>
                             </div>
-                            <span class="sr-only">{{$t('public.loading')}}</span>
+                            <span class="sr-only">{{$t('public.is_loading')}}</span>
                         </div>
 
                         <div
@@ -146,7 +146,7 @@ export default {
                         <div role="status" class="animate-pulse" v-if="isLoading">
                             <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-600 w-48 my-2"></div>
                             <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-600 mb-2.5"></div>
-                            <span class="sr-only">Loading...</span>
+                            <span class="sr-only">{{$t('public.is_loading')}}</span>
                         </div>
                         <div v-else class="flex items-center w-full md:w-auto gap-3 text-lg dark:text-white">
                             <div class="flex flex-col text-center">

@@ -24,10 +24,10 @@ class MasterConfigurationRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'min_join_equity' => 'Minimum Equity',
-            'sharing_profit' => 'Sharing Profit (%)',
-            'subscription_fee' => 'Subscription Fee (Month)',
-            'signal_status' => 'Trade Signal Status',
+            'min_join_equity' => trans('public.minimum_equity_to_join'),
+            'sharing_profit' => trans('public.sharing_profit') . ' (%)',
+            'subscription_fee' => trans('public.subscription_fee') . ' (' . trans('public.month') . ')',
+            'signal_status' => trans('public.trade') . ' ' . trans('public.signal_status'),
         ];
     }
 }

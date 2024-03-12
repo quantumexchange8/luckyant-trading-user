@@ -154,7 +154,7 @@ onUnmounted(() => {
                     <DropdownLink
                         :href="route('profile.edit')"
                     >
-                        Profile
+                        {{ $t('public.sidebar.profile') }}
                     </DropdownLink>
 
                     <DropdownLink
@@ -162,7 +162,7 @@ onUnmounted(() => {
                         method="post"
                         as="button"
                     >
-                        Log Out
+                        {{ $t('public.logout') }}
                     </DropdownLink>
                 </template>
             </Dropdown>

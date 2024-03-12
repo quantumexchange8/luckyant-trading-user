@@ -33,12 +33,12 @@ class ProfileUpdateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'Name',
-            'phone' => 'Mobile Phone',
-            'gender' => 'Gender',
-            'nationality' => 'Nationality',
-            'identification_number' => 'Identification Number',
-            'address' => 'Address',
+            'name' => trans('public.name'),
+            'phone' => trans('public.mobile_phone'),
+            'gender' => trans('public.gender'),
+            'nationality' => trans('public.nationality'),
+            'identification_number' => trans('public.identification_number'),
+            'address' => trans('public.address'),
         ];
     }
 }

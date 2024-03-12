@@ -9,11 +9,11 @@ const viewMasterRequest = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout title="Master Configuration">
+    <AuthenticatedLayout :title="$t('public.master_configuration')">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    Master Account Configuration
+                    {{ $t('public.master_account_configuration') }}
                 </h2>
 
                 <Button
@@ -24,7 +24,7 @@ const viewMasterRequest = () => {
                     @click="viewMasterRequest"
                 >
                     <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
-                    <span>View Master Request</span>
+                    <span>{{ $t('public.view_master_request') }}</span>
                 </Button>
             </div>
         </template>

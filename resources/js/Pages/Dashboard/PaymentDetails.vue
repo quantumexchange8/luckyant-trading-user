@@ -53,7 +53,7 @@ getResults()
 <template>
     <div>
         <div v-if="selectedCountry == null">
-            <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="country" value="Country" />
+            <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="country" :value="$t('public.country')" />
             <div class="flex flex-col w-full">
                 <BaseListbox
                     :options="props.countries"

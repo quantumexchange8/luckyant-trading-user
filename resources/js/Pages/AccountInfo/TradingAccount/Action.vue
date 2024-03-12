@@ -19,19 +19,24 @@ const props = defineProps({
 
 const accountActionModal = ref(false);
 const modalComponent = ref('');
+const actionType = ref(null);
 
 const openAccountActionModal = (action) => {
     accountActionModal.value = true;
     if (action === 'deposit') {
+        actionType.value = 'balance_in';
         modalComponent.value = 'Balance In';
     }
     else if (action === 'withdrawal') {
+        actionType.value = 'balance_out';
         modalComponent.value = 'Balance Out';
     }
     else if (action === 'internal_transfer') {
+        actionType.value = 'internal_transfer';
         modalComponent.value = 'Internal Transfer';
     }
     else if (action === 'become_master') {
+        actionType.value = 'become_master';
         modalComponent.value = 'Become Master';
     }
 }
@@ -51,7 +56,7 @@ const closeModal = () => {
         @click="openAccountActionModal('deposit')"
     >
         <CreditCardAddIcon />
-        Balance In
+        {{ $t('public.balance_in') }}
     </Button>
     <Dropdown v-if="!account.subscriber || account.subscriber.status === 'Unsubscribed'" align="right" width="48">
         <template #trigger>
@@ -61,7 +66,7 @@ const closeModal = () => {
                     variant="transparent"
                     class="flex justify-center"
                 >
-                    More
+                    {{ $t('public.more') }}
                 </Button>
             </span>
         </template>
@@ -74,7 +79,7 @@ const closeModal = () => {
                 <div class="flex items-center gap-2">
                     <CreditCardDownIcon class="w-5 h-5" />
                     <div>
-                        Balance Out
+                        {{ $t('public.balance_out') }}
                     </div>
                 </div>
             </DropdownLink>
@@ -85,7 +90,7 @@ const closeModal = () => {
                 <div class="flex items-center gap-2">
                     <SwitchHorizontalRightIcon class="w-5 h-5" />
                     <div>
-                        Internal Transfer
+                        {{ $t('public.internal_transfer') }}
                     </div>
                 </div>
             </DropdownLink>
@@ -96,7 +101,7 @@ const closeModal = () => {
                 <div class="flex items-center gap-2">
                     <UserUp01Icon class="w-5 h-5" />
                     <div>
-                        Become Master
+                        {{ $t('public.become_master') }}
                     </div>
                 </div>
             </DropdownLink>
@@ -107,14 +112,14 @@ const closeModal = () => {
                 <div class="flex items-center gap-2">
                     <UserSquareIcon class="w-5 h-5" />
                     <div>
-                        Master Profile
+                        {{ $t('public.master_profile') }}
                     </div>
                 </div>
             </DropdownLink>
         </template>
     </Dropdown>
 
-    <Modal :show="accountActionModal" :title="modalComponent" @close="closeModal">
+    <Modal :show="accountActionModal" :title="$t('public.' + actionType)" @close="closeModal">
         <template v-if="modalComponent === 'Balance In'">
             <DepositBalance
                 :account="account"

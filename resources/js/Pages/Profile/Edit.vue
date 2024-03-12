@@ -36,12 +36,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <AuthenticatedLayout title="Profile">
+    <AuthenticatedLayout :title="$t('public.sidebar.profile')">
         <template #header>
             <h2
                 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
             >
-                Profile
+                {{ $t('public.sidebar.profile') }}
             </h2>
         </template>
 
@@ -61,7 +61,7 @@ onMounted(() => {
                                      : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
                                 ]"
                         >
-                            Profile Information
+                            {{ $t('public.profile_information') }}
                         </button>
                     </Tab>
 
@@ -78,7 +78,7 @@ onMounted(() => {
                                      : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
                                 ]"
                         >
-                            Payment Accounts
+                            {{ $t('public.payment_accounts') }}
                         </button>
                     </Tab>
                 </TabList>

@@ -101,7 +101,7 @@ const closeModal = () => {
 
 <template>
     <div class="flex justify-between mb-3">
-        <h4 class="font-semibold dark:text-white">Request History</h4>
+        <h4 class="font-semibold dark:text-white">{{ $t('public.request_history') }}</h4>
         <RefreshIcon
             :class="{ 'animate-spin': isLoading }"
             class="flex-shrink-0 w-5 h-5 cursor-pointer hover:text-primary-500 dark:text-white"
@@ -115,12 +115,12 @@ const closeModal = () => {
                 <template #icon>
                     <SearchIcon aria-hidden="true" class="w-5 h-5"/>
                 </template>
-                 <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.Search')" v-model="search" />
+                 <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.search')" v-model="search" />
             </InputIconWrapper>
         </div>
         <div class="w-full">
             <vue-tailwind-datepicker
-                placeholder="Select Date"
+                :placeholder="$t('public.date_placeholder')"
                 :formatter="formatter"
                 separator=" - "
                 v-model="date"
@@ -131,7 +131,7 @@ const closeModal = () => {
             <BaseListbox
                 v-model="type"
                 :options="typeFilter"
-                placeholder="Filters"
+                :placeholder="$t('public.filters_placeholder')"
                 class="w-full"
             />
         </div>
@@ -142,7 +142,7 @@ const closeModal = () => {
                 @click="clearFilter"
                 class="w-full justify-center"
             >
-                Clear
+                {{ $t('public.clear') }}
             </Button>
         </div>
     </div>
@@ -155,23 +155,23 @@ const closeModal = () => {
             <thead class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
             <tr>
                 <th scope="col" class="p-3">
-                    Date
+                    {{ $t('public.date') }}
                 </th>
                 <th scope="col" class="p-3">
-                    Trading Account
+                    {{ $t('public.trading_account') }}
                 </th>
                 <th scope="col" class="p-3">
-                    Approval Date
+                    {{ $t('public.approval_date') }}
                 </th>
                 <th scope="col" class="p-3 text-center">
-                    Status
+                    {{ $t('public.status') }}
                 </th>
             </tr>
             </thead>
             <tbody>
             <tr v-if="masterRequests.data.length === 0">
                 <th colspan="5" class="py-4 text-lg text-center">
-                    No History
+                    {{ $t('public.no_history') }}
                 </th>
             </tr>
             <tr
@@ -200,17 +200,17 @@ const closeModal = () => {
 
     <Modal :show="requestHistoryModal" title="Request History Details" @close="closeModal">
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Trading Account</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.trading_account') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ requestHistoryDetail.trading_account.meta_login }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Status</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.status') }}</span>
             <div class="col-span-2 items-start">
                 <Badge :variant="statusVariant(requestHistoryDetail.status)">{{ requestHistoryDetail.status }}</Badge>
             </div>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Remarks</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.remarks') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ requestHistoryDetail.remarks ? requestHistoryDetail.remarks : '-' }}</span>
         </div>
     </Modal>

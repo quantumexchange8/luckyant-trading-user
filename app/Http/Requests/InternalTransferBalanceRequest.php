@@ -23,9 +23,9 @@ class InternalTransferBalanceRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'from_meta_login' => 'Transfer from',
-            'to_meta_login' => 'Transfer to',
-            'amount' => 'Amount',
+            'from_meta_login' => trans('public.transfer_from'),
+            'to_meta_login' => trans('public.transfer_to'),
+            'amount' => trans('public.amount'),
         ];
     }
 }

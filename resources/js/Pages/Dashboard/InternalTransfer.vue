@@ -25,16 +25,16 @@ const closeModal = () => {
         @click="openInternalTransferModal"
     >
         <CreditCardRefreshIcon aria-hidden="true" :class="iconSizeClasses" />
-        Internal Transfer
+        {{ $t('public.internal_transfer') }}
     </Button>
 
     <Modal :show="internalTransferModal" title="Internal Transfer" @close="closeModal">
         <div class="p-6 flex flex-col items-center justify-center">
             <div class="text-2xl text-gray-400 dark:text-gray-200">
-                Coming SOON
+                {{ $t('public.coming_soon') }}
             </div>
             <div class="text-lg text-gray-400 dark:text-gray-600">
-                We're working hard to improve the user experience. Stay tuned!
+                {{ $t('public.working_message') }}
             </div>
         </div>
     </Modal>

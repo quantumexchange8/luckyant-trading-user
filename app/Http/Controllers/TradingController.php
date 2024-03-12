@@ -83,8 +83,8 @@ class TradingController extends Controller
 
         if ($connection != 0) {
             return redirect()->back()
-                ->with('title', 'Server under maintenance')
-                ->with('warning', 'Please try again later');
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
         }
 
         try {
@@ -96,7 +96,7 @@ class TradingController extends Controller
         $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
 
         if ($tradingAccount->equity < $masterAccount->min_join_equity || $tradingAccount->equity < $masterAccount->subscription_fee) {
-            throw ValidationException::withMessages(['meta_login' => trans('public.Insufficient balance')]);
+            throw ValidationException::withMessages(['meta_login' => trans('public.insufficient_balance')]);
         }
 
         if ($masterAccount->subscription_fee > 0) {
@@ -156,8 +156,8 @@ class TradingController extends Controller
         $metaService->disableTrade($meta_login);
 
         return redirect()->back()
-            ->with('title', 'Success subscribe')
-            ->with('success', 'Successfully subscribe to LOGIN: ' . $masterAccount->meta_login);
+            ->with('title', trans('public.success_subscribe'))
+            ->with('success', trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
     }
 
     public function getSubscriptions(Request $request)
@@ -225,8 +225,8 @@ class TradingController extends Controller
 
         if ($subscription->status == 'Terminated') {
             return redirect()->back()
-                ->with('title', 'Terminated Subscription')
-                ->with('warning', 'Please try again later');
+                ->with('title', trans('public.terminated_subscription'))
+                ->with('warning', trans('public.terminated_subscription_error'));
         }
 
         $subscription->update([
@@ -240,8 +240,8 @@ class TradingController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('title', 'Success terminate')
-            ->with('success', 'Successfully terminated subscription number: ' . $subscription->subscription_number);
+            ->with('title', trans('public.success_terminate'))
+            ->with('success', trans('public.successfully_terminate'). ': ' . $subscription->subscription_number);
     }
 
     public function getSubscriptionHistories(Request $request)

@@ -197,7 +197,7 @@ const passwordValidation = () => {
 </script>
 
 <template>
-    <GuestLayout title="Register">
+    <GuestLayout :title="$t('public.register')">
         <form>
             <div class="grid gap-6">
                 <!-- Progress Bar -->
@@ -245,21 +245,21 @@ const passwordValidation = () => {
                 <div v-show="formStep === 1" class="space-y-4">
                     <div class="text-center">
                         <RegisterCaption
-                            :title="$t('public.Welcome! First things first...')"
-                            :caption="$t('public.Let’s set up your own account.')"
+                            :title="$t('public.register_welcome')"
+                            :caption="$t('public.register_welcome_message')"
                         />
                     </div>
 
                     <div class="space-y-1.5">
                         <Label
                             for="email"
-                            :value="$t('public.Email')"
+                            :value="$t('public.email')"
                         />
                         <Input
                             id="email"
                             type="email"
                             class="block w-full"
-                            :placeholder="$t('public.Email')"
+                            :placeholder="$t('public.email')"
                             v-model="form.email"
                             autocomplete="email"
                             autofocus
@@ -271,7 +271,7 @@ const passwordValidation = () => {
                     <div class="space-y-1.5">
                         <Label
                             for="phone"
-                            :value="$t('public.Mobile Phone')"
+                            :value="$t('public.mobile_phone')"
                         />
                         <div class="flex gap-3">
                             <BaseListbox
@@ -286,7 +286,7 @@ const passwordValidation = () => {
                                 id="phone"
                                 type="text"
                                 class="block w-full"
-                                placeholder="123456789"
+                                :placeholder="$t('public.phone_placeholder')"
                                 v-model="form.phone"
                                 :invalid="form.errors.phone"
                             />
@@ -295,13 +295,13 @@ const passwordValidation = () => {
                     </div>
 
                     <div class="space-y-1.5">
-                        <Label for="password" :value="$t('public.Password')" />
+                        <Label for="password" :value="$t('public.password')" />
                         <div class="relative">
                             <Input
                                 id="password"
                                 :type="showPassword ? 'text' : 'password'"
                                 class="block w-full"
-                                placeholder="New password"
+                                :placeholder="$t('public.new_password')"
                                 :invalid="form.errors.password"
                                 v-model="form.password"
                             />
@@ -321,13 +321,13 @@ const passwordValidation = () => {
                         <InputError :message="form.errors.password" class="mt-2" />
                     </div>
                     <div class="space-y-1.5">
-                        <Label for="password_confirmation" :value="$t('public.Confirm Password')" />
+                        <Label for="password_confirmation" :value="$t('public.confirm_password')" />
                         <div class="relative">
                             <Input
                                 id="password_confirmation"
                                 :type="showPassword2 ? 'text' : 'password'"
                                 class="block w-full"
-                                placeholder="Confirm password"
+                                :placeholder="$t('public.confirm_password')"
                                 :invalid="form.errors.password"
                                 v-model="form.password_confirmation"
                             />
@@ -374,13 +374,13 @@ const passwordValidation = () => {
                     <div class="space-y-1.5">
                         <Label
                             for="name"
-                            :value="$t('public.Full Name')"
+                            :value="$t('public.full_name')"
                         />
                         <Input
                             id="name"
                             type="text"
                             class="block w-full"
-                            :placeholder="$t('public.Full Name')"
+                            :placeholder="$t('public.full_name')"
                             v-model="form.name"
                             autocomplete="name"
                             :invalid="form.errors.name"
@@ -392,13 +392,13 @@ const passwordValidation = () => {
                         <Label
                             for="chinese_name"
                         >
-                            {{ $t('public.Chinese Name (Optional)') }}
+                            {{ $t('public.chinese_name') + " (" + $t('public.optional') + ")" }}
                         </Label>
                         <Input
                             id="chinese_name"
                             type="text"
                             class="block w-full"
-                            :placeholder="$t('public.Chinese Name')"
+                            :placeholder="$t('public.chinese_name')"
                             v-model="form.chinese_name"
                             autocomplete="chinese_name"
                             :invalid="form.errors.chinese_name"
@@ -409,10 +409,10 @@ const passwordValidation = () => {
                     <div class="space-y-1.5">
                         <Label
                             for="dob"
-                            :value="$t('public.Date of Birth')"
+                            :value="$t('public.date_of_birth')"
                         />
                         <vue-tailwind-datepicker
-                            placeholder="yyyy-mm-dd"
+                            :placeholder="$t('public.date_of_birth_placeholder')"
                             :formatter="formatter"
                             separator=" - "
                             v-model="form.dob"
@@ -425,7 +425,7 @@ const passwordValidation = () => {
                     <div class="space-y-1.5">
                         <Label
                             for="country"
-                            :value="$t('public.Country')"
+                            :value="$t('public.country')"
                         />
                         <BaseListbox
                             :options="countries"
@@ -437,7 +437,7 @@ const passwordValidation = () => {
                     <div class="space-y-1.5">
                         <Label
                             for="nationality"
-                            :value="$t('public.Nationality')"
+                            :value="$t('public.nationality')"
                         />
                         <BaseListbox
                             :options="nationality"
@@ -531,13 +531,13 @@ const passwordValidation = () => {
                     <div class="space-y-1.5 w-full">
                         <Label
                             for="referral_code"
-                            :value="$t('public.Referral Code')"
+                            :value="$t('public.referral_code')"
                         />
                         <Input
                             id="referral_code"
                             type="text"
                             class="block w-full"
-                            :placeholder="$t('public.Referral Code')"
+                            :placeholder="$t('public.referral_code')"
                             v-model="form.referral_code"
                             :invalid="form.errors.referral_code"
                         />
@@ -550,7 +550,7 @@ const passwordValidation = () => {
                         <div class="flex">
                             <Checkbox name="remember" v-model:checked="form.terms" />
                             <span class="ml-2 text-xs text-gray-600 dark:text-white">
-                                By proceeding, I acknowledge that I have thoroughly read, comprehended, and accepted the terms and conditions.
+                                {{ $t('public.terms_acknowledgment') }}
                                 <!-- <Terms :type=signUpTerm /> -->
                             </span>
                         </div>
@@ -559,7 +559,7 @@ const passwordValidation = () => {
                         <div class="flex">
                             <Checkbox name="remember" v-model:checked="form.market" />
                             <span class="ml-2 text-xs text-gray-600 dark:text-white">
-                                I confirm that any market recommendations, signals, or information provided by third parties do not constitute an offer or solicitation to buy or sell any transaction on behalf of Lucky Ant Trading.
+                                {{ $t('public.market_information_disclosure') }}
                             </span>
                         </div>
                     </label>
@@ -567,7 +567,7 @@ const passwordValidation = () => {
                         <div class="flex">
                             <Checkbox name="remember" v-model:checked="form.responsible" />
                             <span class="ml-2 text-xs text-gray-600 dark:text-white">
-                                I am aware that I am solely responsible for assessing the merits and risks of any trade I may enter into.
+                                {{ $t('public.trade_assessment_acknowledgment') }}
                             </span>
                         </div>
                     </label>
@@ -575,7 +575,7 @@ const passwordValidation = () => {
                         <div class="flex">
                             <Checkbox name="remember" v-model:checked="form.compensate" />
                             <span class="ml-2 text-xs text-gray-600 dark:text-white">
-                                I understand that Lucky Ant Trading may compensate third parties with referral fees, either as a one-time or recurring payment.
+                                {{ $t('public.compensation_disclosure') }}
                             </span>
                         </div>
                     </label>
@@ -583,7 +583,7 @@ const passwordValidation = () => {
                         <div class="flex items-center">
                             <Checkbox name="remember" v-model:checked="form.all" />
                             <span class="ml-2 font-semibold text-sm text-gray-600 dark:text-white">
-                                I accept all the terms and conditions.
+                                {{ $t('public.accept_all') }}
                             </span>
                         </div>
                     </label>
@@ -599,23 +599,23 @@ const passwordValidation = () => {
                         @click="prevStep"
                         class="px-12"
                     >
-                        <span>{{ $t('pagination.Back') }}</span>
+                        <span>{{ $t('public.back') }}</span>
                     </Button>
 
                     <Button type="button" v-if="formStep !== 3" @click="nextStep" class="px-12">
-                        <span>{{ $t('pagination.Next') }}</span>
+                        <span>{{ $t('public.next') }}</span>
                     </Button>
 
                     <Button v-else @click="submit" :disabled="form.processing" class="px-12">
-                        <span>{{ $t('public.Register') }}</span>
+                        <span>{{ $t('public.register') }}</span>
                     </Button>
 
                 </div>
 
                 <p class="text-sm text-dark-eval-4 dark:text-gray-400">
-                    {{ $t('public.Already have an account?') }}
+                    {{ $t('public.got_account') }}
                     <Link :href="route('login')" class="text-primary-600 hover:underline">
-                        {{ $t('public.Login') }}
+                        {{ $t('public.login') }}
                     </Link>
                 </p>
             </div>

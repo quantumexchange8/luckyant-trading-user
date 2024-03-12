@@ -25,9 +25,9 @@ class WithdrawalRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'amount' => trans('public.Amount'),
-            'wallet_id' => 'Wallet',
-            'wallet_address' => 'Wallet Address',
+            'amount' => trans('public.amount'),
+            'wallet_id' => trans('public.sidebar.wallet'),
+            'wallet_address' => trans('public.wallet_address'),
         ];
     }
 }

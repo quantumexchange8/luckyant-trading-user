@@ -50,8 +50,8 @@ class AccountInfoController extends Controller
 
         if ($connection != 0) {
             return redirect()->back()
-                ->with('title', 'Server under maintenance')
-                ->with('warning', 'Please try again later');
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
         }
 
         $metaAccount = $metaService->createUser($user, $group, $leverage);
@@ -59,7 +59,7 @@ class AccountInfoController extends Controller
         Notification::route('mail', $user->email)
             ->notify(new AddTradingAccountNotification($metaAccount, $user));
 
-        return back()->with('toast', trans('public.Successfully Created Trading Account'));
+        return back()->with('toast', trans('public.created_trading_account'));
     }
 
     public function refreshTradingAccountsData()
@@ -117,10 +117,10 @@ class AccountInfoController extends Controller
         if ($wallet->type == 'e_wallet') {
             $total_balance = $cash_wallet->balance + $wallet->balance;
             if ($total_balance < $amount || $amount <= 0) {
-                throw ValidationException::withMessages(['amount' => trans('public.Insufficient balance')]);
+                throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
             }
         } elseif ($wallet->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.Insufficient balance')]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
         }
 
         $deal = [];
@@ -134,8 +134,8 @@ class AccountInfoController extends Controller
             }
         } else {
             return redirect()->back()
-                ->with('title', 'Server under maintenance')
-                ->with('warning', 'Please try again later');
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
         }
 
         $new_wallet_amount = $wallet->balance - $amount;
@@ -203,8 +203,8 @@ class AccountInfoController extends Controller
         $wallet->update(['balance' => $new_wallet_amount]);
 
         return redirect()->back()
-            ->with('title', 'Success deposit')
-            ->with('success', 'Successfully deposit $' . number_format($amount, 2) . ' to LOGIN: ' . $request->to_meta_login);
+            ->with('title', trans('public.success_deposit'))
+            ->with('success', trans('public.successfully_deposit') . ' $' . number_format($amount, 2) . trans('public.to_login') . ': ' . $request->to_meta_login);
     }
 
     public function withdrawTradingAccount(WithdrawBalanceRequest $request)
@@ -214,8 +214,8 @@ class AccountInfoController extends Controller
 
         if ($connection != 0) {
             return redirect()->back()
-                ->with('title', 'Server under maintenance')
-                ->with('warning', 'Please try again later');
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
         }
 
         $user = Auth::user();
@@ -231,12 +231,12 @@ class AccountInfoController extends Controller
 
         // Check if balance is sufficient
         if ($tradingAccount->subscriber->unsubscribe_date < now()) {
-            throw ValidationException::withMessages(['amount' => 'Termination within 24 hours']);
+            throw ValidationException::withMessages(['amount' => trans('public.terminatiion_message')]);
         }
 
         // Check if balance is sufficient
         if ($tradingAccount->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.Insufficient balance')]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
         }
         $deal = [];
         try {
@@ -271,8 +271,8 @@ class AccountInfoController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('title', 'Success withdraw')
-            ->with('success', 'Successfully withdraw $' . number_format($amount, 2) . ' from LOGIN: ' . $request->from_meta_login);
+            ->with('title', trans('public.success_withdraw'))
+            ->with('success', trans('public.successfully_withdraw') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $request->from_meta_login);
     }
 
     public function internalTransferTradingAccount(InternalTransferBalanceRequest $request)
@@ -282,8 +282,8 @@ class AccountInfoController extends Controller
 
         if ($connection != 0) {
             return redirect()->back()
-                ->with('title', 'Server under maintenance')
-                ->with('warning', 'Please try again later');
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
         }
 
         $user = Auth::user();
@@ -299,7 +299,7 @@ class AccountInfoController extends Controller
 
         // Check if balance is sufficient
         if ($from_trading_account->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.Insufficient balance')]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
         }
 
         $deal_1 = [];
@@ -335,8 +335,8 @@ class AccountInfoController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('title', 'Success internal transaction')
-            ->with('success', 'Successfully transfer $' . number_format($amount, 2) . ' from LOGIN: ' . $request->from_meta_login . ' to LOGIN: ' . $request->to_meta_login);
+            ->with('title', trans('public.success_internal_transaction'))
+            ->with('success', trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $request->from_meta_login . ' ' . trans('public.to_login') . ': ' . $request->to_meta_login);
     }
 
     public function getTradingAccounts(Request $request)
@@ -392,8 +392,8 @@ class AccountInfoController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('title', 'Success submission')
-            ->with('success', 'Successfully submit request to become Master Account for LOGIN: ' . $request->meta_login);
+            ->with('title', trans('public.success_submission'))
+            ->with('success', trans('public.successfully_submission') . ': ' . $request->meta_login);
     }
 
     public function master_profile(Request $request, $meta_login)
@@ -428,8 +428,8 @@ class AccountInfoController extends Controller
         }
 
         return redirect()->back()
-            ->with('title', 'Success configure setting')
-            ->with('success', 'Successfully configure requirements to follow Master Account for LOGIN: ' . $master->meta_login);
+            ->with('title', trans('public.success_configure_setting'))
+            ->with('success', trans('public.successfully_configure_setting') . ': ' . $master->meta_login);
     }
 
     public function getRequestHistory(Request $request)

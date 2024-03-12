@@ -128,7 +128,7 @@ watchEffect(() => {
 
 <template>
     <div class="flex justify-between mb-3">
-        <h4 class="font-semibold dark:text-white">Subscription History</h4>
+        <h4 class="font-semibold dark:text-white">{{$t('public.subscription_history')}}</h4>
         <!-- <RefreshIcon
             :class="{ 'animate-spin': isLoading }"
             class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white"
@@ -143,12 +143,12 @@ watchEffect(() => {
                 <template #icon>
                     <SearchIcon aria-hidden="true" class="w-5 h-5" />
                 </template>
-                <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" placeholder="Search" v-model="search" />
+                <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.search')" v-model="search" />
             </InputIconWrapper>
         </div>
         <div class="w-full">
             <vue-tailwind-datepicker
-                placeholder="Select Date"
+                :placeholder="$t('public.date_placeholder')"
                 :formatter="formatter"
                 separator=" - "
                 v-model="date"
@@ -159,7 +159,7 @@ watchEffect(() => {
             <BaseListbox
                 v-model="type"
                 :options="typeFilter"
-                placeholder="Filters"
+                :placeholder="$t('public.filters_placeholder')"
                 class="w-full"
             />
         </div>
@@ -170,7 +170,7 @@ watchEffect(() => {
                 @click="clearFilter"
                 class="w-full justify-center"
             >
-                Clear
+                {{$t('public.clear')}}
             </Button>
         </div>
     </div>
@@ -183,29 +183,29 @@ watchEffect(() => {
             <thead class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
             <tr>
                 <th scope="col" class="p-3">
-                    Date
+                    {{$t('public.date')}}
                 </th>
                 <th scope="col" class="p-3">
-                    Account Number
+                    {{$t('public.account_number')}}
                 </th>
                 <th scope="col" class="p-3">
-                    Subscription Number
+                    {{$t('public.subscription_number')}}
                 </th>
                 <th scope="col" class="p-3">
-                    Subscription Fee
+                    {{$t('public.subscription_fee')}}
                 </th>
                 <th scope="col" class="p-3">
-                    Master Account
+                    {{$t('public.master_account')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
-                    Status
+                    {{$t('public.status')}}
                 </th>
             </tr>
             </thead>
             <tbody>
             <tr v-if="subscriptions.data.length === 0">
                 <th colspan="6" class="py-4 text-lg text-center">
-                    No History
+                    {{$t('public.no_history')}}
                 </th>
             </tr>
             <tr
@@ -245,10 +245,10 @@ watchEffect(() => {
             @pagination-change-page="handlePageChange"
         >
             <template #prev-nav>
-                <span class="flex gap-2"><ArrowLeftIcon class="w-5 h-5" /> <span class="hidden sm:flex">Previous</span></span>
+                <span class="flex gap-2"><ArrowLeftIcon class="w-5 h-5" /> <span class="hidden sm:flex">{{$t('public.previous')}}</span></span>
             </template>
             <template #next-nav>
-                <span class="flex gap-2"><span class="hidden sm:flex">Next</span> <ArrowRightIcon class="w-5 h-5" /></span>
+                <span class="flex gap-2"><span class="hidden sm:flex">{{$t('public.next')}}</span> <ArrowRightIcon class="w-5 h-5" /></span>
             </template>
         </TailwindPagination>
     </div>

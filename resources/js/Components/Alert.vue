@@ -99,7 +99,7 @@ function dismiss() {
                                 variant="transparent"
                                 @click="dismiss"
                             >
-                                Later
+                                {{ $t('public.later') }}
                             </Button>
                         </div>
                     </div>

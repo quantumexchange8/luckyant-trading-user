@@ -71,7 +71,7 @@ watchEffect(() => {
                         <div class="w-48 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
                     </div>
                 </div>
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only">{{ $t('public.is_loading') }}</span>
             </div>
         </div>
         <div class="flex items-center justify-between w-full">
@@ -103,7 +103,7 @@ watchEffect(() => {
                     </div>
                 </div>
                 <div class="flex justify-end">
-                    <Badge variant="success">Active</Badge>
+                    <Badge variant="success">{{ $t('public.active') }}</Badge>
                 </div>
             </div>
             <div class="flex justify-between items-center self-stretch">
@@ -112,7 +112,7 @@ watchEffect(() => {
                         {{ account.margin_leverage }}
                     </div>
                     <div class="text-xs font-normal">
-                        Credit: $ {{ formatAmount(account.credit ? account.credit : 0) }}
+                        {{ $t('public.credit') }}: $ {{ formatAmount(account.credit ? account.credit : 0) }}
                     </div>
                 </div>
                 <div class="text-xl">
@@ -130,7 +130,7 @@ watchEffect(() => {
                 </div>
                 <div class="flex items-center gap-2 justify-end w-full">
                     <Loading class="w-5 h-5" />
-                    <div class="text-xs">Refreshing in {{ countdown }}s</div>
+                    <div class="text-xs">{{ $t('public.refreshing_in') }}{{ countdown }}s</div>
                 </div>
             </div>
         </div>

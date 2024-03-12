@@ -195,8 +195,8 @@ class RegisteredUserController extends Controller
             ->notify(new NewUserWelcomeNotification($user));
 
         return redirect()->route('login')
-            ->with('title', 'Success registration')
-            ->with('success', 'Successfully Created Account');
+            ->with('title', trans('public.success_registration'))
+            ->with('success', trans('public.successfully_registration'));
     }
 
     public function sendOtp(Request $request)
@@ -214,6 +214,6 @@ class RegisteredUserController extends Controller
         Notification::route('mail', $email)
             ->notify(new OtpNotification($verfiy_otp->otp));
 
-        return back()->with('toast', 'Successfully Sent OTP');
+        return back()->with('toast', trans('public.success_sent_otp'));
     }
 }

@@ -59,15 +59,15 @@ const submit = () => {
         class="w-full flex justify-center"
         @click="openSubscribeAccountModal"
     >
-        Subscribe
+        {{ $t('public.subscribe') }}
     </Button>
 
-    <Modal :show="subscribeAccountModal" title="Subscribe Master" @close="closeModal">
+    <Modal :show="subscribeAccountModal" :title="$t('public.subscribe_master')" @close="closeModal">
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Account Number
+                        {{ $t('public.account_number') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ masterAccount.meta_login }}
@@ -75,7 +75,7 @@ const submit = () => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Minimum Equity to join
+                        {{ $t('public.minimum_equity_to_join') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         $ {{ formatAmount(masterAccount.min_join_equity) }}
@@ -83,7 +83,7 @@ const submit = () => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Percentage of Sharing Profit
+                        {{ $t('public.percentage_of_sharing_profit') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ formatAmount(masterAccount.sharing_profit, 0) }} %
@@ -91,7 +91,7 @@ const submit = () => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Estimated Monthly Returns
+                        {{ $t('public.estimated_monthly_returns') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ formatAmount(masterAccount.estimated_monthly_returns) }} %
@@ -99,7 +99,7 @@ const submit = () => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Estimated Lot Size
+                        {{ $t('public.estimated_lot_size') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ formatAmount(masterAccount.estimated_lot_size) }}
@@ -107,7 +107,7 @@ const submit = () => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Subscription Fee ({{ masterAccount.roi_period }} Days)
+                        {{ $t('public.subscription_fee') }} ({{ masterAccount.roi_period }} {{ $t('public.days') }})
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         $ {{ formatAmount(masterAccount.subscription_fee) }}
@@ -115,7 +115,7 @@ const submit = () => {
                 </div>
                 <div class="flex flex-col gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Total Fund
+                        {{ $t('public.total_fund') }}
                     </div>
                     <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
                         <div
@@ -142,7 +142,7 @@ const submit = () => {
             <div class="space-y-2">
                 <Label
                     for="leverage"
-                    :value="$t('public.Account Number')"
+                    :value="$t('public.account_number')"
                 />
                 <div v-if="tradingAccountsSel">
                     <BaseListbox
@@ -165,9 +165,9 @@ const submit = () => {
 
             <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                    {{$t('public.Cancel')}}
+                    {{$t('public.cancel')}}
                 </Button>
-                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
+                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
             </div>
         </form>
     </Modal>

@@ -39,7 +39,7 @@ const copyReferralCode = () => {
     document.body.removeChild(tempInput);
 
     toast.add({
-        message: trans('public.Copy Successful!'),
+        message: trans('public.copy_success'),
     });
 }
 
@@ -75,7 +75,7 @@ onMounted(() => {
     }
 });
 
-const tooltipContent = ref('Copy');
+const tooltipContent = ref('copy');
 
 const copyReferralLink = () => {
     const referralCodeCopy = document.querySelector('#userReferralLink').value;
@@ -87,9 +87,9 @@ const copyReferralLink = () => {
     try {
         var successful = document.execCommand('copy');
         if (successful) {
-            tooltipContent.value = 'Copied';
+            tooltipContent.value = 'copied';
             setTimeout(() => {
-                tooltipContent.value = 'Copy'; // Reset tooltip content to 'Copy' after 2 seconds
+                tooltipContent.value = 'copy'; // Reset tooltip content to 'Copy' after 2 seconds
             }, 1000);
         } else {
             tooltipContent.value = 'try_again_later';
@@ -102,7 +102,7 @@ const copyReferralLink = () => {
     window.getSelection().removeAllRanges()
 
     toast.add({
-        message: trans('public.Copy Successful!'),
+        message: trans('public.copy_success'),
     });
 }
 
@@ -120,11 +120,11 @@ getTotalTransactions();
 </script>
 
 <template>
-    <AuthenticatedLayout title="Dashboard">
+    <AuthenticatedLayout :title="$t('public.sidebar.dashboard')">
         <template #header>
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    Dashboard
+                    {{ $t('public.sidebar.dashboard') }}
                 </h2>
             </div>
         </template>
@@ -162,12 +162,12 @@ getTotalTransactions();
                                 </div>
                                 <div class="flex flex-col gap-2 mt-5">
                                     <div class="text-lg text-gray-600 dark:text-white border-b border-gray-300 pb-2">
-                                        Overview
+                                        {{ $t('public.overview') }}
                                     </div>
                                     <div class="grid grid-cols-2 gap-4 w-full mt-4">
                                         <div class="space-y-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.Total Deposit') }}
+                                                {{ $t('public.total_deposit') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalDeposit) }}</span>
@@ -175,7 +175,7 @@ getTotalTransactions();
                                         </div>
                                         <div class="space-y-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.Total Withdrawal') }}
+                                                {{ $t('public.total_withdrawal') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-error-500">
                                                 <span class="text-error-500 font-semibold">$ {{ formatAmount(totalWithdrawal) }}</span>
@@ -183,7 +183,7 @@ getTotalTransactions();
                                         </div>
                                         <div class="space-y-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.Total Rebate Earn') }}
+                                                {{ $t('public.total_rebate_earn') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalRebateEarn) }}</span>
@@ -191,7 +191,7 @@ getTotalTransactions();
                                         </div>
                                         <div class="space-y-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.Total Trade Lots') }}
+                                                {{ $t('public.total_trade_lots') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-gray-500">
                                                 <span class="text-gray-500 font-semibold">{{ formatAmount(totalTradeLot) }}</span>
@@ -205,7 +205,7 @@ getTotalTransactions();
                     <div class="p-6 w-full flex flex-col gap-4 justify-center overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                         <div class="flex flex-col">
                             <div class="text-lg text-gray-600 dark:text-white">
-                                Referral Program
+                                {{ $t('public.sidebar.referral_program') }}
                             </div>
                         </div>
                         <div class="flex flex-col gap-5 w-full">
@@ -214,7 +214,7 @@ getTotalTransactions();
                                     <qrcode-vue :class="['border-4 border-white']" :value="registerLink" :size="150"></qrcode-vue>
 
                                     <div class="flex items-center gap-3">
-                                        <span class="text-lg">Referral Code:</span> <span class="text-xl" id="userReferralCode">{{ user.referral_code }}</span>
+                                        <span class="text-lg">{{ $t('public.referral_code') }}:</span> <span class="text-xl" id="userReferralCode">{{ user.referral_code }}</span>
                                         <div>
                                             <DuplicateIcon
                                                 class="w-5 hover:cursor-pointer"
@@ -225,10 +225,10 @@ getTotalTransactions();
                                 </div>
                                 <div class="flex flex-col gap-1">
                                     <div class="text-gray-400 text-sm dark:text-gray-500">
-                                        Share your referral link through QR link
+                                        {{ $t('public.referral_qr') }}
                                     </div>
                                     <div class="flex w-full rounded-md">
-                                        <Tooltip :content="tooltipContent" placement="top">
+                                        <Tooltip :content="$t('public.' + tooltipContent)" placement="top">
                                             <button
                                                 type="button"
                                                 class="px-4 py-3 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-l-lg border border-transparent font-semibold bg-primary-500 dark:bg-primary-700 text-white hover:bg-primary-60 dark:hover:bg-primary-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm uppercase"
@@ -272,7 +272,7 @@ getTotalTransactions();
 
         </div>
 
-        <Modal :show="announcementModal" title="Details" @close="closeModal">
+        <Modal :show="announcementModal" :title="$t('public.details')" @close="closeModal">
             <div class="text-xs dark:text-gray-400">{{ formatDateTime(announcement.created_at) }}</div>
             <div v-if="announcement.image !== ''" class="my-5">
                 <img class="rounded-lg w-full" :src="announcement.image" alt="announcement image" />

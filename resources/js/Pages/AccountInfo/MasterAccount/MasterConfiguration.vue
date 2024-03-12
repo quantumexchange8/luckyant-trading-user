@@ -66,7 +66,7 @@ const roiPeriod = [
     <div class="flex justify-between items-center self-stretch border-b border-gray-300 dark:border-gray-500 pb-2">
         <div class="flex items-center gap-3">
             <div class="text-lg">
-                Copy Trade Configuration
+                {{ $t('public.copy_trade_configuration') }}
             </div>
         </div>
         <div class="flex justify-end">
@@ -82,13 +82,13 @@ const roiPeriod = [
             <div class="space-y-2">
                 <Label
                     for="min_join_equity"
-                    value="Minimum Equity to Join"
+                    :value="$t('public.minimum_equity_to_join')"
                 />
                 <Input
                     id="min_join_equity"
                     type="number"
                     min="0"
-                    placeholder="$ 0.00"
+                    :placeholder="$t('public.min_join_equity_placeholder')"
                     class="block w-full"
                     v-model="form.min_join_equity"
                     :invalid="form.errors.min_join_equity"
@@ -99,13 +99,13 @@ const roiPeriod = [
             <div class="space-y-2">
                 <Label
                     for="sharing_profit"
-                    value="Sharing Profit (%)"
+                    :value="$t('public.sharing_profit') + ' (%)'"
                 />
                 <Input
                     id="sharing_profit"
                     type="number"
                     min="0"
-                    placeholder="50%"
+                    :placeholder="$t('public.sharing_profit_placeholder')"
                     class="block w-full"
                     v-model="form.sharing_profit"
                     :invalid="form.errors.sharing_profit"
@@ -116,13 +116,13 @@ const roiPeriod = [
             <div class="space-y-2">
                 <Label
                     for="subscription_fee"
-                    value="Subscription Fee"
+                    :value="$t('public.subscription_fee')"
                 />
                 <Input
                     id="subscription_fee"
                     type="number"
                     min="0"
-                    placeholder="$ 0.00"
+                    :placeholder="$t('public.subscription_fee_placeholder')"
                     class="block w-full"
                     v-model="form.subscription_fee"
                     :invalid="form.errors.subscription_fee"
@@ -133,7 +133,7 @@ const roiPeriod = [
             <div class="space-y-2">
                 <Label
                     for="roi_period"
-                    value="ROI Period"
+                    :value="$t('public.roi_period')"
                 />
                 <BaseListbox
                     :options="roiPeriod"
@@ -146,7 +146,7 @@ const roiPeriod = [
             <div class="space-y-2">
                 <Label
                     for="signal_status"
-                    value="Copy Trading Status"
+                    :value="$t('public.copy_trading_status')"
                 />
                 <RadioGroup v-model="selected">
                     <RadioGroupLabel class="sr-only">Signal Status</RadioGroupLabel>
@@ -193,7 +193,7 @@ const roiPeriod = [
                 @click="submit"
                 :disabled="form.processing"
             >
-                {{ $t('public.Confirm') }}
+                {{ $t('public.confirm') }}
             </Button>
         </div>
     </form>

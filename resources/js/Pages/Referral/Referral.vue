@@ -64,11 +64,11 @@ function handleKeyDown(event) {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.Network Tree')">
+    <AuthenticatedLayout :title="$t('public.referral_tree')">
         <template #header>
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    {{ $t('public.Network Tree') }}
+                    {{ $t('public.referral_tree') }}
                 </h2>
             </div>
         </template>
@@ -90,7 +90,7 @@ function handleKeyDown(event) {
                             id="search"
                             type="text"
                             class="block border-transparent w-full md:w-1/3"
-                            :placeholder="$t('public.Search Name/Email.')"
+                            :placeholder="$t('public.search_name_and_email_placeholder')"
                             v-model="search"
                         />
                     </InputIconWrapper>

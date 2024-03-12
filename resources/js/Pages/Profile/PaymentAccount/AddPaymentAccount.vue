@@ -90,12 +90,12 @@ const closeModal = () => {
             <div class="bg-blue-500 w-10 h-10 rounded-full rounded-tl-none group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-blue-900 transition-all"></div>
 
             <div class="uppercase font-bold text-xl text-center my-8">
-                Click to add account
+                {{ $t('public.click_add_account') }}
             </div>
 
             <div class="text-gray-400">
-                <p class="font-bold">Currency</p>
-                <p>Account No</p>
+                <p class="font-bold">{{ $t('public.currency') }}</p>
+                <p>{{ $t('public.account_no') }}</p>
             </div>
         </div>
 
@@ -104,15 +104,15 @@ const closeModal = () => {
         <div class="h-0.5 group-hover:w-full bg-gradient-to-l via-sky-600 dark:via-sky-950 group-hover:via-sky-500 w-[70%] m-auto rounded transition-all"></div>
     </div>
 
-    <Modal :show="addAccountModal" title="Add Account" @close="closeModal">
+    <Modal :show="addAccountModal" :title="$t('public.add_account')" @close="closeModal">
         <form class="space-y-4">
             <div class="space-y-2">
                 <Label
                     for="leverage"
-                    :value="$t('Payment Method')"
+                    :value="$t('public.payment_methods')"
                 />
                 <RadioGroup v-model="selected">
-                    <RadioGroupLabel class="sr-only">Signal Status</RadioGroupLabel>
+                    <RadioGroupLabel class="sr-only">{{ $t('public.signal_status') }}</RadioGroupLabel>
                     <div class="flex gap-3 items-center self-stretch w-full">
                         <RadioGroupOption
                             as="template"
@@ -155,7 +155,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="bank_name"
-                        value="Bank Name"
+                        :value="$t('public.bank_name')"
                     />
                     <Input
                         id="bank_name"
@@ -169,7 +169,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="bank_account_name"
-                        value="Bank Account Name"
+                        :value="$t('public.bank_account_name')"
                     />
                     <Input
                         id="bank_account_name"
@@ -183,7 +183,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="account_number"
-                        value="Account Number"
+                        :value="$t('public.account_number')"
                     />
                     <Input
                         id="account_number"
@@ -197,7 +197,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="bank_swift"
-                        value="Bank Swift Code"
+                        :value="$t('public.bank_swift_code')"
                     />
                     <Input
                         id="bank_swift"
@@ -211,13 +211,13 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="bank_code"
-                        value="Bank Code"
+                        :value="$t('public.bank_code')"
                     />
                     <Input
                         id="bank_code"
                         type="text"
                         class="block w-full"
-                        placeholder="Optional"
+                        :placeholder="$t('public.optional')"
                         v-model="form.bank_code"
                         :invalid="form.errors.bank_code"
                     />
@@ -226,13 +226,13 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="bank_code_type"
-                        value="Bank Code Type"
+                        :value="$t('public.bank_code_type')"
                     />
                     <Input
                         id="bank_code_type"
                         type="text"
                         class="block w-full"
-                        placeholder="Optional"
+                        :placeholder="$t('public.optional')"
                         v-model="form.bank_code_type"
                         :invalid="form.errors.bank_code_type"
                     />
@@ -240,7 +240,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="country"
-                        :value="$t('Country')"
+                        :value="$t('public.country')"
                     />
                     <BaseListbox
                         :options="countries"
@@ -251,7 +251,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="currency"
-                        value="Currency"
+                        :value="$t('public.currency')"
                     />
                     <BaseListbox
                         :options="currencies"
@@ -266,7 +266,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="crypto_name"
-                        value="Tether"
+                        :value="$t('public.tether')"
                     />
                     <Input
                         id="crypto_name"
@@ -281,7 +281,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="crypto_account_name"
-                        value="Crypto Wallet Name"
+                        :value="$t('public.crypto_wallet_name')"
                     />
                     <Input
                         id="crypto_account_name"
@@ -295,7 +295,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="account_number"
-                        value="Wallet Address"
+                        :value="$t('public.wallet_address')"
                     />
                     <Input
                         id="account_number"
@@ -315,7 +315,7 @@ const closeModal = () => {
                     @click="submit"
                     :disabled="form.processing"
                 >
-                    {{ $t('public.Save') }}
+                    {{ $t('public.save') }}
                 </Button>
             </div>
         </form>

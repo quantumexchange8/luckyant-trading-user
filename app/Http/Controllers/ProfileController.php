@@ -90,7 +90,7 @@ class ProfileController extends Controller
 
         foreach ($users as $user_phone) {
             if ($user_phone->phone == $phone_number) {
-                throw ValidationException::withMessages(['phone' => 'Invalid Mobile Phone']);
+                throw ValidationException::withMessages(['phone' => trans('public.invalid_mobile_phone')]);
             }
         }
 
@@ -117,7 +117,7 @@ class ProfileController extends Controller
             $user->addMedia($request->profile_photo)->toMediaCollection('profile_photo');
         }
 
-        return Redirect::route('profile.edit')->with('title', 'Success update')->with('success', trans('public.Successfully Updated Profile'));
+        return Redirect::route('profile.edit')->with('title', trans('public.success_update'))->with('success', trans('public.successfully_update'));
     }
 
     /**
@@ -167,7 +167,7 @@ class ProfileController extends Controller
 
         PaymentAccount::create($data);
 
-        return back()->with('title', trans('public.Successfully Created Account'))->with('success', trans('public.Your payment account has been created successfully!'));
+        return back()->with('title', trans('public.success_created_account'))->with('success', trans('public.successfully_created_account'));
     }
 
     // protected function processImage(Request $request): void

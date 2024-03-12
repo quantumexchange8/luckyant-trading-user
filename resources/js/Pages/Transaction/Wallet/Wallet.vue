@@ -26,11 +26,11 @@ const { formatAmount } = transactionFormat();
 </script>
 
 <template>
-    <AuthenticatedLayout title="Wallet">
+    <AuthenticatedLayout :title="$t('public.sidebar.wallet')">
         <template #header>
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    Wallet
+                    {{ $t('public.sidebar.wallet') }}
                 </h2>
             </div>
         </template>
@@ -39,7 +39,7 @@ const { formatAmount } = transactionFormat();
             <div class="flex flex-col gap-4 sm:col-span-1 col-span-2">
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Deposit
+                        {{ $t('public.total_deposit') }}
                     </div>
                     <div class="text-base font-semibold">
                         $ {{ totalDeposit }}
@@ -47,7 +47,7 @@ const { formatAmount } = transactionFormat();
                 </div>
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Withdrawal
+                        {{ $t('public.total_withdrawal') }}
                     </div>
                     <div class="text-base font-semibold">
                         $ {{ formatAmount(totalWithdrawal) }}
@@ -55,7 +55,7 @@ const { formatAmount } = transactionFormat();
                 </div>
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Rebate Earn
+                        {{ $t('public.total_rebate_earn') }}
                     </div>
                     <div class="text-base font-semibold">
                         $ {{ formatAmount(totalRebate) }}
@@ -65,7 +65,7 @@ const { formatAmount } = transactionFormat();
 
             <div class="flex flex-col justify-between p-6 sm:col-span-1 col-span-2 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                 <div class="text-base font-semibold dark:text-gray-400">
-                    Balance Chart
+                    {{ $t('public.balance_chart') }}
                 </div>
                 <BalanceChart />
             </div>

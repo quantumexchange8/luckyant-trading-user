@@ -77,11 +77,11 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold">
-                    Subscription Details
+                    {{$t('public.subscription_details')}}
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Account Number
+                        {{$t('public.account_number')}}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ subscriberAccount.subscription.meta_login }}
@@ -89,7 +89,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Subscription Number
+                        {{$t('public.subscription_number')}}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ subscriberAccount.subscription.subscription_number }}
@@ -97,7 +97,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Subscription Fee
+                        {{$t('public.subscription_fee')}}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         $ {{ subscriberAccount.subscription.subscription_fee ? formatAmount(subscriberAccount.subscription.subscription_fee) : '0.00' }}
@@ -105,7 +105,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        ROI Date ({{ subscriberAccount.subscription.subscription_period }} Days)
+                        {{$t('public.roi_date')}} ({{ subscriberAccount.subscription.subscription_period }} Days)
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ formatDateTime(subscriberAccount.subscription.next_pay_date, false) }}
@@ -113,7 +113,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                 </div>
                 <div class="flex flex-col gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Progress
+                        {{$t('public.progress')}}
                     </div>
                     <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
                         <div
@@ -134,14 +134,14 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
             </div>
         </div>
         <div class="text-gray-600 dark:text-gray-400 text-justify my-4">
-            After confirming, please note that Account Number {{ subscriberAccount.subscription.meta_login }} will unable to BALANCE OUT in 24 hours. Thank you for your patience and understanding.
+            {{$t('public.confirm_terminate_warning_1')}} {{ subscriberAccount.subscription.meta_login }} {{$t('public.confirm_terminate_warning_2')}}
         </div>
 
         <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                {{$t('public.Cancel')}}
+                {{$t('public.cancel')}}
             </Button>
-            <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
+            <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
         </div>
     </Modal>
 </template>

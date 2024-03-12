@@ -14,7 +14,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         class="relative flex flex-col flex-1 max-h-full gap-4 px-3"
     >
         <SidebarLink
-            title="Dashboard"
+            :title="$t('public.sidebar.dashboard')"
             :href="route('dashboard')"
             :active="route().current('dashboard')"
         >
@@ -27,7 +27,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarLink>
 
         <SidebarLink
-            :title="$t('public.sidebar.Account Info')"
+            :title="$t('public.sidebar.account_info')"
             :href="route('account_info.account_info')"
             :active="route().current('account_info.*')"
         >
@@ -40,7 +40,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarLink>
 
         <SidebarCollapsible
-            title="Copy Trading"
+            :title="$t('public.sidebar.copy_trading')"
             :active="route().current('trading.*')"
         >
             <template #icon>
@@ -52,13 +52,13 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 
             <SidebarCollapsibleItem
                 :href="route('trading.master_listing')"
-                title="Master Trader’s Listing"
+                :title="$t('public.sidebar.master_trader_listing')"
                 :active="route().current('trading.master_listing')"
             />
         </SidebarCollapsible>
 
         <SidebarCollapsible
-            :title="$t('public.sidebar.Transaction')"
+            :title="$t('public.sidebar.transaction')"
             :active="route().current('transaction.*')"
         >
             <template #icon>
@@ -70,18 +70,18 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 
             <SidebarCollapsibleItem
                 :href="route('transaction.wallet')"
-                title="Wallet"
+                :title="$t('public.sidebar.wallet')"
                 :active="route().current('transaction.wallet')"
             />
             <SidebarCollapsibleItem
                 :href="route('transaction.trading_account')"
-                title="Trading Account"
+                :title="$t('public.sidebar.trading_account')"
                 :active="route().current('transaction.trading_account')"
             />
         </SidebarCollapsible>
 
         <SidebarCollapsible
-            title="Referral Program"
+            :title="$t('public.sidebar.referral_program')"
             :active="route().current('referral.*')"
         >
             <template #icon>
@@ -93,13 +93,13 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 
             <SidebarCollapsibleItem
                 :href="route('referral.index')"
-                title="Referral Tree"
+                :title="$t('public.sidebar.referral_tree')"
                 :active="route().current('referral.index')"
             />
         </SidebarCollapsible>
 
         <SidebarLink
-            title="Profile"
+            :title="$t('public.sidebar.profile')"
             :href="route('profile.edit')"
             :active="route().current('profile.edit')"
         >

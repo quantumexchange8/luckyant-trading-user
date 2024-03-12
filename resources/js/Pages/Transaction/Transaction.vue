@@ -18,11 +18,11 @@ const categories = ref([
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.sidebar.Transaction')">
+    <AuthenticatedLayout :title="$t('public.sidebar.transaction')">
         <template #header>
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    {{ $t('public.sidebar.Transaction') }}
+                    {{ $t('public.sidebar.transaction') }}
                 </h2>
             </div>
         </template>

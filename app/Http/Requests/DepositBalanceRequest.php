@@ -23,9 +23,9 @@ class DepositBalanceRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'wallet_id' => 'Wallet',
-            'to_meta_login' => 'Account Number',
-            'amount' => 'Amount',
+            'wallet_id' => trans('public.sidebar.wallet'),
+            'to_meta_login' => trans('public.account_number'),
+            'amount' => trans('public.amount'),
         ];
     }
 }

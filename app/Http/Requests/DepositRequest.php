@@ -24,10 +24,10 @@ class DepositRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'payment_method' => 'Payment Methods',
-            'wallet_id' => 'Wallet',
-            'receipt' => 'Payment Slip',
-            'amount' => 'Amount',
+            'payment_method' => trans('public.payment_methods'),
+            'wallet_id' => trans('public.sidebar.wallet'),
+            'receipt' => trans('public.payment_slip'),
+            'amount' => trans('public.amount'),
         ];
     }
 }

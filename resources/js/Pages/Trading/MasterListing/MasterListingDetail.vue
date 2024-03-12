@@ -13,7 +13,7 @@ const { formatAmount } = transactionFormat();
 </script>
 
 <template>
-    <AuthenticatedLayout title="Master Configuration">
+    <AuthenticatedLayout :title="$t('public.master_configuration')">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row items-center">
                 <h2 class="text-xl font-semibold leading-tight">
@@ -21,7 +21,7 @@ const { formatAmount } = transactionFormat();
                 </h2>
                 <ChevronRightIcon aria-hidden="true" class="w-5 h-5" />
                 <h2 class="text-xl font-semibold leading-tight">
-                    Master Profile - {{ masterListingDetail.meta_login }}
+                    {{ $t('public.master_profile') }} - {{ masterListingDetail.meta_login }}
                 </h2>
             </div>
         </template>
@@ -31,7 +31,7 @@ const { formatAmount } = transactionFormat();
                 <div class="flex justify-between items-center self-stretch border-b border-gray-300 dark:border-gray-500 pb-2">
             <div class="flex items-center gap-3">
                 <div class="text-lg">
-                    Master Detail
+                    {{ $t('public.master_detail') }}
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@ const { formatAmount } = transactionFormat();
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <div class="space-y-2">
                 <Label
-                    value="Name"
+                    :value="$t('public.name')"
                 />
                 <div>
                     {{ masterListingDetail.user.name }}
@@ -49,7 +49,7 @@ const { formatAmount } = transactionFormat();
             <div class="space-y-2">
                 <Label
                     for="meta_login"
-                    value="Meta Login"
+                    :value="$t('public.meta_login')"
                 />
                 <div>
                     {{ masterListingDetail.meta_login }}
@@ -59,7 +59,7 @@ const { formatAmount } = transactionFormat();
             <div class="space-y-2">
                 <Label
                     for="sharing_profit"
-                    value="Sharing Profit (%)"
+                    :value="$t('public.sharing_profit') + ' (%)' "
                 />
                 <div>
                     {{ masterListingDetail.sharing_profit }}
@@ -69,7 +69,7 @@ const { formatAmount } = transactionFormat();
             <div class="space-y-2">
                 <Label
                     for="min_join_equity"
-                    value="Minimun Join Equity"
+                    :value="$t('public.min_join_equity')"
                 />
                 <div>
                     {{ masterListingDetail.min_join_equity }}
@@ -79,7 +79,7 @@ const { formatAmount } = transactionFormat();
             <div class="space-y-2">
                 <Label
                     for="subscription_fee"
-                    value="Subscription Fee"
+                    :value="$t('public.subscription_fee')"
                 />
                 <div>
                     {{ masterListingDetail.min_join_equity }}
@@ -89,7 +89,7 @@ const { formatAmount } = transactionFormat();
             <div class="space-y-2">
                 <Label
                     for="roi_period"
-                    value="ROI Period"
+                    :value="$t('public.roi_period')"
                 />
                 <div>
                     {{ masterListingDetail.roi_period }}
@@ -99,7 +99,7 @@ const { formatAmount } = transactionFormat();
             <div class="space-y-2">
                 <Label
                     for="signal_status"
-                    value="Copy Trading Status"
+                    :value="$t('public.copy_trading_status')"
                 />
                 <div>
                     {{ masterListingDetail.status }}
@@ -113,7 +113,7 @@ const { formatAmount } = transactionFormat();
             <div class="flex flex-col gap-4 w-1/4">
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Subscribers
+                        {{ $t('public.total_subscribers') }}
                     </div>
                     <div class="text-base font-semibold">
                         {{ formatAmount(0) }}
@@ -121,7 +121,7 @@ const { formatAmount } = transactionFormat();
                 </div>
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Subscription Fees ($)
+                        {{ $t('public.total_subscription_fees') }} ($)
                     </div>
                     <div class="text-base font-semibold">
                         $ {{ formatAmount(0) }}
@@ -129,7 +129,7 @@ const { formatAmount } = transactionFormat();
                 </div>
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Copy Trade Earnings ($)
+                        {{ $t('public.total_copy_trade_earnings') }} ($)
                     </div>
                     <div class="text-base font-semibold">
                         $ {{ formatAmount(0) }}

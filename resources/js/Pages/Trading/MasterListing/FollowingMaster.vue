@@ -102,7 +102,7 @@ watchEffect(() => {
                         id="search"
                         type="text"
                         class="w-full block dark:border-transparent"
-                        :placeholder="$t('public.Search By Name / Account No')"
+                        :placeholder="$t('public.search_name_and_account_no_placeholder')"
                         v-model="search"
                     />
                 </InputIconWrapper>
@@ -123,7 +123,7 @@ watchEffect(() => {
                     @click="clearFilter"
                     class="w-full justify-center"
                 >
-                    Clear
+                    {{ $t('public.clear') }}
                 </Button>
             </div>
         </div>
@@ -153,17 +153,17 @@ watchEffect(() => {
                     </div>
                 </div>
                 <div>
-                    <Badge variant="primary">Master</Badge>
+                    <Badge variant="primary">{{ $t('public.master') }}</Badge>
                 </div>
             </div>
 
             <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
                 <div class="flex gap-1">
-                    <div class="text-sm">Sharing %:</div>
+                    <div class="text-sm">{{ $t('public.sharing') }} %:</div>
                     <div class="text-sm font-semibold">{{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%</div>
                 </div>
                 <div class="flex gap-1">
-                    <div class="text-sm">Subscription Fee:</div>
+                    <div class="text-sm">{{ $t('public.subscription_fee') }}:</div>
                     <div class="text-sm font-semibold">$ {{ subscriberAccount.master.subscription_fee % 1 === 0 ? formatAmount(subscriberAccount.master.subscription_fee, 0) : formatAmount(subscriberAccount.master.subscription_fee) }}</div>
                 </div>
             </div>
@@ -203,7 +203,7 @@ watchEffect(() => {
                 <!--                </div>-->
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        Estimated ROI
+                        {{ $t('public.estimated_roi') }}
                     </div>
                     <div class="flex justify-center">
                         <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ formatAmount(subscriberAccount.master.estimated_monthly_returns) }}%</span>
@@ -211,10 +211,10 @@ watchEffect(() => {
                 </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        ROI Return
+                        {{ $t('public.roi_return') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} Days</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} {{ $t('public.days') }}</span>
                     </div>
                 </div>
             </div>

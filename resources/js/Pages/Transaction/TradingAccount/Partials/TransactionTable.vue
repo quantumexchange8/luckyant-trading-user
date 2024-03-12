@@ -104,26 +104,26 @@ const statusVariant = (transactionStatus) => {
             <thead class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
                 <tr>
                     <th scope="col" class="p-3">
-                        Date
+                        {{ $t('public.date') }}
                     </th>
                     <th scope="col" class="p-3">
-                        Type
+                        {{ $t('public.type') }}
                     </th>
                     <th scope="col" class="p-3">
-                        Transaction No
+                        {{ $t('public.transaction_no') }}
                     </th>
                     <th scope="col" class="p-3">
-                        Amount
+                        {{ $t('public.amount') }}
                     </th>
                     <th scope="col" class="p-3 text-center">
-                        Status
+                        {{ $t('public.status') }}
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-if="transactions.data.length === 0">
                     <th colspan="5" class="py-4 text-lg text-center">
-                        No History
+                        {{ $t('public.no_history') }}
                     </th>
                 </tr>
                 <tr
@@ -155,43 +155,43 @@ const statusVariant = (transactionStatus) => {
 
     <Modal :show="transactionModal" title="Transaction Details" @close="closeModal">
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Name</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.name') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.user.name }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Email</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.email') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.user.email }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Transaction Type</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.transaction_type') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.transaction_type }}</span>
         </div>
         <div v-if="transactionDetails.from_wallet_id != null" class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">From Wallet</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.from_wallet') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.from_wallet.wallet_address }}</span>
         </div>
         <div v-if="transactionDetails.to_wallet_id != null" class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">To Wallet</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.to_wallet') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.to_wallet.wallet_address }}</span>
         </div>
         <div v-if="transactionDetails.from_meta_login != null" class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">From account</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.from_account') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.from_meta_login.meta_login }}</span>
         </div>
         <div v-if="transactionDetails.to_meta_login != null" class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">To account</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.to_account') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.to_meta_login.meta_login }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Ticket Number</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.ticket_number') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.ticket }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Amount</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.amount') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">$ {{ transactionDetails.amount }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Date & Time</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.date_and_time') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ formatDateTime(transactionDetails.created_at) }}</span>
         </div>
     </Modal>

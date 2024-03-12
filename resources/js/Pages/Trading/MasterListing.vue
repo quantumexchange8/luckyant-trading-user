@@ -11,11 +11,11 @@ import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vu
 </script>
 
 <template>
-    <AuthenticatedLayout title="Master Trader's Listing">
+    <AuthenticatedLayout :title="$t('public.master_trader_listing')">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    Master Trader's Listing
+                    {{ $t('public.master_trader_listing') }}
                 </h2>
             </div>
         </template>
@@ -36,7 +36,7 @@ import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vu
                                      : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
                                 ]"
                         >
-                            Master Accounts
+                            {{ $t('public.master_accounts') }}
                         </button>
                     </Tab>
 
@@ -53,7 +53,7 @@ import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vu
                                      : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
                                 ]"
                         >
-                            Subscriptions
+                            {{ $t('public.subscriptions') }}
                         </button>
                     </Tab>
                 </TabList>

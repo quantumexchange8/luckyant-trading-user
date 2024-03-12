@@ -23,9 +23,9 @@ class WithdrawBalanceRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'to_wallet_id' => 'Wallet',
-            'from_meta_login' => 'Account Number',
-            'amount' => 'Amount',
+            'to_wallet_id' => trans('public.sidebar.wallet'),
+            'from_meta_login' => trans('public.account_number'),
+            'amount' => trans('public.amount'),
         ];
     }
 }

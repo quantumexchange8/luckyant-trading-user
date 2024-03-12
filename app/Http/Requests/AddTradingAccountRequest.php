@@ -22,8 +22,8 @@ class AddTradingAccountRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'leverage' => trans('public.Leverage'),
-            'terms' => trans('public.Terms & Conditions'),
+            'leverage' => trans('public.leverage'),
+            'terms' => trans('public.terms_and_conditions'),
         ];
     }
 }

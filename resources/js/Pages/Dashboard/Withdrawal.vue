@@ -99,10 +99,10 @@ const handleButtonClick = () => {
         @click="openWithdrawalModal"
     >
         <CurrencyDollarIcon aria-hidden="true" :class="iconSizeClasses" />
-        Withdrawal
+        {{ $t('public.withdrawal') }}
     </Button>
 
-    <Modal :show="withdrawalModal" title="Withdrawal" @close="closeModal">
+    <Modal :show="withdrawalModal" :title="$t('public.withdrawal')" @close="closeModal">
 
         <div
             v-if="$page.props.auth.user.kyc_approval !== 'Verified'"
@@ -113,10 +113,10 @@ const handleButtonClick = () => {
             </div>
             <div class="flex flex-col items-center">
                 <div class="text-xl text-gray-800 font-semibold">
-                    Account verification required
+                    {{ $t('public.account_verification_required') }}
                 </div>
                 <div class="text-gray-500">
-                    No balance withdrawal permitted until verified.
+                    {{ $t('public.withdrawal_required_verification') }}
                 </div>
             </div>
             <div class="flex justify-center w-full">
@@ -127,7 +127,7 @@ const handleButtonClick = () => {
                     class="items-center gap-2 max-w-xs"
                     :href="route('profile.edit')"
                 >
-                    Verify Account
+                    {{ $t('public.verify_account') }}
                 </Button>
             </div>
         </div>
@@ -136,7 +136,7 @@ const handleButtonClick = () => {
             class="space-y-2 mt-5"
         >
             <div class="flex flex-col sm:flex-row gap-4">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" value="Wallet" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" :value="$t('public.sidebar.wallet')" />
                 <div class="flex flex-col w-full">
                     <BaseListbox
                         :options="walletSel"
@@ -146,7 +146,7 @@ const handleButtonClick = () => {
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
-                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.Amount')  + ' ($)'" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
                 <div class="relative flex flex-col w-full">
                     <div class="relative">
                         <Input
@@ -170,7 +170,7 @@ const handleButtonClick = () => {
                                     }"
                                 @click="handleButtonClick"
                             >
-                                {{ !withdrawalAmount ? 'Full Amount' : 'Clear' }}
+                                {{ !withdrawalAmount ? $t('public.full_amount') : $t('public.clear') }}
                             </Button>
                         </div>
                     </div>
@@ -179,7 +179,7 @@ const handleButtonClick = () => {
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4 pt-2 pb-5">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet_address" value="To Account" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet_address" :value="$t('public.to_account')" />
                 <div class="flex flex-col w-full">
                     <BaseListbox
                         :options="paymentAccountSel"
@@ -191,14 +191,14 @@ const handleButtonClick = () => {
 
             <div class="flex flex-col gap-2 border-t border-gray-300">
                 <div class="flex items-start justify-between mt-5">
-                    <span class="text-sm dark:text-gray-400 font-Inter">Withdrawal Charges ({{ withdrawalFee.value }}%)</span>
+                    <span class="text-sm dark:text-gray-400 font-Inter">{{ $t('public.withdrawal_charges') }} ({{ withdrawalFee.value }}%)</span>
                     <div class="flex flex-col">
                         <span class="text-sm dark:text-white text-right">$ {{ formatAmount(transactionFee) }}</span>
-                        <span class="text-xs text-gray-500 dark:text-white">Minimum charges: $ {{ formatAmount(withdrawalFee.value) }}</span>
+                        <span class="text-xs text-gray-500 dark:text-white">{{ $t('public.minimum_charges') }}: $ {{ formatAmount(withdrawalFee.value) }}</span>
                     </div>
                 </div>
                 <div class="flex items-center justify-between mt-2">
-                    <span class="text-sm dark:text-gray-400 font-Inter">{{$t('public.rightbar.Withdrawal Amount')}}</span>
+                    <span class="text-sm dark:text-gray-400 font-Inter">{{$t('public.withdrawal_amount')}}</span>
                     <span class="text-sm dark:text-white">$&nbsp;{{ calculatedBalance ? formatAmount(calculatedBalance) : '0.00' }}</span>
                 </div>
             </div>
@@ -206,9 +206,9 @@ const handleButtonClick = () => {
 
             <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                    {{$t('public.Cancel')}}
+                    {{$t('public.cancel')}}
                 </Button>
-                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
+                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
             </div>
         </form>
 

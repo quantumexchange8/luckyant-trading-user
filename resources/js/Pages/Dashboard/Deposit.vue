@@ -51,7 +51,7 @@ const depositModal = ref(false);
 const selected = ref(null);
 const selectBank = ref(null);
 const paymentDetails = ref([]);
-const tooltipContent = ref('Copy');
+const tooltipContent = ref('copy');
 const initialAmount = ref(null);
 const conversionRate = ref(0);
 const calculatedAmount = ref(0);
@@ -175,16 +175,16 @@ const copyWalletAddress = () => {
     try {
         var successful = document.execCommand('copy');
         if (successful) {
-            tooltipContent.value = 'Copied!';
+            tooltipContent.value = 'copied';
             setTimeout(() => {
-                tooltipContent.value = 'Copy'; // Reset tooltip content to 'Copy' after 2 seconds
+                tooltipContent.value = 'copy'; // Reset tooltip content to 'Copy' after 2 seconds
             }, 1000);
         } else {
-            tooltipContent.value = 'Try Again Later!';
+            tooltipContent.value = 'try_again_later';
         }
 
     } catch (err) {
-        alert('Oops, unable to copy');
+        alert('copy_error');
     }
 
     /* unselect the range */
@@ -203,23 +203,23 @@ const copyWalletAddress = () => {
         @click="openDepositModal"
     >
         <CurrencyDollarIcon aria-hidden="true" :class="iconSizeClasses" />
-        Deposit
+        {{ $t('public.deposit') }}
     </Button>
 
-    <Modal :show="depositModal" title="Deposit" @close="closeModal">
+    <Modal :show="depositModal" :title="$t('public.deposit')" @close="closeModal">
 
         <!-- select payment method first -->
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold">
-                    Payment Methods
+                    {{ $t('public.payment_methods') }}
                 </div>
             </div>
 
             <div v-if="!selected" class="w-full py-4">
                 <div class="mx-auto w-full">
                     <RadioGroup v-model="selected">
-                        <RadioGroupLabel class="sr-only">Payment Method</RadioGroupLabel>
+                        <RadioGroupLabel class="sr-only">{{ $t('public.payment_methods') }}</RadioGroupLabel>
                         <div class="flex sm:flex-row flex-col gap-3 items-center self-stretch w-full">
                             <RadioGroupOption
                                 as="template"
@@ -262,12 +262,13 @@ const copyWalletAddress = () => {
             <div v-if="selected != null ? selected.name === 'Bank' : '' " class="space-y-2">
                 <Label
                     for="bank"
-                    value="Select a bank"
+                    :value="$t('public.bank_placeholder')"
                 />
                 <BaseListbox
                     class="w-full"
                     :options="countries"
                     v-model="selectBank"
+                    :placeholder="$t('public.bank_placeholder')"
                     with-img
                     :error="!!form.errors.payment_method"
                 />
@@ -279,7 +280,7 @@ const copyWalletAddress = () => {
                     <input type="hidden" id="cryptoWalletAddress" :value="paymentDetails.account_no">
                     <div class="flex items-center gap-1">
                         <span class="text-base text-gray-800 dark:text-white font-semibold">{{ paymentDetails.account_no }}</span>
-                        <Tooltip :content="tooltipContent" placement="top">
+                        <Tooltip :content="$t('public.' + tooltipContent)" placement="top">
                             <DuplicateIcon class="w-5 h-5 mt-1 text-gray-600 hover:cursor-pointer" @click="copyWalletAddress" />
                         </Tooltip>
                     </div>
@@ -288,13 +289,13 @@ const copyWalletAddress = () => {
 
             <div v-if="selected != null ? selected.name === 'Payment Merchant' : '' " class="space-y-2">
                 <div class="flex gap-2">
-                   Tether Payment - USDT
+                   {{ $t('public.tether_payment') }}
                 </div>
             </div>
 
             <div v-if="selected" class="flex flex-col mt-5 items-start gap-3 self-stretch">
                 <div v-if="paymentDetails.payment_method" class="text-lg font-semibold">
-                    Payment Information
+                    {{ $t('public.payment_information') }}
                 </div>
                 <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
@@ -306,7 +307,7 @@ const copyWalletAddress = () => {
                 </div>
                 <div v-if="paymentDetails.payment_method === 'Bank'" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Account No
+                        {{ $t('public.account_no') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ paymentDetails.account_no }}
@@ -322,7 +323,7 @@ const copyWalletAddress = () => {
                 </div>
                 <div v-if="paymentDetails.payment_method === 'Bank'" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        Country
+                        {{ $t('public.country') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ paymentDetails.country.name }}
@@ -331,7 +332,7 @@ const copyWalletAddress = () => {
                 <div v-if="paymentDetails.payment_method === 'Bank'" class="border-t border-gray-300 w-full py-3">
                     <div class="flex items-center justify-between gap-2 self-stretch">
                         <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                            Amount to transfer
+                            {{ $t('public.amount_transfer') }}
                         </div>
                         <div class="text-base text-gray-800 dark:text-white font-semibold">
                             {{ paymentDetails.currency }} {{ formatAmount(calculatedAmount) }}
@@ -343,7 +344,7 @@ const copyWalletAddress = () => {
 
         <form v-if="selected" class="space-y-2 mt-5">
             <div class="flex flex-col sm:flex-row gap-4">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" value="Wallet" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" :value="$t('public.sidebar.wallet')" />
                 <div class="flex flex-col w-full">
                     <BaseListbox
                         :options="walletSel"
@@ -354,13 +355,13 @@ const copyWalletAddress = () => {
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
-                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.Amount')  + ' ($)'" />
+                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
                 <div class="flex flex-col w-full">
                     <Input
                         id="amount"
                         type="number"
                         min="0"
-                        placeholder="$ 30.00"
+                        :placeholder="$t('public.amount_transfer_placeholder')"
                         class="block w-full"
                         v-model="initialAmount"
                         :invalid="form.errors.amount"
@@ -386,7 +387,7 @@ const copyWalletAddress = () => {
             </div> -->
 
             <div v-if="selected.name !== 'Payment Merchant'" class="flex flex-col sm:flex-row gap-4 pt-2">
-                <Label for="receipt" class="text-sm dark:text-white md:w-1/4" value="Payment Slip"/>
+                <Label for="receipt" class="text-sm dark:text-white md:w-1/4" :value="$t('public.payment_slip')"/>
                 <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
                     <input
                         ref="receiptInput"
@@ -402,7 +403,7 @@ const copyWalletAddress = () => {
                         @click="$refs.receiptInput.click()"
                         class="justify-center gap-2 w-full sm:max-w-24"
                     >
-                        <span>Browse</span>
+                        <span>{{ $t('public.browse') }}</span>
                     </Button>
                     <InputError :message="form.errors.receipt"/>
                 </div>
@@ -430,9 +431,9 @@ const copyWalletAddress = () => {
 
             <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                    {{$t('public.Cancel')}}
+                    {{$t('public.cancel')}}
                 </Button>
-                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
+                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
             </div>
         </form>
     </Modal>

@@ -93,7 +93,7 @@ const openDetails = (masterAccountID) => {
                         id="search"
                         type="text"
                         class="w-full block dark:border-transparent"
-                        :placeholder="$t('public.Search By Name / Account No')"
+                        :placeholder="$t('public.search_name_and_account_no_placeholder')"
                         v-model="search"
                     />
                 </InputIconWrapper>
@@ -102,7 +102,7 @@ const openDetails = (masterAccountID) => {
                 <BaseListbox
                     v-model="type"
                     :options="typeFilter"
-                    placeholder="Filters"
+                    :placeholder="$t('public.filters_placeholder')"
                     class="w-full"
                 />
             </div>
@@ -114,7 +114,7 @@ const openDetails = (masterAccountID) => {
                     @click="clearFilter"
                     class="w-full justify-center"
                 >
-                    Clear
+                    {{ $t('public.clear') }}
                 </Button>
             </div>
         </div>
@@ -144,7 +144,7 @@ const openDetails = (masterAccountID) => {
             </div>
 
             <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2">
-                <div class="text-sm">Minimum join Equity:</div>
+                <div class="text-sm">{{ $t('public.min_join_equity') }}:</div>
                 <div class="text-sm font-semibold">$ {{ formatAmount(masterAccount.min_join_equity) }}</div>
             </div>
 
@@ -183,7 +183,7 @@ const openDetails = (masterAccountID) => {
 <!--                </div>-->
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                       Subscribers
+                       {{ $t('public.subscribers') }}
                     </div>
                     <div class="flex justify-center">
                         <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ masterAccount.subscribersCount }}</span>
@@ -191,10 +191,10 @@ const openDetails = (masterAccountID) => {
                 </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        ROI Period
+                        {{ $t('public.roi_period') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ masterAccount.roi_period }} Days</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ masterAccount.roi_period }} {{ $t('public.days') }}</span>
                     </div>
                 </div>
             </div>
@@ -209,7 +209,7 @@ const openDetails = (masterAccountID) => {
                     class="w-full flex justify-center"
                     @click.prevent="openDetails(masterAccount.id)"
                 >
-                    View Details
+                    {{ $t('public.view_details') }}
                 </Button>
             </div>
 

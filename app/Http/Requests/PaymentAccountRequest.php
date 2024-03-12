@@ -29,10 +29,10 @@ class PaymentAccountRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'payment_account_name' => $this->payment_method == 'Bank' ? 'Bank Account name' : 'Wallet address',
-            'payment_platform_name' => $this->payment_method == 'Bank' ? 'Bank name' : 'Tether',
-            'account_no' => $this->payment_method == 'Bank' ? 'Account Number' : 'Wallet Address',
-            'bank_swift_code' => 'Bank Swift Code',
+            'payment_account_name' => trans($this->payment_method == 'Bank' ? 'bank_account_name' : 'wallet_address'),
+            'payment_platform_name' => trans($this->payment_method == 'Bank' ? 'bank_name' : 'tether'),
+            'account_no' => trans($this->payment_method == 'Bank' ? 'account_number' : 'wallet_address'),
+            'bank_swift_code' => trans('bank_swift_code'),
         ];
     }
 }

@@ -38,7 +38,7 @@ const closeModal = () => {
         {{ $t('public.learn_more') }}
     </span> -->
     <span v-if="props.type == 'standard_subscription' || props.type == 'staking_subscription' || props.type == 'buy_coin' || props.type == 'deposit' || props.type == 'swap' || props.type == 'withdrawal' || props.type == 'register'" class="font-semibold hover:text-primary-500 dark:text-white underline cursor-pointer dark:hover:text-gray-300" @click="openTncModal">
-        {{ $t('public.tnc') }}.
+        {{ $t('public.terms_and_conditions') }}.
     </span>
     <!-- <span v-if="props.type == 'privacy_notice'" class="dark:text-white underline cursor-pointer dark:hover:text-gray-300" @click="openTncModal">
         {{ $t('public.privacy_notice') }}

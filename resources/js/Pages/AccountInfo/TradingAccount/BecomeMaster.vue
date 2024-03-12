@@ -40,7 +40,7 @@ const submit = () => {
             </div>
             <div class="flex flex-col items-start">
                 <div class="text-gray-800 dark:text-gray-400 text-sm font-semibold text-right">
-                    Account Equity
+                    {{ $t('public.account_equity') }}
                 </div>
                 <div class="text-gray-600 dark:text-gray-200 text-base w-full text-right">
                     ${{ formatAmount(account.equity) }}
@@ -48,14 +48,14 @@ const submit = () => {
             </div>
         </div>
         <div class="text-gray-600 dark:text-gray-400 text-justify text-sm">
-            After submitting your request, please note that your account will undergo a verification process to become a Master Account. This process may take several working days. Thank you for your patience and understanding.
+            {{ $t('public.become_master_request_message') }}
         </div>
 
         <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                {{$t('public.Cancel')}}
+                {{$t('public.cancel')}}
             </Button>
-            <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.Confirm')}}</Button>
+            <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
         </div>
     </form>
 </template>

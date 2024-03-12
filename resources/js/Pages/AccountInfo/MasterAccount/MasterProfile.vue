@@ -16,11 +16,11 @@ const { formatAmount } = transactionFormat();
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row items-center">
                 <h2 class="text-xl font-semibold leading-tight">
-                    <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/account_info/account_listing">{{ $t('public.sidebar.Account Info') }}</a>
+                    <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/account_info/account_listing">{{ $t('public.sidebar.account_info') }}</a>
                 </h2>
                 <ChevronRightIcon aria-hidden="true" class="w-5 h-5" />
                 <h2 class="text-xl font-semibold leading-tight">
-                    Master Profile - {{ masterAccount.meta_login }}
+                    {{ $t('public.master_profile') }} - {{ masterAccount.meta_login }}
                 </h2>
             </div>
         </template>
@@ -35,7 +35,7 @@ const { formatAmount } = transactionFormat();
             <div class="flex flex-col gap-4 w-1/4">
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Subscribers
+                        {{ $t('public.total_subscribers') }}
                     </div>
                     <div class="text-base font-semibold">
                         {{ subscriberCount }}
@@ -43,7 +43,7 @@ const { formatAmount } = transactionFormat();
                 </div>
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Subscription Fees ($)
+                        {{ $t('public.total_subscription_fees') }} ($)
                     </div>
                     <div class="text-base font-semibold">
                         $ {{ formatAmount(0) }}
@@ -51,7 +51,7 @@ const { formatAmount } = transactionFormat();
                 </div>
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-sm">
-                        Total Copy Trade Earnings ($)
+                        {{ $t('public.total_copy_trade_earnings') }} ($)
                     </div>
                     <div class="text-base font-semibold">
                         $ {{ formatAmount(0) }}

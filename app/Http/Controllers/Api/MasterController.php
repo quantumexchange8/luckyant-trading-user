@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\CopyTradeHistory;
 use App\Models\Master;
 use Illuminate\Http\Request;
 use App\Models\TradingAccount;
@@ -55,8 +56,15 @@ class MasterController extends Controller
 
     public function getMasterLiveTrades(Request $request)
     {
-        $metaService = new MetaFiveService();
-        $tradeHistories = $metaService->dealHistory($request->meta_login, date_format(today(), 'Y-m-d'), date_format(today(), 'Y-m-d'));
+        $startDate = today()->subWeek();
+        $endDate = today();
+
+        $tradeHistories = CopyTradeHistory::where('user_type', 'master')
+            ->where('meta_login', $request->meta_login)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->latest()
+            ->limit(5)
+            ->get();
 
         return response()->json($tradeHistories);
     }

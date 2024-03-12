@@ -53,5 +53,11 @@ class MasterController extends Controller
         ]);
     }
 
+    public function getMasterLiveTrades(Request $request)
+    {
+        $metaService = new MetaFiveService();
+        $tradeHistories = $metaService->dealHistory($request->meta_login, date_format(today(), 'Y-m-d'), date_format(today(), 'Y-m-d'));
 
+        return response()->json($tradeHistories);
+    }
 }

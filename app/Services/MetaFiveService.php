@@ -102,6 +102,11 @@ class MetaFiveService {
 
         return $disableTrade;
     }
+
+    public function dealHistory($meta_login, $start_date, $end_date)
+    {
+        return Http::acceptJson()->get($this->baseURL . "/deal_history/{$meta_login}&{$start_date}&{$end_date}")->json();
+    }
 }
 
 class dealAction

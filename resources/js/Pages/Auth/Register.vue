@@ -23,7 +23,7 @@ const props = defineProps({
     referral_code: String
 })
 
-const formStep = ref(3);
+const formStep = ref(1);
 const showPassword = ref(false);
 const showPassword2 = ref(false);
 const selectedCountry = ref(132);
@@ -45,7 +45,7 @@ const togglePasswordVisibilityConfirm = () => {
 }
 
 const form = useForm({
-    form_step: 3,
+    form_step: 1,
     name: '',
     chinese_name: '',
     email: '',

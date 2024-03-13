@@ -19,13 +19,17 @@ const props = defineProps({
 const { formatAmount } = transactionFormat();
 const masterAccounts = ref([]);
 const countdown = ref(10);
+const isLoading = ref(false);
 
 const refreshData = async () => {
     try {
+        isLoading.value = true;
         const response = await axios.get('/account_info/refreshTradingAccountsData');
         masterAccounts.value = response.data.masterAccounts;
     } catch (error) {
         console.error('Error refreshing trading accounts data:', error);
+    } finally {
+        isLoading.value = false; // Set isLoading to false after fetching data (whether successful or not)
     }
 };
 
@@ -61,7 +65,7 @@ watchEffect(() => {
 
 <template>
     <div
-        v-if="masterAccounts.length === 0"
+        v-if="isLoading && masterAccounts.length === 0"
         class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 animate-pulse sm:w-1/2 mx-auto sm:mx-0 shadow-lg"
     >
         <div class="flex justify-between items-center self-stretch">
@@ -83,7 +87,29 @@ watchEffect(() => {
             <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
         </div>
     </div>
-
+    <div
+        v-else-if="masterAccounts.length === 0"
+        class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 sm:w-1/2 mx-auto sm:mx-0 shadow-lg"
+    >
+        <div class="flex justify-between items-center self-stretch">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center">
+                    <div class="flex flex-col gap-2">
+                        <div class="font-semibold">{{ $t('public.no_master_account') }}</div>
+                        <div class="w-48 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                    </div>
+                </div>
+                <span class="sr-only">{{ $t('public.is_loading') }}</span>
+            </div>
+        </div>
+        <div class="flex items-center justify-between w-full">
+            <div>
+                <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+            </div>
+            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
+        </div>
+    </div>
     <div
         v-else
         class="grid grid-cols-1 sm:grid-cols-2 gap-5"

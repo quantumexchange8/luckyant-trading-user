@@ -258,4 +258,6 @@ return [
     'progress' => "Progress",
     'confirm_terminate_warning_1' => "After confirming, please note that Account Number",
     'confirm_terminate_warning_2' => "will unable to BALANCE OUT in 24 hours. Thank you for your patience and understanding.",
+    'no_trading_account' => "No Trading Account",
+    'no_master_account' => "No Master Account",
 ];

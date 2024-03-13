@@ -258,4 +258,6 @@ return [
     'progress' => "处理中",
     'confirm_terminate_warning_1' => "确认后，请注意账户编号",
     'confirm_terminate_warning_2' => "将无法在24小时内平衡。感谢您的耐心和理解。",
+    'no_trading_account' => "没有交易账户",
+    'no_master_account' => "没有主账户",
 ];

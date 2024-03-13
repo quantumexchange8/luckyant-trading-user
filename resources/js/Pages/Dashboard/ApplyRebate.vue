@@ -28,7 +28,7 @@ const closeModal = () => {
         {{ $t('public.apply_rebate') }}
     </Button>
 
-    <Modal :show="applyRebateModal" title="Apply Rebate" @close="closeModal">
+    <Modal :show="applyRebateModal" :title="$t('public.apply_rebate')" @close="closeModal">
         <div class="p-6 flex flex-col items-center justify-center">
             <div class="text-2xl text-gray-400 dark:text-gray-200">
                 {{ $t('public.coming_soon') }}

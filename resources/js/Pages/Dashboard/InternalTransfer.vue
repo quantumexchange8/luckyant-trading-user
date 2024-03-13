@@ -28,7 +28,7 @@ const closeModal = () => {
         {{ $t('public.internal_transfer') }}
     </Button>
 
-    <Modal :show="internalTransferModal" title="Internal Transfer" @close="closeModal">
+    <Modal :show="internalTransferModal" :title="$t('public.internal_transfer')" @close="closeModal">
         <div class="p-6 flex flex-col items-center justify-center">
             <div class="text-2xl text-gray-400 dark:text-gray-200">
                 {{ $t('public.coming_soon') }}

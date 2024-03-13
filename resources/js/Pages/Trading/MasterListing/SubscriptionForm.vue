@@ -149,6 +149,7 @@ const submit = () => {
                         :options="tradingAccountsSel"
                         v-model="form.meta_login"
                         :error="!!form.errors.meta_login"
+                        :placeholder="$t('public.placeholder')"
                     />
                 </div>
                 <div v-else>

@@ -22,11 +22,11 @@ const openAddAccountModal = () => {
 
 const paymentTypes = [
     {
-        name: 'Bank',
+        name: 'bank',
         value: 'Bank',
     },
     {
-        name: 'Crypto',
+        name: 'crypto',
         value: 'Crypto',
     },
 ]
@@ -137,7 +137,7 @@ const closeModal = () => {
                                             class="font-medium"
                                         >
                                             <div class="flex justify-center items-center gap-3">
-                                                {{ plan.name }}
+                                                {{ $t('public.' + plan.name) }}
                                             </div>
                                         </RadioGroupLabel>
                                     </div>
@@ -149,7 +149,7 @@ const closeModal = () => {
                 <InputError :message="form.errors.payment_method" />
             </div>
 
-            <div v-if="selected.name === 'Bank'" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div v-if="selected.name === 'bank'" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <!-- <BankSetting/> -->
 
                 <div class="space-y-2">
@@ -261,7 +261,7 @@ const closeModal = () => {
                 </div>
             </div>
 
-            <div v-else-if="selected.name === 'Crypto'" class="space-y-2">
+            <div v-else-if="selected.name === 'crypto'" class="space-y-2">
                 <!-- <CryptoSetting/> -->
                 <div class="space-y-2">
                     <Label

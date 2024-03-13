@@ -55,7 +55,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
 </script>
 
 <template>
-    <Tooltip content="Terminate" placement="top">
+    <Tooltip :content="$t('public.terminate')" placement="top">
         <Button
             type="button"
             variant="danger"
@@ -73,7 +73,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
         </Button>
     </Tooltip>
 
-    <Modal :show="terminationModal" title="Terminate Subscription" @close="closeModal">
+    <Modal :show="terminationModal" :title="$t('public.terminate_subscription')" @close="closeModal">
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold">

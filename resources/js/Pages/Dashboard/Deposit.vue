@@ -30,17 +30,17 @@ const props = defineProps({
 
 const paymentType = [
   {
-      name: 'Bank',
+      name: 'bank',
       value: 'Bank',
       imgUrl: BankImg
   },
   {
-      name: 'Tether',
+      name: 'tether',
       value: 'Crypto',
       imgUrl: cryptoImg
   },
   {
-      name: 'Payment Merchant',
+      name: 'payment_merchant',
       value: 'Payment Merchant',
       imgUrl: paymentMerchantImg
   }
@@ -105,7 +105,7 @@ const getPaymentDetails = async (settingPaymentValue) => {
     try {
         let url = '/getPaymentDetails';
 
-        if (selected.value.name === 'Bank') {
+        if (selected.value.name === 'bank') {
             url += `?id=${settingPaymentValue}`;
         } else {
             url += `?type=${settingPaymentValue}`;
@@ -115,7 +115,7 @@ const getPaymentDetails = async (settingPaymentValue) => {
         paymentDetails.value = response.data.settingPayment;
         conversionRate.value = response.data.conversionRate;
 
-        if (selected.value.name === 'Bank') {
+        if (selected.value.name === 'bank') {
             calculatedAmount.value = initialAmount.value * conversionRate.value.deposit_rate;
         }
 
@@ -126,7 +126,7 @@ const getPaymentDetails = async (settingPaymentValue) => {
 
 watch(selected, (newType) => {
     if (newType) {
-        if (newType.name === 'Tether') {
+        if (newType.name === 'tether') {
             getPaymentDetails(newType.value)
             selectBank.value = null
         } else {
@@ -137,14 +137,14 @@ watch(selected, (newType) => {
 
 watch(selectBank, (newValue) => {
     if (newValue) {
-        if (selected.value.name === 'Bank') {
+        if (selected.value.name === 'bank') {
             getPaymentDetails(newValue);
         }
     }
 })
 
 watch(initialAmount, (newAmount) => {
-    if (newAmount && selected.value.name === 'Bank') {
+    if (newAmount && selected.value.name === 'bank') {
         calculatedAmount.value = newAmount * conversionRate.value.deposit_rate;
     }
 })
@@ -154,7 +154,7 @@ const submit = () => {
     form.payment_method = selected.value.value;
     form.account_no = paymentDetails.value.account_no;
     form.amount = initialAmount.value;
-    if (selected.value.name === 'Bank') {
+    if (selected.value.name === 'bank') {
         form.transaction_amount = calculatedAmount.value
         form.conversion_rate = conversionRate.value.deposit_rate
     }
@@ -245,7 +245,7 @@ const copyWalletAddress = () => {
                                             >
                                                 <div class="flex flex-col justify-center items-center gap-1">
                                                     <img class="rounded-full w-12 h-12" :src="type.imgUrl" alt="payment-image">
-                                                    {{ type.name }}
+                                                    {{ $t('public.' + type.name) }}
                                                 </div>
                                             </RadioGroupLabel>
                                         </div>
@@ -259,7 +259,7 @@ const copyWalletAddress = () => {
             </div>
 
             <!-- show banks -->
-            <div v-if="selected != null ? selected.name === 'Bank' : '' " class="space-y-2">
+            <div v-if="selected != null ? selected.name === 'bank' : '' " class="space-y-2">
                 <Label
                     for="bank"
                     :value="$t('public.bank_placeholder')"
@@ -274,7 +274,7 @@ const copyWalletAddress = () => {
                 />
             </div>
 
-            <div v-if="selected != null ? selected.name === 'Tether' : '' " class="space-y-2">
+            <div v-if="selected != null ? selected.name === 'tether' : '' " class="space-y-2">
                 <div class="flex flex-col items-center justify-center gap-2">
                     <qrcode-vue :class="['border-4 border-white']" :value="paymentDetails.account_no" :size="200"></qrcode-vue>
                     <input type="hidden" id="cryptoWalletAddress" :value="paymentDetails.account_no">
@@ -299,7 +299,7 @@ const copyWalletAddress = () => {
                 </div>
                 <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ paymentDetails.payment_method === 'Bank' ? 'Bank Name' : 'Tether' }}
+                        {{ paymentDetails.payment_method === 'Bank' ? $t('public.bank_name') : $t('public.tether') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ paymentDetails.payment_platform_name }}
@@ -315,7 +315,7 @@ const copyWalletAddress = () => {
                 </div>
                 <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ paymentDetails.payment_method === 'Bank' ? 'Account Name' : 'Wallet Name' }}
+                        {{ paymentDetails.payment_method === 'Bank' ? $t('public.account_name') : $t('public.wallet_name') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ paymentDetails.payment_account_name }}

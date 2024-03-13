@@ -217,10 +217,10 @@ const handleButtonClick = () => {
             class="flex flex-col items-center justify-center"
         >
             <div class="text-2xl text-gray-400 dark:text-gray-200">
-                No Payment Account
+                {{ $t('public.no_payment_account') }}
             </div>
             <div class="text-lg text-gray-400 dark:text-gray-600">
-                Click the button below to add new payment account.
+                {{ $t('public.click_add_payment_account') }}
             </div>
             <Button
                 type="button"
@@ -228,7 +228,7 @@ const handleButtonClick = () => {
                 external
                 :href="route('profile.edit', {status:'paymentAccount'})"
             >
-                Add Payment Account
+                {{ $t('public.add_payment_account') }}
             </Button>
         </div>
     </Modal>

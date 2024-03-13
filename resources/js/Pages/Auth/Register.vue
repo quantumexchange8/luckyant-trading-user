@@ -119,11 +119,11 @@ const prevStep = () => {
     form.form_step--;
 }
 const passwordRules = [
-    { message: 'Must be at least 6 characters', regex: /.{6,}/ },
-    { message: 'Must contain one uppercase letter', regex: /[A-Z]+/ },
-    { message: 'Must contain one lowercase letter', regex: /[a-z]+/ },
-    { message: 'Must contain one number', regex: /[0-9]+/ },
-    { message: 'Must contain one of the special characters', regex: /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]+/ }
+    { message: 'register_terms_1', regex: /.{6,}/ },
+    { message: 'register_terms_2', regex: /[A-Z]+/ },
+    { message: 'register_terms_3', regex: /[a-z]+/ },
+    { message: 'register_terms_4', regex: /[0-9]+/ },
+    { message: 'register_terms_5', regex: /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]+/ }
 ];
 
 const passwordValidation = () => {
@@ -147,7 +147,7 @@ const passwordValidation = () => {
     const isMatch = form.password === form.password_confirmation;
 
     messages.push({
-        message: 'New password matches confirm password',
+        message: 'register_terms_6',
         valid: isMatch && form.password !== '',
     });
 
@@ -363,7 +363,7 @@ const passwordValidation = () => {
                                         'text-gray-400 dark:text-gray-500': !message.valid
                                     }"
                             >
-                                {{ message.message }}
+                                {{ $t('public.' + message.message) }}
                             </div>
                         </div>
                     </div>

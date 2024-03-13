@@ -153,7 +153,7 @@ const statusVariant = (transactionStatus) => {
         </table>
     </div>
 
-    <Modal :show="transactionModal" title="Transaction Details" @close="closeModal">
+    <Modal :show="transactionModal" :title="$t('public.transaction_details')" @close="closeModal">
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.name') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.user.name }}</span>

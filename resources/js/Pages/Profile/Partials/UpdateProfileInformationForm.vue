@@ -101,11 +101,11 @@ const statusVariant = (userKyc) => {
 
 const genders = [
     {
-        name: 'Male',
+        name: 'male',
         value: 'male',
     },
     {
-        name: 'Female',
+        name: 'female',
         value: 'female',
     },
 ]
@@ -244,7 +244,7 @@ const selected = ref(getUserGender(user.gender));
                                                     class="font-medium"
                                                 >
                                                     <div class="flex justify-center items-center gap-3">
-                                                        {{ gender.name }}
+                                                        {{ $t('public.' + gender.name) }}
                                                     </div>
                                                 </RadioGroupLabel>
                                             </div>

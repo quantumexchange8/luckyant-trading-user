@@ -7,13 +7,14 @@ import InputError from "@/Components/InputError.vue";
 import Button from "@/Components/Button.vue";
 import {onMounted, ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
+import { trans } from "laravel-vue-i18n";
 
 const props = defineProps({
     account: Object,
 })
 const emit = defineEmits(['update:accountActionModal']);
 const tradingAccountsSel = ref();
-const loading = ref('Loading..');
+const loading = ref(trans('public.is_loading'));
 const { formatAmount } = transactionFormat();
 
 const form = useForm({

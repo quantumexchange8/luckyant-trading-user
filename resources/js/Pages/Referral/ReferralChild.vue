@@ -151,19 +151,19 @@ export default {
                         <div v-else class="flex items-center w-full md:w-auto gap-3 text-lg dark:text-white">
                             <div class="flex flex-col text-center">
                                 <span class="text-sm font-semibold">{{ node.direct_affiliate ? node.direct_affiliate : 0 }}</span>
-                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Direct Clients')}}</span>
+                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.direct_clients')}}</span>
                             </div>
                             <div class="flex flex-col text-center">
                                 <span class="text-sm font-semibold">{{ node.total_affiliate }}</span>
-                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Clients')}}</span>
+                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.total_clients')}}</span>
                             </div>
                             <div class="flex flex-col text-center">
                                 <span class="text-sm font-semibold">$ {{ formatAmount(node.self_deposit) }}</span>
-                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Deposit')}}</span>
+                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.total_deposit')}}</span>
                             </div>
                             <div class="flex flex-col text-center">
                                 <span class="text-sm font-semibold">$ {{ formatAmount(node.total_group_deposit) }}</span>
-                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.Total Group Deposit')}}</span>
+                                <span class="text-xs font-normal dark:text-gray-400">{{$t('public.total_group_deposit')}}</span>
                             </div>
                         </div>
                     </div>
@@ -197,19 +197,19 @@ export default {
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
-                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Direct Clients')}}</span>
+                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.direct_clients')}}</span>
                     <span class="text-black dark:text-white py-2">{{ selectedAffiliate.direct_affiliate ? selectedAffiliate.direct_affiliate : 0 }}</span>
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
-                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Total Clients')}}</span>
+                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.total_clients')}}</span>
                     <span class="text-black dark:text-white py-2">{{ selectedAffiliate.total_affiliate }}</span>
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
-                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Total Deposit')}}</span>
+                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.total_deposit')}}</span>
                     <span class="text-black dark:text-white py-2">$ {{ formatAmount(selectedAffiliate.self_deposit) }}</span>
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">
-                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.Total Group Deposit')}}</span>
+                    <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.total_group_deposit')}}</span>
                     <span class="text-black dark:text-white py-2">$ {{ formatAmount(selectedAffiliate.total_group_deposit) }}</span>
                 </div>
             </div>

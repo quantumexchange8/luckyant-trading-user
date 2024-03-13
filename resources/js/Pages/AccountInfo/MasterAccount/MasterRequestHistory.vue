@@ -198,7 +198,7 @@ const closeModal = () => {
         </table>
     </div>
 
-    <Modal :show="requestHistoryModal" title="Request History Details" @close="closeModal">
+    <Modal :show="requestHistoryModal" :title="$t('public.request_history_details')" @close="closeModal">
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.trading_account') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ requestHistoryDetail.trading_account.meta_login }}</span>

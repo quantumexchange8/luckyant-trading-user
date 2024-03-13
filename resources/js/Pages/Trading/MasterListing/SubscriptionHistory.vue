@@ -258,45 +258,45 @@ watchEffect(() => {
         </TailwindPagination>
     </div>
 
-    <Modal :show="subscriptionHistoryModal" title="Subscription Details" @close="closeModal">
+    <Modal :show="subscriptionHistoryModal" :title="$t('public.subscription_details')" @close="closeModal">
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Subscription Date</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.subscription_date')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ formatDateTime(subscriptionHistoryDetail.created_at, false) }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Account Number</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.account_number')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.meta_login }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Status</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.status')}}</span>
             <Badge class="w-36" :variant="statusVariant(subscriptionHistoryDetail.status)">{{ subscriptionHistoryDetail.status }}</Badge>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Approval Date</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.approval_date')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.approval_date ? formatDateTime(subscriptionHistoryDetail.approval_date, false) : '-' }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Subscription Number</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.subscription_number')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.subscription_number }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Master Account</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.master_account')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.master.meta_login }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Subscription Fee</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.subscription_fee')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">$ {{ subscriptionHistoryDetail.subscription_fee ? formatAmount(subscriptionHistoryDetail.subscription_fee) : '0.00' }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">ROI Period</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.roi_period')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.subscription_period }} {{ $t('public.days') }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Renew Date</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.renew_date')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.expired_date ? formatDateTime(subscriptionHistoryDetail.expired_date, false) : '-' }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
-            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">Remarks</span>
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.remarks')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.remarks ? subscriptionHistoryDetail.remarks : '-' }}</span>
         </div>
     </Modal>

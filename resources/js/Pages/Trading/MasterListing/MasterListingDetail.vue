@@ -17,7 +17,7 @@ const { formatAmount } = transactionFormat();
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row items-center">
                 <h2 class="text-xl font-semibold leading-tight">
-                    <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/trading/master_listing">Copy Trading</a>
+                    <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/trading/master_listing">{{ $t('public.sidebar.copy_trading') }}</a>
                 </h2>
                 <ChevronRightIcon aria-hidden="true" class="w-5 h-5" />
                 <h2 class="text-xl font-semibold leading-tight">

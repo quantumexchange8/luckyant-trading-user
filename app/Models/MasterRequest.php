@@ -12,6 +12,10 @@ class MasterRequest extends Model
     protected $fillable = [
         'user_id',
         'trading_account_id',
+        'min_join_equity',
+        'roi_period',
+        'sharing_profit',
+        'subscription_fee',
         'status',
         'approval_date',
         'remarks',

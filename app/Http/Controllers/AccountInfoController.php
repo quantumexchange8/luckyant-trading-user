@@ -391,6 +391,10 @@ class AccountInfoController extends Controller
         MasterRequest::create([
             'user_id' =>  Auth::id(),
             'trading_account_id' =>  $trading_account->id,
+            'min_join_equity' => $request->min_join_equity,
+            'roi_period' => $request->roi_period,
+            'sharing_profit' => $request->sharing_profit,
+            'subscription_fee' => $request->subscription_fee,
         ]);
 
         return redirect()->back()

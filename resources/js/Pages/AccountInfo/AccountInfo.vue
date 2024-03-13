@@ -169,7 +169,7 @@ const leverages = [
                     <InputError :message="form.errors.leverage" />
                 </div>
                 <div class="mt-6 space-y-4">
-                    <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{ $t('public.Terms & Conditions') }}</h3>
+                    <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{ $t('public.terms_and_conditions') }}</h3>
                     <ol class="text-gray-500 dark:text-gray-400 text-xs list-decimal text-justify pl-6 mt-2">
                         <li>{{ $t('public.terms_1') }}</li>
                         <li>{{ $t('public.terms_2') }}</li>

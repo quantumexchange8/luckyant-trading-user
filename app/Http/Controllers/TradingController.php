@@ -141,7 +141,6 @@ class TradingController extends Controller
             'subscription_number' => $subscription_number,
             'subscription_period' => $masterAccount->roi_period,
             'subscription_fee' => $masterAccount->subscription_fee,
-            'next_pay_date' => today()->addDays($masterAccount->roi_period),
             'status' => 'Pending'
         ]);
 
@@ -152,6 +151,7 @@ class TradingController extends Controller
             'master_id' => $masterAccount->id,
             'master_meta_login' => $masterAccount->meta_login,
             'subscription_id' => $subscription->id,
+            'status' => 'Pending'
         ]);
 
         $metaService->disableTrade($meta_login);

@@ -13,8 +13,8 @@ return [
     |
     */
 
-    'Previous' => 'Previous',
-    'Back' => 'Back',
-    'Next' => 'Next',
-
+    'Previous' => '上一页',
+    'Back' => '返回',
+    'Next' => '下一页',
+        
 ];

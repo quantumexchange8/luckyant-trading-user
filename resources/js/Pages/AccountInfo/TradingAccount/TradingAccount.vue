@@ -119,7 +119,7 @@ watchEffect(() => {
                     $ {{ formatAmount(account.balance ? account.balance : 0) }}
                 </div>
             </div>
-            <div class="flex items-center gap-10 w-full">
+            <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 w-full">
                 <div class="flex items-center gap-3 w-full">
                     <Action
                         :account="account"

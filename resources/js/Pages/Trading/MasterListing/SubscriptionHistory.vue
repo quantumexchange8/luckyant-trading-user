@@ -179,7 +179,7 @@ watchEffect(() => {
         </div>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-2 relative overflow-x-auto">
         <div v-if="isLoading" class="w-full flex justify-center my-8">
             <Loading />
         </div>

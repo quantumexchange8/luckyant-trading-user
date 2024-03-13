@@ -9,6 +9,10 @@ import ToastList from "@/Components/ToastList.vue";
 import Alert from "@/Components/Alert.vue";
 import {ref} from "vue";
 import {Inertia} from "@inertiajs/inertia";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import {TranslateIcon} from "@/Components/Icons/outline.jsx";
+import Dropdown from "@/Components/Dropdown.vue";
+import {loadLanguageAsync} from "laravel-vue-i18n";
 
 defineProps({
     title: String
@@ -35,6 +39,15 @@ let removeFinishEventListener = Inertia.on("finish", () => {
         alertButton.value = page.props.alertButton
     }
 });
+
+const changeLanguage = async (langVal) => {
+    try {
+        await loadLanguageAsync(langVal);
+        await axios.get(`/locale/${langVal}`);
+    } catch (error) {
+        console.error('Error changing locale:', error);
+    }
+};
 </script>
 
 <template>
@@ -43,6 +56,58 @@ let removeFinishEventListener = Inertia.on("finish", () => {
     <div
         class="flex flex-col items-center justify-center min-h-screen gap-4 py-6 bg-gray-100 dark:bg-dark-eval-0"
     >
+
+        <div class="flex items-center gap-2 self-stretch w-full justify-end pt-2 pr-2 sm:pr-8">
+            <Dropdown align="right">
+                <template #trigger>
+                    <Button
+                        iconOnly
+                        variant="secondary"
+                        type="button"
+                        v-slot="{ iconSizeClasses }"
+                        class="inline-flex"
+                        srText="Toggle dark mode"
+                    >
+                        <TranslateIcon
+                            aria-hidden="true"
+                            :class="iconSizeClasses"
+                        />
+                    </Button>
+                </template>
+                <template #content>
+                    <DropdownLink @click="changeLanguage('en')">
+                        <div class="inline-flex items-center gap-2">
+                            English
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('cn')">
+                        <div class="inline-flex items-center gap-2">
+                            中文
+                        </div>
+                    </DropdownLink>
+                </template>
+            </Dropdown>
+            <Button
+                iconOnly
+                variant="secondary"
+                type="button"
+                @click="() => { toggleDarkMode() }"
+                v-slot="{ iconSizeClasses }"
+                class="inline-flex"
+                srText="Toggle dark mode"
+            >
+                <MoonIcon
+                    v-show="!isDark"
+                    aria-hidden="true"
+                    :class="iconSizeClasses"
+                />
+                <SunIcon
+                    v-show="isDark"
+                    aria-hidden="true"
+                    :class="iconSizeClasses"
+                />
+            </Button>
+        </div>
         <main class="flex items-center flex-1 w-full sm:max-w-2xl">
             <div
                 class="w-full px-6 py-4 bg-white shadow-md sm:rounded-lg dark:bg-dark-eval-1"
@@ -71,27 +136,5 @@ let removeFinishEventListener = Inertia.on("finish", () => {
 
         <PageFooter />
 
-        <div class="fixed right-10 top-10">
-            <Button
-                iconOnly
-                variant="secondary"
-                type="button"
-                @click="() => { toggleDarkMode() }"
-                v-slot="{ iconSizeClasses }"
-                class="hidden md:inline-flex"
-                srText="Toggle dark mode"
-            >
-                <MoonIcon
-                    v-show="!isDark"
-                    aria-hidden="true"
-                    :class="iconSizeClasses"
-                />
-                <SunIcon
-                    v-show="isDark"
-                    aria-hidden="true"
-                    :class="iconSizeClasses"
-                />
-            </Button>
-        </div>
     </div>
 </template>

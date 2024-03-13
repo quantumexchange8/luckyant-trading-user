@@ -40,7 +40,7 @@ return [
     'next' => "下一步",
     'confirm' => "确认",
     'cancel' => "取消",
-    'clear' => "清楚",
+    'clear' => "清除",
     'process' => "处理",
     'active' => "激活",
     'more' => "更多",

@@ -51,7 +51,7 @@ const closeModal = () => {
     <Button
         type="button"
         variant="primary"
-        class="flex justify-center gap-2"
+        class="flex justify-center gap-2 w-full"
         v-slot="{ iconSizeClasses }"
         @click="openAccountActionModal('deposit')"
     >

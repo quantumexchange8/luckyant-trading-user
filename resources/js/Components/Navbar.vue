@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {Link, usePage} from '@inertiajs/vue3'
 import { useFullscreen } from '@vueuse/core'
 import {
     SunIcon,
@@ -8,7 +8,7 @@ import {
     SearchIcon,
     MenuIcon,
     XIcon,
-    ArrowsExpandIcon,
+    ChevronDownIcon,
 } from '@heroicons/vue/outline'
 import {
     handleScroll,
@@ -34,8 +34,19 @@ onUnmounted(() => {
     document.removeEventListener('scroll', handleScroll)
 })
 
+const currentLocale = ref(usePage().props.locale);
+const localeTextMap = {
+    en: 'EN',
+    cn: '中文',
+};
+
+const currentLocaleText = computed(() => {
+    return localeTextMap[currentLocale.value];
+});
+
 const changeLanguage = async (langVal) => {
     try {
+        currentLocale.value = langVal;
         await loadLanguageAsync(langVal);
         await axios.get(`/locale/${langVal}`);
     } catch (error) {
@@ -55,28 +66,35 @@ const changeLanguage = async (langVal) => {
             },
         ]"
     >
-        <div class="flex items-center gap-2">
-            <Button
-                iconOnly
-                variant="transparent"
-                type="button"
-                @click="() => { toggleDarkMode() }"
-                v-slot="{ iconSizeClasses }"
-                class="md:hidden"
-                srText="Toggle dark mode"
-            >
-                <MoonIcon
-                    v-show="!isDark"
-                    aria-hidden="true"
-                    :class="iconSizeClasses"
-                />
-                <SunIcon
-                    v-show="isDark"
-                    aria-hidden="true"
-                    :class="iconSizeClasses"
-                />
-            </Button>
-        </div>
+        <Dropdown align="left">
+            <template #trigger>
+                <Button
+                    iconOnly
+                    variant="secondary"
+                    type="button"
+                    v-slot="{ iconSizeClasses }"
+                    class="md:hidden"
+                    srText="Toggle dark mode"
+                >
+                    <TranslateIcon
+                        aria-hidden="true"
+                        :class="iconSizeClasses"
+                    />
+                </Button>
+            </template>
+            <template #content>
+                <DropdownLink @click="changeLanguage('en')">
+                    <div class="inline-flex items-center gap-2">
+                        English
+                    </div>
+                </DropdownLink>
+                <DropdownLink @click="changeLanguage('cn')">
+                    <div class="inline-flex items-center gap-2">
+                        中文
+                    </div>
+                </DropdownLink>
+            </template>
+        </Dropdown>
         <div class="flex items-center gap-2">
             <Button
                 iconOnly
@@ -106,12 +124,13 @@ const changeLanguage = async (langVal) => {
                         variant="transparent"
                         type="button"
                         v-slot="{ iconSizeClasses }"
-                        class="hidden md:inline-flex"
-                        srText="Toggle dark mode"
+                        class="border-0 bg-transparent hidden md:inline-flex p-0"
+                        srText="Select language"
                     >
-                        <TranslateIcon
+                        <span class="dark:text-gray-400">{{ currentLocaleText }}</span>
+                        <ChevronDownIcon
                             aria-hidden="true"
-                            :class="iconSizeClasses"
+                            class="w-4 h-4 dark:text-gray-400"
                         />
                     </Button>
                 </template>
@@ -191,7 +210,7 @@ const changeLanguage = async (langVal) => {
     <!-- Mobile bottom bar -->
     <div
         :class="[
-            'fixed inset-x-0 bottom-0 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white md:hidden dark:bg-gray-950',
+            'fixed inset-x-0 bottom-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 transition-transform duration-500 bg-white md:hidden dark:bg-gray-950',
             {
                 'translate-y-full': scrolling.down,
                 'translate-y-0': scrolling.up,
@@ -202,10 +221,21 @@ const changeLanguage = async (langVal) => {
             iconOnly
             variant="transparent"
             type="button"
+            @click="() => { toggleDarkMode() }"
             v-slot="{ iconSizeClasses }"
-            srText="Search"
+            class="md:hidden"
+            srText="Toggle dark mode"
         >
-            <SearchIcon aria-hidden="true" :class="iconSizeClasses" />
+            <MoonIcon
+                v-show="!isDark"
+                aria-hidden="true"
+                :class="iconSizeClasses"
+            />
+            <SunIcon
+                v-show="isDark"
+                aria-hidden="true"
+                :class="iconSizeClasses"
+            />
         </Button>
 
         <Link :href="route('dashboard')">

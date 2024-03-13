@@ -38,7 +38,6 @@ return [
     'back' => "返回",
     'previous' => "上一步",
     'next' => "下一步",
-    'email_password_reset_link' => "邮件密码重置链接",
     'confirm' => "确认",
     'cancel' => "取消",
     'clear' => "清楚",
@@ -49,7 +48,7 @@ return [
     'email_verification_message' => "感谢注册！在开始之前，请通过点击我们刚刚发送给您的链接来验证您的电子邮件地址。如果您没有收到邮件，我们将很乐意重新发送。",
     'verification_link_sent' => "已向您在注册时提供的电子邮件地址发送了一个新的验证链接。",
     'resend_email_verification' => "重新发送验证电子邮件",
-    'sidebar' => {
+    'sidebar' => [
         'dashboard' => "首页",
         'account_info' => "账户信息",
         'copy_trading' => "跟单社区",
@@ -60,7 +59,7 @@ return [
         'referral_program' => "介绍计划",
         'referral_tree' => "管理列表",
         'profile' => "个人资料"
-    },
+    ],
     'copy' => "复制",
     'copied' => "已复制！",
     'try_again_later' => "请稍后重试！",

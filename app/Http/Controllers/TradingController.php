@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CopyTradeHistory;
 use App\Models\Master;
 use App\Models\Subscriber;
 use App\Models\Subscription;
@@ -203,18 +204,25 @@ class TradingController extends Controller
         return response()->json($masterAccounts);
     }
 
-    public function masterListingDetail($masterListingDetail)
+    public function masterListingDetail($id)
     {
+        $master = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,meta_login'])->find($id);
 
-        $masterListingDetail = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,meta_login'])
-            ->where('status', 'Active')
-            ->where('signal_status', 1)
-            ->whereNot('user_id', \Auth::id())
-            ->where('id', $masterListingDetail)
-            ->first();
+        if (!$master || $master->status !== 'Active' || $master->user_id === auth()->id()) {
+            return redirect()->route('trading.master_listing')
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.try_again_later'));
+        }
+
+        $totalSubscriptionsFee = Subscription::where('master_id', $master->id)
+            ->sum('meta_balance');
+
+        $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
+        $master->subscribersCount = $master->subscribers->count();
+        $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
 
         return Inertia::render('Trading/MasterListing/MasterListingDetail', [
-            'masterListingDetail' => $masterListingDetail,
+            'masterListingDetail' => $master,
         ]);
     }
 
@@ -271,5 +279,50 @@ class TradingController extends Controller
         });
 
         return response()->json($subscriptionHistories);
+    }
+
+    public function getMasterTradeChart($meta_login)
+    {
+        $topFiveSymbols = CopyTradeHistory::select('symbol', \DB::raw('COUNT(*) as symbol_count'))
+            ->where('meta_login', $meta_login)
+            ->where('status', 'closed')
+            ->groupBy('symbol')
+            ->orderByDesc('symbol_count')
+            ->limit(5)
+            ->get();
+
+        $walletColors = ['#003f5c', '#58508d', '#bc5090', '#ff6361', '#ffa600'];
+
+        $chartData = [
+            'labels' => $topFiveSymbols->pluck('symbol'),
+            'datasets' => [],
+        ];
+
+        $symbolCount = [];
+        $backgroundColors = [];
+        $colorIndex = 0;
+
+        foreach ($topFiveSymbols as $symbol) {
+            $symbolCount[] = $symbol->symbol_count;
+
+            // Get color from the array based on the color index
+            $backgroundColor = $walletColors[$colorIndex % count($walletColors)];
+
+            $backgroundColors[] = $backgroundColor;
+
+            // Increment color index
+            $colorIndex++;
+        }
+
+        $dataset = [
+            'data' => $symbolCount,
+            'backgroundColor' => $backgroundColors,
+            'offset' => 5,
+            'borderColor' => 'transparent'
+        ];
+
+        $chartData['datasets'][] = $dataset;
+
+        return response()->json($chartData);
     }
 }

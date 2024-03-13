@@ -285,4 +285,6 @@ return [
     'payment_merchant' => "支付商户",
     'terminate' => "终止",
     'crypto' => "加密货币",
+    'level' => "等级",
+    'most_traded_products' => "交易最多的产品",
 ];

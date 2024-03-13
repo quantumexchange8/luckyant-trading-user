@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/getMasterAccounts', [TradingController::class, 'getMasterAccounts'])->name('trading.getMasterAccounts');
         Route::get('/getSubscriptions', [TradingController::class, 'getSubscriptions'])->name('trading.getSubscriptions');
         Route::get('/getSubscriptionHistories', [TradingController::class, 'getSubscriptionHistories'])->name('trading.getSubscriptionHistories');
+        Route::get('/getMasterTradeChart/{meta_login}', [TradingController::class, 'getMasterTradeChart'])->name('trading.getMasterTradeChart');
 
         Route::post('/subscribeMaster', [TradingController::class, 'subscribeMaster'])->name('trading.subscribeMaster');
         Route::post('/terminateSubscription', [TradingController::class, 'terminateSubscription'])->name('trading.terminateSubscription');

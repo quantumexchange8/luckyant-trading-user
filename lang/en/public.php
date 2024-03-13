@@ -285,4 +285,6 @@ return [
     'payment_merchant' => "Payment Merchant",
     'terminate' => "Terminate",
     'crypto' => "Crypto",
+    'level' => "Level",
+    'most_traded_products' => "Most Traded Products",
 ];

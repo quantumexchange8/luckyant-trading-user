@@ -100,7 +100,7 @@ class AccountInfoController extends Controller
             }
         });
 
-        $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name'])->where('user_id', \Auth::id())->get();
+        $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,name,meta_login'])->where('user_id', \Auth::id())->get();
 
         return response()->json([
             'tradingAccounts' => $tradingAccounts,

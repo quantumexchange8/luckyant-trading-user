@@ -96,7 +96,7 @@ watchEffect(() => {
                 <div class="flex items-center gap-3">
                     <div class="flex flex-col items-start">
                         <div class="text-sm font-semibold">
-                            {{ account.trading_account.account_type.name }}
+                            {{ account.trading_user.name }}
                         </div>
                         <div class="text-xs">
                             {{ account.meta_login }}

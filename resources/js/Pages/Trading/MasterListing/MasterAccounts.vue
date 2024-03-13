@@ -125,7 +125,7 @@ const openDetails = (masterAccountID) => {
     >
         <div
             v-for="masterAccount in masterAccounts.data"
-            class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg hover:cursor-pointer hover:bg-gray-50 hover:shadow-primary-300"
+            class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg hover:bg-gray-50 hover:shadow-primary-300"
         >
             <div class="flex justify-between w-full">
                 <img
@@ -135,7 +135,7 @@ const openDetails = (masterAccountID) => {
                 />
                 <div class="flex flex-col text-right">
                     <div class="text-sm">
-                        {{ masterAccount.user.name }}
+                        {{ masterAccount.trading_user.name }}
                     </div>
                     <div class="font-semibold">
                         {{ masterAccount.meta_login }}

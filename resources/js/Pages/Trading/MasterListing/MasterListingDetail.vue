@@ -42,7 +42,7 @@ const { formatAmount } = transactionFormat();
                     :value="$t('public.name')"
                 />
                 <div>
-                    {{ masterListingDetail.user.name }}
+                    {{ masterListingDetail.trading_user.name }}
                 </div>
             </div>
 

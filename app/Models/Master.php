@@ -41,7 +41,7 @@ class Master extends Model
 
     public function tradingUser(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(TradingUser::class, 'meta_login', 'meta_login');
+        return $this->hasOne(TradingUser::class, 'id', 'trading_account_id');
     }
 
 }

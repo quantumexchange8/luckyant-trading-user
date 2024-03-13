@@ -26,7 +26,7 @@ class TradingController extends Controller
 
     public function getMasterAccounts(Request $request)
     {
-        $masterAccounts = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity'])
+        $masterAccounts = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name'])
             ->where('status', 'Active')
             ->where('signal_status', 1)
             ->whereNot('user_id', \Auth::id())
@@ -206,7 +206,7 @@ class TradingController extends Controller
     public function masterListingDetail($masterListingDetail)
     {
 
-        $masterListingDetail = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity'])
+        $masterListingDetail = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,meta_login'])
             ->where('status', 'Active')
             ->where('signal_status', 1)
             ->whereNot('user_id', \Auth::id())

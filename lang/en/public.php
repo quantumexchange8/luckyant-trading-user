@@ -287,4 +287,10 @@ return [
     'crypto' => "Crypto",
     'level' => "Level",
     'most_traded_products' => "Most Traded Products",
+    'symbol' => "Symbol",
+    'profit' => "Profit",
+    'volume' => "Volume",
+    'trade_history' => "Trade History",
+    'filter_symbols' => "Filter Symbols",
+    'successfully_refreshed' => "Successfully refreshed",
 ];

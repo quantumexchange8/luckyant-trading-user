@@ -287,4 +287,10 @@ return [
     'crypto' => "加密货币",
     'level' => "等级",
     'most_traded_products' => "交易最多的产品",
+    'symbol' => "产品",
+    'profit' => "收益",
+    'volume' => "手数",
+    'trade_history' => "交易历史",
+    'filter_symbols' => "搜索产品",
+    'successfully_refreshed' => "成功刷新",
 ];

@@ -13,6 +13,7 @@ import BaseListbox from "@/Components/BaseListbox.vue";
 import Badge from "@/Components/Badge.vue";
 import AvatarInput from "@/Pages/Profile/Partials/AvatarInput.vue";
 import MasterTradeChart from "@/Pages/Trading/MasterListing/MasterTradeChart.vue";
+import MasterTradeHistory from "@/Pages/Trading/MasterListing/MasterDetail/MasterTradeHistory.vue";
 
 const props = defineProps({
     masterListingDetail: Object,
@@ -30,7 +31,7 @@ const statusVariant = (status) => {
 <template>
     <AuthenticatedLayout :title="$t('public.master_configuration')">
         <template #header>
-            <div class="flex flex-col gap-2 md:flex-row items-center">
+            <div class="flex gap-2 items-center">
                 <h2 class="text-xl font-semibold leading-tight">
                     <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/trading/master_listing">{{ $t('public.sidebar.copy_trading') }}</a>
                 </h2>
@@ -41,8 +42,8 @@ const statusVariant = (status) => {
             </div>
         </template>
 
-        <div class="flex gap-5 items-stretch">
-            <div class="flex flex-col gap-4 items-start bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-3/4 rounded-lg shadow-lg">
+        <div class="flex flex-col sm:flex-row gap-5 items-stretch">
+            <div class="flex flex-col gap-4 items-start bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full sm:w-3/4 rounded-lg shadow-lg">
                 <div class="flex justify-between items-center self-stretch">
                     <div class="flex items-center justify-between w-full gap-3">
                         <div class="text-lg">
@@ -82,7 +83,7 @@ const statusVariant = (status) => {
                         </div>
                     </div>
                     <div class="w-full sm:w-2/3">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-1">
                                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                                     {{ $t('public.sharing_profit') }}
@@ -116,7 +117,7 @@ const statusVariant = (status) => {
                                 </div>
                             </div>
 
-                            <div class="flex flex-col gap-2 self-stretch sm:col-span-2">
+                            <div class="flex flex-col gap-2 self-stretch col-span-2">
                                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                                     {{ $t('public.total_fund') }}
                                 </div>
@@ -143,7 +144,7 @@ const statusVariant = (status) => {
                 </div>
             </div>
 
-            <div class="flex flex-col gap-4 w-1/4">
+            <div class="flex flex-col gap-4 w-full sm:w-1/4">
                 <div class="flex flex-col gap-2 items-stretch bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 p-5 w-full h-full rounded-lg shadow-lg">
                     <div class="text-lg font-semibold">
                         {{ $t('public.most_traded_products') }}
@@ -153,7 +154,12 @@ const statusVariant = (status) => {
                     />
                 </div>
             </div>
+        </div>
 
+        <div class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-lg shadow-lg dark:bg-gray-900 border border-gray-300">
+            <MasterTradeHistory
+                :meta_login="masterListingDetail.meta_login"
+            />
         </div>
     </AuthenticatedLayout>
 </template>

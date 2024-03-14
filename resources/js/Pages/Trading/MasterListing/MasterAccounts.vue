@@ -121,7 +121,7 @@ const openDetails = (masterAccountID) => {
     </div>
 
     <div
-        class="grid grid-cols-1 sm:grid-cols-4 gap-5 my-5"
+        class="grid grid-cols-1 sm:grid-cols-3 gap-5 my-5"
     >
         <div
             v-for="masterAccount in masterAccounts.data"

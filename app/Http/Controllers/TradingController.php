@@ -325,4 +325,44 @@ class TradingController extends Controller
 
         return response()->json($chartData);
     }
+
+    public function getTradeHistories(Request $request, $meta_login)
+    {
+        $tradeHistories = CopyTradeHistory::where('meta_login', $meta_login)
+            ->when($request->filled('date'), function ($query) use ($request) {
+                $date = $request->input('date');
+                $dateRange = explode(' - ', $date);
+                $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+                $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            })
+            ->when($request->filled('type'), function ($query) use ($request) {
+                $type = $request->input('type');
+                $types = explode(',', $type); // Convert comma-separated string to array
+                $query->whereIn('symbol', $types);
+            })
+            ->where('status', 'closed')
+            ->latest()
+            ->paginate(10);
+
+        return response()->json($tradeHistories);
+    }
+
+    public function getTradingSymbols(Request $request)
+    {
+        $symbols = CopyTradeHistory::query()
+            ->where('meta_login', $request->meta_login)
+            ->where('status', 'closed')
+            ->when($request->filled('query'), function ($query) use ($request) {
+                $search = $request->input('query');
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('symbol', 'like', "%{$search}%");
+                });
+            })
+            ->select('symbol')
+            ->distinct()
+            ->get();
+
+        return response()->json($symbols);
+    }
 }

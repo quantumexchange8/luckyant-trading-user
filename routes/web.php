@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/getTotalTransactions', [DashboardController::class, 'getTotalTransactions']);
     Route::get('/getPaymentDetails', [DashboardController::class, 'getPaymentDetails']);
     Route::post('/update_session', [DashboardController::class, 'update_session']);
+    Route::post('/internalTransferWallet', [DashboardController::class, 'internalTransferWallet'])->name('internalTransferWallet');
 
     /**
      * ==============================

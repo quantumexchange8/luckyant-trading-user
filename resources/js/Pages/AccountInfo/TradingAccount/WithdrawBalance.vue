@@ -43,7 +43,7 @@ const submit = () => {
                     id="amount"
                     type="number"
                     min="0"
-                    :placeholder="$t('public.amount_transfer_placeholder')"
+                    :placeholder="$t('public.withdrawal_placeholder')"
                     class="block w-full"
                     v-model="form.amount"
                     :invalid="form.errors.amount"

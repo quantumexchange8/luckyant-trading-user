@@ -136,10 +136,10 @@ class RegisteredUserController extends Controller
             'dob' => $request->dob,
             'password' => Hash::make($request->password),
             'role' => 'member',
+            'top_leader_id' => null,
         ];
 
         if ($request->referral_code) {
-            //TODO check company id to have different rank_status
             $referral_code = $request->input('referral_code');
             $check_referral_code = User::where('referral_code', $referral_code)->first();
 
@@ -151,8 +151,10 @@ class RegisteredUserController extends Controller
                 $userData['top_leader_id'] = $top_leader_id;
                 $userData['upline_id'] = $upline_id;
                 $userData['hierarchyList'] = $hierarchyList;
-            } else {
-                $userData['top_leader_id'] = null;
+
+                if ($userData['top_leader_id'] != 7) {
+                    $userData['rank_up_status'] = 'manual';
+                }
             }
         }
 

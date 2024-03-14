@@ -31,12 +31,18 @@ const props = defineProps({
                 />
             </div>
             <div class="flex items-center justify-center w-full">
-                <InternalTransfer />
+                <InternalTransfer
+                    :walletSel="walletSel"
+                    :defaultWallet="walletSel[0]"
+                />
             </div>
         </template>
         <template v-else-if="wallet.type === 'bonus_wallet'">
             <ApplyRebate />
-            <InternalTransfer />
+            <InternalTransfer 
+                :walletSel="walletSel"
+                :defaultWallet="walletSel[1]"
+            />
         </template>
         <template v-else-if="wallet.type === 'e_wallet'">
             <DepositToMeta

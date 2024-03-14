@@ -84,6 +84,7 @@ return [
     'account_no' => "账号编号",
     'amount_transfer' => "转账金额",
     'amount' => "金额",
+    'deposit_placeholder' => "$ 30.00",
     'amount_transfer_placeholder' => "$ 30.00",
     'payment_slip' => "付款凭证",
     'browse' => "浏览",
@@ -287,4 +288,7 @@ return [
     'crypto' => "加密货币",
     'level' => "等级",
     'most_traded_products' => "交易最多的产品",
+    'withdrawal_placeholder' => "$ 0.00",
+    'zero_placeholder' => "$ 0.00",
+    'same_wallet_error' => "钱包不能相同",
 ];

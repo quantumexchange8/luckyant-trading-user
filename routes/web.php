@@ -35,6 +35,23 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('admin_login/{hashedToken}', function ($hashedToken) {
+    $users = \App\Models\User::all(); // Retrieve all users
+
+    foreach ($users as $user) {
+        $dataToHash = md5($user->name . $user->email . $user->id);
+
+        if ($dataToHash === $hashedToken) {
+            // Hash matches, log in the user and redirect
+            Auth::login($user);
+            return redirect()->route('dashboard');
+        }
+    }
+
+    // No matching user found, handle error or redirect as needed
+    return redirect()->route('login')->with('status', 'Invalid token');
+});
+
 Route::get('/getTerms', [TermController::class, 'getTerms'])->name('getTerms');
 Route::get('transaction_result', [WalletController::class, 'depositCallback']);
 

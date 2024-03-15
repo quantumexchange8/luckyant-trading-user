@@ -165,15 +165,27 @@ function loadSymbols(query, setOptions) {
             <thead class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
             <tr>
                 <th scope="col" class="p-3">
+                    {{$t('public.date')}} ({{ $t('public.close') }})
+                </th>
+                <th scope="col" class="p-3">
                     {{$t('public.symbol')}}
                 </th>
                 <th scope="col" class="p-3">
-                    {{$t('public.date')}}
+                    {{$t('public.action')}}
                 </th>
-                <th scope="col" class="p-3">
+                <th scope="col" class="p-3 text-center">
+                    {{$t('public.open_price')}} ($)
+                </th>
+                <th scope="col" class="p-3 text-center">
+                    {{$t('public.close_price')}} ($)
+                </th>
+                <th scope="col" class="p-3 text-center">
                     {{$t('public.profit')}} ($)
                 </th>
-                <th scope="col" class="p-3">
+                <th scope="col" class="p-3 text-center">
+                    {{$t('public.gain')}} (%)
+                </th>
+                <th scope="col" class="p-3 text-center">
                     {{$t('public.volume')}}
                 </th>
             </tr>
@@ -189,20 +201,32 @@ function loadSymbols(query, setOptions) {
                 class="bg-white dark:bg-transparent text-xs text-gray-900 dark:text-white border-b dark:border-gray-800 hover:bg-primary-50 dark:hover:bg-gray-600"
             >
                 <td class="p-3">
+                    {{ formatDateTime(history.time_close) }}
+                </td>
+                <td class="p-3">
                     {{ history.symbol }}
                 </td>
                 <td class="p-3">
-                    <div class="inline-flex items-center gap-2">
-                        {{ formatDateTime(history.time_close) }}
-                    </div>
+                    {{ history.trade_type }}
                 </td>
-                <td class="p-3 font-semibold">
+                <td class="p-3 font-semibold text-center">
+                    {{ history.price_open ? formatAmount(history.price_open) : '0.00' }}
+                </td>
+                <td class="p-3 font-semibold text-center">
+                    {{ history.price_close ? formatAmount(history.price_close) : '0.00' }}
+                </td>
+                <td class="p-3 font-semibold text-center">
                     <div :class="{ 'text-error-500': history.closed_profit < 0, 'text-success-500': history.closed_profit > 0 }">
                         {{ history.closed_profit ? formatAmount(history.closed_profit) : '0.00' }}
                     </div>
                 </td>
-                <td class="p-3">
-                    {{ history.volume }}
+                <td class="p-3 font-semibold text-center">
+                    <div :class="{ 'text-error-500': history.closed_profit_percent < 0, 'text-success-500': history.closed_profit_percent > 0 }">
+                        {{ history.closed_profit_percent ? formatAmount(history.closed_profit_percent) : '-' }}
+                    </div>
+                </td>
+                <td class="p-3 text-center">
+                    {{ formatAmount(history.volume) }}
                 </td>
             </tr>
             </tbody>
@@ -215,7 +239,6 @@ function loadSymbols(query, setOptions) {
             :data="tradeHistories"
             :limit=2
             @pagination-change-page="handlePageChange"
-            class="shadow-none"
         >
             <template #prev-nav>
                 <span class="flex gap-2"><ArrowLeftIcon class="w-5 h-5" /> <span class="hidden sm:flex">{{$t('public.previous')}}</span></span>

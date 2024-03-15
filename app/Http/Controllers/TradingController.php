@@ -342,7 +342,7 @@ class TradingController extends Controller
                 $query->whereIn('symbol', $types);
             })
             ->where('status', 'closed')
-            ->latest()
+            ->orderByDesc('time_close')
             ->paginate(10);
 
         return response()->json($tradeHistories);

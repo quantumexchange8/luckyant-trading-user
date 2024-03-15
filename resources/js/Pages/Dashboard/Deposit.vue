@@ -211,7 +211,7 @@ const copyWalletAddress = () => {
         <!-- select payment method first -->
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
-                <div class="text-lg font-semibold">
+                <div class="text-lg font-semibold dark:text-white">
                     {{ $t('public.payment_methods') }}
                 </div>
             </div>
@@ -241,7 +241,7 @@ const copyWalletAddress = () => {
                                         <div class="text-sm flex flex-col gap-3 w-full">
                                             <RadioGroupLabel
                                                 as="div"
-                                                class="font-medium"
+                                                class="font-medium dark:text-white"
                                             >
                                                 <div class="flex flex-col justify-center items-center gap-1">
                                                     <img class="rounded-full w-12 h-12" :src="type.imgUrl" alt="payment-image">
@@ -294,7 +294,7 @@ const copyWalletAddress = () => {
             </div>
 
             <div v-if="selected" class="flex flex-col mt-5 items-start gap-3 self-stretch">
-                <div v-if="paymentDetails.payment_method" class="text-lg font-semibold">
+                <div v-if="paymentDetails.payment_method" class="text-lg font-semibold dark:text-white">
                     {{ $t('public.payment_information') }}
                 </div>
                 <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">

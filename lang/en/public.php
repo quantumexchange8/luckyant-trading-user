@@ -297,4 +297,6 @@ return [
     'trade_history' => "Trade History",
     'filter_symbols' => "Filter Symbols",
     'successfully_refreshed' => "Successfully refreshed",
+    'transfer_form' => "Transfer Form",
+    'transfer_information' => "Transfer Information",
 ];

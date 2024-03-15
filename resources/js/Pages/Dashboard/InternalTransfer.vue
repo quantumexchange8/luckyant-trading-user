@@ -35,7 +35,8 @@ const closeModal = () => {
 
 const filteredWallets = computed(() => {
     // Filter out E-Wallet
-    return props.walletSel.filter(wallet => !wallet.label.includes('E-Wallet'));
+    const defaultWalletId = props.defaultWallet.value;
+    return props.walletSel.filter(wallet => wallet.value !== defaultWalletId);
 });
 
 const submit = () => {
@@ -58,32 +59,40 @@ const submit = () => {
 
     <Modal :show="internalTransferModal" :title="$t('public.internal_transfer')" @close="closeModal">
         <form class="space-y-2">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" :value="$t('public.transfer_from')" />
-                <div class="flex flex-col w-full">
-                    <div v-if="walletSel">
-                        <BaseListbox 
-                            :options="filteredWallets" 
-                            v-model="form.from_wallet" 
-                        />
+            <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+
+                <div class="flex flex-col items-start gap-3 self-stretch">
+                    <div class="text-lg font-semibold dark:text-white">
+                        {{ $t('public.transfer_information') }}
                     </div>
-                    <div v-else>
-                        <Input 
-                            id="loading" 
-                            type="text" 
-                            class="block w-full" 
-                            v-model="loading" 
-                            readonly 
-                        />
+                    <div class="flex items-center justify-between gap-2 self-stretch">
+                        <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                            {{ $t('public.transfer_from') }}
+                        </div>
+                        <div class="text-base text-gray-800 dark:text-white font-semibold">
+                            {{ props.defaultWallet.label }}
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-300 w-full py-3">
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                                {{ $t('public.amount_transfer') }}
+                            </div>
+                            <div class="text-base text-gray-800 dark:text-white font-semibold">
+                                $ {{ formatAmount(parseFloat(form.amount) || 0.00) }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" :value="$t('public.transfer_to')" />
                 <div class="flex flex-col w-full">
                     <div v-if="walletSel">
                         <BaseListbox 
-                            :options="walletSel" 
+                            :options="filteredWallets" 
+                            :placeholder="$t('public.placeholder')"
                             v-model="form.to_wallet" 
                         />
                     </div>
@@ -98,6 +107,7 @@ const submit = () => {
                     </div>
                 </div>
             </div>
+
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount') + ' ($)'" />
                 <div class="flex flex-col w-full">
@@ -113,6 +123,7 @@ const submit = () => {
                     <InputError v-for="errorField in ['amount', 'from_wallet']" :key="errorField" :message="form.errors[errorField]" class="mt-2" />
                 </div>
             </div>
+
 
             <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">

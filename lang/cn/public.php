@@ -297,4 +297,6 @@ return [
     'trade_history' => "交易历史",
     'filter_symbols' => "搜索产品",
     'successfully_refreshed' => "成功刷新",
+    'transfer_form' => "转账表单",
+    'transfer_information' => "转账信息",
 ];

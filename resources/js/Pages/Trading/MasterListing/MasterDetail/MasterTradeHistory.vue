@@ -26,25 +26,22 @@ const props = defineProps({
     meta_login: Number
 })
 
-const typeFilter = [
-    {value: '', label:"All"},
-    {value: 'Pending', label:"Pending"},
-    {value: 'Active', label:"Active"},
-    {value: 'Inactive', label:"Inactive"},
-    {value: 'Terminated', label:"Terminated"},
-    {value: 'Rejected', label:"Rejected"},
-];
-
 const isLoading = ref(false);
 const date = ref('');
 const search = ref('');
 const refresh = ref(false);
 const type = ref();
+const tradeType = ref();
 const tradeHistories = ref({data: []})
 const currentPage = ref(1)
 const { formatDateTime, formatAmount } = transactionFormat();
 
-const getResults = async (page = 1, type = null, date = '') => {
+const tradeActions = [
+    {value: 'BUY', label:"BUY"},
+    {value: 'SELL', label:"SELL"},
+];
+
+const getResults = async (page = 1, type = null, date = '', tradeType = '') => {
     isLoading.value = true
     try {
         let url = `/trading/getTradeHistories/${props.meta_login}?page=${page}`;
@@ -55,6 +52,10 @@ const getResults = async (page = 1, type = null, date = '') => {
 
         if (date) {
             url += `&date=${date}`;
+        }
+
+        if (tradeType) {
+            url += `&tradeType=${tradeType}`;
         }
 
         const response = await axios.get(url);
@@ -70,10 +71,10 @@ const getResults = async (page = 1, type = null, date = '') => {
 getResults()
 
 watch(
-    [type, date],
-    debounce(([typeValue, dateValue]) => {
+    [type, date, tradeType],
+    debounce(([typeValue, dateValue, tradeType]) => {
         const typeStrings = typeValue ? typeValue.map(item => item.value) : null;
-        getResults(1, typeStrings, dateValue);
+        getResults(1, typeStrings, dateValue, tradeType);
     }, 300)
 );
 
@@ -82,14 +83,14 @@ const handlePageChange = (newPage) => {
         currentPage.value = newPage;
         const typeStrings = type.value ? type.value.map(item => item.value) : null;
 
-        getResults(currentPage.value, typeStrings, date.value);
+        getResults(currentPage.value, typeStrings, date.value, tradeType.value);
     }
 };
 
 const refreshHistory = () => {
     const typeStrings = type.value ? type.value.map(item => item.value) : null;
 
-    getResults(1, typeStrings, date.value);
+    getResults(1, typeStrings, date.value, tradeType.value);
 
     toast.add({
         message: wTrans('public.successfully_refreshed'),
@@ -145,6 +146,14 @@ function loadSymbols(query, setOptions) {
                 separator=" - "
                 v-model="date"
                 input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-dark-eval-2"
+            />
+        </div>
+        <div class="w-full sm:w-80">
+            <BaseListbox
+                v-model="tradeType"
+                :options="tradeActions"
+                :placeholder="$t('public.filters_placeholder')"
+                class="w-full"
             />
         </div>
         <div class="w-full sm:w-80">

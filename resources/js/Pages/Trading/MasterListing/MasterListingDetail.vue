@@ -14,12 +14,15 @@ import Badge from "@/Components/Badge.vue";
 import AvatarInput from "@/Pages/Profile/Partials/AvatarInput.vue";
 import MasterTradeChart from "@/Pages/Trading/MasterListing/MasterTradeChart.vue";
 import MasterTradeHistory from "@/Pages/Trading/MasterListing/MasterDetail/MasterTradeHistory.vue";
+import {ref} from "vue";
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     masterListingDetail: Object,
 })
 
 const { formatAmount } = transactionFormat();
+const currentLocale = ref(usePage().props.locale);
 
 const statusVariant = (status) => {
     if (status === 'Pending') return 'processing';
@@ -36,9 +39,17 @@ const statusVariant = (status) => {
                     <a class="hover:text-primary-500 dark:hover:text-primary-500" href="/trading/master_listing">{{ $t('public.sidebar.copy_trading') }}</a>
                 </h2>
                 <ChevronRightIcon aria-hidden="true" class="w-5 h-5" />
-                <h2 class="text-xl text-primary-500 font-semibold leading-tight">
-                    {{ $t('public.master_profile') }} - {{ masterListingDetail.trading_user.name }}
-                </h2>
+                <div class="flex gap-1 text-xl text-primary-500 font-semibold leading-tight">
+                    <h2>
+                        {{ $t('public.master_profile') }} -
+                    </h2>
+                    <div v-if="currentLocale === 'en'">
+                        {{ masterListingDetail.trading_user.name }}
+                    </div>
+                    <div v-if="currentLocale === 'cn'">
+                        {{ masterListingDetail.trading_user.company ? masterListingDetail.trading_user.company : masterListingDetail.trading_user.name }}
+                    </div>
+                </div>
             </div>
         </template>
 
@@ -67,7 +78,12 @@ const statusVariant = (status) => {
                         />
                         <div class="flex flex-col items-center">
                             <div class="font-semibold text-gray-800 dark:text-white">
-                                {{ masterListingDetail.trading_user.name }}
+                                <div v-if="currentLocale === 'en'">
+                                    {{ masterListingDetail.trading_user.name }}
+                                </div>
+                                <div v-if="currentLocale === 'cn'">
+                                    {{ masterListingDetail.trading_user.company ? masterListingDetail.trading_user.company : masterListingDetail.trading_user.name }}
+                                </div>
                             </div>
                             <div class="text-sm text-gray-500 dark:text-gray-400">
                                 {{ masterListingDetail.meta_login }}

@@ -341,6 +341,10 @@ class TradingController extends Controller
                 $types = explode(',', $type); // Convert comma-separated string to array
                 $query->whereIn('symbol', $types);
             })
+            ->when($request->filled('tradeType'), function ($query) use ($request) {
+                $tradeType = $request->input('tradeType');
+                $query->where('trade_type', $tradeType);
+            })
             ->where('status', 'closed')
             ->orderByDesc('time_close')
             ->paginate(10);

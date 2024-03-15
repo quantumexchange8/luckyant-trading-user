@@ -13,6 +13,7 @@ import Badge from "@/Components/Badge.vue";
 import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
 import {usePage} from "@inertiajs/vue3";
 import SubscriptionHistory from "@/Pages/Trading/MasterListing/SubscriptionHistory.vue";
+import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
 
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -130,7 +131,7 @@ watchEffect(() => {
     </div>
 
     <div
-        class="grid grid-cols-1 sm:grid-cols-4 gap-5 my-5"
+        class="grid grid-cols-1 sm:grid-cols-3 gap-5 my-5"
     >
         <div
             v-for="subscriberAccount in subscriberAccounts.data"
@@ -153,7 +154,7 @@ watchEffect(() => {
                     </div>
                 </div>
                 <div>
-                    <Badge variant="primary">{{ $t('public.master') }}</Badge>
+                    <Badge :variant="statusVariant(subscriberAccount.subscription.status)" width="full">{{ subscriberAccount.subscription.status }}</Badge>
                 </div>
             </div>
 
@@ -220,7 +221,10 @@ watchEffect(() => {
             </div>
 
             <div class="flex w-full gap-2 items-center">
-                <Badge :variant="statusVariant(subscriberAccount.subscription.status)" width="full">{{ subscriberAccount.subscription.status }}</Badge>
+                <StopRenewSubscription
+                    v-if="subscriberAccount.subscription.status === 'Active'"
+                    :subscriberAccount="subscriberAccount"
+                />
                 <TerminateSubscription
                     v-if="subscriberAccount.subscription.status === 'Active'"
                     :subscriberAccount="subscriberAccount"

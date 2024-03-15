@@ -1,33 +1,39 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {BanIcon} from "@heroicons/vue/outline";
-import Tooltip from "@/Components/Tooltip.vue";
+import {CreditCardXIcon, CreditCardCheckIcon} from "@/Components/Icons/outline.jsx";
 import Modal from "@/Components/Modal.vue";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import {useForm} from "@inertiajs/vue3";
+import Badge from "@/Components/Badge.vue";
 
 const props = defineProps({
     subscriberAccount: Object
 })
 
-const terminationModal = ref(false);
+const renewSubscriptionModal = ref(false);
 const { formatDateTime, formatAmount } = transactionFormat();
 
-const openTerminationModal = () => {
-    terminationModal.value = true;
+const openRenewSubscriptionModal = () => {
+    renewSubscriptionModal.value = true;
 }
 
 const form = useForm({
     subscription_id: props.subscriberAccount.subscription.id,
+    action: ''
 })
 
 const closeModal = () => {
-    terminationModal.value = false;
+    renewSubscriptionModal.value = false;
 }
 
 const submit = () => {
-    form.post(route('trading.terminateSubscription'), {
+    if (props.subscriberAccount.subscription.auto_renewal === 1) {
+        form.action = 'stop_renewal'
+    } else {
+        form.action = 'request_auto_renewal'
+    }
+    form.post(route('trading.renewalSubscription'), {
         onSuccess: () => {
             closeModal();
         },
@@ -52,25 +58,62 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
 
     return { widthResult, remainingTime };
 };
+
+const statusVariant = (autoRenewal) => {
+    if (autoRenewal === 1) {
+        return 'success';
+    } else {
+        return 'danger'
+    }
+}
+
+const expiredDate = ref(props.subscriberAccount.subscription.expired_date);
+const isExpiredWithin24Hours = computed(() => {
+    if (!expiredDate.value) {
+        return false; // No expiration date, button should be enabled
+    }
+    const currentTime = new Date(); // Current time in milliseconds
+    const expirationTime = new Date(expiredDate.value); // Expiration time in milliseconds
+    const diffInHours = (expirationTime - currentTime) / (1000 * 60 * 60); // Difference in hours
+
+    return diffInHours <= 24; // Disable button if within 24 hours
+});
 </script>
 
 <template>
     <Button
+        v-if="subscriberAccount.subscription.auto_renewal === 1"
         type="button"
-        variant="danger"
+        variant="warning"
         size="sm"
         class="flex gap-2 justify-center w-full"
         v-slot="{ iconSizeClasses }"
-        @click="openTerminationModal"
+        @click="openRenewSubscriptionModal"
     >
-        <BanIcon
+        <CreditCardXIcon
             aria-hidden="true"
             :class="iconSizeClasses"
         />
-        {{ $t('public.terminate') }}
+        {{ $t('public.stop_renewal') }}
+    </Button>
+    <Button
+        v-else
+        type="button"
+        variant="warning"
+        size="sm"
+        class="flex gap-2 justify-center w-full"
+        v-slot="{ iconSizeClasses }"
+        :disabled="isExpiredWithin24Hours"
+        @click="openRenewSubscriptionModal"
+    >
+        <CreditCardCheckIcon
+            aria-hidden="true"
+            :class="iconSizeClasses"
+        />
+        {{ $t('public.request_renewal') }}
     </Button>
 
-    <Modal :show="terminationModal" :title="$t('public.terminate_subscription')" @close="closeModal">
+    <Modal :show="renewSubscriptionModal" :title="subscriberAccount.subscription.auto_renewal === 1 ? $t('public.stop_renewal') : $t('public.request_renewal')" @close="closeModal">
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold">
@@ -108,6 +151,14 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                         {{ formatDateTime(subscriberAccount.subscription.next_pay_date, false) }}
                     </div>
                 </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.auto_renewal')}}
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        <Badge :variant="statusVariant(subscriberAccount.subscription.auto_renewal)">{{ subscriberAccount.subscription.auto_renewal === 1 ? 'Auto' : 'Stop' }}</Badge>
+                    </div>
+                </div>
                 <div class="flex flex-col gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                         {{$t('public.progress')}}
@@ -131,7 +182,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
             </div>
         </div>
         <div class="text-gray-600 dark:text-gray-400 text-justify my-4">
-            {{$t('public.confirm_terminate_warning_1')}} {{ subscriberAccount.subscription.meta_login }} {{$t('public.confirm_terminate_warning_2')}}
+            {{ subscriberAccount.subscription.auto_renewal === 1 ? $t('public.stop_renewal_confirmation', {meta_login: subscriberAccount.subscription.meta_login}) : $t('public.request_renewal_confirmation') }}
         </div>
 
         <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">

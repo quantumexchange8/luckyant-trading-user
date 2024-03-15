@@ -26,6 +26,7 @@ class Subscription extends Model
         'approval_date',
         'remarks',
         'status',
+        'auto_renewal',
         'handle_by',
     ];
 

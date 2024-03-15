@@ -38,8 +38,7 @@ const props = defineProps({
             </div>
         </template>
         <template v-else-if="wallet.type === 'bonus_wallet'">
-            <ApplyRebate />
-            <InternalTransfer 
+            <InternalTransfer
                 :walletSel="walletSel"
                 :defaultWallet="walletSel[1]"
             />

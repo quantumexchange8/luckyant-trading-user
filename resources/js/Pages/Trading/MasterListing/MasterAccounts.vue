@@ -9,6 +9,7 @@ import {ref, watch} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
 import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
+import {usePage} from "@inertiajs/vue3";
 
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -78,6 +79,7 @@ const openDetails = (masterAccountID) => {
     window.location.href = detailUrl;
 }
 
+const currentLocale = ref(usePage().props.locale);
 </script>
 
 <template>
@@ -134,8 +136,11 @@ const openDetails = (masterAccountID) => {
                     alt="userPic"
                 />
                 <div class="flex flex-col text-right">
-                    <div class="text-sm">
+                    <div v-if="currentLocale === 'en'" class="text-sm">
                         {{ masterAccount.trading_user.name }}
+                    </div>
+                    <div v-if="currentLocale === 'cn'" class="text-sm">
+                        {{ masterAccount.trading_user.company ? masterAccount.trading_user.company : masterAccount.trading_user.name }}
                     </div>
                     <div class="font-semibold">
                         {{ masterAccount.meta_login }}

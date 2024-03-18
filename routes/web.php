@@ -64,7 +64,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/getTotalTransactions', [DashboardController::class, 'getTotalTransactions']);
     Route::get('/getPaymentDetails', [DashboardController::class, 'getPaymentDetails']);
     Route::post('/update_session', [DashboardController::class, 'update_session']);
-    Route::post('/internalTransferWallet', [DashboardController::class, 'internalTransferWallet'])->name('internalTransferWallet');
 
     /**
      * ==============================
@@ -147,6 +146,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('transaction.deposit');
         Route::get('/getPaymentDetails', [WalletController::class, 'getPaymentDetails'])->name('transaction.getPaymentDetails');
         Route::post('/withdrawal', [WalletController::class, 'withdrawal'])->name('transaction.withdrawal');
+        Route::post('/internalTransferWallet', [WalletController::class, 'internalTransferWallet'])->name('transaction.internalTransferWallet');
 
          /**
          * ==============================

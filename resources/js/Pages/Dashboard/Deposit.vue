@@ -24,7 +24,7 @@ import cryptoImg from "/public/assets/cryptocurrency.svg"
 import paymentMerchantImg from "/public/assets/payment_merchant.svg"
 
 const props = defineProps({
-    walletSel: Array,
+    wallet: Object,
     countries: Array,
 })
 
@@ -70,7 +70,7 @@ const selectedReceipt = ref(null);
 const selectedReceiptName = ref(null);
 
 const form = useForm({
-    wallet_id: props.walletSel[0].value,
+    wallet_id: props.wallet.id,
     setting_payment_id: '',
     amount: '',
     transaction_amount: 0,
@@ -287,7 +287,7 @@ const copyWalletAddress = () => {
                 </div>
             </div>
 
-            <div v-if="selected != null ? selected.name === 'Payment Merchant' : '' " class="space-y-2">
+            <div v-if="selected != null ? selected.name === 'payment_merchant' : '' " class="space-y-2">
                 <div class="flex gap-2">
                    {{ $t('public.tether_payment') }}
                 </div>
@@ -343,17 +343,6 @@ const copyWalletAddress = () => {
         </div>
 
         <form v-if="selected" class="space-y-2 mt-5">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" :value="$t('public.sidebar.wallet')" />
-                <div class="flex flex-col w-full">
-                    <BaseListbox
-                        :options="walletSel"
-                        v-model="form.wallet_id"
-                        :error="!!form.errors.wallet_id"
-                    />
-                </div>
-            </div>
-
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
                 <div class="flex flex-col w-full">
@@ -386,7 +375,7 @@ const copyWalletAddress = () => {
                 </div>
             </div> -->
 
-            <div v-if="selected.name !== 'Payment Merchant'" class="flex flex-col sm:flex-row gap-4 pt-2">
+            <div v-if="selected.name !== 'payment_merchant'" class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label for="receipt" class="text-sm dark:text-white md:w-1/4" :value="$t('public.payment_slip')"/>
                 <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
                     <input

@@ -16,10 +16,6 @@ use App\Services\MetaFiveService;
 use App\Models\SettingPaymentMethod;
 use App\Services\SelectOptionService;
 use App\Models\CurrencyConversionRate;
-use App\Services\RunningNumberService;
-use App\Http\Requests\InternalTransferRequest;
-use Illuminate\Validation\ValidationException;
-use App\Http\Requests\InternalTransferBalanceRequest;
 
 class DashboardController extends Controller
 {
@@ -48,7 +44,8 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'announcement' => $announcement,
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
-            'walletSel' => (new SelectOptionService())->getInternalTransferWalletSelection(),
+            'walletSel' => (new SelectOptionService())->getWalletSelection(),
+            'eWalletSel' => (new SelectOptionService())->getInternalTransferWalletSelection(),
             'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
             'paymentDetails' => $PaymentBankDetails,
             'PaymentCryptoDetails' => $PaymentCryptoDetails,
@@ -152,58 +149,6 @@ class DashboardController extends Controller
             'settingPayment' => $settingPayment,
             'conversionRate' => $conversionRate,
         ]);
-    }
-
-    public function internalTransferWallet(InternalTransferRequest $request)
-    {
-        $user = \Auth::user();
-        $from_wallet = Wallet::where('id', $request->from_wallet)->first();
-        $to_wallet = Wallet::where('id', $request->to_wallet)->first();
-        $amount = $request->amount;
-
-        if ($from_wallet->id == $to_wallet->id) {
-            throw ValidationException::withMessages([
-                'from_wallet' => trans('public.same_wallet_error'),
-        ]);
-        }
-
-        // Check if balance is sufficient
-        if ($from_wallet->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
-        }
-
-        $transaction_number = RunningNumberService::getID('transaction');
-
-        // Create transaction
-        $transaction = Transaction::create([
-            'category' => 'wallet',
-            'user_id' => $user->id,
-            'from_wallet_id' => $from_wallet->id,
-            'to_wallet_id' => $to_wallet->id,
-            'transaction_number' => $transaction_number,
-            'transaction_type' => 'InternalTransfer',
-            'amount' => $amount,
-            'transaction_charges' => 0,
-            'transaction_amount' => $amount,
-            'status' => 'Success',
-        ]);
-
-        // Update the wallet balance
-        $from_wallet->update([
-            'balance' => $from_wallet->balance - $transaction->transaction_amount,
-        ]);
-
-        $to_wallet->update([
-            'balance' => $to_wallet->balance + $transaction->transaction_amount,
-        ]);
-
-        $transaction->update([
-            'new_wallet_amount' => $to_wallet->balance,
-        ]);
-
-        return redirect()->back()
-            ->with('title', trans('public.success_internal_transaction'))
-            ->with('success', trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . ' ' . trans('public.from_wallet') . ': ' . $from_wallet->name . ' ' . trans('public.to_wallet') . ': ' . $to_wallet->name);
     }
 
 }

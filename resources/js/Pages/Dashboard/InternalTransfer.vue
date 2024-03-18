@@ -12,16 +12,17 @@ import { transactionFormat } from "@/Composables/index.js";
 import { trans } from "laravel-vue-i18n";
 
 const props = defineProps({
-    walletSel: Object,
-    defaultWallet: Object,
+    walletSel: Array,
+    eWalletSel: Array,
+    wallet: Object,
 });
 const internalTransferModal = ref(false);
 const loading = ref(trans('public.is_loading'));
 const { formatAmount } = transactionFormat();
 
 const form = useForm({
-    from_wallet: props.defaultWallet.value,
-    to_wallet: '',
+    from_wallet: props.wallet.id,
+    to_wallet: props.eWalletSel[0].value,
     amount: '',
 });
 
@@ -33,14 +34,8 @@ const closeModal = () => {
     internalTransferModal.value = false;
 };
 
-const filteredWallets = computed(() => {
-    // Filter out E-Wallet
-    const defaultWalletId = props.defaultWallet.value;
-    return props.walletSel.filter(wallet => wallet.value !== defaultWalletId);
-});
-
 const submit = () => {
-    form.post(route('internalTransferWallet'), {
+    form.post(route('transaction.internalTransferWallet'), {
         onSuccess: () => {
             closeModal();
             form.reset();
@@ -70,17 +65,15 @@ const submit = () => {
                             {{ $t('public.transfer_from') }}
                         </div>
                         <div class="text-base text-gray-800 dark:text-white font-semibold">
-                            {{ props.defaultWallet.label }}
+                            {{ props.wallet.name }}
                         </div>
                     </div>
-                    <div class="border-t border-gray-300 w-full py-3">
-                        <div class="flex items-center justify-between gap-2 self-stretch">
-                            <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                                {{ $t('public.amount_transfer') }}
-                            </div>
-                            <div class="text-base text-gray-800 dark:text-white font-semibold">
-                                $ {{ formatAmount(parseFloat(form.amount) || 0.00) }}
-                            </div>
+                    <div class="flex items-center justify-between gap-2 self-stretch">
+                        <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                            {{ $t('public.amount_transfer') }}
+                        </div>
+                        <div class="text-base text-gray-800 dark:text-white font-semibold">
+                            $ {{ formatAmount(parseFloat(form.amount) || 0.00) }}
                         </div>
                     </div>
                 </div>
@@ -89,20 +82,20 @@ const submit = () => {
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" :value="$t('public.transfer_to')" />
                 <div class="flex flex-col w-full">
-                    <div v-if="walletSel">
-                        <BaseListbox 
-                            :options="filteredWallets" 
+                    <div v-if="eWalletSel">
+                        <BaseListbox
+                            :options="wallet.type === 'cash_wallet' ? eWalletSel : walletSel"
                             :placeholder="$t('public.placeholder')"
-                            v-model="form.to_wallet" 
+                            v-model="form.to_wallet"
                         />
                     </div>
                     <div v-else>
-                        <Input 
-                            id="loading" 
-                            type="text" 
-                            class="block w-full" 
-                            v-model="loading" 
-                            readonly 
+                        <Input
+                            id="loading"
+                            type="text"
+                            class="block w-full"
+                            v-model="loading"
+                            readonly
                         />
                     </div>
                 </div>
@@ -111,16 +104,16 @@ const submit = () => {
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount') + ' ($)'" />
                 <div class="flex flex-col w-full">
-                    <Input 
-                        id="amount" 
-                        type="number" 
-                        min="0" 
+                    <Input
+                        id="amount"
+                        type="number"
+                        min="0"
                         :placeholder="$t('public.zero_placeholder')"
-                        class="block w-full" 
-                        v-model="form.amount" 
-                        :invalid="form.errors.amount" 
+                        class="block w-full"
+                        v-model="form.amount"
+                        :invalid="form.errors.amount"
                     />
-                    <InputError v-for="errorField in ['amount', 'from_wallet']" :key="errorField" :message="form.errors[errorField]" class="mt-2" />
+                    <InputError :message="form.errors.amount" class="mt-2" />
                 </div>
             </div>
 

@@ -116,20 +116,12 @@ const closeModal = () => {
             </div>
 
             <div class="border-t boarder-gray-300 pt-5">
-                <div class="flex items-center justify-between gap-2 self-stretch">
+                <div v-for="walletInfo in walletSel" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ wallet.name }}
+                        {{ walletInfo.name }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        $ {{ formatAmount(wallet.balance) }}
-                    </div>
-                </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ cashWallet }}
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        $ {{ formatAmount(walletSel[0].balance) }}
+                        $ {{ formatAmount(walletInfo.balance) }}
                     </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ import DepositBalance from "@/Pages/AccountInfo/TradingAccount/DepositBalance.vu
 const props = defineProps({
     wallet: Object,
     walletSel: Array,
+    eWalletSel: Array,
     paymentAccountSel: Array,
     paymentDetails: Object,
     withdrawalFee: Object,
@@ -21,26 +22,27 @@ const props = defineProps({
         <template v-if="wallet.type === 'cash_wallet'">
             <div class="flex justify-between w-full gap-2">
                 <Deposit
-                    :walletSel="walletSel"
+                    :wallet="wallet"
                     :countries="countries"
                 />
                 <Withdrawal
-                    :walletSel="walletSel"
+                    :wallet="wallet"
                     :withdrawalFee="withdrawalFee"
                     :paymentAccountSel="paymentAccountSel"
                 />
             </div>
             <div class="flex items-center justify-center w-full">
                 <InternalTransfer
-                    :walletSel="walletSel"
-                    :defaultWallet="walletSel[0]"
+                    :eWalletSel="eWalletSel"
+                    :wallet="wallet"
                 />
             </div>
         </template>
         <template v-else-if="wallet.type === 'bonus_wallet'">
             <InternalTransfer
                 :walletSel="walletSel"
-                :defaultWallet="walletSel[1]"
+                :eWalletSel="eWalletSel"
+                :wallet="wallet"
             />
         </template>
         <template v-else-if="wallet.type === 'e_wallet'">

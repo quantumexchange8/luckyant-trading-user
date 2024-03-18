@@ -14,6 +14,7 @@ class SelectOptionService
         return $wallets->get()->map(function ($wallet) {
             return [
                 'value' => $wallet->id,
+                'name' => $wallet->name,
                 'label' => $wallet->name . ' ($' . number_format($wallet->balance, 2) . ')',
                 'balance' => $wallet->balance,
             ];
@@ -22,7 +23,7 @@ class SelectOptionService
 
     public function getInternalTransferWalletSelection(): \Illuminate\Support\Collection
     {
-        $wallets = Wallet::where('user_id', \Auth::id())->whereIn('type', ['cash_wallet', 'bonus_wallet', 'e_wallet']);
+        $wallets = Wallet::where('user_id', \Auth::id())->where('type', 'e_wallet');
 
         return $wallets->get()->map(function ($wallet) {
             return [

@@ -21,6 +21,7 @@ const props = defineProps({
     announcement: Object,
     firstTimeLogin: Number,
     walletSel: Array,
+    eWalletSel: Array,
     paymentAccountSel: Array,
     paymentDetails: Object,
     withdrawalFee: Object,
@@ -263,6 +264,7 @@ getTotalTransactions();
             <div class="flex flex-col gap-5 w-full sm:w-[480px] sm:pl-5 sm:border-l-2 sm:border-gray-300 h-full">
                 <DashboardWallets
                     :walletSel="walletSel"
+                    :eWalletSel="eWalletSel"
                     :paymentAccountSel="paymentAccountSel"
                     :paymentDetails="paymentDetails"
                     :withdrawalFee="withdrawalFee"

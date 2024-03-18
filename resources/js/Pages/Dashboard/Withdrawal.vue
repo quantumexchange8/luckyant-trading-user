@@ -12,14 +12,14 @@ import {useForm} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
 
 const props = defineProps({
-    walletSel: Array,
+    wallet: Object,
     paymentAccountSel: Array,
     withdrawalFee: Object,
 })
 const withdrawalModal = ref(false);
 const { formatAmount } = transactionFormat();
 const withdrawalAmount = ref();
-const selectedWallet = ref(props.walletSel[0].value);
+const selectedWallet = ref(props.wallet);
 const selectedPaymentAccount = ref(null);
 
 const openWithdrawalModal = () => {
@@ -37,7 +37,7 @@ const form = useForm({
 })
 
 const submit = () => {
-    form.wallet_id = selectedWallet.value;
+    form.wallet_id = props.wallet.id;
     form.wallet_address = selectedPaymentAccount.value;
     form.amount = withdrawalAmount.value;
     form.transaction_charges = transactionFee.value;
@@ -72,16 +72,7 @@ watch(withdrawalAmount, (newValue) => {
 
 const handleButtonClick = () => {
     if (!withdrawalAmount.value) {
-        // Find the selected wallet in props.walletSel
-        const selectedWalletId = selectedWallet.value;
-        const foundWallet = props.walletSel.find(wallet => wallet.value === selectedWalletId);
-
-        if (foundWallet) {
-            // Set withdrawal amount to the balance of the selected wallet
-            withdrawalAmount.value = foundWallet.balance;
-        } else {
-            console.error('Selected wallet not found');
-        }
+        withdrawalAmount.value = props.wallet.balance;
     } else {
         // Clear withdrawal amount
         withdrawalAmount.value = '';
@@ -133,19 +124,9 @@ const handleButtonClick = () => {
         </div>
         <form
             v-else-if="paymentAccountSel.length > 0"
-            class="space-y-2 mt-5"
+            class="space-y-2 mt-2"
         >
             <div class="flex flex-col sm:flex-row gap-4">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet" :value="$t('public.sidebar.wallet')" />
-                <div class="flex flex-col w-full">
-                    <BaseListbox
-                        :options="walletSel"
-                        v-model="selectedWallet"
-                        :error="!!form.errors.wallet_id"
-                    />
-                </div>
-            </div>
-            <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
                 <div class="relative flex flex-col w-full">
                     <div class="relative">

@@ -165,6 +165,7 @@ module.exports = {
             '2xl': ['24px', {
                 fontWeight: '600',
             }],
+            '3xl': ['30px'],
         }
     },
 

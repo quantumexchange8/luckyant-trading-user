@@ -104,6 +104,8 @@ class AccountInfoController extends Controller
 
         return response()->json([
             'tradingAccounts' => $tradingAccounts,
+            'totalEquity' => $tradingAccounts->sum('equity'),
+            'totalBalance' => $tradingAccounts->sum('balance'),
             'masterAccounts' => $masterAccounts
         ]);
     }

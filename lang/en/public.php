@@ -314,4 +314,7 @@ return [
     'success_request_renewal' => "Success request renewal",
     'successfully_request_renewal' => "Successfully submitted request for auto renewal for this subscription",
     'invalid_action' => "Invalid Action",
+    'total_equity' => "Total Equity",
+    'total_balance' => "Total Balance",
+    'equity' => "Equity",
 ];

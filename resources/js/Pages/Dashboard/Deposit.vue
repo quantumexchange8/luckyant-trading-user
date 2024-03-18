@@ -29,21 +29,21 @@ const props = defineProps({
 })
 
 const paymentType = [
-  {
-      name: 'bank',
-      value: 'Bank',
-      imgUrl: BankImg
-  },
-  {
-      name: 'tether',
-      value: 'Crypto',
-      imgUrl: cryptoImg
-  },
-  {
-      name: 'payment_merchant',
-      value: 'Payment Merchant',
-      imgUrl: paymentMerchantImg
-  }
+    // {
+    //     name: 'bank',
+    //     value: 'Bank',
+    //     imgUrl: BankImg
+    // },
+    {
+        name: 'tether',
+        value: 'Crypto',
+        imgUrl: cryptoImg
+    },
+    {
+        name: 'payment_merchant',
+        value: 'Payment Merchant',
+        imgUrl: paymentMerchantImg
+    }
 ]
 
 const { formatAmount } = transactionFormat();

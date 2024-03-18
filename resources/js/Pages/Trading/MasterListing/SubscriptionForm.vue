@@ -94,7 +94,7 @@ const submit = () => {
                         {{ $t('public.estimated_monthly_returns') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ formatAmount(masterAccount.estimated_monthly_returns) }} %
+                        {{ masterAccount.estimated_monthly_returns }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
@@ -102,7 +102,7 @@ const submit = () => {
                         {{ $t('public.estimated_lot_size') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ formatAmount(masterAccount.estimated_lot_size) }}
+                        {{ masterAccount.estimated_lot_size }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">

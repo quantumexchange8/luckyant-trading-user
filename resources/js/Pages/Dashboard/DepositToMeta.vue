@@ -1,7 +1,7 @@
 <script setup>
 import Button from "@/Components/Button.vue";
 import {CreditCardUpIcon} from "@/Components/Icons/outline";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import Modal from "@/Components/Modal.vue";
 import Label from "@/Components/Label.vue";
 import Input from "@/Components/Input.vue";
@@ -48,6 +48,7 @@ onMounted(() => {
 
 const submit = () => {
     form.to_meta_login = selectedAccount.value
+    form.amount = depositAmount.value
     form.post(route('account_info.depositTradingAccount'), {
         onSuccess: () => {
             closeModal();
@@ -59,6 +60,15 @@ const submit = () => {
 const closeModal = () => {
     internalTransferModal.value = false;
 }
+
+const depositAmount = ref();
+const eWalletAmount = ref();
+const cashWalletAmount = ref();
+
+watch(depositAmount, (newAmount) => {
+    eWalletAmount.value = newAmount * 0.2;
+    cashWalletAmount.value = newAmount * 0.8;
+})
 </script>
 
 <template>
@@ -108,7 +118,7 @@ const closeModal = () => {
                         min="0"
                         :placeholder="$t('public.deposit_placeholder')"
                         class="block w-full"
-                        v-model="form.amount"
+                        v-model="depositAmount"
                         :invalid="form.errors.amount"
                     />
                     <InputError :message="form.errors.amount" class="mt-2" />
@@ -116,12 +126,20 @@ const closeModal = () => {
             </div>
 
             <div class="border-t boarder-gray-300 pt-5">
-                <div v-for="walletInfo in walletSel" class="flex items-center justify-between gap-2 self-stretch">
+                <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ walletInfo.name }}
+                        {{ wallet.name }} (20%)
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        $ {{ formatAmount(walletInfo.balance) }}
+                        $ {{ formatAmount(eWalletAmount ? eWalletAmount : 0) }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ $t('public.cash_wallet') }} (80%)
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        $ {{ formatAmount(cashWalletAmount ? cashWalletAmount : 0) }}
                     </div>
                 </div>
             </div>

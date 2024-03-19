@@ -211,6 +211,7 @@ return [
     'trade' => "Trade",
     'server_under_maintenance' => "Server under maintenance",
     'created_trading_account' => "Successfully Created Trading Account",
+    'insufficient_wallet_balance' => "Insufficient :wallet balance",
     'insufficient_balance' => "Insufficient balance",
     'success_deposit' => "Success deposit",
     'successfully_deposit' => "Successfully deposit",
@@ -317,4 +318,7 @@ return [
     'total_equity' => "Total Equity",
     'total_balance' => "Total Balance",
     'equity' => "Equity",
+    'cash_wallet' => "Cash Wallet",
+    'join_date' => "Join Date",
+    'remaining_days' => "Remaining Days",
 ];

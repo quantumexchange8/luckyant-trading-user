@@ -10,6 +10,7 @@ use App\Http\Requests\WithdrawBalanceRequest;
 use App\Models\AccountType;
 use App\Models\Master;
 use App\Models\MasterRequest;
+use App\Models\Subscription;
 use App\Models\TradingAccount;
 use App\Models\TradingUser;
 use App\Models\Transaction;
@@ -117,14 +118,20 @@ class AccountInfoController extends Controller
         $amount = $request->amount;
         $meta_login = $request->to_meta_login;
         $cash_wallet = Wallet::where('type', 'cash_wallet')->where('user_id', $user->id)->first();
+        $subscription = Subscription::where('user_id', $user->id)
+            ->where('meta_login', $meta_login)
+            ->where('status', 'Active')
+            ->first();
 
         if ($wallet->type == 'e_wallet') {
-            $total_balance = $cash_wallet->balance + $wallet->balance;
-            if ($total_balance < $amount || $amount <= 0) {
-                throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
+            if ($wallet->balance < ($amount * 0.2) || $amount <= 0) {
+                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
+            }
+            if ($cash_wallet->balance < ($amount * 0.8)) {
+                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $cash_wallet->name])]);
             }
         } elseif ($wallet->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
         }
 
         $deal = [];
@@ -142,50 +149,17 @@ class AccountInfoController extends Controller
                 ->with('warning', trans('public.try_again_later'));
         }
 
-        $new_wallet_amount = $wallet->balance - $amount;
-        $transaction_amount = $amount;
-        if ($wallet->type == 'e_wallet' && $new_wallet_amount < 0) {
-            $remaining_amount = abs($new_wallet_amount);
-            $transaction_amount = $wallet->balance;
+        if ($wallet->type == 'e_wallet') {
+            $eWalletAmount = $amount * 0.2;
+            $cashWalletAmount = $amount * 0.8;
 
-            if ($transaction_amount > 0) {
-                Transaction::create([
-                    'category' => 'trading_account',
-                    'user_id' => $user->id,
-                    'from_wallet_id' => $wallet->id,
-                    'to_meta_login' => $meta_login,
-                    'ticket' => $deal['deal_Id'],
-                    'transaction_number' => RunningNumberService::getID('transaction'),
-                    'transaction_type' => 'Deposit',
-                    'amount' => $transaction_amount,
-                    'transaction_charges' => 0,
-                    'transaction_amount' => $transaction_amount,
-                    'status' => 'Success',
-                    'comment' => $deal['conduct_Deal']['comment'],
-                    'new_wallet_amount' => 0,
-                ]);
-            }
+            $this->createTransaction($user->id, $wallet->id, $meta_login, $deal['deal_Id'], 'Deposit', $eWalletAmount, $wallet->balance - $eWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
+            $wallet->balance -= $eWalletAmount;
+            $wallet->save();
 
-            $new_wallet_amount = 0;
-
-            $cash_wallet->balance -= $remaining_amount;
+            $this->createTransaction($user->id, $cash_wallet->id, $meta_login, $deal['deal_Id'], 'Deposit', $cashWalletAmount, $cash_wallet->balance - $cashWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
+            $cash_wallet->balance -= $cashWalletAmount;
             $cash_wallet->save();
-
-            Transaction::create([
-                'category' => 'trading_account',
-                'user_id' => $user->id,
-                'from_wallet_id' => $cash_wallet->id,
-                'to_meta_login' => $meta_login,
-                'ticket' => $deal['deal_Id'],
-                'transaction_number' => RunningNumberService::getID('transaction'),
-                'transaction_type' => 'Deposit',
-                'amount' => $remaining_amount,
-                'transaction_charges' => 0,
-                'transaction_amount' => $remaining_amount,
-                'status' => 'Success',
-                'comment' => $deal['conduct_Deal']['comment'],
-                'new_wallet_amount' => $cash_wallet->balance,
-            ]);
         } else {
             Transaction::create([
                 'category' => 'trading_account',
@@ -195,16 +169,21 @@ class AccountInfoController extends Controller
                 'ticket' => $deal['deal_Id'],
                 'transaction_number' => RunningNumberService::getID('transaction'),
                 'transaction_type' => 'Deposit',
-                'amount' => $transaction_amount,
+                'amount' => $amount,
                 'transaction_charges' => 0,
-                'transaction_amount' => $transaction_amount,
+                'transaction_amount' => $amount,
                 'status' => 'Success',
                 'comment' => $deal['conduct_Deal']['comment'],
-                'new_wallet_amount' => $new_wallet_amount,
+                'new_wallet_amount' => $wallet->balance - $amount,
             ]);
+
+            $wallet->update(['balance' => $wallet->balance - $amount]);
         }
 
-        $wallet->update(['balance' => $new_wallet_amount]);
+        if ($subscription) {
+            $subscription->meta_balance += $amount;
+            $subscription->save();
+        }
 
         return redirect()->back()
             ->with('title', trans('public.success_deposit'))
@@ -467,5 +446,23 @@ class AccountInfoController extends Controller
             ->paginate(10);
 
         return response()->json($masterRequest);
+    }
+
+    protected function createTransaction($userId, $fromWalletId, $toMetaLogin, $ticket, $transactionType, $amount, $newWalletAmount, $comment, $transactionCharges, $category) {
+        Transaction::create([
+            'category' => $category,
+            'user_id' => $userId,
+            'from_wallet_id' => $fromWalletId,
+            'to_meta_login' => $toMetaLogin,
+            'ticket' => $ticket,
+            'transaction_number' => RunningNumberService::getID('transaction'),
+            'transaction_type' => $transactionType,
+            'amount' => $amount,
+            'transaction_charges' => $transactionCharges,
+            'transaction_amount' => $amount,
+            'status' => 'Success',
+            'comment' => $comment,
+            'new_wallet_amount' => $newWalletAmount,
+        ]);
     }
 }

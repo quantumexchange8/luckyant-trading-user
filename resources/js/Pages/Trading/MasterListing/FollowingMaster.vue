@@ -36,7 +36,8 @@ const refresh = ref(false);
 const type = ref('');
 const subscriberAccounts = ref({data: []})
 const currentPage = ref(1);
-const { formatAmount } = transactionFormat();
+const { formatAmount, formatDateTime } = transactionFormat();
+const currentLocale = ref(usePage().props.locale);
 
 const getResults = async (page = 1, search = '', type = '', date = '') => {
     isLoading.value = true
@@ -88,6 +89,25 @@ watchEffect(() => {
         getResults();
     }
 });
+
+const calculateWidthPercentage = (starting_date, expired_date, period) => {
+    const startDate = new Date(starting_date);
+    const endDate = new Date(expired_date);
+
+    const currentDate = new Date();
+    const elapsedMilliseconds = currentDate - startDate;
+    const elapsedDays = Math.ceil(elapsedMilliseconds / (1000 * 60 * 60 * 24));
+
+    const totalMilliseconds = endDate - startDate;
+    const totalDays = Math.ceil(totalMilliseconds / (1000 * 60 * 60 * 24));
+
+    // Adjust remaining time display based on the unit of the period
+    const remainingTime = Math.ceil(period - elapsedDays);
+
+    const widthResult = Math.max(0, Math.min(100, (elapsedDays / totalDays) * 100));
+
+    return { widthResult, remainingTime };
+};
 </script>
 
 <template>
@@ -145,8 +165,11 @@ watchEffect(() => {
                         alt="userPic"
                     />
                     <div class="flex flex-col">
-                        <div class="text-sm">
-                            {{ subscriberAccount.master.user.name }}
+                        <div v-if="currentLocale === 'en'" class="text-sm">
+                            {{ subscriberAccount.master.trading_user.name }}
+                        </div>
+                        <div v-if="currentLocale === 'cn'" class="text-sm">
+                            {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
                         </div>
                         <div class="font-semibold">
                             {{ subscriberAccount.master.meta_login }}
@@ -160,48 +183,32 @@ watchEffect(() => {
 
             <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
                 <div class="flex gap-1">
-                    <div class="text-sm">{{ $t('public.sharing') }} %:</div>
-                    <div class="text-sm font-semibold">{{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%</div>
+                    <div class="text-sm">{{ $t('public.join_date') }}:</div>
+                    <div class="text-sm font-semibold">{{ formatDateTime(subscriberAccount.subscription.approval_date, false) }}</div>
                 </div>
                 <div class="flex gap-1">
-                    <div class="text-sm">{{ $t('public.subscription_fee') }}:</div>
-                    <div class="text-sm font-semibold">$ {{ subscriberAccount.master.subscription_fee % 1 === 0 ? formatAmount(subscriberAccount.master.subscription_fee, 0) : formatAmount(subscriberAccount.master.subscription_fee) }}</div>
+                    <div class="text-sm">{{ $t('public.remaining_days') }}:</div>
+                    <div class="text-sm font-semibold">{{ calculateWidthPercentage(subscriberAccount.subscription.created_at, subscriberAccount.subscription.expired_date, subscriberAccount.subscription.subscription_period).remainingTime }}</div>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 w-full">
-                <!--                <div class="space-y-2">-->
-                <!--                    <div class="text-xs flex justify-center">-->
-                <!--                        Current Month P/L-->
-                <!--                    </div>-->
-                <!--                    <div class="flex justify-center rounded-md border border-success-500">-->
-                <!--                        <span class="text-success-500 font-semibold">+200%</span>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!--                <div class="space-y-2">-->
-                <!--                    <div class="text-xs flex justify-center">-->
-                <!--                        Growth Since 2024-->
-                <!--                    </div>-->
-                <!--                    <div class="flex justify-center rounded-md border border-error-500">-->
-                <!--                        <span class="text-error-500 font-semibold">-10%</span>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!--                <div class="space-y-2">-->
-                <!--                    <div class="text-xs flex justify-center">-->
-                <!--                        Month Average-->
-                <!--                    </div>-->
-                <!--                    <div class="flex justify-center rounded-md border border-success-500">-->
-                <!--                        <span class="text-success-500 font-semibold">+200%</span>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!--                <div class="space-y-2">-->
-                <!--                    <div class="text-xs flex justify-center">-->
-                <!--                        Draw down-->
-                <!--                    </div>-->
-                <!--                    <div class="flex justify-center rounded-md border border-gray-300">-->
-                <!--                        <span class="text-gray-400 font-semibold">-2%</span>-->
-                <!--                    </div>-->
-                <!--                </div>-->
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.sharing_profit') }}
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%</span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.amount') }}
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription.meta_balance ? subscriberAccount.subscription.meta_balance : 0) }}</span>
+                    </div>
+                </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
                         {{ $t('public.estimated_roi') }}

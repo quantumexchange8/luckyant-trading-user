@@ -196,7 +196,7 @@ watchEffect(() => {
                     {{$t('public.subscription_number')}}
                 </th>
                 <th scope="col" class="p-3">
-                    {{$t('public.subscription_fee')}}
+                    {{$t('public.amount')}}
                 </th>
                 <th scope="col" class="p-3">
                     {{$t('public.master_account')}}
@@ -229,7 +229,7 @@ watchEffect(() => {
                     {{ subscription.subscription_number }}
                 </td>
                 <td class="p-3">
-                    $ {{ subscription.subscription_fee ? formatAmount(subscription.subscription_fee) : '0.00' }}
+                    $ {{ formatAmount(subscription.meta_balance ? subscription.meta_balance : 0) }}
                 </td>
                 <td class="p-3">
                     {{ subscription.master.meta_login }}
@@ -278,6 +278,10 @@ watchEffect(() => {
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.subscription_number')}}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.subscription_number }}</span>
+        </div>
+        <div class="grid grid-cols-3 items-center gap-2">
+            <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.amount')}}</span>
+            <span class="col-span-2 text-black dark:text-white py-2">$ {{ formatAmount(subscriptionHistoryDetail.meta_balance ? subscriptionHistoryDetail.meta_balance : 0) }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.master_account')}}</span>

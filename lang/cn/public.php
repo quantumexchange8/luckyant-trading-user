@@ -212,6 +212,7 @@ return [
     'server_under_maintenance' => "服务器维护中",
     'created_trading_account' => "成功创建交易账户",
     'insufficient_balance' => "余额不足",
+    'insufficient_wallet_balance' => ":wallet余额不足",
     'success_deposit' => "存款成功",
     'successfully_deposit' => "存款成功",
     'to_login' => " 登入",
@@ -314,4 +315,10 @@ return [
     'success_request_renewal' => "成功申请续订",
     'successfully_request_renewal' => "成功提交此订阅的自动续订请求",
     'invalid_action' => "无效操作",
+    'total_equity' => "总金额",
+    'total_balance' => "总余额",
+    'equity' => "金额",
+    'cash_wallet' => "Cash Wallet",
+    'join_date' => "加入日期",
+    'remaining_days' => "剩余天数",
 ];

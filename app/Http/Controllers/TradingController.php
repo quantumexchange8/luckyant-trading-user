@@ -173,7 +173,7 @@ class TradingController extends Controller
 
     public function getSubscriptions(Request $request)
     {
-        $masterAccounts = Subscriber::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'subscription'])
+        $masterAccounts = Subscriber::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'master.tradingUser','subscription'])
             ->where('user_id', Auth::id())
             ->where('status', 'Subscribing')
             ->when($request->filled('search'), function ($query) use ($request) {

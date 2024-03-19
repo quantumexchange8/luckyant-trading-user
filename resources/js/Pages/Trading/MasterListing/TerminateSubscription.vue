@@ -5,7 +5,7 @@ import Tooltip from "@/Components/Tooltip.vue";
 import Modal from "@/Components/Modal.vue";
 import {ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
-import {useForm} from "@inertiajs/vue3";
+import {useForm, usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     subscriberAccount: Object
@@ -13,6 +13,7 @@ const props = defineProps({
 
 const terminationModal = ref(false);
 const { formatDateTime, formatAmount } = transactionFormat();
+const currentLocale = ref(usePage().props.locale);
 
 const openTerminationModal = () => {
     terminationModal.value = true;
@@ -74,7 +75,12 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold">
-                    {{$t('public.subscription_details')}}
+                    <div v-if="currentLocale === 'en'">
+                        {{ subscriberAccount.master.trading_user.name }}
+                    </div>
+                    <div v-if="currentLocale === 'cn'">
+                        {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
+                    </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">

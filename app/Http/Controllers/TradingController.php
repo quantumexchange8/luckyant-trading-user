@@ -231,7 +231,6 @@ class TradingController extends Controller
 //        $master->subscribersCount = $master->subscribers->count();
         $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
 
-//        dd($master->copyTradeHistories->sum('closed_profit'));
         return Inertia::render('Trading/MasterListing/MasterListingDetail', [
             'masterListingDetail' => $master,
         ]);

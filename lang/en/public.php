@@ -131,7 +131,7 @@ return [
     'minimum_equity_to_join' => "Minimum Equity to Join",
     'sharing_profit' => "Sharing Profit",
     'subscription_fee' => "Subscription Fee",
-    'roi_period' => "ROI Period",
+    'roi_period' => "Settlement  Period",
     'copy_trading_status' => "Copy Trading Status",
     'min_join_equity_placeholder' => "$ 0.00",
     'sharing_profit_placeholder' => "50%",

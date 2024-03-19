@@ -160,7 +160,7 @@ watchEffect(() => {
                         1 : {{ account.margin_leverage }}
                     </div>
                     <div class="text-xs font-normal">
-                        {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
+                        {{ $t('public.credit') }}: $ {{ formatAmount(account.credit ? account.credit : 0) }}
                     </div>
                 </div>
                 <div class="text-xl">

@@ -67,7 +67,7 @@ class TradingController extends Controller
             $totalSubscriptionsFee = Subscription::where('master_id', $master->id)->where('status', 'Active')->sum('meta_balance');
 
             $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-            $master->subscribersCount = $master->subscribers->count();
+//            $master->subscribersCount = $master->subscribers->count();
             $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
         });
 
@@ -82,6 +82,15 @@ class TradingController extends Controller
         $masterAccount = Master::find($request->master_id);
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
+        $subscriber = Subscriber::where('meta_login', $meta_login)
+            ->whereIn('status', ['Pending', 'Subscribing'])
+            ->first();
+
+        if ($subscriber) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.try_again_later'));
+        }
 
         if ($connection != 0) {
             return redirect()->back()
@@ -219,9 +228,10 @@ class TradingController extends Controller
             ->sum('meta_balance');
 
         $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-        $master->subscribersCount = $master->subscribers->count();
+//        $master->subscribersCount = $master->subscribers->count();
         $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
 
+        dd($master->copyTradeHistories->sum('closed_profit'));
         return Inertia::render('Trading/MasterListing/MasterListingDetail', [
             'masterListingDetail' => $master,
         ]);

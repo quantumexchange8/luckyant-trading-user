@@ -6,7 +6,7 @@ import {transactionFormat} from "@/Composables/index.js";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import InputError from "@/Components/InputError.vue";
 import Label from "@/Components/Label.vue";
-import {useForm} from "@inertiajs/vue3";
+import {useForm, usePage} from "@inertiajs/vue3";
 import Input from "@/Components/Input.vue";
 
 const props = defineProps({
@@ -51,6 +51,8 @@ const submit = () => {
         },
     });
 }
+
+const currentLocale = ref(usePage().props.locale);
 </script>
 
 <template>
@@ -65,6 +67,14 @@ const submit = () => {
     <Modal :show="subscribeAccountModal" :title="$t('public.subscribe_master')" @close="closeModal">
         <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
+                <div>
+                    <div v-if="currentLocale === 'en'" class="text-xl">
+                        {{ masterAccount.trading_user.name }}
+                    </div>
+                    <div v-if="currentLocale === 'cn'" class="text-xl">
+                        {{ masterAccount.trading_user.company ? masterAccount.trading_user.company : masterAccount.trading_user.name }}
+                    </div>
+                </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                         {{ $t('public.account_number') }}

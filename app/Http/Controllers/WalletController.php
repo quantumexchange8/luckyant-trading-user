@@ -247,7 +247,7 @@ class WalletController extends Controller
             'transactionId' => $data['transactionId'],
             'walletAddress' => $data['walletAddress'] ?? null,
             'status' => $data['status'],
-            'sCode' => $data['sCode'],
+            'sCode' => $data['sCode'] ?? null,
             'transactionHash' => $data['transactionHash'],
             'sourceAddress' => $data['sourceAddress'],
             'blockTime' => $data['blockTime'],

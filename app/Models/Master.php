@@ -44,4 +44,9 @@ class Master extends Model
         return $this->hasOne(TradingUser::class, 'id', 'trading_account_id');
     }
 
+    public function copyTradeHistories(): \Illuminate\Database\Eloquent\Relations\hasMany
+    {
+        return $this->hasMany(CopyTradeHistory::class, 'master_id', 'id');
+    }
+
 }

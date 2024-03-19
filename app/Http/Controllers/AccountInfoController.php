@@ -234,7 +234,7 @@ class AccountInfoController extends Controller
         }
 
         // Check if balance is sufficient
-        if ($tradingAccount->subscriber->unsubscribe_date < now()) {
+        if (!empty($tradingAccount->subscriber) && $tradingAccount->subscriber->unsubscribe_date < now()) {
             throw ValidationException::withMessages(['amount' => trans('public.terminatiion_message')]);
         }
 
@@ -360,7 +360,7 @@ class AccountInfoController extends Controller
                 ->orWhere(function ($query) {
                     $query->whereHas('subscriber', function ($subQuery) {
                         $subQuery->where('user_id', Auth::id())
-                            ->whereNot('status', 'Subscribing');
+                            ->whereNotIn('status', ['Pending', 'Subscribing']);
                     });
                 })
                 ->whereNot('meta_login', $request->meta_login)

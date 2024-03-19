@@ -248,11 +248,11 @@ class WalletController extends Controller
             'walletAddress' => $data['walletAddress'] ?? null,
             'status' => $data['status'],
             'sCode' => $data['sCode'] ?? null,
-            'transactionHash' => $data['transactionHash'],
-            'sourceAddress' => $data['sourceAddress'],
-            'blockTime' => $data['blockTime'],
-            'paidTime' => $data['paidTime'],
-            'receivedAmount' => $data['receivedAmount'],
+            'transactionHash' => $data['transactionHash'] ?? null,
+            'sourceAddress' => $data['sourceAddress'] ?? null,
+            'blockTime' => $data['blockTime'] ?? null,
+            'paidTime' => $data['paidTime'] ?? null,
+            'receivedAmount' => $data['receivedAmount'] ?? null,
         ];
 
         $domain = $_SERVER['HTTP_HOST'];
@@ -401,7 +401,7 @@ class WalletController extends Controller
 
         $wallet = Wallet::find($request->wallet_id);
         if ($wallet->balance < $amount) {
-            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
         }
         $withdrawal_fee = $request->transaction_charges;
         $final_amount = $amount - $withdrawal_fee;
@@ -496,7 +496,7 @@ class WalletController extends Controller
 
         // Check if balance is sufficient
         if ($from_wallet->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $from_wallet->name])]);
         }
 
         $transaction_number = RunningNumberService::getID('transaction');

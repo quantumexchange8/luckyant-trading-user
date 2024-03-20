@@ -53,7 +53,7 @@ Route::get('admin_login/{hashedToken}', function ($hashedToken) {
 });
 
 Route::get('/getTerms', [TermController::class, 'getTerms'])->name('getTerms');
-Route::get('transaction_result', [WalletController::class, 'depositCallback']);
+Route::post('transaction_result', [WalletController::class, 'depositCallback']);
 
 Route::middleware('auth')->group(function () {
     Route::get('update_transaction', [WalletController::class, 'depositReturn']);

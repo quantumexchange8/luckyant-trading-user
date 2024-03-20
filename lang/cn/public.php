@@ -321,4 +321,6 @@ return [
     'cash_wallet' => "Cash Wallet",
     'join_date' => "加入日期",
     'remaining_days' => "剩余天数",
+    'profile_update_confirmation' => "个人资料更新确认",
+    'profile_update_alert' => "请注意，对您的个人资料进行的任何修改都会导致您的 KYC 验证状态发生更改，将其重置为“未验证”。感谢您的理解。",
 ];

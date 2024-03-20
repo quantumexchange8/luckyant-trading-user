@@ -71,7 +71,7 @@ const setValueInSession = async (value) => {
 
 onMounted(() => {
     // Check if the modal has been shown already
-    if (firstTimeLogin.value === 1) {
+    if (firstTimeLogin.value === 1 && props.announcement) {
         announcementModal.value = true;
     }
 });
@@ -275,12 +275,14 @@ getTotalTransactions();
         </div>
 
         <Modal :show="announcementModal" :title="$t('public.details')" @close="closeModal">
-            <div class="text-xs dark:text-gray-400">{{ formatDateTime(announcement.created_at) }}</div>
-            <div v-if="announcement.image !== ''" class="my-5">
-                <img class="rounded-lg w-full" :src="announcement.image" alt="announcement image" />
+            <div v-if="announcement">
+                <div class="text-xs dark:text-gray-400">{{ formatDateTime(announcement.created_at) }}</div>
+                <div v-if="announcement.image !== ''" class="my-5">
+                    <img class="rounded-lg w-full" :src="announcement.image" alt="announcement image" />
+                </div>
+                <div class="my-5 dark:text-white">{{ announcement.subject }}</div>
+                <div class="dark:text-gray-300 text-sm prose leading-3" v-html="announcement.details"></div>
             </div>
-            <div class="my-5 dark:text-white">{{ announcement.subject }}</div>
-            <div class="dark:text-gray-300 text-sm prose leading-3" v-html="announcement.details"></div>
         </Modal>
 
     </AuthenticatedLayout>

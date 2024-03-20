@@ -103,8 +103,12 @@ class ProfileController extends Controller
             'gender' => $request->gender,
             'address_1' => $request->address,
             'identification_number' => $request->identification_number,
-            'kyc_approval' => 'Unverified',
         ]);
+
+        if ($user->getChanges()) {
+            $user->kyc_approval = 'Unverified';
+            $user->save();
+        }
 
         if ($request->hasFile('proof_front')) {
             $user->clearMediaCollection('front_identity');

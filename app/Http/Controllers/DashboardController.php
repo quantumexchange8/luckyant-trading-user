@@ -21,7 +21,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $announcement = Announcement::where('type', 'login')->latest()->first();
+        $announcement = Announcement::where('type', 'login')->where('status', 'Active')->latest()->first();
 
         $PaymentBankDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();
         $PaymentCryptoDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();

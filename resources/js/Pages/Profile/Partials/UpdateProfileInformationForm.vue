@@ -6,11 +6,12 @@ import Input from '@/Components/Input.vue'
 import BaseListbox from "@/Components/BaseListbox.vue";
 import { Link, useForm, usePage } from '@inertiajs/vue3'
 import CountryLists from "../../../../../public/data/countries.json";
-import {ref} from "vue";
+import {ref, watchEffect} from "vue";
 import {XIcon} from '@heroicons/vue/outline'
 import Badge from "@/Components/Badge.vue";
 import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
 import AvatarInput from "@/Pages/Profile/Partials/AvatarInput.vue";
+import Modal from "@/Components/Modal.vue";
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
@@ -22,7 +23,7 @@ const props = defineProps({
 })
 
 const user = usePage().props.auth.user
-const kycApproval = usePage().props.auth.user.kyc_approval
+const kycApproval = ref(usePage().props.auth.user.kyc_approval)
 
 const form = useForm({
     name: user.name,
@@ -42,7 +43,11 @@ const submit = () => {
     if (selected.value) {
         form.gender = selected.value.value
     }
-    form.post(route('profile.update'))
+    form.post(route('profile.update'), {
+        onSuccess: () => {
+            closeModal();
+        },
+    })
 }
 
 const selectedProofFrontFile = ref(null);
@@ -114,7 +119,21 @@ const getUserGender = (user_gender) => {
     return genders.find(gender => gender.value === user_gender);
 }
 const selected = ref(getUserGender(user.gender));
+const confirmModal = ref(false);
 
+const openConfirmModal = () => {
+    confirmModal.value = true;
+}
+
+const closeModal = () => {
+    confirmModal.value = false
+}
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        kycApproval.value = usePage().props.auth.user.kyc_approval;
+    }
+});
 </script>
 
 <template>
@@ -147,11 +166,16 @@ const selected = ref(getUserGender(user.gender));
                     >
                         <span class="text-sm">{{ user.rank.name }}</span>
                     </Badge>
-                    <Badge
-                        :variant="statusVariant(user.kyc_approval)"
+                    <div
+                        class="flex px-2 py-1 justify-center text-white rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out w-20"
+                        :class="{
+                            'bg-success-400 dark:bg-success-500': kycApproval === 'Verified',
+                            'bg-error-400 dark:bg-error-500': kycApproval === 'Unverified',
+                            'bg-warning-400 dark:bg-warning-500': kycApproval === 'Pending',
+                        }"
                     >
-                        <span class="text-sm">{{ user.kyc_approval }}</span>
-                    </Badge>
+                        <span class="text-sm">{{ kycApproval }}</span>
+                    </div>
                 </div>
             </div>
             <form class="w-full sm:w-2/3">
@@ -304,12 +328,14 @@ const selected = ref(getUserGender(user.gender));
                                 class="hidden"
                                 accept="image/*"
                                 @change="handleProofFront"
-                                />
+                                :disabled="kycApproval === 'Verified'"
+                            />
                             <Button
                                 type="button"
                                 variant="primary"
                                 @click="$refs.frontProofInput.click()"
-                                >
+                                :disabled="kycApproval === 'Verified'"
+                            >
                                 {{ $t('public.browse') }}
                             </Button>
                             <InputError :message="form.errors.proof_front" class="mt-2" />
@@ -350,12 +376,14 @@ const selected = ref(getUserGender(user.gender));
                                 class="hidden"
                                 accept="image/*"
                                 @change="handleProofBack"
-                                />
+                                :disabled="kycApproval === 'Verified'"
+                            />
                             <Button
                                 type="button"
                                 variant="primary"
                                 @click="$refs.backProofInput.click()"
-                                >
+                                :disabled="kycApproval === 'Verified'"
+                            >
                                 {{ $t('public.browse') }}
                             </Button>
                             <InputError :message="form.errors.proof_back" class="mt-2" />
@@ -364,11 +392,11 @@ const selected = ref(getUserGender(user.gender));
                             v-if="selectedProofBackFile"
                             class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
                             :class="[
-                                    {
-                                          'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.proof_back,
-                                          'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_back,
-                                    }
-                                ]"
+                                {
+                                      'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.proof_back,
+                                      'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_back,
+                                }
+                            ]"
                         >
                             <div class="inline-flex items-center gap-3">
                                 <img :src="selectedProofBackFile" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
@@ -389,8 +417,17 @@ const selected = ref(getUserGender(user.gender));
             </form>
         </div>
         <div class="flex justify-end mt-8">
-            <Button @click="submit" :disabled="form.processing">{{ $t('public.save') }}</Button>
+            <Button @click.prevent="openConfirmModal">{{ $t('public.save') }}</Button>
         </div>
-
     </section>
+
+    <Modal :show="confirmModal" :title="$t('public.profile_update_confirmation')" max-width="md" @close="closeModal">
+        {{ $t('public.profile_update_alert') }}
+        <div class="pt-5 grid grid-cols-2 mt-5 gap-4 w-full">
+            <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
+                {{$t('public.cancel')}}
+            </Button>
+            <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
+        </div>
+    </Modal>
 </template>

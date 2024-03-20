@@ -7,7 +7,9 @@ import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import MasterAccount from "@/Pages/AccountInfo/MasterAccount/MasterAccount.vue";
 import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vue";
 
-
+const props = defineProps({
+    terms: Object
+})
 </script>
 
 <template>
@@ -63,6 +65,7 @@ import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vu
                         class="py-3"
                     >
                         <MasterAccounts
+                            :terms="terms"
                         />
                     </TabPanel>
 

@@ -11,6 +11,7 @@ import Input from "@/Components/Input.vue";
 
 const props = defineProps({
     masterAccount: Object,
+    terms: Object,
 })
 
 const subscribeAccountModal = ref(false);
@@ -53,6 +54,15 @@ const submit = () => {
 }
 
 const currentLocale = ref(usePage().props.locale);
+const termsModal = ref(false);
+
+const openTermsModal = () => {
+    termsModal.value = true
+}
+
+const closeTermsModal = () => {
+    termsModal.value = false
+}
 </script>
 
 <template>
@@ -144,6 +154,14 @@ const currentLocale = ref(usePage().props.locale);
                         <div class="dark:text-gray-400">$ {{ masterAccount.total_fund }}</div>
                     </div>
                 </div>
+                <div class="flex flex-col gap-2 self-stretch">
+                    <div
+                        class="text-xs hover:cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                        @click="openTermsModal"
+                    >
+                        {{ $t('public.terms_and_conditions') }}
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -181,5 +199,9 @@ const currentLocale = ref(usePage().props.locale);
                 <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
             </div>
         </form>
+    </Modal>
+
+    <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
+        <div v-html="terms.contents" class="prose"></div>
     </Modal>
 </template>

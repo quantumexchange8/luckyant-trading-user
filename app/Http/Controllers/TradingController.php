@@ -7,6 +7,7 @@ use App\Models\Master;
 use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\SubscriptionRenewalRequest;
+use App\Models\Term;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
 use App\Models\Wallet;
@@ -23,7 +24,9 @@ class TradingController extends Controller
 {
     public function master_listing()
     {
-        return Inertia::render('Trading/MasterListing');
+        return Inertia::render('Trading/MasterListing', [
+            'terms' => Term::where('type', 'subscribe')->first()
+        ]);
     }
 
     public function getMasterAccounts(Request $request)

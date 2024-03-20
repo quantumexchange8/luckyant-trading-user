@@ -11,6 +11,10 @@ import debounce from "lodash/debounce.js";
 import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
 import {usePage} from "@inertiajs/vue3";
 
+const props = defineProps({
+    terms: Object
+})
+
 const formatter = ref({
     date: 'YYYY-MM-DD',
     month: 'MM'
@@ -178,6 +182,7 @@ const currentLocale = ref(usePage().props.locale);
             <div class="flex w-full gap-2 items-center">
                 <SubscriptionForm
                     :masterAccount="masterAccount"
+                    :terms="terms"
                 />
                 <Button
                     type="button"

@@ -70,7 +70,28 @@ class RegisteredUserController extends Controller
             'phone' => trans('public.mobile_phone'),
             'password' => trans('public.password'),
         ];
+        
+        $dial_code = $request->dial_code;
+        $phone = $request->phone;
 
+        // Remove leading '+' from dial code if present
+        $dial_code = ltrim($dial_code, '+');
+
+        // Remove leading '+' from phone number if present
+        $phone = ltrim($phone, '+');
+
+        // Check if phone number already starts with dial code
+        if (!str_starts_with($phone, $dial_code)) {
+            // Concatenate dial code and phone number
+            $phone = '+' . $dial_code . $phone;
+        } else {
+            // If phone number already starts with dial code, use the phone number directly
+            $phone = '+' . $phone;
+        }
+
+        // Merge the modified phone number back into the request
+        $request->merge(['phone' => $phone]);
+        
         $validator = Validator::make($request->all(), $rules);
         $validator->setAttributeNames($attributes);
 
@@ -124,7 +145,24 @@ class RegisteredUserController extends Controller
 //            throw ValidationException::withMessages(['verification_code' => 'Invalid Verification Code']);
 //        }
 
-        $phone = $request->dial_code . $request->phone;
+        $dial_code = $request->dial_code;
+        $phone = $request->phone;
+
+        // Remove leading '+' from dial code if present
+        $dial_code = ltrim($dial_code, '+');
+
+        // Remove leading '+' from phone number if present
+        $phone = ltrim($phone, '+');
+
+        // Check if phone number already starts with dial code
+        if (!str_starts_with($phone, $dial_code)) {
+            // Concatenate dial code and phone number
+            $phone = '+' . $dial_code . $phone;
+        } else {
+            // If phone number already starts with dial code, use the phone number directly
+            $phone = '+' . $phone;
+        }
+
         $userData = [
             'name' => $request->name,
             'chinese_name' => $request->chinese_name,

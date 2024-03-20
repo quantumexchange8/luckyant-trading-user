@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -92,22 +93,18 @@ class ReferralController extends Controller
 
     protected function getSelfDeposit($user)
     {
-        return Transaction::query()
-            ->where('user_id', $user->id)
-            ->where('category', 'wallet')
-            ->where('transaction_type', 'Deposit')
-            ->sum('amount');
+        return Subscription::where('user_id',$user->id)
+            ->where('status', 'Active')
+            ->sum('meta_balance');
     }
 
     protected function getTotalGroupDeposit($user)
     {
         $ids = $user->getChildrenIds();
 
-        return Transaction::query()
-            ->whereIn('user_id', $ids)
-            ->where('category', 'wallet')
-            ->where('transaction_type', 'Deposit')
-            ->sum('amount');
+        return Subscription::whereIn('user_id', $ids)
+            ->where('status', 'Active')
+            ->sum('meta_balance');
     }
 
 }

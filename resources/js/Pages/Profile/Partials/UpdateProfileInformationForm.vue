@@ -166,7 +166,6 @@ const selected = ref(getUserGender(user.gender));
                             v-model="form.name"
                             autofocus
                             autocomplete="name"
-                            :disabled="kycApproval === 'Verified'"
                         />
 
                         <InputError class="mt-2" :message="form.errors.name" />
@@ -181,7 +180,6 @@ const selected = ref(getUserGender(user.gender));
                             class="block w-full"
                             v-model="form.email"
                             autocomplete="email"
-                            disabled
                         />
 
                         <InputError class="mt-2" :message="form.errors.email" />
@@ -280,7 +278,6 @@ const selected = ref(getUserGender(user.gender));
                             :placeholder="$t('public.nationality')"
                             class="w-full"
                             :error="!!form.errors.nationality"
-                            :disabled="kycApproval === 'Verified'"
                         />
                         <InputError class="mt-2" :message="form.errors.nationality" />
                     </div>
@@ -292,7 +289,6 @@ const selected = ref(getUserGender(user.gender));
                             type="text"
                             class="block w-full"
                             v-model="form.identification_number"
-                            :disabled="kycApproval === 'Verified'"
                             :invalid="form.errors.identification_number"
                         />
                         <InputError class="mt-2" :message="form.errors.identification_number" />
@@ -308,14 +304,12 @@ const selected = ref(getUserGender(user.gender));
                                 class="hidden"
                                 accept="image/*"
                                 @change="handleProofFront"
-                                :disabled="kycApproval === 'Verified'"
-                            />
+                                />
                             <Button
                                 type="button"
                                 variant="primary"
                                 @click="$refs.frontProofInput.click()"
-                                :disabled="kycApproval === 'Verified'"
-                            >
+                                >
                                 {{ $t('public.browse') }}
                             </Button>
                             <InputError :message="form.errors.proof_front" class="mt-2" />
@@ -356,14 +350,12 @@ const selected = ref(getUserGender(user.gender));
                                 class="hidden"
                                 accept="image/*"
                                 @change="handleProofBack"
-                                :disabled="kycApproval === 'Verified'"
-                            />
+                                />
                             <Button
                                 type="button"
                                 variant="primary"
                                 @click="$refs.backProofInput.click()"
-                                :disabled="kycApproval === 'Verified'"
-                            >
+                                >
                                 {{ $t('public.browse') }}
                             </Button>
                             <InputError :message="form.errors.proof_back" class="mt-2" />

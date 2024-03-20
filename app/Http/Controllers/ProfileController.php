@@ -96,12 +96,14 @@ class ProfileController extends Controller
 
         $user->update([
             'name' => $request->name,
+            'email' => $request->email,
             'dial_code' => $dial_code,
             'phone' => $phone_number,
             'nationality' => $request->nationality,
             'gender' => $request->gender,
             'address_1' => $request->address,
             'identification_number' => $request->identification_number,
+            'kyc_approval' => 'Unverified',
         ]);
 
         if ($request->hasFile('proof_front')) {

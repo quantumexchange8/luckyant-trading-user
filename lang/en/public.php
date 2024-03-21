@@ -320,7 +320,7 @@ return [
     'equity' => "Equity",
     'cash_wallet' => "Cash Wallet",
     'join_date' => "Join Date",
-    'remaining_days' => "Remaining Days",
+    'join_day' => "Join Days",
     'profile_update_confirmation' => "Profile Update Confirmation",
     'profile_update_alert' => "Please be informed that any modifications made to your profile will result in a change to your KYC verification status, resetting it to 'Unverified.' Thank you for your understanding.",
     'edit_leverage' => "Edit Leverage",

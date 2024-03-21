@@ -113,10 +113,14 @@ class ProfileController extends Controller
         if ($request->hasFile('proof_front')) {
             $user->clearMediaCollection('front_identity');
             $user->addMedia($request->proof_front)->toMediaCollection('front_identity');
+            $user->kyc_approval = 'Pending';
+            $user->save();
         }
         if ($request->hasFile('proof_back')) {
             $user->clearMediaCollection('back_identity');
             $user->addMedia($request->proof_back)->toMediaCollection('back_identity');
+            $user->kyc_approval = 'Pending';
+            $user->save();
         }
         if ($request->hasFile('profile_photo')) {
             $user->clearMediaCollection('profile_photo');

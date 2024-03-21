@@ -61,7 +61,6 @@ class WalletController extends Controller
 
     public function getWalletHistory(Request $request, $wallet_id)
     {
-
         $user = \Auth::user();
 
         $wallet = Transaction::query()
@@ -74,8 +73,8 @@ class WalletController extends Controller
             'from_meta_login:id,meta_login',
             'to_meta_login:id,meta_login',
         ])
-        ->where('transactions.to_wallet_id', $wallet_id)
-        ->orWhere('transactions.from_wallet_id', $wallet_id);
+        ->where('to_wallet_id', $wallet_id)
+        ->orWhere('from_wallet_id', $wallet_id);
 
         // $wallet = $wallet->whereNotNull('from_wallet_id')->orWhereNotNull('to_wallet_id')->get();
         // dd($wallet);
@@ -277,20 +276,9 @@ class WalletController extends Controller
 
             if ($transaction->status == 'Processing') {
                 if ($result['status'] == 'PAID') {
-                    $intAmount = $transaction->transaction_amount * 100;
-                    if ($result['receivedAmount'] != $intAmount) {
-                        $charges = $intAmount - $result['receivedAmount'];
-                        $transaction->update([
-                            'transaction_charges' => $charges / 100,
-                            'transaction_amount' => $result['receivedAmount'] / 100
-                        ]);
-                    } else {
-                        $transaction->update([
-                            'transaction_amount' => $result['receivedAmount'] / 100
-                        ]);
-                    }
-
                     $transaction->update([
+                        'amount' => $result['receivedAmount'] / 100,
+                        'transaction_amount' => $result['receivedAmount'] / 100,
                         'txn_hash' => $result['transactionHash'],
                         'status' => 'Success'
                     ]);
@@ -358,20 +346,9 @@ class WalletController extends Controller
 
             if ($transaction->status == 'Processing') {
                 if ($result['status'] == 'PAID') {
-                    $intAmount = $transaction->transaction_amount * 100;
-                    if ($result['receivedAmount'] != $intAmount) {
-                        $charges = $intAmount - $result['receivedAmount'];
-                        $transaction->update([
-                            'transaction_charges' => $charges / 100,
-                            'transaction_amount' => $result['receivedAmount'] / 100
-                        ]);
-                    } else {
-                        $transaction->update([
-                            'transaction_amount' => $result['receivedAmount'] / 100
-                        ]);
-                    }
-
                     $transaction->update([
+                        'amount' => $result['receivedAmount'] / 100,
+                        'transaction_amount' => $result['receivedAmount'] / 100,
                         'txn_hash' => $result['transactionHash'],
                         'status' => 'Success'
                     ]);

@@ -89,25 +89,6 @@ watchEffect(() => {
         getResults();
     }
 });
-
-const calculateWidthPercentage = (starting_date, expired_date, period) => {
-    const startDate = new Date(starting_date);
-    const endDate = new Date(expired_date);
-
-    const currentDate = new Date();
-    const elapsedMilliseconds = currentDate - startDate;
-    const elapsedDays = Math.ceil(elapsedMilliseconds / (1000 * 60 * 60 * 24));
-
-    const totalMilliseconds = endDate - startDate;
-    const totalDays = Math.ceil(totalMilliseconds / (1000 * 60 * 60 * 24));
-
-    // Adjust remaining time display based on the unit of the period
-    const remainingTime = Math.ceil(period - elapsedDays);
-
-    const widthResult = Math.max(0, Math.min(100, (elapsedDays / totalDays) * 100));
-
-    return { widthResult, remainingTime };
-};
 </script>
 
 <template>
@@ -187,12 +168,19 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                     <div class="text-sm font-semibold">{{ formatDateTime(subscriberAccount.subscription.approval_date, false) }}</div>
                 </div>
                 <div class="flex gap-1">
-                    <div class="text-sm">{{ $t('public.remaining_days') }}:</div>
-                    <div class="text-sm font-semibold">{{ calculateWidthPercentage(subscriberAccount.subscription.created_at, subscriberAccount.subscription.expired_date, subscriberAccount.subscription.subscription_period).remainingTime }}</div>
+                    <div class="text-sm">{{ $t('public.join_day') }}:</div>
+                    <div class="text-sm font-semibold">{{ subscriberAccount.join_days }}</div>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="space-y-1 col-span-2">
+                    <div class="flex justify-center gap-2">
+                        <div>{{ $t('public.account_no') }}</div>
+                        <div class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.meta_login }}
+                        </div>
+                    </div>
+                </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
                         {{ $t('public.sharing_profit') }}
@@ -214,12 +202,12 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                         {{ $t('public.estimated_roi') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ formatAmount(subscriberAccount.master.estimated_monthly_returns) }}%</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.estimated_monthly_returns }}</span>
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        {{ $t('public.roi_return') }}
+                        {{ $t('public.roi_period') }}
                     </div>
                     <div class="flex justify-center">
                         <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} {{ $t('public.days') }}</span>

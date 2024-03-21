@@ -108,7 +108,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.roi_date')}} ({{ subscriberAccount.subscription.subscription_period }} Days)
+                        {{$t('public.roi_period')}} ({{ subscriberAccount.subscription.subscription_period }} Days)
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ formatDateTime(subscriberAccount.subscription.next_pay_date, false) }}

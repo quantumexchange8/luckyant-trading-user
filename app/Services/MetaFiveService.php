@@ -107,6 +107,34 @@ class MetaFiveService {
     {
         return Http::acceptJson()->get($this->baseURL . "/deal_history/{$meta_login}&{$start_date}&{$end_date}")->json();
     }
+
+    public function updateLeverage($meta_login, $leverage)
+    {
+        $upatedResponse = Http::acceptJson()->patch($this->baseURL . "/update_leverage", [
+            'login' => $meta_login,
+            'leverage' => $leverage,
+        ]);
+        $upatedResponse = $upatedResponse->json();
+
+        Log::debug($upatedResponse);
+
+        return $upatedResponse;
+    }
+
+    public function changePassword($meta_login, $type, $password)
+    {
+        $passwordResponse = Http::acceptJson()->patch($this->baseURL . "/change_password", [
+            'login' => $meta_login,
+            'type' => $type,
+            'password' => $password,
+        ]);
+        $passwordResponse = $passwordResponse->json();
+
+        Log::debug($passwordResponse);
+
+        return $passwordResponse;
+    }
+
 }
 
 class dealAction

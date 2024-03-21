@@ -2,32 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AddTradingAccountRequest;
-use App\Http\Requests\DepositBalanceRequest;
-use App\Http\Requests\InternalTransferBalanceRequest;
-use App\Http\Requests\MasterConfigurationRequest;
-use App\Http\Requests\WithdrawBalanceRequest;
-use App\Models\AccountType;
+use App\Models\User;
+use Inertia\Inertia;
 use App\Models\Master;
-use App\Models\MasterRequest;
-use App\Models\Subscription;
-use App\Models\TradingAccount;
+use App\Models\Wallet;
+use App\Services\dealType;
+use App\Models\AccountType;
 use App\Models\TradingUser;
 use App\Models\Transaction;
-use App\Models\User;
-use App\Models\Wallet;
-use App\Notifications\AddTradingAccountNotification;
+use App\Models\Subscription;
 use App\Services\dealAction;
-use App\Services\dealType;
-use App\Services\MetaFiveService;
-use App\Services\RunningNumberService;
-use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
+use App\Models\MasterRequest;
+use App\Models\TradingAccount;
 use Illuminate\Support\Carbon;
+use App\Services\MetaFiveService;
 use Illuminate\Support\Facades\Auth;
+use App\Services\SelectOptionService;
+use App\Services\RunningNumberService;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\DepositBalanceRequest;
 use Illuminate\Support\Facades\Notification;
+use App\Http\Requests\WithdrawBalanceRequest;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
+use App\Http\Requests\AddTradingAccountRequest;
+use App\Http\Requests\MasterConfigurationRequest;
+use App\Notifications\AddTradingAccountNotification;
+use App\Http\Requests\InternalTransferBalanceRequest;
+use App\Notifications\ChangeTradingAccountPassowrdNotification;
 
 class AccountInfoController extends Controller
 {
@@ -464,5 +466,95 @@ class AccountInfoController extends Controller
             'comment' => $comment,
             'new_wallet_amount' => $newWalletAmount,
         ]);
+    }
+
+    public function updateLeverage(Request $request)
+    {
+        $meta_login = $request->meta_login;
+        $leverage = $request->leverage;
+        $metaService = new MetaFiveService();
+        $connection = $metaService->getConnectionStatus();
+
+        if ($connection != 0) {
+            return redirect()->back()
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
+        }
+
+        $metaService->updateLeverage($meta_login, $leverage);
+
+        return redirect()->back()
+            ->with('title', trans('public.success_edit_leverage'))
+            ->with('success', trans('public.successfully_edit_leverage'));
+    }
+
+    public function changePassword(Request $request)
+    {
+        // Define validation rules
+        $rules = [
+            'meta_login' => ['required'],
+            'master_password' => ['required_without:investor_password'],
+            'confirm_master_password' => ['required_with:master_password', 'same:master_password'],
+            'investor_password' => ['required_without:master_password'],
+            'confirm_investor_password' => ['required_with:investor_password', 'same:investor_password'],
+        ];
+
+        // Define attribute names
+        $attributes = [
+            'meta_login' => trans('public.meta_login'),
+            'master_password' => trans('public.master_password'),
+            'confirm_master_password' => trans('public.confirm_master_password'),
+            'investor_password' => trans('public.investor_password'),
+            'confirm_investor_password' => trans('public.confirm_investor_password'),
+        ];
+
+        // Create validator instance with the rules and attribute names
+        $validator = Validator::make($request->all(), $rules);
+
+        // Set attribute names for validation messages
+        $validator->setAttributeNames($attributes);
+
+        // Redirect back if validation fails
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        } else {
+
+            $user = Auth::user();
+            $meta_login = $request->meta_login;
+            $master_password = $request->master_password;
+            $investor_password = $request->investor_password;
+            $metaService = new MetaFiveService();
+            $connection = $metaService->getConnectionStatus();
+            //  dd([
+            //     'meta_login' => $meta_login,
+            //     'master_password' => $master_password,
+            //     'investor_password' => $investor_password,
+            // ]);
+    
+            // If there is a connection issue
+            if ($connection != 0) {
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+        
+            // If master password is provided
+            if ($master_password) {
+                $metaService->changePassword($meta_login, 'main', $master_password);
+            }
+        
+            // If investor password is provided
+            if ($investor_password) {
+                $metaService->changePassword($meta_login, 'investor', $investor_password);
+            }
+
+            Notification::route('mail', $user->email)
+                ->notify(new ChangeTradingAccountPassowrdNotification($user, $meta_login, $master_password, $investor_password));
+
+        }
+    
+        return redirect()->back()
+            ->with('title', trans('public.success_change_password'))
+            ->with('success', trans('public.successfully_change_password'));
     }
 }

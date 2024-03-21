@@ -9,6 +9,8 @@ import DepositBalance from "@/Pages/AccountInfo/TradingAccount/DepositBalance.vu
 import WithdrawBalance from "@/Pages/AccountInfo/TradingAccount/WithdrawBalance.vue";
 import InternalTransferBalance from "@/Pages/AccountInfo/TradingAccount/InternalTransferBalance.vue";
 import BecomeMaster from "@/Pages/AccountInfo/TradingAccount/BecomeMaster.vue";
+import EditLeverage from "@/Pages/AccountInfo/TradingAccount/EditLeverage.vue";
+import ChangePassword from "@/Pages/AccountInfo/TradingAccount/ChangePassword.vue";
 
 const props = defineProps({
     account: Object,
@@ -39,6 +41,15 @@ const openAccountActionModal = (action) => {
         actionType.value = 'become_master';
         modalComponent.value = 'Become Master';
     }
+    else if (action === 'edit_leverage') {
+        actionType.value = 'edit_leverage';
+        modalComponent.value = 'Edit Leverage';
+    }
+    else if (action === 'change_password') {
+        actionType.value = 'change_password';
+        modalComponent.value = 'Change Password';
+    }
+
 }
 
 const closeModal = () => {
@@ -116,6 +127,26 @@ const closeModal = () => {
                     </div>
                 </div>
             </DropdownLink>
+            <DropdownLink
+                @click="openAccountActionModal('edit_leverage')"
+            >
+                <div class="flex items-center gap-2">
+                    <UserSquareIcon class="w-5 h-5" />
+                    <div>
+                        {{ $t('public.edit_leverage') }}
+                    </div>
+                </div>
+            </DropdownLink>
+            <DropdownLink
+                @click="openAccountActionModal('change_password')"
+            >
+                <div class="flex items-center gap-2">
+                    <UserSquareIcon class="w-5 h-5" />
+                    <div>
+                        {{ $t('public.change_password') }}
+                    </div>
+                </div>
+            </DropdownLink>
         </template>
     </Dropdown>
 
@@ -149,6 +180,22 @@ const closeModal = () => {
                 @update:accountActionModal="accountActionModal = $event"
             />
         </template>
+
+        <template v-if="modalComponent === 'Edit Leverage'">
+            <EditLeverage
+                :account="account"
+                @update:accountActionModal="accountActionModal = $event"
+            />
+        </template>
+
+        <template v-if="modalComponent === 'Change Password'">
+            <ChangePassword
+                :account="account"
+                @update:accountActionModal="accountActionModal = $event"
+            />
+        </template>
+
+
     </Modal>
 
 </template>

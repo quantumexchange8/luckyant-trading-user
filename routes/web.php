@@ -97,6 +97,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/internalTransferTradingAccount', [AccountInfoController::class, 'internalTransferTradingAccount'])->name('account_info.internalTransferTradingAccount');
         Route::post('/becomeMaster', [AccountInfoController::class, 'becomeMaster'])->name('account_info.becomeMaster');
         Route::post('/updateMasterConfiguration', [AccountInfoController::class, 'updateMasterConfiguration'])->name('account_info.updateMasterConfiguration');
+        Route::post('/updateLeverage', [AccountInfoController::class, 'updateLeverage'])->name('account_info.updateLeverage');
+        Route::post('/changePassword', [AccountInfoController::class, 'changePassword'])->name('account_info.changePassword');
 
 //        Route::post('change-leverage', [AccountInfoController::class, 'change_leverage'])->name('account_info.change_leverage');
 //

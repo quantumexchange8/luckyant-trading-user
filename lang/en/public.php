@@ -319,6 +319,8 @@ return [
     'total_balance' => "Total Balance",
     'equity' => "Equity",
     'cash_wallet' => "Cash Wallet",
+    'bonus_wallet' => 'Bonus Wallet',
+    'e_wallet' => 'E-Wallet',
     'join_date' => "Join Date",
     'join_day' => "Join Days",
     'profile_update_confirmation' => "Profile Update Confirmation",
@@ -333,4 +335,9 @@ return [
     'confirm_master_password' => "Confirm Master Password",
     'investor_password' => "Investor Password",
     'confirm_investor_password' => "Confirm Investor Password",
+    'from' => "From",
+    'to' => "To",
+    'payment_charges' => "Payment Charges",
+    'transaction_amount' => "Transaction Amount",
+    'wallet_adjustment' => "Wallet Adjustment",
 ];

@@ -63,7 +63,7 @@ watchEffect(() => {
             { 'border-purple-500 dark:border-purple-400': wallet.type === 'bonus_wallet' },
         ]"
     >
-        <div class="text-lg text-gray-600 dark:text-gray-400 font-bold">{{ wallet.name }} ({{wallet.wallet_address }})</div>
+        <div class="text-lg text-gray-600 dark:text-gray-400 font-bold">{{ $t('public.' + wallet.type) }} ({{wallet.wallet_address }})</div>
         <div class="text-2xl">
             $ {{ formatAmount(wallet.balance) }}
         </div>

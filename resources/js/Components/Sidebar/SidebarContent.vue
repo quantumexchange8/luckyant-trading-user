@@ -69,15 +69,21 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
             </template>
 
             <SidebarCollapsibleItem
-                :href="route('transaction.wallet')"
-                :title="$t('public.sidebar.wallet')"
-                :active="route().current('transaction.wallet')"
+                :href="route('transaction.transaction_listing')"
+                :title="$t('public.transaction_history')"
+                :active="route().current('transaction.transaction_listing')"
             />
-            <SidebarCollapsibleItem
-                :href="route('transaction.trading_account')"
-                :title="$t('public.sidebar.trading_account')"
-                :active="route().current('transaction.trading_account')"
-            />
+
+<!--            <SidebarCollapsibleItem-->
+<!--                :href="route('transaction.wallet')"-->
+<!--                :title="$t('public.sidebar.wallet')"-->
+<!--                :active="route().current('transaction.wallet')"-->
+<!--            />-->
+<!--            <SidebarCollapsibleItem-->
+<!--                :href="route('transaction.trading_account')"-->
+<!--                :title="$t('public.sidebar.trading_account')"-->
+<!--                :active="route().current('transaction.trading_account')"-->
+<!--            />-->
         </SidebarCollapsible>
 
         <SidebarCollapsible

@@ -61,4 +61,9 @@ class Transaction extends Model implements HasMedia
     {
         return $this->belongsTo(TradingAccount::class, 'to_meta_login', 'meta_login');
     }
+
+    public function payment_account(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(PaymentAccount::class, 'payment_account_id', 'id');
+    }
 }

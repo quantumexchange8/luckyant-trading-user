@@ -132,7 +132,7 @@ Route::middleware('auth')->group(function () {
      */
     Route::prefix('transaction')->group(function () {
         Route::get('/transaction_listing', [TransactionController::class, 'index'])->name('transaction.transaction_listing');
-        Route::get('/getTransactionData/{category}', [TransactionController::class, 'getTransactionData'])->name('transaction.getTransactionData');
+        Route::get('/getTransactionData', [TransactionController::class, 'getTransactionData'])->name('transaction.getTransactionData');
 
 
          /**

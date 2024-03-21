@@ -46,11 +46,11 @@ const toggleMasterPasswordVisibilityConfirm = () => {
 }
 
 const toggleInvestorPasswordVisibility = () => {
-    showPassword2.value = !showPassword2.value;
+    showPassword3.value = !showPassword3.value;
 }
 
 const toggleInvestorPasswordVisibilityConfirm = () => {
-    showPassword2.value = !showPassword2.value;
+    showPassword4.value = !showPassword4.value;
 }
 
 </script>

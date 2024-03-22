@@ -315,9 +315,9 @@ class WalletController extends Controller
             'status' => $data['status'],
             'sCode' => $data['sCode'],
             'transactionHash' => $data['transactionHash'] ?? null,
-            'sourceAddress' => $data['sourceAddress'],
+            'sourceAddress' => $data['sourceAddress'] ?? null,
             'blockTime' => $data['blockTime'] ?? null,
-            'paidTime' => $data['paidTime'],
+            'paidTime' => $data['paidTime'] ?? null,
             'receivedAmount' => $data['receivedAmount'],
         ];
 
@@ -350,7 +350,8 @@ class WalletController extends Controller
                         'amount' => $result['receivedAmount'] / 100,
                         'transaction_amount' => $result['receivedAmount'] / 100,
                         'txn_hash' => $result['transactionHash'],
-                        'status' => 'Success'
+                        'status' => 'Success',
+                        'new_wallet_amount' => $wallet->balance + $result['receivedAmount'] / 100
                     ]);
 
                     $walletTotalBalance = $wallet->balance + $transaction->transaction_amount;
@@ -361,7 +362,7 @@ class WalletController extends Controller
                 } else {
                     $transaction->update([
                         'txn_hash' => $result['transactionHash'],
-                        'status' => 'Reject'
+                        'status' => 'Rejected'
                     ]);
                 }
             }

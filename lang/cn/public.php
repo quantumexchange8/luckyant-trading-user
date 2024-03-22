@@ -1,7 +1,7 @@
 <?php
 return [
     'email' => "邮箱",
-    'username' => "用户名",
+    'username' => "昵称",
     'password' => "密码",
     'remember' => "记住我",
     'forgot_password' => "忘记密码",

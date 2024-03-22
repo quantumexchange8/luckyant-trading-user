@@ -74,14 +74,14 @@ watchEffect(() => {
             class="border-2 border-primary-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-primary-300"
         >
             <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_equity') }}</legend>
-            <p class="text-xl font-medium sm:text-3xl">{{ totalEquity ? '$ ' + formatAmount(totalEquity) : 'Loading..' }}</p>
+            <p class="text-xl font-medium sm:text-3xl">{{ totalEquity ? '$ ' + formatAmount(totalEquity) : $t('public.is_loading') }}</p>
         </fieldset>
 
         <fieldset
             class="border-2 border-purple-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-purple-300"
         >
             <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_balance') }}</legend>
-            <p class="text-xl font-medium sm:text-3xl">{{ totalBalance ? '$ ' + formatAmount(totalBalance) : 'Loading..' }}</p>
+            <p class="text-xl font-medium sm:text-3xl">{{ totalBalance ? '$ ' + formatAmount(totalBalance) : $t('public.is_loading') }}</p>
         </fieldset>
 
     </div>

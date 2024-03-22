@@ -98,7 +98,7 @@ class ProfileController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'dial_code' => $dial_code,
+            'dial_code' => $request->dial_code,
             'phone' => $phone_number,
             'country' => $request->country,
             'nationality' => $request->nationality,

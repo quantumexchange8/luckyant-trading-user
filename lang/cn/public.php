@@ -1,6 +1,7 @@
 <?php
 return [
     'email' => "邮箱",
+    'username' => "用户名",
     'password' => "密码",
     'remember' => "记住我",
     'forgot_password' => "忘记密码",
@@ -207,7 +208,9 @@ return [
     'master_detail' => "主账户信息",
     'meta_login' => "Meta 登录",
     'terms_and_conditions' => "条款和条件",
-    'month' => "月份",
+    'year' => "年",
+    'month' => "月",
+    'day' => "日",
     'trade' => "交易",
     'server_under_maintenance' => "服务器维护中",
     'created_trading_account' => "成功创建交易账户",

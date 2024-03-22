@@ -7,7 +7,7 @@ import Input from '@/Components/Input.vue'
 import Label from '@/Components/Label.vue'
 import ValidationErrors from '@/Components/ValidationErrors.vue'
 import Button from '@/Components/Button.vue'
-import {ref, watch} from "vue";
+import {ref, watch, computed, watchEffect} from "vue";
 import RegisterCaption from "@/Components/Auth/RegisterCaption.vue";
 import ReferralPic from "@/Components/Auth/ReferralPic.vue";
 import InputError from "@/Components/InputError.vue";
@@ -26,8 +26,6 @@ const props = defineProps({
 const formStep = ref(1);
 const showPassword = ref(false);
 const showPassword2 = ref(false);
-const selectedCountry = ref(132);
-const selectedNationality = ref('Malaysian');
 const isButtonDisabled = ref(false)
 const buttonText = ref('Send OTP')
 const formatter = ref({
@@ -49,12 +47,15 @@ const form = useForm({
     name: '',
     chinese_name: '',
     email: '',
-    dial_code: '+60',
+    username: '',
+    dial_code: '',
     phone: '',
     password: '',
     password_confirmation: '',
-    dob: '',
-    country: 132,
+    dob_year: '',
+    dob_month: '',
+    dob_day: '',
+    country: '',
     front_identity: null,
     back_identity: null,
     // verification_via: 'email',
@@ -65,7 +66,7 @@ const form = useForm({
     responsible: false,
     compensate: false,
     all: false,
-    nationality: 'Malaysian',
+    nationality: '',
 });
 
 watch(() => [form.terms, form.market, form.responsible, form.compensate], (newValues) => {
@@ -79,14 +80,14 @@ watch(() => form.all, (newValue) => {
     form.compensate = newValue;
 });
 
-watch(selectedCountry, (newCountry) => {
+watch(() => form.country, (newCountry) => {
     const foundNationality = props.nationality.find(nationality => nationality.id === newCountry);
     if (foundNationality) {
-        selectedNationality.value = foundNationality.value;
+        form.nationality = foundNationality.value;
     } else {
-        selectedNationality.value = null; // Reset if not found
+        form.nationality = null; // Reset if not found
     }
-})
+});
 
 const handleFrontIdentity = (event) => {
     form.front_identity = event.target.files[0];
@@ -97,8 +98,8 @@ const handleBackIdentity = (event) => {
 };
 
 const submit = () => {
-    form.country = selectedCountry.value;
-    form.nationality = selectedNationality.value;
+    form.country = form.country;
+    form.nationality = form.nationality;
 
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
@@ -270,6 +271,22 @@ const passwordValidation = () => {
 
                     <div class="space-y-1.5">
                         <Label
+                            for="username"
+                            :value="$t('public.username')"
+                        />
+                        <Input
+                            id="username"
+                            type="username"
+                            class="block w-full"
+                            :placeholder="$t('public.username')"
+                            v-model="form.username"
+                            :invalid="form.errors.username"
+                        />
+                        <InputError :message="form.errors.username" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <Label
                             for="phone"
                             :value="$t('public.mobile_phone')"
                         />
@@ -278,6 +295,7 @@ const passwordValidation = () => {
                                 class="w-[180px]"
                                 :options="CountryLists"
                                 v-model="form.dial_code"
+                                :placeholder="$t('public.placeholder')"
                                 with-img
                                 is-phone-code
                                 :error="!!form.errors.phone"
@@ -406,20 +424,51 @@ const passwordValidation = () => {
                         <InputError :message="form.errors.chinese_name" />
                     </div>
 
-                    <div class="space-y-1.5">
-                        <Label
-                            for="dob"
-                            :value="$t('public.date_of_birth')"
-                        />
-                        <vue-tailwind-datepicker
-                            :placeholder="$t('public.date_of_birth_placeholder')"
-                            :formatter="formatter"
-                            separator=" - "
-                            v-model="form.dob"
-                            as-single
-                            :input-classes="`py-3 w-full rounded-lg text-sm placeholder:text-base dark:placeholder:text-gray-400 bg-white dark:bg-gray-700 dark:text-white border ${form.errors.dob ? 'border-error-500 dark:border-error-500' : 'border-gray-300 dark:border-dark-eval-2 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500'}`"
-                        />
-                        <InputError :message="form.errors.dob" />
+                    <div class="space-x-2 flex">
+                        <!-- Year Input -->
+                        <div class="space-y-1.5">
+                            <Label for="dob_year">{{ $t('public.year') }}</Label>
+                            <Input
+                                id="dob_year"
+                                type="number"
+                                class="block w-full"
+                                :placeholder="$t('public.year')"
+                                v-model="form.dob_year"
+                                autocomplete="dob_year"
+                                :invalid="form.errors.dob_year"
+                            />
+                            <InputError :message="form.errors.dob_year" />
+                        </div>
+
+                        <!-- Month Input -->
+                        <div class="space-y-1.5">
+                            <Label for="dob_month">{{ $t('public.month') }}</Label>
+                            <Input
+                                id="dob_month"
+                                type="number"
+                                class="block w-full"
+                                :placeholder="$t('public.month')"
+                                v-model="form.dob_month"
+                                autocomplete="dob_month"
+                                :invalid="form.errors.dob_month"
+                            />
+                            <InputError :message="form.errors.dob_month" />
+                        </div>
+
+                        <!-- Day Input -->
+                        <div class="space-y-1.5">
+                            <Label for="dob_day">{{ $t('public.day') }}</Label>
+                            <Input
+                                id="dob_day"
+                                type="number"
+                                class="block w-full"
+                                :placeholder="$t('public.day')"
+                                v-model="form.dob_day"
+                                autocomplete="dob_day"
+                                :invalid="form.errors.dob_day"
+                            />
+                            <InputError :message="form.errors.dob_day" />
+                        </div>
                     </div>
 
                     <div class="space-y-1.5">
@@ -429,7 +478,8 @@ const passwordValidation = () => {
                         />
                         <BaseListbox
                             :options="countries"
-                            v-model="selectedCountry"
+                            v-model="form.country"
+                            :placeholder="$t('public.placeholder')"
                         />
                         <InputError :message="form.errors.country" />
                     </div>
@@ -441,7 +491,8 @@ const passwordValidation = () => {
                         />
                         <BaseListbox
                             :options="nationality"
-                            v-model="selectedNationality"
+                            v-model="form.nationality"
+                            :placeholder="$t('public.placeholder')"
                         />
                         <InputError :message="form.errors.nationality" />
                     </div>

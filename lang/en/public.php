@@ -1,6 +1,7 @@
 <?php
 return [
     'email' => "Email",
+    'username' => "Username",
     'password' => "Password",
     'remember' => "Remember me",
     'forgot_password' => "Forgot Password",
@@ -207,7 +208,9 @@ return [
     'master_detail' => "Master Detail",
     'meta_login' => "Meta Login",
     'terms_and_conditions' => "Terms & Conditions",
+    'year' => "Year",
     'month' => "Month",
+    'day' => "Day",
     'trade' => "Trade",
     'server_under_maintenance' => "Server under maintenance",
     'created_trading_account' => "Successfully Created Trading Account",

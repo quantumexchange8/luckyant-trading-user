@@ -61,25 +61,27 @@ class RegisteredUserController extends Controller
     {
         $rules = [
             'email' => 'required|string|email|max:255|unique:' . User::class,
+            'username' => 'required|string|max:255|unique:' . User::class,
             'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:8|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
-
+    
         $attributes = [
             'email' => trans('public.email'),
+            'username' => trans('public.username'),
             'phone' => trans('public.mobile_phone'),
             'password' => trans('public.password'),
         ];
         
         $dial_code = $request->dial_code;
         $phone = $request->phone;
-
+    
         // Remove leading '+' from dial code if present
         $dial_code = ltrim($dial_code, '+');
-
+    
         // Remove leading '+' from phone number if present
         $phone = ltrim($phone, '+');
-
+    
         // Check if phone number already starts with dial code
         if (!str_starts_with($phone, $dial_code)) {
             // Concatenate dial code and phone number
@@ -88,42 +90,55 @@ class RegisteredUserController extends Controller
             // If phone number already starts with dial code, use the phone number directly
             $phone = '+' . $phone;
         }
-
+    
         // Merge the modified phone number back into the request
         $request->merge(['phone' => $phone]);
         
         $validator = Validator::make($request->all(), $rules);
         $validator->setAttributeNames($attributes);
-
+    
         if ($request->form_step == 1) {
             $validator->validate();
         } elseif ($request->form_step == 2) {
+            // Validation rules for step 2
             $additionalRules = [
                 'name' => 'required|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u|max:255',
                 'chinese_name' => 'nullable|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u',
-                'dob' => 'required',
+                'dob_year' => 'required|numeric|digits:4|min:1900',
+                'dob_month' => 'required|numeric|digits:2|min:1|max:12',
+                'dob_day' => 'required|numeric|digits:2|min:1|max:31',
                 'country' => 'required',
                 'nationality' => 'required',
             ];
+    
+            // Merge additional rules with existing rules
             $rules = array_merge($rules, $additionalRules);
-
+    
+            // Set additional attributes
             $additionalAttributes = [
                 'name'=> trans('public.name'),
                 'chinese_name' => trans('public.chinese_name'),
-                'dob' => trans('public.date_of_birth'),
+                'dob_year' => trans('public.year'),
+                'dob_month' => trans('public.month'),
+                'dob_day' => trans('public.day'),
                 'country' => trans('public.country'),
                 'nationality' => trans('public.nationality'),
             ];
+    
+            // Merge additional attributes with existing attributes
             $attributes = array_merge($attributes, $additionalAttributes);
-
+    
+            // Create a new validator with updated rules and attributes
             $validator = Validator::make($request->all(), $rules);
             $validator->setAttributeNames($attributes);
+    
+            // Validate the request
             $validator->validate();
         }
-
+    
         return to_route('register');
     }
-
+    
     /**
      * Handle an incoming registration request.
      *
@@ -163,15 +178,18 @@ class RegisteredUserController extends Controller
             $phone = '+' . $phone;
         }
 
+        $dob = $request->dob_year . '-' . $request->dob_month . '-' . $request->dob_day;
+
         $userData = [
             'name' => $request->name,
             'chinese_name' => $request->chinese_name,
             'email' => $request->email,
+            'username' => $request->username,
             'country' => $request->country,
             'nationality' => $request->nationality,
             'dial_code' => $request->dial_code,
             'phone' => $phone,
-            'dob' => $request->dob,
+            'dob' => $dob,
             'password' => Hash::make($request->password),
             'role' => 'member',
             'top_leader_id' => null,

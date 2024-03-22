@@ -7,6 +7,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Country;
 use App\Models\PaymentAccount;
 use App\Models\User;
+use App\Services\SelectOptionService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,38 +24,16 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        $formattedNationalities = Country::all()->map(function ($country) {
-            return [
-                'id' => $country->id,
-                'value' => $country->nationality,
-                'label' => $country->nationality,
-            ];
-        });
-
-        $formattedCountries = Country::all()->map(function ($country) {
-            return [
-                'value' => $country->id,
-                'label' => $country->name,
-            ];
-        });
-
-        $formattedCurrencies = Country::whereIn('id', [132, 233])->get()->map(function ($country) {
-            return [
-                'value' => $country->currency,
-                'label' => $country->currency_name . ' (' . $country->currency . ')',
-            ];
-        });
-
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
-            'nationalities' => $formattedNationalities,
+            'nationalities' => (new SelectOptionService())->getNationalities(),
             'frontIdentityImg' => Auth::user()->getFirstMediaUrl('front_identity'),
             'backIdentityImg' => Auth::user()->getFirstMediaUrl('back_identity'),
             'profileImg' => Auth::user()->getFirstMediaUrl('profile_photo'),
             'paymentAccounts' => PaymentAccount::where('user_id', Auth::id())->latest()->get(),
-            'countries' => $formattedCountries,
-            'currencies' => $formattedCurrencies,
+            'countries' => (new SelectOptionService())->getCountries(),
+            'currencies' => (new SelectOptionService())->getCurrencies(),
         ]);
     }
 

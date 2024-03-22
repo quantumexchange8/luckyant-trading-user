@@ -114,6 +114,14 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                         {{ formatDateTime(subscriberAccount.subscription.next_pay_date, false) }}
                     </div>
                 </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ $t('public.max_drawdown') }}
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ subscriberAccount.master.max_drawdown }}
+                    </div>
+                </div>
                 <div class="flex flex-col gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                         {{$t('public.progress')}}

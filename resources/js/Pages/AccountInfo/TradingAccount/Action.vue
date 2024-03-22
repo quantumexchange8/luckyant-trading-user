@@ -1,6 +1,6 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CreditCardAddIcon, CreditCardDownIcon, SwitchHorizontalRightIcon, UserUp01Icon, UserSquareIcon} from "@/Components/Icons/outline.jsx";
+import {CreditCardAddIcon, CreditCardDownIcon, SwitchHorizontalRightIcon, UserUp01Icon, UserSquareIcon, PasscodeLockIcon, Edit05Icon} from "@/Components/Icons/outline.jsx";
 import {ref} from "vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -132,7 +132,7 @@ const closeModal = () => {
                 @click="openAccountActionModal('edit_leverage')"
             >
                 <div class="flex items-center gap-2">
-                    <UserSquareIcon class="w-5 h-5" />
+                    <Edit05Icon class="w-5 h-5" />
                     <div>
                         {{ $t('public.edit_leverage') }}
                     </div>
@@ -142,7 +142,7 @@ const closeModal = () => {
                 @click="openAccountActionModal('change_password')"
             >
                 <div class="flex items-center gap-2">
-                    <UserSquareIcon class="w-5 h-5" />
+                    <PasscodeLockIcon class="w-5 h-5" />
                     <div>
                         {{ $t('public.change_password') }}
                     </div>

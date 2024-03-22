@@ -13,6 +13,7 @@ use App\Notifications\NewUserWelcomeNotification;
 use App\Notifications\OtpNotification;
 use App\Providers\RouteServiceProvider;
 use App\Services\RunningNumberService;
+use App\Services\SelectOptionService;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -34,25 +35,9 @@ class RegisteredUserController extends Controller
      */
     public function create($referral = null): Response
     {
-        $countries = Country::all();
-        $formattedCountries = $countries->map(function ($country) {
-            return [
-                'value' => $country->id,
-                'label' => $country->name,
-            ];
-        });
-
-        $formattedNationalities = $countries->map(function ($country) {
-            return [
-                'id' => $country->id,
-                'value' => $country->nationality,
-                'label' => $country->nationality,
-            ];
-        });
-
         return Inertia::render('Auth/Register', [
-            'countries' => $formattedCountries,
-            'nationality' => $formattedNationalities,
+            'countries' => (new SelectOptionService())->getCountries(),
+            'nationality' => (new SelectOptionService())->getNationalities(),
             'referral_code' => $referral,
         ]);
     }
@@ -65,23 +50,23 @@ class RegisteredUserController extends Controller
             'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:8|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
-    
+
         $attributes = [
             'email' => trans('public.email'),
             'username' => trans('public.username'),
             'phone' => trans('public.mobile_phone'),
             'password' => trans('public.password'),
         ];
-        
+
         $dial_code = $request->dial_code;
         $phone = $request->phone;
-    
+
         // Remove leading '+' from dial code if present
         $dial_code = ltrim($dial_code, '+');
-    
+
         // Remove leading '+' from phone number if present
         $phone = ltrim($phone, '+');
-    
+
         // Check if phone number already starts with dial code
         if (!str_starts_with($phone, $dial_code)) {
             // Concatenate dial code and phone number
@@ -90,13 +75,13 @@ class RegisteredUserController extends Controller
             // If phone number already starts with dial code, use the phone number directly
             $phone = '+' . $phone;
         }
-    
+
         // Merge the modified phone number back into the request
         $request->merge(['phone' => $phone]);
-        
+
         $validator = Validator::make($request->all(), $rules);
         $validator->setAttributeNames($attributes);
-    
+
         if ($request->form_step == 1) {
             $validator->validate();
         } elseif ($request->form_step == 2) {
@@ -110,10 +95,10 @@ class RegisteredUserController extends Controller
                 'country' => 'required',
                 'nationality' => 'required',
             ];
-    
+
             // Merge additional rules with existing rules
             $rules = array_merge($rules, $additionalRules);
-    
+
             // Set additional attributes
             $additionalAttributes = [
                 'name'=> trans('public.name'),
@@ -124,21 +109,21 @@ class RegisteredUserController extends Controller
                 'country' => trans('public.country'),
                 'nationality' => trans('public.nationality'),
             ];
-    
+
             // Merge additional attributes with existing attributes
             $attributes = array_merge($attributes, $additionalAttributes);
-    
+
             // Create a new validator with updated rules and attributes
             $validator = Validator::make($request->all(), $rules);
             $validator->setAttributeNames($attributes);
-    
+
             // Validate the request
             $validator->validate();
         }
-    
+
         return to_route('register');
     }
-    
+
     /**
      * Handle an incoming registration request.
      *

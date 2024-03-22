@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Country;
 use App\Models\Wallet;
 use App\Models\PaymentAccount;
 use App\Models\SettingLeverage;
@@ -15,8 +16,8 @@ class SelectOptionService
         return $wallets->get()->map(function ($wallet) {
             return [
                 'value' => $wallet->id,
-                'name' => $wallet->name,
-                'label' => $wallet->name . ' ($' . number_format($wallet->balance, 2) . ')',
+                'name' => trans('public.' . $wallet->type),
+                'label' => trans('public.' . $wallet->type) . ' ($' . number_format($wallet->balance, 2) . ')',
                 'balance' => $wallet->balance,
             ];
         });
@@ -29,7 +30,7 @@ class SelectOptionService
         return $wallets->get()->map(function ($wallet) {
             return [
                 'value' => $wallet->id,
-                'label' => $wallet->name . ' ($' . number_format($wallet->balance, 2) . ')',
+                'label' => trans('public.' . $wallet->type) . ' ($' . number_format($wallet->balance, 2) . ')',
                 'balance' => $wallet->balance,
             ];
         });
@@ -55,6 +56,41 @@ class SelectOptionService
             return [
                 'label' => $settingLeverage->display,
                 'value' => $settingLeverage->value,
+            ];
+        });
+    }
+
+    public function getCountries()
+    {
+        $locale = app()->getLocale();
+
+        return Country::all()->map(function ($country) use ($locale) {
+            $translations = json_decode($country->translations, true);
+
+            return [
+                'value' => $country->id,
+                'label' => $translations[$locale] ?? $country->name,
+            ];
+        });
+    }
+
+    public function getNationalities()
+    {
+        return Country::all()->map(function ($country) {
+            return [
+                'id' => $country->id,
+                'value' => $country->nationality,
+                'label' => $country->nationality,
+            ];
+        });
+    }
+
+    public function getCurrencies(): \Illuminate\Support\Collection
+    {
+        return Country::whereIn('id', [132, 233])->get()->map(function ($country) {
+            return [
+                'value' => $country->currency,
+                'label' => $country->currency_name . ' (' . $country->currency . ')',
             ];
         });
     }

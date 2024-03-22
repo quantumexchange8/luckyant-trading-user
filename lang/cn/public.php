@@ -343,4 +343,5 @@ return [
     'payment_charges' => "付款费用",
     'transaction_amount' => "交易金额",
     'wallet_adjustment' => "钱包调整",
+    'max_drawdown' => "最大缩减",
 ];

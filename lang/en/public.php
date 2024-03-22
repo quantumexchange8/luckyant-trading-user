@@ -343,4 +343,5 @@ return [
     'payment_charges' => "Payment Charges",
     'transaction_amount' => "Transaction Amount",
     'wallet_adjustment' => "Wallet Adjustment",
+    'max_drawdown' => "Max Drawdown",
 ];

@@ -128,7 +128,7 @@ watch(depositAmount, (newAmount) => {
             <div class="border-t boarder-gray-300 pt-5">
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ wallet.name }} (20%)
+                        {{ $t('public.'+ wallet.type) }} (20%)
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         $ {{ formatAmount(eWalletAmount ? eWalletAmount : 0) }}

@@ -16,6 +16,7 @@ import MasterAccount from "@/Pages/AccountInfo/MasterAccount/MasterAccount.vue";
 
 const props = defineProps({
     walletSel: Array,
+    leverageSel: Array,
     accountCounts: Number,
     masterAccountLogin: Array,
 })
@@ -43,18 +44,6 @@ const submit = () => {
 const closeModal = () => {
     addingTradingAccount.value = false
 }
-
-const leverages = [
-    // { label: '1:1', value: 1 },
-    // { label: '1:10', value: 10 },
-    // { label: '1:20', value: 20 },
-    // { label: '1:50', value: 50 },
-    // { label: '1:100', value: 100 },
-    // { label: '1:200', value: 200 },
-    // { label: '1:300', value: 300 },
-    // { label: '1:400', value: 400 },
-    { label: '1:500', value: 500 },
-]
 
 </script>
 
@@ -125,6 +114,7 @@ const leverages = [
                         >
                             <TradingAccount
                                 :walletSel="walletSel"
+                                :leverageSel="leverageSel"
                                 :accountCounts="accountCounts"
                                 :masterAccountLogin="masterAccountLogin"
                             />
@@ -163,7 +153,7 @@ const leverages = [
                         :value="$t('public.leverage')"
                     />
                     <BaseListbox
-                        :options="leverages"
+                        :options="leverageSel"
                         v-model="form.leverage"
                     />
                     <InputError :message="form.errors.leverage" />

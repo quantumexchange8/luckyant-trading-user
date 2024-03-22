@@ -37,6 +37,7 @@ class AccountInfoController extends Controller
     {
         return Inertia::render('AccountInfo/AccountInfo', [
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
+            'leverageSel' => (new SelectOptionService())->getActiveLeverageSelection(),
             'accountCounts' => Auth::user()->tradingAccounts->count(),
             'masterAccountLogin' => Master::where('user_id', Auth::id())->pluck('meta_login')->toArray()
         ]);

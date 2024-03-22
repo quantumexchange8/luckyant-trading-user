@@ -17,8 +17,10 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique(User::class)->ignore($this->user()->id)],
             'phone' => ['required', Rule::unique(User::class)->ignore($this->user()->id)],
+            'dob' => ['required', 'date', 'date_format:Y-m-d'],
             'gender' => ['required'],
             'nationality' => ['required'],
             'identification_number' => ['required'],
@@ -35,8 +37,10 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => trans('public.name'),
+            'username' => trans('public.username'),
             'email' => trans('public.email'),
             'phone' => trans('public.mobile_phone'),
+            'dob' => trans('public.date_of_birth'),
             'gender' => trans('public.gender'),
             'nationality' => trans('public.nationality'),
             'identification_number' => trans('public.identification_number'),

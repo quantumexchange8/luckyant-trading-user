@@ -11,6 +11,7 @@ import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     walletSel: Array,
+    leverageSel: Array,
     accountCounts: Number,
     masterAccountLogin: Array
 })
@@ -172,6 +173,7 @@ watchEffect(() => {
                     <Action
                         :account="account"
                         :walletSel="walletSel"
+                        :leverageSel="leverageSel"
                         :accountCounts="accountCounts"
                         :masterAccountLogin="masterAccountLogin"
                     />

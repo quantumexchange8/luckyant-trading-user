@@ -33,7 +33,7 @@ const paymentTypes = [
 
 const selected = ref(paymentTypes[0]);
 const cryptoWallet = ref('USDT (TRC20)');
-const country = ref('Malaysia');
+const country = ref(132);
 const currency = ref('MYR');
 
 const form = useForm({
@@ -41,7 +41,7 @@ const form = useForm({
     payment_account_name: '',
     payment_platform_name: '',
     account_no: '',
-    country: 'Malaysia',
+    country: 132,
     currency: 'MYR',
     bank_swift_code: '',
     bank_code: '',
@@ -58,9 +58,13 @@ watch((selected), (newSelect) => {
 });
 
 watch(country, (newValue) => {
-    if (newValue !== 'Malaysia') {
+    if (newValue !== 132) {
         currency.value = 'USD';
     }
+    else if (newValue == 132) {
+        currency.value = 'MYR';
+    }
+
 });
 
 const submit = () => {

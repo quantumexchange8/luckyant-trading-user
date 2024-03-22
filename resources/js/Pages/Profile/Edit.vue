@@ -98,6 +98,7 @@ onMounted(() => {
                                     :backIdentityImg="backIdentityImg"
                                     :profileImg="profileImg"
                                     :nationalities="nationalities"
+                                    :countries="countries"
                                 />
                             </div>
 

@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\PaymentAccount;
 use App\Models\Wallet;
+use App\Models\PaymentAccount;
+use App\Models\SettingLeverage;
 
 class SelectOptionService
 {
@@ -45,4 +46,17 @@ class SelectOptionService
             ];
         });
     }
+
+    public function getActiveLeverageSelection(): \Illuminate\Support\Collection
+    {
+        $settingLeverages = SettingLeverage::where('status', 'Active');
+
+        return $settingLeverages->get()->map(function ($settingLeverage) {
+            return [
+                'label' => $settingLeverage->display,
+                'value' => $settingLeverage->value,
+            ];
+        });
+    }
+
 }

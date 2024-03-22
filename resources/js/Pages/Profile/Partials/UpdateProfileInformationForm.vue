@@ -6,7 +6,7 @@ import Input from '@/Components/Input.vue'
 import BaseListbox from "@/Components/BaseListbox.vue";
 import { Link, useForm, usePage } from '@inertiajs/vue3'
 import CountryLists from "../../../../../public/data/countries.json";
-import {ref, watchEffect} from "vue";
+import {ref, watchEffect, watch} from "vue";
 import {XIcon} from '@heroicons/vue/outline'
 import Badge from "@/Components/Badge.vue";
 import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
@@ -20,6 +20,7 @@ const props = defineProps({
     backIdentityImg: String,
     profileImg: String,
     nationalities: Array,
+    countries: Array,
 })
 
 const user = usePage().props.auth.user
@@ -27,11 +28,14 @@ const kycApproval = ref(usePage().props.auth.user.kyc_approval)
 
 const form = useForm({
     name: user.name,
+    username: user.username,
     email: user.email,
     dial_code: user.dial_code,
     phone: user.phone,
+    dob: user.dob,
     gender: user.gender,
     address: user.address_1,
+    country: user.country,
     nationality: user.nationality,
     identification_number: user.identification_number,
     proof_front: null,
@@ -47,8 +51,20 @@ const submit = () => {
         onSuccess: () => {
             closeModal();
         },
+        onError: () => {
+            closeModal();
+        }
     })
 }
+
+watch(() => form.country, (newCountry) => {
+    const foundNationality = props.nationalities.find(nationality => nationality.id === newCountry);
+    if (foundNationality) {
+        form.nationality = foundNationality.value;
+    } else {
+        form.nationality = null; // Reset if not found
+    }
+});
 
 const selectedProofFrontFile = ref(null);
 const selectedProofFrontFileName = ref(null);
@@ -196,6 +212,20 @@ watchEffect(() => {
                     </div>
 
                     <div class="space-y-1.5">
+                        <Label for="username" :value="$t('public.username')" />
+
+                        <Input
+                            id="username"
+                            type="text"
+                            class="block w-full"
+                            v-model="form.username"
+                            autocomplete="username"
+                        />
+
+                        <InputError class="mt-2" :message="form.errors.username" />
+                    </div>
+
+                    <div class="space-y-1.5">
                         <Label for="email" :value="$t('public.email')" />
 
                         <Input
@@ -233,6 +263,20 @@ watchEffect(() => {
                             />
                         </div>
                         <InputError :message="form.errors.phone"/>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <Label for="dob" :value="$t('public.date_of_birth')" />
+
+                        <Input
+                            id="dob"
+                            type="text"
+                            class="block w-full"
+                            v-model="form.dob"
+                            autocomplete="dob"
+                        />
+
+                        <InputError class="mt-2" :message="form.errors.dob" />
                     </div>
 
                     <div class="space-y-1.5">
@@ -278,17 +322,19 @@ watchEffect(() => {
                         </RadioGroup>
                     </div>
 
-                    <div class="space-y-1.5 sm:col-span-2">
-                        <Label for="address" :value="$t('public.address')" />
-                        <Input
-                            id="address"
-                            type="text"
-                            class="block w-full"
-                            v-model="form.address"
-                            autocomplete="address"
-                            :invalid="form.errors.address"
+                    <div class="space-y-1.5">
+                        <Label
+                            for="country"
+                            :value="$t('public.country')"
                         />
-                        <InputError class="mt-2" :message="form.errors.address" />
+                        <BaseListbox
+                            v-model="form.country"
+                            :options="countries"
+                            :placeholder="$t('public.country')"
+                            class="w-full"
+                            :error="!!form.errors.country"
+                        />
+                        <InputError class="mt-2" :message="form.errors.country" />
                     </div>
 
                     <div class="space-y-1.5">
@@ -304,6 +350,19 @@ watchEffect(() => {
                             :error="!!form.errors.nationality"
                         />
                         <InputError class="mt-2" :message="form.errors.nationality" />
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <Label for="address" :value="$t('public.address')" />
+                        <Input
+                            id="address"
+                            type="text"
+                            class="block w-full"
+                            v-model="form.address"
+                            autocomplete="address"
+                            :invalid="form.errors.address"
+                        />
+                        <InputError class="mt-2" :message="form.errors.address" />
                     </div>
 
                     <div class="space-y-1.5">
@@ -422,7 +481,9 @@ watchEffect(() => {
     </section>
 
     <Modal :show="confirmModal" :title="$t('public.profile_update_confirmation')" max-width="md" @close="closeModal">
-        {{ $t('public.profile_update_alert') }}
+        <div class="dark:text-white">
+            {{ $t('public.profile_update_alert') }}
+        </div>
         <div class="pt-5 grid grid-cols-2 mt-5 gap-4 w-full">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
                 {{$t('public.cancel')}}

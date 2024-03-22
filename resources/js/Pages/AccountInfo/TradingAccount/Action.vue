@@ -15,6 +15,7 @@ import ChangePassword from "@/Pages/AccountInfo/TradingAccount/ChangePassword.vu
 const props = defineProps({
     account: Object,
     walletSel: Array,
+    leverageSel: Array,
     accountCounts: Number,
     masterAccountLogin: Array,
 })
@@ -184,6 +185,7 @@ const closeModal = () => {
         <template v-if="modalComponent === 'Edit Leverage'">
             <EditLeverage
                 :account="account"
+                :leverageSel="leverageSel"
                 @update:accountActionModal="accountActionModal = $event"
             />
         </template>

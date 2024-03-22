@@ -25,6 +25,7 @@ class ProfileController extends Controller
     {
         $formattedNationalities = Country::all()->map(function ($country) {
             return [
+                'id' => $country->id,
                 'value' => $country->nationality,
                 'label' => $country->nationality,
             ];
@@ -32,9 +33,8 @@ class ProfileController extends Controller
 
         $formattedCountries = Country::all()->map(function ($country) {
             return [
-                'value' => $country->name,
+                'value' => $country->id,
                 'label' => $country->name,
-                'currency' => $country->currency,
             ];
         });
 
@@ -96,10 +96,13 @@ class ProfileController extends Controller
 
         $user->update([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'dial_code' => $dial_code,
             'phone' => $phone_number,
+            'country' => $request->country,
             'nationality' => $request->nationality,
+            'dob' => $request->dob,
             'gender' => $request->gender,
             'address_1' => $request->address,
             'identification_number' => $request->identification_number,

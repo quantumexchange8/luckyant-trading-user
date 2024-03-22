@@ -23,7 +23,7 @@ const props = defineProps({
     referral_code: String
 })
 
-const formStep = ref(2);
+const formStep = ref(1);
 const showPassword = ref(false);
 const showPassword2 = ref(false);
 const isButtonDisabled = ref(false)

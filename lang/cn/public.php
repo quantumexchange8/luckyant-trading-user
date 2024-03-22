@@ -1,5 +1,7 @@
 <?php
 return [
+    'live_account_quota' => "实盘账户配额",
+    'live_account_quota_warning' => "您已达到实盘账户的最大数量",
     'email' => "邮箱",
     'username' => "昵称",
     'password' => "密码",

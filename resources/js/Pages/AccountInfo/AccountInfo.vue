@@ -19,6 +19,7 @@ const props = defineProps({
     leverageSel: Array,
     accountCounts: Number,
     masterAccountLogin: Array,
+    liveAccountQuota: Object,
 })
 const user = usePage().props.auth.user;
 const addingTradingAccount = ref(false)
@@ -62,6 +63,7 @@ const closeModal = () => {
                     class="flex justify-center items-center gap-2 sm:max-w-xs"
                     v-slot="{ iconSizeClasses }"
                     @click="addTradingAccount"
+                    v-if="props.accountCounts < props.liveAccountQuota.value"
                 >
                     <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
                     <span>{{ $t('public.add_real_account') }}</span>

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('setting_leverages', function (Blueprint $table) {
             $table->id();
             $table->string('display');
-            $table->string('value');
+            $table->integer('value');
             $table->string('status')->default('Active');
             $table->softDeletes();
             $table->timestamps();

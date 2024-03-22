@@ -6,6 +6,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Master;
 use App\Models\Wallet;
+use App\Models\Setting;
 use App\Services\dealType;
 use App\Models\AccountType;
 use App\Models\TradingUser;
@@ -39,13 +40,23 @@ class AccountInfoController extends Controller
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'leverageSel' => (new SelectOptionService())->getActiveLeverageSelection(),
             'accountCounts' => Auth::user()->tradingAccounts->count(),
-            'masterAccountLogin' => Master::where('user_id', Auth::id())->pluck('meta_login')->toArray()
+            'masterAccountLogin' => Master::where('user_id', Auth::id())->pluck('meta_login')->toArray(),
+            'liveAccountQuota' => Setting::where('slug', 'live_account_quota')->first(),
         ]);
     }
 
     public function add_trading_account(AddTradingAccountRequest $request)
     {
         $user = Auth::user();
+        
+        $liveAccountQuota = Setting::where('slug', 'live_account_quota')->first()->value;
+
+        if ($user->tradingAccounts->count() >= $liveAccountQuota) {
+            return redirect()->back()
+                ->with('title', trans('public.live_account_quota'))
+                ->with('warning', trans('public.live_account_quota_warning'));
+        }
+
         $group = AccountType::with('metaGroup')->where('id', 1)->get()->value('metaGroup.meta_group_name');
         $leverage = $request->leverage;
 

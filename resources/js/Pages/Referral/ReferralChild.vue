@@ -134,11 +134,8 @@ export default {
                             />
                             <div class="flex-col ml-3">
                                 <div class="flex whitespace-nowrap gap-2 text-sm font-semibold items-center">
-                                    <div class="whitespace-normal">{{ node.name }}</div>
+                                    <div class="whitespace-normal">{{ node.username }}</div>
                                     <span class="text-xs px-2 py-0.5 rounded-full text-primary-100 bg-primary-400 dark:bg-primary-600">{{$t('public.level')}} {{ node.level }}</span>
-                                </div>
-                                <div class="text-xs font-normal dark:text-gray-400">
-                                    {{ node.email }}
                                 </div>
                             </div>
                         </div>
@@ -173,7 +170,7 @@ export default {
         <Tree
             v-if="expanded && !isLoading"
             v-for="child in node.children"
-            :key="child.name"
+            :key="child.id"
             :node="child"
             :depth="depth + 1"
             @onClick="(node) => $emit('onClick', node)"
@@ -188,11 +185,8 @@ export default {
                     />
                     <div class="flex-col ml-3">
                         <div class="flex gap-2 text-sm font-semibold">
-                            {{ selectedAffiliate.name }}
-                            <span class="text-xs px-2 py-0.5 rounded-full text-primary-100 bg-primary-400 dark:bg-primary-600">{{$t('public.Level')}} {{ selectedAffiliate.level }}</span>
-                        </div>
-                        <div class="text-xs font-normal dark:text-gray-400">
-                            {{ selectedAffiliate.email }}
+                            {{ selectedAffiliate.username }}
+                            <span class="text-xs px-2 py-0.5 rounded-full text-primary-100 bg-primary-400 dark:bg-primary-600">{{$t('public.level')}} {{ selectedAffiliate.level }}</span>
                         </div>
                     </div>
                 </div>

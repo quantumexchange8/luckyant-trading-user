@@ -79,7 +79,7 @@ const closeTermsModal = () => {
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div>
                     <div v-if="currentLocale === 'en'" class="text-xl">
-                        {{ masterAccount.trading_user.name }}
+                        {{ masterAccount.user.username }}
                     </div>
                     <div v-if="currentLocale === 'cn'" class="text-xl">
                         {{ masterAccount.trading_user.company ? masterAccount.trading_user.company : masterAccount.trading_user.name }}

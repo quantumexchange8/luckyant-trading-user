@@ -49,6 +49,7 @@ class ReferralController extends Controller
         $rootNode = [
             'id' => $user->id,
             'name' => $user->name,
+            'username' => $user->username,
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level,

@@ -145,10 +145,7 @@ getTotalTransactions();
                                         />
                                         <div>
                                             <div class="text-lg font-semibold text-gray-600 dark:text-gray-400">
-                                                {{ user.name }}
-                                            </div>
-                                            <div class="text-sm text-gray-600 dark:text-gray-400">
-                                                {{ user.email }}
+                                                {{ user.username }}
                                             </div>
                                         </div>
                                     </div>

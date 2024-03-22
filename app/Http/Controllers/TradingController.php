@@ -31,7 +31,7 @@ class TradingController extends Controller
 
     public function getMasterAccounts(Request $request)
     {
-        $masterAccounts = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,company'])
+        $masterAccounts = Master::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,company'])
             ->where('status', 'Active')
             ->where('signal_status', 1)
             ->whereNot('user_id', \Auth::id())
@@ -42,6 +42,7 @@ class TradingController extends Controller
                 })
                     ->orWhereHas('user', function ($q2) use ($search) {
                         $q2->where('name', 'like', $search)
+                            ->orWhere('username', 'like', $search)
                             ->orWhere('email', 'like', $search);
                     });
             })
@@ -180,7 +181,7 @@ class TradingController extends Controller
 
     public function getSubscriptions(Request $request)
     {
-        $masterAccounts = Subscriber::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'master.tradingUser','subscription'])
+        $masterAccounts = Subscriber::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'master.tradingUser','subscription'])
             ->where('user_id', Auth::id())
             ->where('status', 'Subscribing')
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -231,7 +232,7 @@ class TradingController extends Controller
 
     public function masterListingDetail($id)
     {
-        $master = Master::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,meta_login'])->find($id);
+        $master = Master::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,meta_login'])->find($id);
 
         if (!$master || $master->status !== 'Active' || $master->user_id === auth()->id()) {
             return redirect()->route('trading.master_listing')

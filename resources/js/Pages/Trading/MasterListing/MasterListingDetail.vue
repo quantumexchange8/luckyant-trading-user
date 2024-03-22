@@ -44,7 +44,7 @@ const statusVariant = (status) => {
                         {{ $t('public.master_profile') }} -
                     </h2>
                     <div v-if="currentLocale === 'en'">
-                        {{ masterListingDetail.trading_user.name }}
+                        {{ masterListingDetail.user.username }}
                     </div>
                     <div v-if="currentLocale === 'cn'">
                         {{ masterListingDetail.trading_user.company ? masterListingDetail.trading_user.company : masterListingDetail.trading_user.name }}
@@ -79,7 +79,7 @@ const statusVariant = (status) => {
                         <div class="flex flex-col items-center">
                             <div class="font-semibold text-gray-800 dark:text-white">
                                 <div v-if="currentLocale === 'en'">
-                                    {{ masterListingDetail.trading_user.name }}
+                                    {{ masterListingDetail.user.username }}
                                 </div>
                                 <div v-if="currentLocale === 'cn'">
                                     {{ masterListingDetail.trading_user.company ? masterListingDetail.trading_user.company : masterListingDetail.trading_user.name }}

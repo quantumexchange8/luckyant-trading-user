@@ -15,6 +15,7 @@ const props = defineProps({
     wallet: Object,
     paymentAccountSel: Array,
     withdrawalFee: Object,
+    withdrawalFeePercentage: Object,
 })
 const withdrawalModal = ref(false);
 const { formatAmount } = transactionFormat();
@@ -58,15 +59,15 @@ const transactionFee = ref(props.withdrawalFee.value);
 const calculatedBalance = ref();
 
 watch(withdrawalAmount, (newValue) => {
-    const calculatedMinimumFee = newValue * (props.withdrawalFee.value / 100);
+    const calculatedMinimumFee = newValue * (props.withdrawalFeePercentage.value / 100);
 
     if (calculatedMinimumFee <= props.withdrawalFee.value) {
         transactionFee.value = props.withdrawalFee.value;
         const calculated = newValue - props.withdrawalFee.value;
         calculatedBalance.value = calculated <= 0 ? 0 : calculated;
     } else {
-        transactionFee.value = newValue * (props.withdrawalFee.value / 100);
-        calculatedBalance.value = newValue * ((100 - props.withdrawalFee.value) / 100);
+        transactionFee.value = newValue * (props.withdrawalFeePercentage.value / 100);
+        calculatedBalance.value = newValue * ((100 - props.withdrawalFeePercentage.value) / 100);
     }
 });
 
@@ -172,7 +173,7 @@ const handleButtonClick = () => {
 
             <div class="flex flex-col gap-2 border-t border-gray-300">
                 <div class="flex items-start justify-between mt-5">
-                    <span class="text-sm dark:text-gray-400 font-Inter">{{ $t('public.withdrawal_charges') }} ({{ withdrawalFee.value }}%)</span>
+                    <span class="text-sm dark:text-gray-400 font-Inter">{{ $t('public.withdrawal_charges') }} ({{ withdrawalFeePercentage.value }}%)</span>
                     <div class="flex flex-col">
                         <span class="text-sm dark:text-white text-right">$ {{ formatAmount(transactionFee) }}</span>
                         <span class="text-xs text-gray-500 dark:text-white">{{ $t('public.minimum_charges') }}: $ {{ formatAmount(withdrawalFee.value) }}</span>

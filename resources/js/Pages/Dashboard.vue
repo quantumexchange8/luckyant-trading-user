@@ -25,6 +25,7 @@ const props = defineProps({
     paymentAccountSel: Array,
     paymentDetails: Object,
     withdrawalFee: Object,
+    withdrawalFeePercentage: Object,
     registerLink: String,
     countries: Array,
 })
@@ -265,6 +266,7 @@ getTotalTransactions();
                     :paymentAccountSel="paymentAccountSel"
                     :paymentDetails="paymentDetails"
                     :withdrawalFee="withdrawalFee"
+                    :withdrawalFeePercentage="withdrawalFeePercentage"
                     :countries="countries"
                 />
             </div>

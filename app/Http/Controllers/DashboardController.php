@@ -51,6 +51,7 @@ class DashboardController extends Controller
             'PaymentCryptoDetails' => $PaymentCryptoDetails,
             'countries' => $formattedCurrencies,
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
+            'withdrawalFeePercentage' => Setting::where('slug', 'withdrawal-fee-percentage')->first(),
             'registerLink' => $registerLink,
         ]);
     }

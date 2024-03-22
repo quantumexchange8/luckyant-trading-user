@@ -11,6 +11,7 @@ const props = defineProps({
     paymentAccountSel: Array,
     paymentDetails: Object,
     withdrawalFee: Object,
+    withdrawalFeePercentage: Object,
     countries: Array,
 })
 
@@ -74,6 +75,7 @@ watchEffect(() => {
             :paymentAccountSel="paymentAccountSel"
             :paymentDetails="paymentDetails"
             :withdrawalFee="withdrawalFee"
+            :withdrawalFeePercentage="withdrawalFeePercentage"
             :countries="countries"
         />
     </div>

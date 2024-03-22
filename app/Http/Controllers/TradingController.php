@@ -82,7 +82,7 @@ class TradingController extends Controller
         $user = Auth::user();
         $meta_login = $request->meta_login;
         $wallet = Wallet::where('user_id', $user->id)->first();
-        $masterAccount = Master::find($request->master_id);
+        $masterAccount = Master::with('tradingAccount:id,meta_login,margin_leverage')->find($request->master_id);
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
         $subscriber = Subscriber::where('meta_login', $meta_login)
@@ -108,6 +108,10 @@ class TradingController extends Controller
         }
 
         $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
+
+        if ($tradingAccount->margin_leverage != $masterAccount->tradingAccount->margin_leverage) {
+            throw ValidationException::withMessages(['meta_login' => 'Leverage not same']);
+        }
 
         if ($tradingAccount->equity < $masterAccount->min_join_equity || $tradingAccount->equity < $masterAccount->subscription_fee) {
             throw ValidationException::withMessages(['meta_login' => trans('public.insufficient_balance')]);

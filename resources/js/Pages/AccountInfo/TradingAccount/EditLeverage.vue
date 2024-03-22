@@ -32,14 +32,14 @@ const submit = () => {
 }
 
 const leverages = [
-    { label: '1:1', value: 1 },
-    { label: '1:10', value: 10 },
-    { label: '1:20', value: 20 },
-    { label: '1:50', value: 50 },
-    { label: '1:100', value: 100 },
-    { label: '1:200', value: 200 },
-    { label: '1:300', value: 300 },
-    { label: '1:400', value: 400 },
+    // { label: '1:1', value: 1 },
+    // { label: '1:10', value: 10 },
+    // { label: '1:20', value: 20 },
+    // { label: '1:50', value: 50 },
+    // { label: '1:100', value: 100 },
+    // { label: '1:200', value: 200 },
+    // { label: '1:300', value: 300 },
+    // { label: '1:400', value: 400 },
     { label: '1:500', value: 500 },
 ]
 

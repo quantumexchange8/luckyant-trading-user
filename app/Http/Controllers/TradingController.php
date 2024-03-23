@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubscribeRequest;
 use App\Models\CopyTradeHistory;
 use App\Models\Master;
 use App\Models\Subscriber;
@@ -78,7 +79,7 @@ class TradingController extends Controller
         return response()->json($masterAccounts);
     }
 
-    public function subscribeMaster(Request $request)
+    public function subscribeMaster(SubscribeRequest $request)
     {
         $user = Auth::user();
         $meta_login = $request->meta_login;

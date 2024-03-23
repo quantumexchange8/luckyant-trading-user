@@ -75,6 +75,7 @@ class ReferralController extends Controller
         $mappedUser = [
             'id' => $user->id,
             'name' => $user->name,
+            'username' => $user->username,
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level + 1,

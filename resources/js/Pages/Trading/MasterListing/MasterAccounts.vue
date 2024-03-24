@@ -141,7 +141,7 @@ const currentLocale = ref(usePage().props.locale);
                 />
                 <div class="flex flex-col text-right">
                     <div v-if="currentLocale === 'en'" class="text-sm">
-                        {{ masterAccount.user.username }}
+                        {{ masterAccount.trading_user.name }}
                     </div>
                     <div v-if="currentLocale === 'cn'" class="text-sm">
                         {{ masterAccount.trading_user.company ? masterAccount.trading_user.company : masterAccount.trading_user.name }}

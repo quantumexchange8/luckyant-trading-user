@@ -147,7 +147,7 @@ watchEffect(() => {
                     />
                     <div class="flex flex-col">
                         <div v-if="currentLocale === 'en'" class="text-sm">
-                            {{ subscriberAccount.master.user.username }}
+                            {{ subscriberAccount.master.trading_user.name }}
                         </div>
                         <div v-if="currentLocale === 'cn'" class="text-sm">
                             {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}

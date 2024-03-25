@@ -68,24 +68,6 @@ watchEffect(() => {
 </script>
 
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-
-        <fieldset
-            class="border-2 border-primary-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-primary-300"
-        >
-            <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_equity') }}</legend>
-            <p class="text-xl font-medium sm:text-3xl">{{ totalEquity ? '$ ' + formatAmount(totalEquity) : $t('public.is_loading') }}</p>
-        </fieldset>
-
-        <fieldset
-            class="border-2 border-purple-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-purple-300"
-        >
-            <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_balance') }}</legend>
-            <p class="text-xl font-medium sm:text-3xl">{{ totalBalance ? '$ ' + formatAmount(totalBalance) : $t('public.is_loading') }}</p>
-        </fieldset>
-
-    </div>
-
     <div
         v-if="isLoading && tradingAccounts.length === 0"
         class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 animate-pulse sm:w-1/2 mx-auto sm:mx-0 shadow-lg"
@@ -144,10 +126,10 @@ watchEffect(() => {
                 <div class="flex items-center gap-3">
                     <div class="flex flex-col items-start">
                         <div class="font-semibold">
-                            {{ account.of_user.username }}
+                           {{ $t('public.name') }}: {{ account.of_user.username }}
                         </div>
                         <div class="text-xs">
-                            {{ account.meta_login }}
+                            {{ $t('public.account_no') }}: {{ account.meta_login }}
                         </div>
                     </div>
                 </div>
@@ -158,7 +140,10 @@ watchEffect(() => {
             <div class="flex justify-between items-center self-stretch">
                 <div class="flex items-center gap-3">
                     <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
-                        1 : {{ account.margin_leverage }}
+                        {{ $t('public.leverage') }}: 1 : {{ account.margin_leverage }}
+                    </div>
+                    <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
+                        {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
                     </div>
                     <div class="text-xs font-normal">
                         {{ $t('public.credit') }}: $ {{ formatAmount(account.credit ? account.credit : 0) }}

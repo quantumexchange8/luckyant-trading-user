@@ -21,6 +21,7 @@ const props = defineProps({
     profileImg: String,
     nationalities: Array,
     countries: Array,
+    rank: String,
 })
 
 const user = usePage().props.auth.user
@@ -180,7 +181,7 @@ watchEffect(() => {
                         variant="primary"
                         width="auto"
                     >
-                        <span class="text-sm">{{ user.rank.name }}</span>
+                        <span class="text-sm">{{ props.rank }}</span>
                     </Badge>
                     <div
                         class="flex px-2 py-1 justify-center text-white rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out w-20"

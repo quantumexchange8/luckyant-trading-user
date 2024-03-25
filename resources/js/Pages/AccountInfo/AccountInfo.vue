@@ -12,6 +12,7 @@ import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import {transactionFormat} from "@/Composables/index.js";
 import MasterAccount from "@/Pages/AccountInfo/MasterAccount/MasterAccount.vue";
 
 const props = defineProps({
@@ -20,9 +21,14 @@ const props = defineProps({
     accountCounts: Number,
     masterAccountLogin: Array,
     liveAccountQuota: Object,
+    totalEquity: Number,
+    totalBalance: Number,
 })
+const { formatAmount } = transactionFormat();
 const user = usePage().props.auth.user;
 const addingTradingAccount = ref(false)
+const totalEquity = ref();
+const totalBalance = ref();
 
 const addTradingAccount = () => {
     addingTradingAccount.value = true
@@ -45,6 +51,16 @@ const submit = () => {
 const closeModal = () => {
     addingTradingAccount.value = false
 }
+
+const refreshData = async () => {    
+    const response = await axios.get('/account_info/refreshTradingAccountsData');
+    totalEquity.value = response.data.totalEquity;
+    totalBalance.value = response.data.totalBalance;
+};
+
+refreshData();
+
+setInterval(refreshData, 10000);
 
 </script>
 
@@ -70,6 +86,23 @@ const closeModal = () => {
                 </Button>
             </div>
         </template>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+            <fieldset
+                class="border-2 border-primary-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-primary-300"
+            >
+                <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_equity') }}</legend>
+                <p class="text-xl font-medium sm:text-3xl">{{ totalEquity ? '$ ' + formatAmount(totalEquity) : $t('public.is_loading') }}</p>
+            </fieldset>
+
+            <fieldset
+                class="border-2 border-purple-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-purple-300"
+            >
+                <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_balance') }}</legend>
+                <p class="text-xl font-medium sm:text-3xl">{{ totalBalance ? '$ ' + formatAmount(totalBalance) : $t('public.is_loading') }}</p>
+            </fieldset>
+
+        </div>
 
         <div v-if="accountCounts > 0">
             <div class="w-full">

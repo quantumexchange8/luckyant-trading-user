@@ -28,6 +28,7 @@ const props = defineProps({
     withdrawalFeePercentage: Object,
     registerLink: String,
     countries: Array,
+    rank: String,
 })
 
 const copyReferralCode = () => {
@@ -138,7 +139,7 @@ getTotalTransactions();
                         <div class="flex flex-col sm:flex-row items-center self-stretch gap-4">
                             <div class="flex flex-col gap-4 w-full">
                                 <div class="flex flex-col gap-4 sm:flex-row sm:justify-between">
-                                    <div class="flex gap-3 items-center justify-center">
+                                    <div class="flex gap-3 items-center justify-start w-full pr-4">
                                         <img
                                             class="object-cover w-14 h-14 rounded-full"
                                             :src="user.profile_photo ? user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
@@ -150,12 +151,12 @@ getTotalTransactions();
                                             </div>
                                         </div>
                                     </div>
-                                    <div>
+                                    <div class="w-full">
                                         <Badge
                                             variant="primary"
                                             width="auto"
                                         >
-                                            <span class="text-sm">{{ user.rank.name }}</span>
+                                            <span class="text-sm">{{ props.rank }}</span>
                                         </Badge>
                                     </div>
                                 </div>

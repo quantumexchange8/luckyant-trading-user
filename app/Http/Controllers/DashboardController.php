@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Models\Wallet;
 use App\Models\Country;
 use App\Models\Setting;
+use App\Models\SettingRank;
 use App\Models\Transaction;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
@@ -40,6 +41,13 @@ class DashboardController extends Controller
 
         $registerUrl = route('register');
         $registerLink = $registerUrl . '/' . \Auth::user()->referral_code;
+        
+        $locale = app()->getLocale();
+
+        $rank = SettingRank::where('id', \Auth::user()->setting_rank_id)->first();
+
+        // Parse the JSON data in the name column to get translations
+        $translations = json_decode($rank->name, true);
 
         return Inertia::render('Dashboard', [
             'announcement' => $announcement,
@@ -53,6 +61,7 @@ class DashboardController extends Controller
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
             'withdrawalFeePercentage' => Setting::where('slug', 'withdrawal-fee-percentage')->first(),
             'registerLink' => $registerLink,
+            'rank' => $translations[$locale] ?? $rank->name,
         ]);
     }
 

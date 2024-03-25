@@ -76,7 +76,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold">
                     <div v-if="currentLocale === 'en'">
-                        {{ subscriberAccount.master.user.username }}
+                        {{ subscriberAccount.master.trading_user.name }}
                     </div>
                     <div v-if="currentLocale === 'cn'">
                         {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}

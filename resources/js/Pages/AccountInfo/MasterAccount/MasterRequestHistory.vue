@@ -7,6 +7,7 @@ import Input from "@/Components/Input.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import Loading from "@/Components/Loading.vue";
 import Badge from "@/Components/Badge.vue";
+import {usePage} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
 import Modal from "@/Components/Modal.vue";
@@ -97,6 +98,9 @@ const openRequestHistoryModal = (detail) => {
 const closeModal = () => {
     requestHistoryModal.value = false
 }
+
+const currentLocale = ref(usePage().props.locale);
+
 </script>
 
 <template>
@@ -185,7 +189,15 @@ const closeModal = () => {
                     </div>
                 </td>
                 <td class="p-3">
-                    {{ request.trading_account.meta_login }}
+                    <div class="flex-col">
+                        <span v-if="currentLocale === 'en'" class="col-span-2 text-black dark:text-white py-2 mr-3">
+                            {{ request.trading_account.trading_user.name }}
+                        </span>
+                        <span v-if="currentLocale === 'cn'" class="col-span-2 text-black dark:text-white py-2 mr-3">
+                            {{ request.trading_account.trading_user.company ? request.trading_account.trading_user.company : request.trading_account.trading_user.name }}
+                        </span>
+                        <span class="col-span-2 text-black dark:text-white py-2">({{ request.trading_account.meta_login }})</span>
+                    </div>
                 </td>
                 <td class="p-3">
                     {{ formatDateTime(request.approval_date, false) }}
@@ -199,17 +211,25 @@ const closeModal = () => {
     </div>
 
     <Modal :show="requestHistoryModal" :title="$t('public.request_history_details')" @close="closeModal">
-        <div class="grid grid-cols-3 items-center gap-2">
+        <div class="grid grid-cols-3 items-center gap-2 pb-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.trading_account') }}</span>
-            <span class="col-span-2 text-black dark:text-white py-2">{{ requestHistoryDetail.trading_account.meta_login }}</span>
+            <span class="flex-col">
+                <span v-if="currentLocale === 'en'" class="col-span-2 text-black dark:text-white py-2 mr-3">
+                    {{ requestHistoryDetail.trading_account.trading_user.name }}
+                </span>
+                <span v-if="currentLocale === 'cn'" class="col-span-2 text-black dark:text-white py-2 mr-3">
+                    {{ requestHistoryDetail.trading_account.trading_user.company ? requestHistoryDetail.trading_account.trading_user.company : requestHistoryDetail.trading_account.trading_user.name }}
+                </span>
+                <span class="col-span-2 text-black dark:text-white py-2">({{ requestHistoryDetail.trading_account.meta_login }})</span>
+            </span>
         </div>
-        <div class="grid grid-cols-3 items-center gap-2">
+        <div class="grid grid-cols-3 items-center gap-2 pb-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.status') }}</span>
             <div class="col-span-2 items-start">
                 <Badge :variant="statusVariant(requestHistoryDetail.status)">{{ requestHistoryDetail.status }}</Badge>
             </div>
         </div>
-        <div class="grid grid-cols-3 items-center gap-2">
+        <div class="grid grid-cols-3 items-center gap-2 pb-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.remarks') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ requestHistoryDetail.remarks ? requestHistoryDetail.remarks : '-' }}</span>
         </div>

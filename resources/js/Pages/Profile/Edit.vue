@@ -18,6 +18,7 @@ defineProps({
     paymentAccounts: Object,
     countries: Array,
     currencies: Array,
+    rank: String,
 })
 
 const selectedTab = ref(0);
@@ -99,6 +100,7 @@ onMounted(() => {
                                     :profileImg="profileImg"
                                     :nationalities="nationalities"
                                     :countries="countries"
+                                    :rank="rank"
                                 />
                             </div>
 

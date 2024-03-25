@@ -122,10 +122,10 @@ watchEffect(() => {
                 <div class="flex items-center gap-3">
                     <div class="flex flex-col items-start">
                         <div class="text-sm font-semibold">
-                            {{ account.user.username }}
+                            {{ $t('public.name') }}: {{ account.user.username }}
                         </div>
                         <div class="text-xs">
-                            {{ account.meta_login }}
+                            {{ $t('public.account_no') }}: {{ account.meta_login }}
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,10 @@ watchEffect(() => {
             <div class="flex justify-between items-center self-stretch">
                 <div class="flex items-center gap-3">
                     <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
-                        {{ account.trading_account.margin_leverage }}
+                        {{ $t('public.leverage') }}: 1 : {{ account.trading_account.margin_leverage }}
+                    </div>
+                    <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
+                        {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
                     </div>
                     <div class="text-xs font-normal">
                         {{ $t('public.credit') }}: $ {{ formatAmount(account.trading_account.credit ? account.trading_account.credit : 0) }}

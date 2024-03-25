@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PaymentAccountRequest;
-use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Country;
-use App\Models\PaymentAccount;
 use App\Models\User;
-use App\Services\SelectOptionService;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Country;
+use App\Models\SettingRank;
+use Illuminate\Http\Request;
+use App\Models\PaymentAccount;
+use Illuminate\Support\Facades\Auth;
+use App\Services\SelectOptionService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\PaymentAccountRequest;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -24,6 +25,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $locale = app()->getLocale();
+
+        $rank = SettingRank::where('id', \Auth::user()->setting_rank_id)->first();
+
+        // Parse the JSON data in the name column to get translations
+        $translations = json_decode($rank->name, true);
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
@@ -34,6 +42,7 @@ class ProfileController extends Controller
             'paymentAccounts' => PaymentAccount::where('user_id', Auth::id())->latest()->get(),
             'countries' => (new SelectOptionService())->getCountries(),
             'currencies' => (new SelectOptionService())->getCurrencies(),
+            'rank' => $translations[$locale] ?? $rank->name,
         ]);
     }
 

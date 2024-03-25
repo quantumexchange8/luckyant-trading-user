@@ -336,7 +336,7 @@ class TradingController extends Controller
 
     public function getSubscriptionHistories(Request $request)
     {
-        $subscriptionHistories = Subscription::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master'])
+        $subscriptionHistories = Subscription::with(['user:id,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'master.tradingUser'])
             ->where('user_id', Auth::id())
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';

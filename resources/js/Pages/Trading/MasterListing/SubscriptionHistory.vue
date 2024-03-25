@@ -128,6 +128,9 @@ watchEffect(() => {
         getResults();
     }
 });
+
+const currentLocale = ref(usePage().props.locale);
+
 </script>
 
 <template>
@@ -218,7 +221,7 @@ watchEffect(() => {
                 @click="openSubscriptionHistoryModal(subscription)"
             >
                 <td class="p-3">
-                    <div class="inline-flex items-center gap-2">
+                    <div class="inline-flex items-center">
                         {{ formatDateTime(subscription.created_at) }}
                     </div>
                 </td>
@@ -232,7 +235,15 @@ watchEffect(() => {
                     $ {{ formatAmount(subscription.meta_balance ? subscription.meta_balance : 0) }}
                 </td>
                 <td class="p-3">
-                    {{ subscription.master.meta_login }}
+                    <span class="flex-col ml-3">
+                        <span v-if="currentLocale === 'en'" class="col-span-2 text-black dark:text-white mr-3">
+                            {{ subscription.master.trading_user.name }}
+                        </span>
+                        <span v-if="currentLocale === 'cn'" class="col-span-2 text-black dark:text-white mr-3">
+                            {{ subscription.master.trading_user.company ? subscription.master.trading_user.company : subscription.master.trading_user.name }}
+                        </span>
+                        <span class="col-span-2 text-black dark:text-white">({{ subscription.master.meta_login }})</span>
+                    </span>
                 </td>
                 <td class="p-3 flex items-center justify-center">
                     <Badge :variant="statusVariant(subscription.status)">{{ subscription.status }}</Badge>
@@ -285,7 +296,15 @@ watchEffect(() => {
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.master_account')}}</span>
-            <span class="col-span-2 text-black dark:text-white py-2">{{ subscriptionHistoryDetail.master.meta_login }}</span>
+            <span class="flex-col">
+                <span v-if="currentLocale === 'en'" class="col-span-2 text-black dark:text-white py-2 mr-3">
+                    {{ subscriptionHistoryDetail.master.trading_user.name }}
+                </span>
+                <span v-if="currentLocale === 'cn'" class="col-span-2 text-black dark:text-white py-2 mr-3">
+                    {{ subscriptionHistoryDetail.master.trading_user.company ? subscriptionHistoryDetail.master.trading_user.company : subscriptionHistoryDetail.master.trading_user.name }}
+                </span>
+                <span class="col-span-2 text-black dark:text-white py-2">({{ subscriptionHistoryDetail.master.meta_login }})</span>
+            </span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{$t('public.subscription_fee')}}</span>

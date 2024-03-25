@@ -36,12 +36,34 @@ class AccountInfoController extends Controller
 {
     public function index()
     {
+        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login', 'subscriber', 'masterRequest:id,trading_account_id,status', 'ofUser:id,username'])
+        ->where('user_id', \Auth::id())
+        ->whereDoesntHave('masterAccount', function ($query) {
+            $query->whereNotNull('trading_account_id');
+        })
+        ->latest()
+        ->get();
+
+        $tradingAccounts->each(function ($tradingAccount) {
+            if ($tradingAccount->subscriber) {
+                if ($tradingAccount->subscriber->unsubscribe_date < now()) {
+                    $tradingAccount->balance_out = false;
+                } else {
+                    $tradingAccount->balance_out = true;
+                }
+            } else {
+                $tradingAccount->balance_out = true;
+            }
+        });
+
         return Inertia::render('AccountInfo/AccountInfo', [
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'leverageSel' => (new SelectOptionService())->getActiveLeverageSelection(),
             'accountCounts' => Auth::user()->tradingAccounts->count(),
             'masterAccountLogin' => Master::where('user_id', Auth::id())->pluck('meta_login')->toArray(),
             'liveAccountQuota' => Setting::where('slug', 'live_account_quota')->first(),
+            'totalEquity' => $tradingAccounts->sum('equity'),
+            'totalBalance' => $tradingAccounts->sum('balance'),
         ]);
     }
 
@@ -437,7 +459,7 @@ class AccountInfoController extends Controller
     {
         $user = Auth::user();
 
-        $masterRequest = MasterRequest::with(['trading_account:id,meta_login'])
+        $masterRequest = MasterRequest::with(['trading_account:id,meta_login', 'trading_account.tradingUser:meta_login,name,company'])
             ->where('user_id', $user->id)
             ->when($request->filled('date'), function ($query) use ($request) {
                 $date = $request->input('date');

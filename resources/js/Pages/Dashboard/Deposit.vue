@@ -281,7 +281,7 @@ const copyWalletAddress = () => {
                     <div class="flex items-center gap-1">
                         <span class="text-base text-gray-800 dark:text-white font-semibold">{{ paymentDetails.account_no }}</span>
                         <Tooltip :content="$t('public.' + tooltipContent)" placement="top">
-                            <DuplicateIcon class="w-5 h-5 mt-1 text-gray-600 hover:cursor-pointer" @click="copyWalletAddress" />
+                            <DuplicateIcon class="w-5 h-5 mt-1 text-gray-600 dark:text-white hover:cursor-pointer" @click="copyWalletAddress" />
                         </Tooltip>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ return [
     'live_account_quota' => "Live Account Quota",
     'live_account_quota_warning' => "You have reached the maximum of live accounts",
     'email' => "Email",
+    'rank' => "Rank",
     'username' => "Username",
     'password' => "Password",
     'remember' => "Remember me",

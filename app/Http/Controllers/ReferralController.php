@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subscription;
-use App\Models\Transaction;
 use App\Models\User;
+use Inertia\Inertia;
+use App\Models\SettingRank;
+use App\Models\Transaction;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class ReferralController extends Controller
 {
@@ -53,6 +54,7 @@ class ReferralController extends Controller
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level,
+            'rank' => SettingRank::where('id', $user->setting_rank_id)->value('name'),
             'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
             'self_deposit' => $this->getSelfDeposit($user),
@@ -79,6 +81,7 @@ class ReferralController extends Controller
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level + 1,
+            'rank' => SettingRank::where('id', $user->setting_rank_id)->value('name'),
             'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
             'self_deposit' => $this->getSelfDeposit($user),

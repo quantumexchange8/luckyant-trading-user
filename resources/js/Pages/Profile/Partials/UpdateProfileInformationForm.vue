@@ -191,7 +191,7 @@ watchEffect(() => {
                             'bg-warning-400 dark:bg-warning-500': kycApproval === 'Pending',
                         }"
                     >
-                        <span class="text-sm">{{ kycApproval }}</span>
+                        <span class="text-sm">{{ $t('public.' + kycApproval.toLowerCase()) }}</span>
                     </div>
                 </div>
             </div>

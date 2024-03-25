@@ -1,5 +1,17 @@
 <?php
 return [
+    'auto payment' => "自动支付",
+    'payment merchant' => "支付商户",
+    'internaltransfer' => "内部转账",
+    'walletadjustment' => "钱包调整",
+    'rejected' => "已拒绝",
+    'success' => "成功",
+    'processing' => "处理中",
+    'verified' => "已验证",
+    'unverified' => "未验证",
+    'pending' => "待处理",
+    'enable'=> "启用",
+    'disable'=> "禁用",
     'live_account_quota' => "实盘账户配额",
     'live_account_quota_warning' => "您已达到实盘账户的最大数量",
     'email' => "邮箱",

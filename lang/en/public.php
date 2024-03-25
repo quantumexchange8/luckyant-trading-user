@@ -1,5 +1,17 @@
 <?php
 return [
+    'auto payment' => "Auto Payment",
+    'payment merchant' => "Payment Merchant",
+    'internaltransfer' => "Internal Transfer",
+    'walletadjustment' => "Wallet Adjustment",
+    'rejected' => "Rejected",
+    'success' => "Success",
+    'processing' => "Processing",
+    'verified' => "Verified",
+    'unverified' => "Unverified",
+    'pending' => "Pending",
+    'enable'=> "Enable",
+    'disable'=> "Disable",
     'live_account_quota' => "Live Account Quota",
     'live_account_quota_warning' => "You have reached the maximum of live accounts",
     'email' => "Email",

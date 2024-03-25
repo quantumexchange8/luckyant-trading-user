@@ -89,14 +89,14 @@ const exportMember = () => {
                                 id="search"
                                 type="text"
                                 class="block w-full"
-                                placeholder="Search"
+                                :placeholder="$t('public.search')"
                                 v-model="search"
                             />
                         </InputIconWrapper>
                     </div>
                     <div class="w-full">
                         <vue-tailwind-datepicker
-                            placeholder="Select dates"
+                            :placeholder="$t('public.date_placeholder')"
                             :formatter="formatter"
                             separator=" - "
                             v-model="date"

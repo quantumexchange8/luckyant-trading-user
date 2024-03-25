@@ -223,7 +223,7 @@ const closeModal = () => {
                     {{ transaction.to_wallet ? $t('public.' + transaction.to_wallet.type) : (transaction.to_meta_login ? $t('public.account_no') + ' - ' + transaction.to_meta_login.meta_login : '-') }}
                 </td>
                 <td class="p-3">
-                    {{ transaction.payment_method ?? '-' }}
+                    {{ transaction.payment_method ? $t('public.' + transaction.payment_method.toLowerCase()) : '-' }}
                 </td>
                 <td class="p-3">
                     {{ transaction.transaction_number }}
@@ -232,7 +232,7 @@ const closeModal = () => {
                     $ {{ transaction.amount }}
                 </td>
                 <td class="p-3 flex items-center justify-center">
-                    <Badge :variant="statusVariant(transaction.status)">{{ transaction.status }}</Badge>
+                    <Badge :variant="statusVariant(transaction.status)">{{ $t('public.' + transaction.status.toLowerCase()) }}</Badge>
                 </td>
             </tr>
             </tbody>
@@ -251,7 +251,7 @@ const closeModal = () => {
     <Modal :show="transactionModal" :title="$t('public.transaction_details')" @close="closeModal" max-width="xl">
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.transaction_type') }}</span>
-            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetail.transaction_type }}</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ $t('public.' + transactionDetail.transaction_type.toLowerCase()) }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.from') }}</span>
@@ -263,7 +263,7 @@ const closeModal = () => {
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.payment_methods') }}</span>
-            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetail.payment_method ?? '-' }}</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ $t('public.' + transactionDetail.payment_method.toLowerCase()) ?? '-' }}</span>
         </div>
         <div v-if="transactionDetail.transaction_type === 'Deposit'" class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.to_account') }}</span>
@@ -295,7 +295,7 @@ const closeModal = () => {
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.status') }}</span>
-            <Badge :variant="statusVariant(transactionDetail.status)" width="auto">{{ transactionDetail.status }}</Badge>
+            <Badge :variant="statusVariant(transactionDetail.status)" width="auto">{{ $t('public.' + transactionDetail.status.toLowerCase()) }}</Badge>
         </div>
         <div v-if="transactionDetail.status === 'Rejected'" class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.remarks') }}</span>

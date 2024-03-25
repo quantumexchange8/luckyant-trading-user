@@ -203,7 +203,7 @@ const currentLocale = ref(usePage().props.locale);
                     {{ formatDateTime(request.approval_date, false) }}
                 </td>
                 <td class="p-3 flex items-center justify-center">
-                    <Badge :variant="statusVariant(request.status)">{{ request.status }}</Badge>
+                    <Badge :variant="statusVariant(request.status)">{{ $t('public.' + request.status.toLowerCase()) }}</Badge>
                 </td>
             </tr>
             </tbody>
@@ -226,7 +226,7 @@ const currentLocale = ref(usePage().props.locale);
         <div class="grid grid-cols-3 items-center gap-2 pb-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.status') }}</span>
             <div class="col-span-2 items-start">
-                <Badge :variant="statusVariant(requestHistoryDetail.status)">{{ requestHistoryDetail.status }}</Badge>
+                <Badge :variant="statusVariant(requestHistoryDetail.status)">{{ $t('public.' + requestHistoryDetail.status.toLowerCase()) }}</Badge>
             </div>
         </div>
         <div class="grid grid-cols-3 items-center gap-2 pb-2">

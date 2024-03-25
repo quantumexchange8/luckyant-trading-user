@@ -28,11 +28,11 @@ const form = useForm({
 
 const plans = [
     {
-        name: 'Enable',
+        name: 'enable',
         value: 1,
     },
     {
-        name: 'Disable',
+        name: 'disable',
         value: 0,
     },
 ]
@@ -174,7 +174,7 @@ const roiPeriod = [
                                             class="font-medium"
                                         >
                                             <div class="flex justify-center items-center gap-3">
-                                                {{ plan.name }}
+                                                {{ $t('public.' + plan.name) }}
                                             </div>
                                         </RadioGroupLabel>
                                     </div>

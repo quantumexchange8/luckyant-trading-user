@@ -359,4 +359,5 @@ return [
     'transaction_amount' => "交易金额",
     'wallet_adjustment' => "钱包调整",
     'max_drawdown' => "最大缩减",
+    "agreement" => "通过继续，我同意我已阅读支持文件并同意",
 ];

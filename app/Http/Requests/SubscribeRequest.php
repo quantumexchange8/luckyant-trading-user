@@ -9,7 +9,8 @@ class SubscribeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'meta_login' => ['required']
+            'meta_login' => ['required'],
+            'terms' => ['accepted'],
         ];
     }
 
@@ -21,7 +22,8 @@ class SubscribeRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'meta_login' => trans('public.account_no')
+            'meta_login' => trans('public.account_no'),
+            'terms' => trans('public.terms_and_conditions'),
         ];
     }
 }

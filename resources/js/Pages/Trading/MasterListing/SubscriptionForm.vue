@@ -8,6 +8,7 @@ import InputError from "@/Components/InputError.vue";
 import Label from "@/Components/Label.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 import Input from "@/Components/Input.vue";
+import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
     masterAccount: Object,
@@ -29,7 +30,8 @@ const closeModal = () => {
 
 const form = useForm({
     master_id: props.masterAccount.id,
-    meta_login: ''
+    meta_login: '',
+    terms: '',
 })
 
 const getTradingAccounts = async () => {
@@ -187,16 +189,26 @@ const closeTermsModal = () => {
                             <div class="dark:text-gray-400">$ {{ masterAccount.total_fund }}</div>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-2 self-stretch">
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <div class="flex items-center h-5">
+                    <Checkbox id="terms" v-model="form.terms"/>
+                </div>
+                <div class="ml-3">
+                    <label for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
+                        {{ $t('public.agreement') }}
                         <div
-                            class="text-xs hover:cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                            class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
                             @click="openTermsModal"
                         >
                             {{ $t('public.terms_and_conditions') }}
                         </div>
-                    </div>
+                    </label>
                 </div>
             </div>
+            <InputError :message="form.errors.terms" />
 
             <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
@@ -208,6 +220,6 @@ const closeTermsModal = () => {
     </Modal>
 
     <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
-        <div v-html="terms.contents" class="prose"></div>
+        <div v-html="terms.contents" class="prose dark:text-white"></div>
     </Modal>
 </template>

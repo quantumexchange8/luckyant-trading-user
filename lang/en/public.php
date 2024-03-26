@@ -359,4 +359,5 @@ return [
     'transaction_amount' => "Transaction Amount",
     'wallet_adjustment' => "Wallet Adjustment",
     'max_drawdown' => "Max Drawdown",
+    "agreement" => "By proceeding, I agree that I have read the supporting documents and agree to the",
 ];

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\passwordType;
 use Inertia\Inertia;
 use App\Models\Master;
 use App\Models\Wallet;
@@ -70,7 +71,7 @@ class AccountInfoController extends Controller
     public function add_trading_account(AddTradingAccountRequest $request)
     {
         $user = Auth::user();
-        
+
         $liveAccountQuota = Setting::where('slug', 'live_account_quota')->first()->value;
 
         if ($user->tradingAccounts->count() >= $liveAccountQuota) {
@@ -559,34 +560,29 @@ class AccountInfoController extends Controller
             $investor_password = $request->investor_password;
             $metaService = new MetaFiveService();
             $connection = $metaService->getConnectionStatus();
-            //  dd([
-            //     'meta_login' => $meta_login,
-            //     'master_password' => $master_password,
-            //     'investor_password' => $investor_password,
-            // ]);
-    
+
             // If there is a connection issue
             if ($connection != 0) {
                 return redirect()->back()
                     ->with('title', trans('public.server_under_maintenance'))
                     ->with('warning', trans('public.try_again_later'));
             }
-        
+
             // If master password is provided
             if ($master_password) {
-                $metaService->changePassword($meta_login, 'main', $master_password);
+                $metaService->changePassword($meta_login, passwordType::MAIN, $master_password);
             }
-        
+
             // If investor password is provided
             if ($investor_password) {
-                $metaService->changePassword($meta_login, 'investor', $investor_password);
+                $metaService->changePassword($meta_login, passwordType::INVESTOR, $investor_password);
             }
 
             Notification::route('mail', $user->email)
                 ->notify(new ChangeTradingAccountPassowrdNotification($user, $meta_login, $master_password, $investor_password));
 
         }
-    
+
         return redirect()->back()
             ->with('title', trans('public.success_change_password'))
             ->with('success', trans('public.successfully_change_password'));

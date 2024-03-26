@@ -62,6 +62,8 @@ watchEffect(() => {
     }
 });
 
+const currentLocale = ref(usePage().props.locale);
+
 </script>
 
 <template>

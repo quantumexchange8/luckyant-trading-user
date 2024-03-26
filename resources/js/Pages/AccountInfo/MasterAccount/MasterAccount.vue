@@ -123,7 +123,12 @@ watchEffect(() => {
                 <div class="flex items-center gap-3">
                     <div class="flex flex-col items-start">
                         <div class="text-sm font-semibold">
-                            {{ $t('public.name') }}: {{ account.trading_user.name }}
+                            <div v-if="currentLocale === 'en'">
+                                {{ $t('public.name') }}: {{ account.trading_user.name }}
+                            </div>
+                            <div v-if="currentLocale === 'cn'">
+                                {{ $t('public.name') }}: {{ account.trading_user.company ? account.trading_user.company : account.trading_user.name}}
+                            </div>
                         </div>
                         <div class="text-xs">
                             {{ $t('public.account_no') }}: {{ account.meta_login }}

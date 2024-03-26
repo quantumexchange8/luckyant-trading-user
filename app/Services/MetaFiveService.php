@@ -143,6 +143,13 @@ class dealAction
     const WITHDRAW = false;
 }
 
+class dealType
+{
+    const DEAL_BALANCE = 2;
+    const DEAL_CREDIT = 3;
+    const DEAL_BONUS = 6;
+}
+
 class passwordType
 {
     const MAIN = false;

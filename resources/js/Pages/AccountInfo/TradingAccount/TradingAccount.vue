@@ -65,6 +65,7 @@ watchEffect(() => {
     }
 });
 
+const currentLocale = ref(usePage().props.locale);
 </script>
 
 <template>
@@ -126,15 +127,24 @@ watchEffect(() => {
                 <div class="flex items-center gap-3">
                     <div class="flex flex-col items-start">
                         <div class="font-semibold">
-                           {{ $t('public.name') }}: {{ account.of_user.username }}
+                           {{ $t('public.name') }}: {{ account.trading_user.name }}
                         </div>
                         <div class="text-xs">
                             {{ $t('public.account_no') }}: {{ account.meta_login }}
                         </div>
                     </div>
+                    <div class="flex justify-end">
+                        <Badge variant="success">{{ $t('public.active') }}</Badge>
+                    </div>
                 </div>
                 <div class="flex justify-end">
-                    <Badge variant="success">{{ $t('public.active') }}</Badge>
+                    <Action
+                        :account="account"
+                        :walletSel="walletSel"
+                        :leverageSel="leverageSel"
+                        :masterAccountLogin="masterAccountLogin"
+                        type="Edit"
+                    />
                 </div>
             </div>
             <div class="flex justify-between items-center self-stretch">
@@ -142,11 +152,16 @@ watchEffect(() => {
                     <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
                         {{ $t('public.leverage') }}: 1 : {{ account.margin_leverage }}
                     </div>
-                    <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
+                    <div class="text-xs font-normal">
                         {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
                     </div>
-                    <div class="text-xs font-normal">
-                        {{ $t('public.credit') }}: $ {{ formatAmount(account.credit ? account.credit : 0) }}
+                    <div class="border-l pl-3 border-gray-400 dark:border-gray-600 text-xs font-normal" v-if="account.subscriber && account.subscriber.status === 'Subscribing'">
+                        <div v-if="currentLocale === 'en'">
+                            {{ $t('public.master') }}: {{ account.subscriber?.master?.trading_user?.name }}
+                        </div>
+                        <div v-if="currentLocale === 'cn'">
+                            {{ $t('public.master') }}: {{ account.subscriber?.master?.trading_user?.company ? account.subscriber?.master?.trading_user?.company : account.subscriber?.master?.trading_user?.name}}
+                        </div>
                     </div>
                 </div>
                 <div class="text-xl">

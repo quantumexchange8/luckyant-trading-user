@@ -117,7 +117,7 @@ class AccountInfoController extends Controller
             }
         }
 
-        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login', 'subscriber', 'masterRequest:id,trading_account_id,status', 'ofUser:id,username'])
+        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login', 'subscriber', 'masterRequest:id,trading_account_id,status', 'subscriber.master.tradingUser:id,name,company'])
             ->where('user_id', \Auth::id())
             ->whereDoesntHave('masterAccount', function ($query) {
                 $query->whereNotNull('trading_account_id');
@@ -137,7 +137,7 @@ class AccountInfoController extends Controller
             }
         });
 
-        $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login', 'user:id,username'])->where('user_id', \Auth::id())->get();
+        $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login'])->where('user_id', \Auth::id())->get();
 
         return response()->json([
             'tradingAccounts' => $tradingAccounts,

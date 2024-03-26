@@ -11,6 +11,7 @@ import InternalTransferBalance from "@/Pages/AccountInfo/TradingAccount/Internal
 import BecomeMaster from "@/Pages/AccountInfo/TradingAccount/BecomeMaster.vue";
 import EditLeverage from "@/Pages/AccountInfo/TradingAccount/EditLeverage.vue";
 import ChangePassword from "@/Pages/AccountInfo/TradingAccount/ChangePassword.vue";
+import Tooltip from "@/Components/Tooltip.vue";
 
 const props = defineProps({
     account: Object,
@@ -18,6 +19,7 @@ const props = defineProps({
     leverageSel: Array,
     accountCounts: Number,
     masterAccountLogin: Array,
+    type: String,
 })
 
 const accountActionModal = ref(false);
@@ -66,11 +68,12 @@ const closeModal = () => {
         class="flex justify-center gap-2 w-full"
         v-slot="{ iconSizeClasses }"
         @click="openAccountActionModal('deposit')"
+        v-if="!props.type"
     >
         <CreditCardAddIcon />
         {{ $t('public.balance_in') }}
     </Button>
-    <Dropdown v-if="!account.subscriber || account.subscriber.status === 'Unsubscribed'" align="right" width="48">
+    <Dropdown v-if="(!account.subscriber || account.subscriber.status === 'Unsubscribed') && !props.type" align="right" width="48">
         <template #trigger>
             <span class="inline-flex rounded-md">
                 <Button
@@ -128,28 +131,32 @@ const closeModal = () => {
                     </div>
                 </div>
             </DropdownLink>
-            <DropdownLink
-                @click="openAccountActionModal('edit_leverage')"
-            >
-                <div class="flex items-center gap-2">
-                    <Edit05Icon class="w-5 h-5" />
-                    <div>
-                        {{ $t('public.edit_leverage') }}
-                    </div>
-                </div>
-            </DropdownLink>
-            <DropdownLink
-                @click="openAccountActionModal('change_password')"
-            >
-                <div class="flex items-center gap-2">
-                    <PasscodeLockIcon class="w-5 h-5" />
-                    <div>
-                        {{ $t('public.change_password') }}
-                    </div>
-                </div>
-            </DropdownLink>
         </template>
     </Dropdown>
+
+    <Tooltip :content="$t('public.edit_leverage')" placement="bottom" v-if="props.type">
+        <Button
+            type="button"
+            class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
+            variant="primary"
+            pill
+            @click="openAccountActionModal('edit_leverage')" 
+        >
+            <Edit05Icon aria-hidden="true" class="w-5 h-5 absolute" />
+        </Button>
+    </Tooltip>
+
+    <Tooltip :content="$t('public.change_password')" placement="bottom" v-if="props.type">
+        <Button
+            type="button"
+            class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
+            variant="primary"
+            pill
+            @click="openAccountActionModal('change_password')" 
+        >
+            <PasscodeLockIcon aria-hidden="true" class="w-5 h-5 absolute" />
+        </Button>
+    </Tooltip>
 
     <Modal :show="accountActionModal" :title="$t('public.' + actionType)" @close="closeModal">
         <template v-if="modalComponent === 'Balance In'">

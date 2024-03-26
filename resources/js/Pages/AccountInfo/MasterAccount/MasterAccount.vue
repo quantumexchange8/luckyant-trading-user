@@ -12,6 +12,7 @@ import MasterRequestHistory from "@/Pages/AccountInfo/MasterAccount/MasterReques
 
 const props = defineProps({
     walletSel: Array,
+    leverageSel: Array,
     accountCounts: Number,
     masterAccountLogin: Array
 })
@@ -122,15 +123,25 @@ watchEffect(() => {
                 <div class="flex items-center gap-3">
                     <div class="flex flex-col items-start">
                         <div class="text-sm font-semibold">
-                            {{ $t('public.name') }}: {{ account.user.username }}
+                            {{ $t('public.name') }}: {{ account.trading_user.name }}
                         </div>
                         <div class="text-xs">
                             {{ $t('public.account_no') }}: {{ account.meta_login }}
                         </div>
                     </div>
+                    <div class="flex justify-end">
+                        <Badge variant="success">{{ $t('public.active') }}</Badge>
+                    </div>
                 </div>
                 <div class="flex justify-end">
-                    <Badge variant="success">{{ $t('public.active') }}</Badge>
+                    <Action
+                        :account="account.trading_account"
+                        :walletSel="walletSel"
+                        :leverageSel="leverageSel"
+                        :accountCounts="accountCounts"
+                        :masterAccountLogin="masterAccountLogin"
+                        type="Edit"
+                    />
                 </div>
             </div>
             <div class="flex justify-between items-center self-stretch">
@@ -138,11 +149,8 @@ watchEffect(() => {
                     <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
                         {{ $t('public.leverage') }}: 1 : {{ account.trading_account.margin_leverage }}
                     </div>
-                    <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
-                        {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
-                    </div>
                     <div class="text-xs font-normal">
-                        {{ $t('public.credit') }}: $ {{ formatAmount(account.trading_account.credit ? account.trading_account.credit : 0) }}
+                        {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
                     </div>
                 </div>
                 <div class="text-xl">
@@ -154,6 +162,7 @@ watchEffect(() => {
                     <Action
                         :account="account.trading_account"
                         :walletSel="walletSel"
+                        :leverageSel="leverageSel"
                         :accountCounts="accountCounts"
                         :masterAccountLogin="masterAccountLogin"
                     />

@@ -160,6 +160,7 @@ setInterval(refreshData, 10000);
                         >
                             <MasterAccount
                                 :walletSel="walletSel"
+                                :leverageSel="leverageSel"
                                 :accountCounts="accountCounts"
                                 :masterAccountLogin="masterAccountLogin"
                             />

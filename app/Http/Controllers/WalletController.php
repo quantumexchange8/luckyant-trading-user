@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\InternalTransferRequest;
 use Auth;
 use Carbon\Carbon;
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Wallet;
 use App\Models\Setting;
@@ -16,9 +16,12 @@ use Illuminate\Support\Facades\Log;
 use App\Models\SettingPaymentMethod;
 use App\Http\Requests\DepositRequest;
 use App\Services\SelectOptionService;
+use App\Http\Requests\TransferRequest;
 use App\Models\CurrencyConversionRate;
 use App\Services\RunningNumberService;
 use App\Http\Requests\WithdrawalRequest;
+use App\Notifications\TransferNotification;
+use App\Http\Requests\InternalTransferRequest;
 use Illuminate\Validation\ValidationException;
 
 class WalletController extends Controller
@@ -526,4 +529,81 @@ class WalletController extends Controller
             ->with('title', trans('public.success_internal_transaction'))
             ->with('success', trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . ' ' . trans('public.from_wallet') . ': ' . $from_wallet->name . ' ' . trans('public.to_wallet') . ': ' . $to_wallet->name);
     }
+
+    public function transfer(TransferRequest $request)
+    {
+        $user = \Auth::user();
+        $from_wallet = Wallet::where('id', $request->from_wallet)->first();
+        $to_wallet = Wallet::where('wallet_address', $request->wallet_address)->first();
+        $to_user = $to_wallet->user;
+        $amount = $request->amount;
+        // Get IDs from hierarchy lists
+        $userHierarchyIDs = explode('-', trim($user->hierarchyList, '-'));
+        $toUserHierarchyIDs = explode('-', trim($to_user->hierarchyList, '-'));
+        // Validate if to_user's ID is in user's hierarchy list
+        $isToUserInUserHierarchy = in_array($to_user->id, $userHierarchyIDs);
+
+        // Validate if user's ID is in to_user's hierarchy list
+        $isUserInToUserHierarchy = in_array($user->id, $toUserHierarchyIDs);
+
+        // Check if the to_wallet exists and is of type 'e_wallet'
+        if (!$to_wallet || $to_wallet->type !== 'e_wallet') {
+            throw ValidationException::withMessages([
+                'wallet_address' => trans('public.invalid_transfer_wallet_type'),
+            ]);
+        }
+
+        if ($from_wallet->id == $to_wallet->id) {
+            throw ValidationException::withMessages([
+                'wallet_address' => trans('public.same_wallet_address_error'),
+            ]);
+        }
+
+        // Check if to_user's ID is in user's hierarchy list or vice versa
+        if (!$isToUserInUserHierarchy && !$isUserInToUserHierarchy) {
+            throw ValidationException::withMessages(['wallet_address' => trans('public.hierarchy_validation_error')]);
+        }
+        
+        // Check if balance is sufficient
+        if ($from_wallet->balance < $amount || $amount <= 0) {
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $from_wallet->name])]);
+        }
+
+        $transaction_number = RunningNumberService::getID('transaction');
+
+        // Create transaction
+        $transaction = Transaction::create([
+            'category' => 'wallet',
+            'user_id' => $user->id,
+            'from_wallet_id' => $from_wallet->id,
+            'to_wallet_id' => $to_wallet->id,
+            'transaction_number' => $transaction_number,
+            'transaction_type' => 'Transfer',
+            'amount' => $amount,
+            'transaction_charges' => 0,
+            'transaction_amount' => $amount,
+            'status' => 'Success',
+        ]);
+
+        // Update the wallet balance
+        $from_wallet->update([
+            'balance' => $from_wallet->balance - $transaction->transaction_amount,
+        ]);
+
+        $to_wallet->update([
+            'balance' => $to_wallet->balance + $transaction->transaction_amount,
+        ]);
+
+        $transaction->update([
+            'new_wallet_amount' => $to_wallet->balance,
+        ]);
+
+        \Notification::send($to_user, new TransferNotification($amount, $from_wallet, $to_wallet));
+
+
+        return redirect()->back()
+            ->with('title', trans('public.success_transfer_transaction'))
+            ->with('success', trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . ' ' . trans('public.from_wallet') . ': ' . $from_wallet->wallet_address . ' ' . trans('public.to_wallet') . ': ' . $to_wallet->wallet_address);
+    }
+
 }

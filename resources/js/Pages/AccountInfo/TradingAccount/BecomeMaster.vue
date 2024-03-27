@@ -7,6 +7,7 @@ import { useForm } from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import { ref } from "vue";
+import { trans } from "laravel-vue-i18n";
 
 const props = defineProps({
     account: Object
@@ -23,8 +24,8 @@ const form = useForm({
     meta_login: props.account.meta_login,
     min_join_equity: '',
     roi_period: '',
-    sharing_profit: '',
-    subscription_fee: '',
+    // sharing_profit: '',
+    // subscription_fee: '',
 })
 
 const submit = () => {
@@ -37,9 +38,9 @@ const submit = () => {
 }
 
 const roiPeriod = [
-    { label: 'Weekly', value: 7 },
-    { label: '2 Week', value: 14 },
-    { label: 'Monthly', value: 30 },
+    { label: trans('public.weekly'), value: 7 },
+    { label: trans('public.two_week'), value: 14 },
+    { label: trans('public.monthly'), value: 30 },
 ]
 
 </script>
@@ -136,9 +137,13 @@ const roiPeriod = [
                 <InputError :message="form.errors.subscription_fee" />
             </div> -->
         </div>
+        <InputError :message="form.errors.meta_login" class="mt-2" />
 
         <!-- Submit button -->
         <div class="pt-5 flex justify-end">
+            <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
+                {{$t('public.cancel')}}
+            </Button>
             <Button
                 class="flex justify-center"
                 @click="submit"

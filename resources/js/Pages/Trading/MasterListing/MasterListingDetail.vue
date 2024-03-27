@@ -64,7 +64,7 @@ const statusVariant = (status) => {
                             :variant="statusVariant(masterListingDetail.status)"
                             width="auto"
                         >
-                            <span class="text-sm">{{ masterListingDetail.status }}</span>
+                            <span class="text-sm">{{ $t('public.' + masterListingDetail.status.toLowerCase()) }}</span>
                         </Badge>
                     </div>
                 </div>
@@ -129,7 +129,7 @@ const statusVariant = (status) => {
                                     {{ $t('public.roi_period') }}
                                 </div>
                                 <div class="text-xl">
-                                    {{ masterListingDetail.roi_period }} Days
+                                    {{ masterListingDetail.roi_period }} {{ $t('public.days') }}
                                 </div>
                             </div>
 

@@ -412,14 +412,44 @@ class AccountInfoController extends Controller
 
     public function becomeMaster(Request $request)
     {
-        $trading_account = TradingAccount::where('meta_login', $request->meta_login)->first();
+        $rules = [
+            'meta_login' => 'required',
+            'min_join_equity' => 'required|numeric',
+            'roi_period' => 'required|numeric',
+        ];
 
-        MasterRequest::create([
-            'user_id' =>  Auth::id(),
-            'trading_account_id' =>  $trading_account->id,
-            'min_join_equity' => $request->min_join_equity,
-            'roi_period' => $request->roi_period,
-        ]);
+        $attributes = [
+            'meta_login' => trans('public.meta_login'),
+            'min_join_equity' => trans('public.min_join_equity'),
+            'roi_period' => trans('public.roi_period'),
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        $validator->setAttributeNames($attributes);
+
+        // Redirect back if validation fails
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        } else {
+        
+            $trading_account = TradingAccount::where('meta_login', $request->meta_login)->first();
+
+            $existingRequest = MasterRequest::where('trading_account_id', $trading_account->id)
+                ->where('status', 'pending')
+                ->exists();
+
+            if ($existingRequest) {
+                    throw ValidationException::withMessages(['meta_login' => trans('public.become_master_request_pending'),]);
+            }
+
+            MasterRequest::create([
+                'user_id' =>  Auth::id(),
+                'trading_account_id' =>  $trading_account->id,
+                'min_join_equity' => $request->min_join_equity,
+                'roi_period' => $request->roi_period,
+            ]);
+        }
 
         return redirect()->back()
             ->with('title', trans('public.success_submission'))

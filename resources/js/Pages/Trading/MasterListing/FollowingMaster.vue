@@ -158,7 +158,7 @@ watchEffect(() => {
                     </div>
                 </div>
                 <div>
-                    <Badge :variant="statusVariant(subscriberAccount.subscription.status)" width="full">{{ subscriberAccount.subscription.status }}</Badge>
+                    <Badge :variant="statusVariant(subscriberAccount.subscription.status)" width="full">{{ $t('public.' + subscriberAccount.subscription.status.toLowerCase()) }}</Badge>
                 </div>
             </div>
 

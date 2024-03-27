@@ -1,5 +1,9 @@
 <?php
 return [
+    'min_e_wallet_error' => "电子钱包金额必须至少是存款金额的1%",
+    'max_e_wallet_error' => "电子钱包金额必须小于存款金额的20%",
+    'max' => "最大值",
+    'percentage' => "百分比",
     'auto payment' => "自动支付",
     'payment merchant' => "支付商户",
     'internaltransfer' => "内部转账",

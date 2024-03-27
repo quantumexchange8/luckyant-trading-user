@@ -159,12 +159,23 @@ class AccountInfoController extends Controller
             ->where('meta_login', $meta_login)
             ->where('status', 'Active')
             ->first();
+        
+        $minEWalletAmount = $request->minEWalletAmount;
+        $maxEWalletAmount = $request->maxEWalletAmount;
+        $eWalletAmount = $request->eWalletAmount;
+        $cashWalletAmount = $request->cashWalletAmount;
+
+        if ($eWalletAmount < $minEWalletAmount) {
+            throw ValidationException::withMessages(['eWalletAmount' => trans('public.min_e_wallet_error')]);
+        } elseif ($eWalletAmount > $maxEWalletAmount) {
+            throw ValidationException::withMessages(['eWalletAmount' => trans('public.max_e_wallet_error')]);
+        }
 
         if ($wallet->type == 'e_wallet') {
-            if ($wallet->balance < ($amount * 0.2) || $amount <= 0) {
+            if ($wallet->balance < $eWalletAmount || $amount <= 0) {
                 throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
             }
-            if ($cash_wallet->balance < ($amount * 0.8)) {
+            if ($cash_wallet->balance < $cashWalletAmount || $amount <= 0) {
                 throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $cash_wallet->name])]);
             }
         } elseif ($wallet->balance < $amount || $amount <= 0) {
@@ -187,9 +198,6 @@ class AccountInfoController extends Controller
         }
 
         if ($wallet->type == 'e_wallet') {
-            $eWalletAmount = $amount * 0.2;
-            $cashWalletAmount = $amount * 0.8;
-
             $this->createTransaction($user->id, $wallet->id, $meta_login, $deal['deal_Id'], 'Deposit', $eWalletAmount, $wallet->balance - $eWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
             $wallet->balance -= $eWalletAmount;
             $wallet->save();

@@ -1,5 +1,9 @@
 <?php
 return [
+    'min_e_wallet_error' => "The E-Wallet Amount must be at least 1% of the Deposit Amount",
+    'max_e_wallet_error' => "The E-Wallet Amount must be less than 20% of the Deposit Amount",
+    'max' => "Max",
+    'percentage' => "Percentage",
     'auto payment' => "Auto Payment",
     'payment merchant' => "Payment Merchant",
     'internaltransfer' => "Internal Transfer",

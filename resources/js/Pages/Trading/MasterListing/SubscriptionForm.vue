@@ -154,10 +154,18 @@ const closeTermsModal = () => {
                     </div>
                     <div class="flex items-center justify-between gap-2 self-stretch">
                         <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                            {{ $t('public.subscription_fee') }} ({{ masterAccount.roi_period }} {{ $t('public.days') }})
+                            {{ $t('public.management_fee') }}
                         </div>
                         <div class="text-base text-gray-800 dark:text-white font-semibold">
-                            $ {{ formatAmount(masterAccount.subscription_fee) }}
+                            $ {{ formatAmount(masterAccount.management_fee) }}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 self-stretch">
+                        <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                            {{ $t('public.roi_period') }}
+                        </div>
+                        <div class="text-base text-gray-800 dark:text-white font-semibold">
+                            {{ masterAccount.roi_period }} {{ $t('public.days') }}
                         </div>
                     </div>
                     <div class="flex items-center justify-between gap-2 self-stretch">

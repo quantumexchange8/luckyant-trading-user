@@ -1,5 +1,6 @@
 <?php
 return [
+    'management_fee' => "管理费",
     'min_e_wallet_error' => "电子钱包金额必须至少是存款金额的1%",
     'max_e_wallet_error' => "电子钱包金额必须小于存款金额的20%",
     'max' => "最大值",
@@ -151,7 +152,7 @@ return [
     'minimum_equity_to_join' => "最低加入金额",
     'sharing_profit' => "盈利分成",
     'subscription_fee' => "订阅费",
-    'roi_period' => "ROI周期",
+    'roi_period' => "结算周期",
     'copy_trading_status' => "复制交易状态",
     'min_join_equity_placeholder' => "$ 0.00",
     'sharing_profit_placeholder' => "50%",

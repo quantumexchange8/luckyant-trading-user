@@ -176,6 +176,22 @@ class WalletController extends Controller
         $user = Auth::user();
         $wallet = Wallet::find($request->wallet_id);
         $amount = number_format(floatval($request->amount), 2, '.', '');
+        $latest_transaction = Transaction::where('user_id', $user->id)
+            ->where('category', 'wallet')
+            ->where('transaction_type', 'Deposit')
+            ->where('status', 'Processing')
+            ->latest()
+            ->first();
+
+        // Check if a latest transaction exists and its created_at time is within the last 30 seconds
+        if ($latest_transaction && Carbon::parse($latest_transaction->created_at)->diffInSeconds(Carbon::now()) < 30) {
+
+            $remainingSeconds = 30 - Carbon::parse($latest_transaction->created_at)->diffInSeconds(Carbon::now());
+
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.please_wait_for_seconds', ['seconds' => $remainingSeconds]));
+        }
 
         $transaction_number = RunningNumberService::getID('transaction');
 

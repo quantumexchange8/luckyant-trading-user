@@ -365,4 +365,5 @@ return [
     'wallet_adjustment' => "钱包调整",
     'max_drawdown' => "最大缩减",
     "agreement" => "通过继续，我同意我已阅读支持文件并同意",
+    "please_wait_for_seconds" => "请等待 :seconds 秒后再执行另一个交易",
 ];

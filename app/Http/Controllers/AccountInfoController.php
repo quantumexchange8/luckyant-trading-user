@@ -419,8 +419,6 @@ class AccountInfoController extends Controller
             'trading_account_id' =>  $trading_account->id,
             'min_join_equity' => $request->min_join_equity,
             'roi_period' => $request->roi_period,
-            'sharing_profit' => $request->sharing_profit,
-            'subscription_fee' => $request->subscription_fee,
         ]);
 
         return redirect()->back()
@@ -444,20 +442,9 @@ class AccountInfoController extends Controller
 
         $master->update([
             'min_join_equity' => $request->min_join_equity,
-            'sharing_profit' => $request->sharing_profit,
-            'subscription_fee' => $request->subscription_fee,
             'roi_period' => $request->roi_period,
             'signal_status' => $request->signal_status,
         ]);
-
-        if ($master->min_join_equity != null &&
-            $master->sharing_profit != null &&
-            $master->roi_period != null &&
-            $master->subscription_fee != null) {
-            $master->update([
-                'status' => 'Active',
-            ]);
-        }
 
         return redirect()->back()
             ->with('title', trans('public.success_configure_setting'))

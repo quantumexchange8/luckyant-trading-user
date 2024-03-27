@@ -103,7 +103,7 @@ const roiPeriod = [
             </div>
 
             <!-- Input field for sharing profit -->
-            <div class="space-y-2">
+            <!-- <div class="space-y-2">
                 <Label
                     for="sharing_profit"
                     :value="$t('public.sharing_profit') + ' (%)'"
@@ -117,10 +117,10 @@ const roiPeriod = [
                     v-model="form.sharing_profit"
                 />
                 <InputError :message="form.errors.sharing_profit" />
-            </div>
+            </div> -->
 
             <!-- Input field for subscription fee -->
-            <div class="space-y-2">
+            <!-- <div class="space-y-2">
                 <Label
                     for="subscription_fee"
                     :value="$t('public.subscription_fee')"
@@ -134,7 +134,7 @@ const roiPeriod = [
                     v-model="form.subscription_fee"
                 />
                 <InputError :message="form.errors.subscription_fee" />
-            </div>
+            </div> -->
         </div>
 
         <!-- Submit button -->

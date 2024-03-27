@@ -157,7 +157,7 @@ const closeTermsModal = () => {
                             {{ $t('public.management_fee') }}
                         </div>
                         <div class="text-base text-gray-800 dark:text-white font-semibold">
-                            $ {{ formatAmount(masterAccount.management_fee) }}
+                           {{ formatAmount(masterAccount.management_fee) }} %
                         </div>
                     </div>
                     <div class="flex items-center justify-between gap-2 self-stretch">

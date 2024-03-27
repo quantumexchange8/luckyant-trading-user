@@ -96,7 +96,7 @@ const roiPeriod = [
                 <InputError :message="form.errors.min_join_equity" />
             </div>
 
-            <div class="space-y-2">
+            <!-- <div class="space-y-2">
                 <Label
                     for="sharing_profit"
                     :value="$t('public.sharing_profit') + ' (%)'"
@@ -128,7 +128,7 @@ const roiPeriod = [
                     :invalid="form.errors.subscription_fee"
                 />
                 <InputError :message="form.errors.subscription_fee" />
-            </div>
+            </div> -->
 
             <div class="space-y-2">
                 <Label

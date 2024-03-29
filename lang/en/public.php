@@ -166,6 +166,7 @@ return [
     'minimum_equity_to_join' => "Minimum Equity to Join",
     'sharing_profit' => "Sharing Profit",
     'subscription_fee' => "Subscription Fee",
+    'subscriptionfee' => "Subscription Fee",
     'roi_period' => "Settlement  Period",
     'copy_trading_status' => "Copy Trading Status",
     'min_join_equity_placeholder' => "$ 0.00",

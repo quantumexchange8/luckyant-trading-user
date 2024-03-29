@@ -13,7 +13,9 @@ import Badge from "@/Components/Badge.vue";
 import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
 import {usePage} from "@inertiajs/vue3";
 import SubscriptionHistory from "@/Pages/Trading/MasterListing/SubscriptionHistory.vue";
+import TransactionHistory from "@/Pages/Trading/MasterListing/TransactionHistory.vue";
 import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
+import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -39,6 +41,9 @@ const currentPage = ref(1);
 const { formatAmount, formatDateTime } = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
 
+const approvalDate = ref('');
+const unsubscribeDate = ref('');
+
 const getResults = async (page = 1, search = '', type = '', date = '') => {
     isLoading.value = true
     try {
@@ -58,6 +63,8 @@ const getResults = async (page = 1, search = '', type = '', date = '') => {
 
         const response = await axios.get(url);
         subscriberAccounts.value = response.data;
+        approvalDate.value = response.data.approval_date;
+        unsubscribeDate.value = response.data.unsubscribe_date;
     } catch (error) {
         console.error(error);
     } finally {
@@ -89,6 +96,18 @@ watchEffect(() => {
         getResults();
     }
 });
+
+const tabs = ref([
+    { title: "subscription_history", component: "SubscriptionHistory" },
+    { title: "transaction_history", component: "TransactionHistory" }
+]);
+
+let selectedTab = ref(0);
+
+function changeTab(index) {
+    selectedTab.value = index;
+}
+
 </script>
 
 <template>
@@ -229,8 +248,36 @@ watchEffect(() => {
         </div>
     </div>
 
-    <div class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
-        <SubscriptionHistory
-        />
+    <div class="p-5 my-5 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
+        <div class="w-full">
+            <TabGroup :selectedIndex="selectedTab" @change="changeTab">
+                <TabList class="flex py-1 w-full flex-col sm:flex-row">
+                    <Tab v-for="(tab, index) in tabs" :key="index">
+                        <button
+                            @click="selectedTab = index"
+                            class="w-full sm:w-40 py-2.5 text-sm font-semibold dark:text-gray-400 ring-white ring-offset-0 focus:outline-none focus:ring-0"
+                            :class="[
+                                selectedTab === index ? 'dark:text-white border-b-2 border-gray-400 dark:border-gray-500' : 'border-b border-gray-300 dark:border-gray-700'
+                            ]"
+                        >
+                            {{ $t('public.' + tab.title) }}
+                        </button>
+                    </Tab>
+                </TabList>
+
+                <TabPanels class="pt-2">
+                    <TabPanel v-for="(tab, index) in tabs" :key="index">
+                        <div v-if="selectedTab === index">
+                            <SubscriptionHistory 
+                                v-if="tab.component === 'SubscriptionHistory'" 
+                            />
+                            <TransactionHistory 
+                                v-if="tab.component === 'TransactionHistory'" 
+                            />
+                        </div>
+                    </TabPanel>
+                </TabPanels>
+            </TabGroup>
+        </div>
     </div>
 </template>

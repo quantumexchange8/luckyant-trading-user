@@ -17,6 +17,7 @@ class Subscriber extends Model
         'master_meta_login',
         'subscription_id',
         'status',
+        'approval_date',
         'unsubscribe_date',
     ];
 

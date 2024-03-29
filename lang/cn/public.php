@@ -166,6 +166,7 @@ return [
     'minimum_equity_to_join' => "最低加入金额",
     'sharing_profit' => "盈利分成",
     'subscription_fee' => "订阅费",
+    'subscriptionfee' => "订阅费",
     'roi_period' => "结算周期",
     'copy_trading_status' => "复制交易状态",
     'min_join_equity_placeholder' => "$ 0.00",

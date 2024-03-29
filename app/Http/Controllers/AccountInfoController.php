@@ -159,7 +159,7 @@ class AccountInfoController extends Controller
             ->where('meta_login', $meta_login)
             ->where('status', 'Active')
             ->first();
-        
+
         $minEWalletAmount = $request->minEWalletAmount;
         $maxEWalletAmount = $request->maxEWalletAmount;
         $eWalletAmount = $request->eWalletAmount;
@@ -258,7 +258,10 @@ class AccountInfoController extends Controller
         }
 
         // Check if balance is sufficient
-        if (!empty($tradingAccount->subscriber) && $tradingAccount->subscriber->unsubscribe_date < now()) {
+        if (!empty($tradingAccount->subscriber) &&
+            !empty($tradingAccount->unsubscribe_date) &&
+            $tradingAccount->subscriber->unsubscribe_date->greaterThan(Carbon::now()->subHours(24))
+        ) {
             throw ValidationException::withMessages(['amount' => trans('public.terminatiion_message')]);
         }
 
@@ -432,7 +435,7 @@ class AccountInfoController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
-        
+
             $trading_account = TradingAccount::where('meta_login', $request->meta_login)->first();
 
             $existingRequest = MasterRequest::where('trading_account_id', $trading_account->id)

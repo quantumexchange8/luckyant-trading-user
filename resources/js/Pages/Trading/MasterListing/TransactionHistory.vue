@@ -139,7 +139,7 @@ const currentLocale = ref(usePage().props.locale);
 
 <template>
     <div class="flex justify-between mb-3">
-        <h4 class="font-semibold dark:text-white">{{$t('public.transaction_history')}}</h4>
+<!--        <h4 class="font-semibold dark:text-white">{{$t('public.transaction_history')}}</h4>-->
         <!-- <RefreshIcon
             :class="{ 'animate-spin': isLoading }"
             class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white"

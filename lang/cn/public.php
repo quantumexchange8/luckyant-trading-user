@@ -1,5 +1,6 @@
 <?php
 return [
+    'amount_multiples_of_100' => "金额必须是100的倍数",
     'amount_return_cash_wallet' => "退回至现金钱包的金额",
     'amount_to_follow_master' => "跟随交易者的金额",
     'confirm_submit' => "确认提交",

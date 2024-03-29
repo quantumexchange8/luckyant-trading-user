@@ -1,5 +1,6 @@
 <?php
 return [
+    'amount_multiples_of_100' => "Amount must be multiplies of 100",
     'amount_return_cash_wallet' => "Amount returned to cash wallet",
     'amount_to_follow_master' => "Amount to follow master",
     'confirm_submit' => "Confirm Submit",

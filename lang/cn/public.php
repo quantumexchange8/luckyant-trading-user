@@ -1,8 +1,12 @@
 <?php
 return [
-    'weekly' => '每周',
-    'two_week' => '每两周',
-    'monthly' => '每月',
+    'amount_return_cash_wallet' => "退回至现金钱包的金额",
+    'amount_to_follow_master' => "跟随交易者的金额",
+    'confirm_submit' => "确认提交",
+    'successfully_subscribe_with_remainder' => '订阅成功。退回至现金钱包的金额：:amount。跟随交易者的金额: :balance',
+    'weekly' => "每周",
+    'two_week' => "每两周",
+    'monthly' => "每月",
     'hierarchy_validation_error' => "具有该钱包地址的用户与当前用户不在同一层次线上",
     'become_master_request_pending' => "成为交易者请求待处理",
     'invalid_transfer_wallet_type' => "钱包地址类型无效，必须为电子钱包",

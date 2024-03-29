@@ -405,7 +405,7 @@ class AccountInfoController extends Controller
         return $tradingAccount->map(function ($tradingAccount) {
             return [
                 'value' => $tradingAccount->meta_login,
-                'label' => $tradingAccount->meta_login . ' ($' . number_format($tradingAccount->equity, 2) . ')',
+                'label' => $tradingAccount->meta_login . ' ($' . number_format($tradingAccount->balance, 2) . ')',
             ];
         });
     }

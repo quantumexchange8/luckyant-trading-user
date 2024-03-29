@@ -1,8 +1,12 @@
 <?php
 return [
-    'weekly' => 'Weekly',
-    'two_week' => '2 Week',
-    'monthly' => 'Monthly',
+    'amount_return_cash_wallet' => "Amount returned to cash wallet",
+    'amount_to_follow_master' => "Amount to follow master",
+    'confirm_submit' => "Confirm Submit",
+    'successfully_subscribe_with_remainder' => 'Successfully subscribed. Amount returned to cash wallet: :amount. Remaining balance for following master: :balance',
+    'weekly' => "Weekly",
+    'two_week' => "2 Week",
+    'monthly' => "Monthly",
     'hierarchy_validation_error' => "The user with that wallet address is not in the same hierarchy line as the current user",
     'become_master_request_pending' => "The become master request is pending",
     'invalid_transfer_wallet_type' => "The type of wallet address is invalid, it must be E-Wallet",

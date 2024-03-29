@@ -115,10 +115,51 @@ class TradingController extends Controller
             throw ValidationException::withMessages(['meta_login' => 'Leverage not same']);
         }
 
-        if ($tradingAccount->equity < $masterAccount->min_join_equity || $tradingAccount->equity < $masterAccount->subscription_fee) {
+        if ($tradingAccount->balance < $masterAccount->min_join_equity || $tradingAccount->balance < $masterAccount->subscription_fee) {
             throw ValidationException::withMessages(['meta_login' => trans('public.insufficient_balance')]);
         }
 
+        // Calculate the remainder of the balance when divided by 100, including cents
+        $remainder = fmod($tradingAccount->balance, 100);
+
+        // Format the remainder to ensure it represents the cents accurately
+        $amount = number_format($remainder, 2, '.', '');
+
+        if ($amount != 0 && $amount != null) {
+            $deal = [];
+            try {
+                $deal = $metaService->createDeal($tradingAccount->meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
+            } catch (\Exception $e) {
+                \Log::error('Error creating deal: '. $e->getMessage());
+            }
+        
+            // Calculate new wallet amount
+            $new_wallet_amount = $wallet->balance + $amount;
+            $transaction_number = RunningNumberService::getID('transaction');
+        
+            // Create transaction
+            Transaction::create([
+                'category' => 'trading_account',
+                'user_id' => $user->id,
+                'to_wallet_id' => $wallet->id,
+                'from_meta_login' => $tradingAccount->meta_login,
+                'ticket' => $deal['deal_Id'],
+                'transaction_number' => $transaction_number,
+                'transaction_type' => 'Withdrawal',
+                'amount' => $amount,
+                'transaction_charges' => 0,
+                'transaction_amount' => $amount,
+                'status' => 'Success',
+                'comment' => $deal['conduct_Deal']['comment'],
+                'new_wallet_amount' => $new_wallet_amount,
+            ]);
+        
+            $wallet->update([
+                'balance' => $new_wallet_amount
+            ]);
+            
+        }
+        
         if ($masterAccount->subscription_fee > 0) {
             $transaction_number = RunningNumberService::getID('transaction');
 
@@ -144,6 +185,13 @@ class TradingController extends Controller
                 'meta_balance' => $tradingAccount->balance,
                 'transaction_id' => $transaction->id,
             ];
+
+            // Update meta_balance if withdrawal occurred
+            if ($amount != 0 && $amount != null) {
+                $remaining_balance = $tradingAccount->balance - $amount;
+                $subscriptionData['meta_balance'] = $remaining_balance;
+            }
+
         } else {
             $subscriptionData = [
                 'user_id' => $user->id,
@@ -151,6 +199,12 @@ class TradingController extends Controller
                 'meta_login' => $meta_login,
                 'meta_balance' => $tradingAccount->balance,
             ];
+
+            // Update meta_balance if withdrawal occurred
+            if ($amount != 0 && $amount != null) {
+                $remaining_balance = $tradingAccount->balance - $amount;
+                $subscriptionData['meta_balance'] = $remaining_balance;
+            }
         }
 
         $subscription_number = RunningNumberService::getID('subscription');
@@ -175,9 +229,17 @@ class TradingController extends Controller
 
         $metaService->disableTrade($meta_login);
 
-        return redirect()->back()
-            ->with('title', trans('public.success_subscribe'))
-            ->with('success', trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
+        if ($amount != 0 && $amount != null) {
+            $remaining_balance = $tradingAccount->balance - $amount;
+
+            return redirect()->back()
+                ->with('title', trans('public.success_subscribe'))
+                ->with('success', trans('public.successfully_subscribe_with_remainder', ['amount' => $amount, 'balance' => $remaining_balance]). ' ' . trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
+        } else {
+            return redirect()->back()
+                ->with('title', trans('public.success_subscribe'))
+                ->with('success', trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
+        }
     }
 
     public function getSubscriptions(Request $request)

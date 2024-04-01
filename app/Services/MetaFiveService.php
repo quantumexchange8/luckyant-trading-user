@@ -64,8 +64,6 @@ class MetaFiveService {
         ]);
         $accountResponse = $accountResponse->json();
 
-        Log::debug($accountResponse);
-
         (new CreateTradingAccount)->execute($user, $accountResponse);
         (new CreateTradingUser)->execute($user, $accountResponse);
         return $accountResponse;
@@ -93,7 +91,6 @@ class MetaFiveService {
     public function disableTrade($meta_login)
     {
         $disableTrade = Http::acceptJson()->patch($this->baseURL . "/disable_trade/{$meta_login}")->json();
-        Log::debug($disableTrade);
 
         $userData = $this->getMetaUser($meta_login);
         $metaAccountData = $this->getMetaAccount($meta_login);
@@ -115,8 +112,10 @@ class MetaFiveService {
             'leverage' => $leverage,
         ]);
         $upatedResponse = $upatedResponse->json();
-
-        Log::debug($upatedResponse);
+        $userData = $this->getMetaUser($meta_login);
+        $metaAccountData = $this->getMetaAccount($meta_login);
+        (new UpdateTradingAccount)->execute($meta_login, $metaAccountData);
+        (new UpdateTradingUser)->execute($meta_login, $userData);
 
         return $upatedResponse;
     }
@@ -128,11 +127,7 @@ class MetaFiveService {
             'type' => $type,
             'password' => $password,
         ]);
-        $passwordResponse = $passwordResponse->json();
-
-        Log::debug($passwordResponse);
-
-        return $passwordResponse;
+        return $passwordResponse->json();
     }
 
 }

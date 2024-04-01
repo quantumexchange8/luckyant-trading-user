@@ -49,7 +49,7 @@ const submit = () => {
                     :invalid="form.errors.amount"
                 />
                 <InputError :message="form.errors.amount" class="mt-2" />
-                <span class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ account.meta_login }}: ${{ account.balance ? formatAmount(account.balance) : '0.00' }}</span>
+                <span class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ account.meta_login }}: ${{ account.balance ? formatAmount(account.equity) : '0.00' }}</span>
             </div>
         </div>
 

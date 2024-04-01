@@ -45,18 +45,6 @@ class AccountInfoController extends Controller
         ->latest()
         ->get();
 
-        $tradingAccounts->each(function ($tradingAccount) {
-            if ($tradingAccount->subscriber) {
-                if ($tradingAccount->subscriber->unsubscribe_date < now()) {
-                    $tradingAccount->balance_out = false;
-                } else {
-                    $tradingAccount->balance_out = true;
-                }
-            } else {
-                $tradingAccount->balance_out = true;
-            }
-        });
-
         return Inertia::render('AccountInfo/AccountInfo', [
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'leverageSel' => (new SelectOptionService())->getActiveLeverageSelection(),
@@ -127,18 +115,24 @@ class AccountInfoController extends Controller
             ->get();
 
         $tradingAccounts->each(function ($tradingAccount) {
-            if ($tradingAccount->subscriber) {
-                if ($tradingAccount->subscriber->unsubscribe_date < now()) {
-                    $tradingAccount->balance_out = false;
-                } else {
-                    $tradingAccount->balance_out = true;
-                }
+            if ($tradingAccount->subscriber && \Carbon\Carbon::parse($tradingAccount->subscriber->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
+                $tradingAccount->balance_out = false;
+            } elseif ($tradingAccount->demo_fund > 0) {
+                $tradingAccount->balance_out = false;
             } else {
                 $tradingAccount->balance_out = true;
             }
         });
 
         $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login,company'])->where('user_id', \Auth::id())->get();
+
+        $masterAccounts->each(function ($masterAccount) {
+            if ($masterAccount->tradingAccount->demo_fund > 0) {
+                $masterAccount->tradingAccount->balance_out = false;
+            } else {
+                $masterAccount->tradingAccount->balance_out = true;
+            }
+        });
 
         return response()->json([
             'tradingAccounts' => $tradingAccounts,
@@ -266,7 +260,7 @@ class AccountInfoController extends Controller
         }
 
         // Check if balance is sufficient
-        if ($tradingAccount->balance < $amount || $amount <= 0) {
+        if ($tradingAccount->equity < $amount || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
         }
         $deal = [];

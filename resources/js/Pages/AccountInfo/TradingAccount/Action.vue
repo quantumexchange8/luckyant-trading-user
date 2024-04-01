@@ -88,7 +88,7 @@ const closeModal = () => {
 
         <template #content>
             <DropdownLink
-                v-if="!account.subscriber || account.balance_out"
+                v-if="account.balance_out"
                 @click="openAccountActionModal('withdrawal')"
             >
                 <div class="flex items-center gap-2">
@@ -140,7 +140,7 @@ const closeModal = () => {
             class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
             variant="primary"
             pill
-            @click="openAccountActionModal('edit_leverage')" 
+            @click="openAccountActionModal('edit_leverage')"
         >
             <Edit05Icon aria-hidden="true" class="w-5 h-5 absolute" />
         </Button>
@@ -152,7 +152,7 @@ const closeModal = () => {
             class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
             variant="primary"
             pill
-            @click="openAccountActionModal('change_password')" 
+            @click="openAccountActionModal('change_password')"
         >
             <PasscodeLockIcon aria-hidden="true" class="w-5 h-5 absolute" />
         </Button>

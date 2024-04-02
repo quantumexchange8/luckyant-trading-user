@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\AccountInfoController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ReferralController;
-use App\Http\Controllers\TradingController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\TermController;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\TermController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TradingController;
+use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AccountInfoController;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -170,6 +171,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/network', [ReferralController::class, 'index'])->name('referral.index');
         Route::get('/getTreeData', [ReferralController::class, 'getTreeData'])->name('referral.getTreeData');
     });
+
+    /**
+     * ==============================
+     *           Report
+     * ==============================
+     */
+    Route::prefix('report')->group(function () {
+        Route::get('/tradeRebateHisoty', [ReportController::class, 'tradeRebate'])->name('report.tradeRebateHisoty');
+        Route::get('/getTradeRebateHistories', [ReportController::class, 'getTradeRebateHistories'])->name('report.getTradeRebateHistories');
+    });
+
 });
 
 Route::get('/components/buttons', function () {

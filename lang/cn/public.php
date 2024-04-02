@@ -1,5 +1,11 @@
 <?php
 return [
+    'rebate_history' => "返利历史",
+    'affiliate' => "联盟",
+    'downline' => "下线",
+    'trade_rebate_report' => "交易返利报告",
+    'total_rebate_amount' => "总返利金额",
+    'total_trade_volume' => "总交易量",
     'amount_multiples_of_100' => "金额必须是100的倍数",
     'amount_return_cash_wallet' => "退回至现金钱包的金额",
     'amount_to_follow_master' => "跟随交易者的金额",
@@ -94,6 +100,8 @@ return [
         'trading_account' => "交易账户",
         'referral_program' => "介绍计划",
         'referral_tree' => "管理列表",
+        'report' => "报告",
+        'trade_rebate' => "交易返利",
         'profile' => "个人资料"
     ],
     'copy' => "复制",
@@ -338,8 +346,10 @@ return [
     'open_price' => "开盘价",
     'close_price' => "收盘价",
     'gain' => "盈利",
+    'change' => "更改",
     'profit' => "收益",
     'volume' => "手数",
+    'rebate' => "返利",
     'trade_history' => "交易历史",
     'filter_symbols' => "搜索产品",
     'successfully_refreshed' => "成功刷新",

@@ -2,7 +2,7 @@
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
-import {ArrowLeftIcon, ArrowRightIcon, RefreshIcon} from "@heroicons/vue/outline";
+import {SearchIcon, ArrowLeftIcon, ArrowRightIcon, RefreshIcon} from "@heroicons/vue/outline";
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import {ref, watch, watchEffect} from "vue";
@@ -23,9 +23,8 @@ const formatter = ref({
 });
 
 const props = defineProps({
-    meta_login: Number
+    trade_rebates: Object
 })
-
 const isLoading = ref(false);
 const date = ref('');
 const search = ref('');
@@ -36,26 +35,17 @@ const tradeHistories = ref({data: []})
 const currentPage = ref(1)
 const { formatDateTime, formatAmount } = transactionFormat();
 
-const tradeActions = [
-    {value: 'BUY', label:"BUY"},
-    {value: 'SELL', label:"SELL"},
-];
-
-const getResults = async (page = 1, type = null, date = '', tradeType = '') => {
+const getResults = async (page = 1, search = '', date = '') => {
     isLoading.value = true
     try {
-        let url = `/trading/getTradeHistories/${props.meta_login}?page=${page}`;
+        let url = `/report/getTradeRebateHistories?page=${page}`;
 
-        if (type) {
-            url += `&type=${type}`;
+        if (search) {
+            url += `&search=${search}`;
         }
 
         if (date) {
             url += `&date=${date}`;
-        }
-
-        if (tradeType) {
-            url += `&tradeType=${tradeType}`;
         }
 
         const response = await axios.get(url);
@@ -71,26 +61,21 @@ const getResults = async (page = 1, type = null, date = '', tradeType = '') => {
 getResults()
 
 watch(
-    [type, date, tradeType],
-    debounce(([typeValue, dateValue, tradeType]) => {
-        const typeStrings = typeValue ? typeValue.map(item => item.value) : null;
-        getResults(1, typeStrings, dateValue, tradeType);
+    [search, date],
+    debounce(([serachValue, dateValue]) => {
+        getResults(1, serachValue, dateValue);
     }, 300)
 );
 
 const handlePageChange = (newPage) => {
     if (newPage >= 1) {
         currentPage.value = newPage;
-        const typeStrings = type.value ? type.value.map(item => item.value) : null;
-
-        getResults(currentPage.value, typeStrings, date.value, tradeType.value);
+        getResults(currentPage.value, search.value, date.value);
     }
 };
 
 const refreshHistory = () => {
-    const typeStrings = type.value ? type.value.map(item => item.value) : null;
-
-    getResults(1, typeStrings, date.value, tradeType.value);
+    getResults(1, search.value, date.value);
 
     toast.add({
         message: wTrans('public.successfully_refreshed'),
@@ -111,25 +96,25 @@ watchEffect(() => {
     }
 });
 
-function loadSymbols(query, setOptions) {
-    fetch(`/trading/getTradingSymbols?meta_login=${props.meta_login}&query=` + query)
-        .then(response => response.json())
-        .then(results => {
-            setOptions(
-                results.map(history => {
-                    return {
-                        value: history.symbol,
-                        label: history.symbol,
-                    }
-                })
-            )
-        });
-}
+// function loadSymbols(query, setOptions) {
+//     fetch(`/trading/getTradingSymbols?meta_login=${props.meta_login}&query=` + query)
+//         .then(response => response.json())
+//         .then(results => {
+//             setOptions(
+//                 results.map(history => {
+//                     return {
+//                         value: history.symbol,
+//                         label: history.symbol,
+//                     }
+//                 })
+//             )
+//         });
+// }
 </script>
 
 <template>
     <div class="flex justify-between mb-3">
-        <h4 class="font-semibold text-lg dark:text-white">{{$t('public.trade_history')}}</h4>
+        <h4 class="font-semibold text-lg dark:text-white">{{$t('public.rebate_history')}}</h4>
         <RefreshIcon
             :class="{ 'animate-spin': isLoading }"
             class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white"
@@ -140,6 +125,15 @@ function loadSymbols(query, setOptions) {
 
     <div class="flex flex-wrap gap-3 w-full justify-end items-center sm:flex-nowrap">
         <div class="w-full sm:w-80">
+            <InputIconWrapper>
+                <template #icon>
+                    <SearchIcon aria-hidden="true" class="w-5 h-5" />
+                </template>
+                <!-- <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.report.search_placeholder')" v-model="search" /> -->
+                <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.search')" v-model="search" />
+            </InputIconWrapper>
+        </div>
+        <div class="w-full sm:w-80">
             <vue-tailwind-datepicker
                 :placeholder="$t('public.date_placeholder')"
                 :formatter="formatter"
@@ -148,7 +142,7 @@ function loadSymbols(query, setOptions) {
                 input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-dark-eval-2"
             />
         </div>
-        <div class="w-full sm:w-80">
+        <!-- <div class="w-full sm:w-80">
             <BaseListbox
                 v-model="tradeType"
                 :options="tradeActions"
@@ -163,7 +157,7 @@ function loadSymbols(query, setOptions) {
                 multiple
                 :placeholder="$t('public.filter_symbols')"
             />
-        </div>
+        </div> -->
     </div>
 
     <div class="mt-2 relative overflow-x-auto">
@@ -174,34 +168,22 @@ function loadSymbols(query, setOptions) {
             <thead class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
             <tr>
                 <th scope="col" class="p-3">
-                    {{$t('public.date')}} ({{ $t('public.close') }})
+                    {{$t('public.date')}}
                 </th>
                 <th scope="col" class="p-3">
-                    {{$t('public.symbol')}}
+                    {{$t('public.affiliate')}}
                 </th>
-                <th scope="col" class="p-3">
-                    {{$t('public.action')}}
+                <th scope="col" class="p-3 text-center">
+                    {{$t('public.rebate')}} ($)
                 </th>
                 <th scope="col" class="p-3 text-center">
                     {{$t('public.volume')}}
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.open_price')}} ($)
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.close_price')}} ($)
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.profit')}} ($)
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.change')}} (%)
                 </th>
             </tr>
             </thead>
             <tbody>
             <tr v-if="tradeHistories.data.length === 0">
-                <th colspan="8" class="py-4 text-lg text-center">
+                <th colspan="4" class="py-4 text-lg text-center">
                     {{$t('public.no_history')}}
                 </th>
             </tr>
@@ -210,32 +192,19 @@ function loadSymbols(query, setOptions) {
                 class="bg-white dark:bg-transparent text-xs text-gray-900 dark:text-white border-b dark:border-gray-800 hover:bg-primary-50 dark:hover:bg-gray-600"
             >
                 <td class="p-3">
-                    {{ formatDateTime(history.time_close) }}
+                    {{ formatDateTime(history.created_at) }}
                 </td>
-                <td class="p-3">
-                    {{ history.symbol }}
+                <td class="p-3 inline-flex">
+                    <div class="grid">
+                        <span>{{ history.of_user.username }} ({{ history.meta_login }})</span>
+                        <span class="dark:text-gray-400">{{ history.of_user.email }}</span>
+                    </div>
                 </td>
-                <td class="p-3">
-                    {{ history.trade_type }}
+                <td class="p-3 font-semibold text-center">
+                    {{ formatAmount(history.rebate) }}
                 </td>
-                <td class="p-3 text-center">
+                <td class="p-3 font-semibold text-center">
                     {{ formatAmount(history.volume) }}
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    {{ history.price_open ? formatAmount(history.price_open) : '0.00' }}
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    {{ history.price_close ? formatAmount(history.price_close) : '0.00' }}
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    <div :class="{ 'text-error-500': history.trade_profit < 0, 'text-success-500': history.trade_profit > 0 }">
-                        {{ history.trade_profit ? formatAmount(history.trade_profit) : '0.00' }}
-                    </div>
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    <div :class="{ 'text-error-500': history.trade_profit_pct < 0, 'text-success-500': history.trade_profit_pct > 0 }">
-                        {{ history.trade_profit_pct ? formatAmount(history.trade_profit_pct) : '-' }}
-                    </div>
                 </td>
             </tr>
             </tbody>

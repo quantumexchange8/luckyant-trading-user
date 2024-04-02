@@ -25,4 +25,19 @@ class TradeRebateSummary extends Model
         'execute_at',
     ];
     
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'upline_user_id', 'id');
+    }
+
+    public function ofUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function symbolGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(SymbolGroup::class, 'symbol_group', 'id');
+    }
+
 }

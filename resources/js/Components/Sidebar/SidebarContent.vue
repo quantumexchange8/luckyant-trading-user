@@ -104,6 +104,24 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
             />
         </SidebarCollapsible>
 
+        <SidebarCollapsible
+            :title="$t('public.sidebar.report')"
+            :active="route().current('report.*')"
+        >
+            <template #icon>
+                <CoinsHandIcon
+                    class="flex-shrink-0 w-6 h-6"
+                    aria-hidden="true"
+                />
+            </template>
+
+            <SidebarCollapsibleItem
+                :href="route('report.tradeRebateHisoty')"
+                :title="$t('public.sidebar.trade_rebate')"
+                :active="route().current('trading.tradeRebateHisoty')"
+            />
+        </SidebarCollapsible>
+
         <SidebarLink
             :title="$t('public.sidebar.profile')"
             :href="route('profile.edit')"

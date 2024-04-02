@@ -201,7 +201,7 @@ function loadSymbols(query, setOptions) {
             </thead>
             <tbody>
             <tr v-if="tradeHistories.data.length === 0">
-                <th colspan="4" class="py-4 text-lg text-center">
+                <th colspan="8" class="py-4 text-lg text-center">
                     {{$t('public.no_history')}}
                 </th>
             </tr>
@@ -225,13 +225,13 @@ function loadSymbols(query, setOptions) {
                     {{ history.price_close ? formatAmount(history.price_close) : '0.00' }}
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    <div :class="{ 'text-error-500': history.closed_profit < 0, 'text-success-500': history.closed_profit > 0 }">
-                        {{ history.closed_profit ? formatAmount(history.closed_profit) : '0.00' }}
+                    <div :class="{ 'text-error-500': history.trade_profit < 0, 'text-success-500': history.trade_profit > 0 }">
+                        {{ history.trade_profit ? formatAmount(history.trade_profit) : '0.00' }}
                     </div>
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    <div :class="{ 'text-error-500': history.closed_profit_percent < 0, 'text-success-500': history.closed_profit_percent > 0 }">
-                        {{ history.closed_profit_percent ? formatAmount(history.closed_profit_percent) : '-' }}
+                    <div :class="{ 'text-error-500': history.trade_profit_pct < 0, 'text-success-500': history.trade_profit_pct > 0 }">
+                        {{ history.trade_profit_pct ? formatAmount(history.trade_profit_pct) : '-' }}
                     </div>
                 </td>
                 <td class="p-3 text-center">

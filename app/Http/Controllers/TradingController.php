@@ -9,6 +9,7 @@ use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\SubscriptionRenewalRequest;
 use App\Models\Term;
+use App\Models\TradeHistory;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
 use App\Models\Wallet;
@@ -132,11 +133,11 @@ class TradingController extends Controller
             } catch (\Exception $e) {
                 \Log::error('Error creating deal: '. $e->getMessage());
             }
-        
+
             // Calculate new wallet amount
             $new_wallet_amount = $wallet->balance + $amount;
             $transaction_number = RunningNumberService::getID('transaction');
-        
+
             // Create transaction
             Transaction::create([
                 'category' => 'trading_account',
@@ -153,13 +154,13 @@ class TradingController extends Controller
                 'comment' => $deal['conduct_Deal']['comment'],
                 'new_wallet_amount' => $new_wallet_amount,
             ]);
-        
+
             $wallet->update([
                 'balance' => $new_wallet_amount
             ]);
-            
+
         }
-        
+
         if ($masterAccount->subscription_fee > 0) {
             $transaction_number = RunningNumberService::getID('transaction');
 
@@ -472,7 +473,7 @@ class TradingController extends Controller
 
     public function getTradeHistories(Request $request, $meta_login)
     {
-        $tradeHistories = CopyTradeHistory::where('meta_login', $meta_login)
+        $tradeHistories = TradeHistory::where('meta_login', $meta_login)
             ->when($request->filled('date'), function ($query) use ($request) {
                 $date = $request->input('date');
                 $dateRange = explode(' - ', $date);
@@ -489,7 +490,7 @@ class TradingController extends Controller
                 $tradeType = $request->input('tradeType');
                 $query->where('trade_type', $tradeType);
             })
-            ->where('status', 'closed')
+            ->where('trade_status', 'Closed')
             ->orderByDesc('time_close')
             ->paginate(10);
 

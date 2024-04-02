@@ -186,10 +186,10 @@ function loadSymbols(query, setOptions) {
                     {{$t('public.volume')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
-                    {{$t('public.open_price')}} ($)
+                    {{$t('public.open_price')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
-                    {{$t('public.close_price')}} ($)
+                    {{$t('public.close_price')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
                     {{$t('public.profit')}} ($)

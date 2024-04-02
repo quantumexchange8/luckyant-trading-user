@@ -47,7 +47,7 @@ class ReportController extends Controller
                 $dateRange = explode(' - ', $date);
                 $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
                 $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
-                $query->whereBetween('closed_time', [$start_date, $end_date]);
+                $query->whereBetween('created_at', [$start_date, $end_date]);
             })
             ->latest()
             ->paginate(10);

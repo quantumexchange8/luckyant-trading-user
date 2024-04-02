@@ -1,7 +1,7 @@
 <script setup>
 import PerfectScrollbar from '@/Components/PerfectScrollbar.vue'
 import SidebarLink from '@/Components/Sidebar/SidebarLink.vue'
-import { DashboardIcon, CoinsHandIcon } from '@/Components/Icons/outline'
+import { DashboardIcon, CoinsHandIcon, ReportIcon } from '@/Components/Icons/outline'
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
 import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
@@ -109,7 +109,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
             :active="route().current('report.*')"
         >
             <template #icon>
-                <CoinsHandIcon
+                <ReportIcon
                     class="flex-shrink-0 w-6 h-6"
                     aria-hidden="true"
                 />

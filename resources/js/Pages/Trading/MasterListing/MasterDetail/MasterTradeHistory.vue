@@ -222,10 +222,10 @@ function loadSymbols(query, setOptions) {
                     {{ formatAmount(history.volume) }}
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    {{ history.price_open ? formatAmount(history.price_open) : '0.00' }}
+                    {{ history.price_open ? (history.price_open) : '0.00' }}
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    {{ history.price_close ? formatAmount(history.price_close) : '0.00' }}
+                    {{ history.price_close ? (history.price_close) : '0.00' }}
                 </td>
                 <td class="p-3 font-semibold text-center">
                     <div :class="{ 'text-error-500': history.trade_profit < 0, 'text-success-500': history.trade_profit > 0 }">

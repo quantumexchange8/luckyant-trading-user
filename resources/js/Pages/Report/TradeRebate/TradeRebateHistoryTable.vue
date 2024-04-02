@@ -174,10 +174,10 @@ watchEffect(() => {
                     {{$t('public.affiliate')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
-                    {{$t('public.rebate')}} ($)
+                    {{$t('public.volume')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
-                    {{$t('public.volume')}}
+                    {{$t('public.rebate')}} ($)
                 </th>
             </tr>
             </thead>
@@ -201,10 +201,10 @@ watchEffect(() => {
                     </div>
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    {{ formatAmount(history.rebate) }}
+                    {{ formatAmount(history.volume) }}
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    {{ formatAmount(history.volume) }}
+                    {{ formatAmount(history.rebate) }}
                 </td>
             </tr>
             </tbody>

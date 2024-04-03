@@ -48,4 +48,10 @@ class Subscription extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function transaction(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
+    }
+
 }

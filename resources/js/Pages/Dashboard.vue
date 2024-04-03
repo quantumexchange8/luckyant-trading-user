@@ -205,7 +205,7 @@ getTotalTransactions();
                     <div class="p-6 w-full flex flex-col gap-4 justify-center overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                         <div class="flex flex-col">
                             <div class="text-lg text-gray-600 dark:text-white">
-                                {{ $t('public.sidebar.referral_program') }}
+                                {{ $t('public.sidebar.affiliate_program') }}
                             </div>
                         </div>
                         <div class="flex flex-col gap-5 w-full">

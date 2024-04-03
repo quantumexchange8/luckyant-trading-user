@@ -168,7 +168,7 @@ export default {
         </div>
         <Tree v-if="expanded && !isLoading" v-for="child in node.children" :key="child.id" :node="child"
             :depth="depth + 1" @onClick="(node) => $emit('onClick', node)" />
-        <Modal :show="affiliateModal" title="View Details" @close="closeModal">
+        <Modal :show="affiliateModal" :title="$t('public.view_details')" @close="closeModal">
             <div v-if="selectedAffiliate">
                 <div
                     class="flex items-center p-2.5 mb-3 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white">

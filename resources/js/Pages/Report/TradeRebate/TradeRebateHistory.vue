@@ -32,7 +32,7 @@ const statusVariant = (status) => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.master_configuration')">
+    <AuthenticatedLayout :title="$t('public.trade_rebate_report')">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">

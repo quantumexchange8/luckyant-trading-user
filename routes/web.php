@@ -170,6 +170,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('referral')->group(function () {
         Route::get('/network', [ReferralController::class, 'index'])->name('referral.index');
         Route::get('/getTreeData', [ReferralController::class, 'getTreeData'])->name('referral.getTreeData');
+        Route::get('/affiliateSubscription', [ReferralController::class, 'affiliateSubscription'])->name('referral.affiliateSubscription');
+        Route::get('/affiliateSubscriptionData', [ReferralController::class, 'affiliateSubscriptionData'])->name('referral.affiliateSubscriptionData');
+        Route::get('/affiliateListing', [ReferralController::class, 'affiliateListing'])->name('referral.affiliateListing');
+        Route::get('/affiliateListingData', [ReferralController::class, 'affiliateListingData'])->name('referral.affiliateListingData');
     });
 
     /**

@@ -1,7 +1,8 @@
 <?php
 return [
+    'subscription_transaction_history' => "订阅交易历史",
     'rebate_history' => "返利历史",
-    'affiliate' => "联盟",
+    'affiliate' => "下线",
     'downline' => "下线",
     'trade_rebate_report' => "交易返利报告",
     'total_rebate_amount' => "总返利金额",
@@ -98,8 +99,10 @@ return [
         'transaction' => "交易明细",
         'wallet' => "钱包",
         'trading_account' => "交易账户",
-        'referral_program' => "介绍计划",
-        'referral_tree' => "管理列表",
+        'affiliate_program' => "介绍计划",
+        'affiliate_tree' => "管理列表",
+        'affiliate_listing' => "介绍计划成员列表",
+        'affiliate_subscriptions' => "介绍计划订阅",
         'report' => "报告",
         'trade_rebate' => "交易返利",
         'profile' => "个人资料"
@@ -110,6 +113,7 @@ return [
     'copy_error' => "抱歉，无法复制。",
     'copy_success' => "复制成功！",
     'overview' => "概览",
+    'total_affiliate'=> "介绍计划成员",
     'total_deposit' => "总存款",
     'total_withdrawal' => "总提款",
     'total_rebate_earn' => "总返利收入",
@@ -352,6 +356,7 @@ return [
     'rebate' => "返利",
     'trade_history' => "交易历史",
     'filter_symbols' => "搜索产品",
+    'filter_rank' => "筛选级别",
     'successfully_refreshed' => "成功刷新",
     'transfer_form' => "转账表单",
     'transfer_information' => "转账信息",

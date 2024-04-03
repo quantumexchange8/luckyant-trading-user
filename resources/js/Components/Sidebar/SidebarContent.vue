@@ -87,7 +87,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarCollapsible>
 
         <SidebarCollapsible
-            :title="$t('public.sidebar.referral_program')"
+            :title="$t('public.sidebar.affiliate_program')"
             :active="route().current('referral.*')"
         >
             <template #icon>
@@ -99,9 +99,22 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 
             <SidebarCollapsibleItem
                 :href="route('referral.index')"
-                :title="$t('public.sidebar.referral_tree')"
+                :title="$t('public.sidebar.affiliate_tree')"
                 :active="route().current('referral.index')"
             />
+
+            <SidebarCollapsibleItem
+                :href="route('referral.affiliateListing')"
+                :title="$t('public.sidebar.affiliate_listing')"
+                :active="route().current('referral.affiliateListing')"
+            />
+
+            <SidebarCollapsibleItem
+                :href="route('referral.affiliateSubscription')"
+                :title="$t('public.sidebar.affiliate_subscriptions')"
+                :active="route().current('referral.affiliateSubscription')"
+            />
+
         </SidebarCollapsible>
 
         <SidebarCollapsible

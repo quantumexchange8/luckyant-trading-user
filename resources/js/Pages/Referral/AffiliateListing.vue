@@ -119,11 +119,11 @@ const statusVariant = (transactionStatus) => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.sidebar.affiliate_subscriptions')">
+    <AuthenticatedLayout :title="$t('public.sidebar.affiliate_listing')">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    {{ $t('public.sidebar.affiliate_subscriptions') }}
+                    {{ $t('public.sidebar.affiliate_listing') }}
                 </h2>
             </div>
         </template>
@@ -152,7 +152,7 @@ const statusVariant = (transactionStatus) => {
         <div
             class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-lg shadow-lg dark:bg-gray-900 border border-gray-300 dark:border-gray-600">
             <div class="flex justify-between mb-3">
-                <h4 class="font-semibold text-lg dark:text-white">{{ $t('public.subscription_transaction_history') }}</h4>
+                <h4 class="font-semibold text-lg dark:text-white">{{ $t('public.affiliate') }}</h4>
                 <RefreshIcon 
                     :class="{ 'animate-spin': isLoading }"
                     class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white" aria-hidden="true"

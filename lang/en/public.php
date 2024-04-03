@@ -203,7 +203,7 @@ return [
     'to_wallet' => "To Wallet",
     'from_account' => "From account",
     'date_and_time' => "Date & Time",
-    'ticket_number' => 'Ticket Number',
+    'ticket_number' => 'Ticket',
     'referral_tree' => "Referral Tree",
     'search_name_and_email_placeholder' => 'Search Name/Email.',
     'search_name_and_account_no_placeholder' => 'Search By Name / Account No.',

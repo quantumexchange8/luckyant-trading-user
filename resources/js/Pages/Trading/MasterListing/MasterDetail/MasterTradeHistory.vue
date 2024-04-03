@@ -180,6 +180,9 @@ function loadSymbols(query, setOptions) {
                     {{$t('public.symbol')}}
                 </th>
                 <th scope="col" class="p-3">
+                    {{$t('public.ticket_number')}}
+                </th>
+                <th scope="col" class="p-3">
                     {{$t('public.action')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
@@ -201,7 +204,7 @@ function loadSymbols(query, setOptions) {
             </thead>
             <tbody>
             <tr v-if="tradeHistories.data.length === 0">
-                <th colspan="8" class="py-4 text-lg text-center">
+                <th colspan="9" class="py-4 text-lg text-center">
                     {{$t('public.no_history')}}
                 </th>
             </tr>
@@ -216,16 +219,19 @@ function loadSymbols(query, setOptions) {
                     {{ history.symbol }}
                 </td>
                 <td class="p-3">
+                    {{ history.ticket }}
+                </td>
+                <td class="p-3">
                     {{ history.trade_type }}
                 </td>
                 <td class="p-3 text-center">
                     {{ formatAmount(history.volume) }}
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    {{ history.price_open ? (history.price_open) : '0.00' }}
+                    {{ history.price_open ? history.price_open : '0.00' }}
                 </td>
                 <td class="p-3 font-semibold text-center">
-                    {{ history.price_close ? (history.price_close) : '0.00' }}
+                    {{ history.price_close ? history.price_close : '0.00' }}
                 </td>
                 <td class="p-3 font-semibold text-center">
                     <div :class="{ 'text-error-500': history.trade_profit < 0, 'text-success-500': history.trade_profit > 0 }">

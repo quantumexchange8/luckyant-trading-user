@@ -88,6 +88,7 @@ watch(eWalletAmount, (newEWalletAmount) => {
                     id="amount"
                     type="number"
                     min="0"
+                    step="100"
                     :placeholder="$t('public.deposit_placeholder')"
                     class="block w-full"
                     v-model="depositAmount"
@@ -110,7 +111,7 @@ watch(eWalletAmount, (newEWalletAmount) => {
                         :max="maxEWalletAmount"
                         class="block w-24"
                         v-model="eWalletAmount"
-                        :disabled="form.processing"
+                        :disabled="form.processing || !depositAmount"
                         :invalid="form.errors.eWalletAmount"
                     />
                 </div>

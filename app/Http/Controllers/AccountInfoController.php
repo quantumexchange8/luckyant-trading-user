@@ -165,6 +165,10 @@ class AccountInfoController extends Controller
             throw ValidationException::withMessages(['eWalletAmount' => trans('public.max_e_wallet_error')]);
         }
 
+        if (!preg_match('/^\d+(\.\d{1,2})?$/', $eWalletAmount)) {
+            throw ValidationException::withMessages(['eWalletAmount' => trans('public.invalid_e_wallet_amount')]);
+        }
+
         if ($wallet->type == 'e_wallet') {
             if ($wallet->balance < $eWalletAmount || $amount <= 0) {
                 throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);

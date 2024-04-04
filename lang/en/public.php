@@ -21,6 +21,7 @@ return [
     'same_wallet_address_error' => "Wallet address cannot be the same as current user",
     'transfer' => "Transfer",
     'management_fee' => "Management Fee",
+    'invalid_e_wallet_amount' => "The E-Wallet Amount must be an integer or a float,for example: 7, 5.5, or 12.05",
     'min_e_wallet_error' => "The E-Wallet Amount must be at least 1% of the Deposit Amount",
     'max_e_wallet_error' => "The E-Wallet Amount must be less than 20% of the Deposit Amount",
     'max' => "Max",

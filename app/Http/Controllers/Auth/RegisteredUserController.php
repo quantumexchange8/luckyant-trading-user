@@ -90,8 +90,8 @@ class RegisteredUserController extends Controller
                 'name' => 'required|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u|max:255',
                 'chinese_name' => 'nullable|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u',
                 'dob_year' => 'required|numeric|digits:4|min:1900',
-                'dob_month' => 'required|numeric|digits:2|min:1|max:12',
-                'dob_day' => 'required|numeric|digits:2|min:1|max:31',
+                'dob_month' => 'required|numeric|min:1|max:12',
+                'dob_day' => 'required|numeric|min:1|max:31',
                 'country' => 'required',
                 'nationality' => 'required',
             ];

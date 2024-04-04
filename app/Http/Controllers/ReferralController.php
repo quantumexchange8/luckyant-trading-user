@@ -317,10 +317,9 @@ class ReferralController extends Controller
         });
         // Calculate total deposit amount for downline users
         $totalAffiliate = count(Auth::user()->getChildrenIds());
-        $totalDeposit = Transaction::whereIn('user_id', Auth::user()->getChildrenIds())
-                        ->where('transaction_type', 'Deposit')
-                        ->where('status', 'Success')
-                        ->sum('amount');
+        $totalDeposit = Subscription::whereIn('user_id', Auth::user()->getChildrenIds())
+                        ->where('status', 'Active')
+                        ->sum('meta_balance');
 
         return Inertia::render('Referral/AffiliateListing', [
             'rankLists' => $rankLists,

@@ -33,9 +33,13 @@ class TradingController extends Controller
 
     public function getMasterAccounts(Request $request)
     {
+        $user = Auth::user();
+        $first_leader = $user->getFirstLeader();
+
         $masterAccounts = Master::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,company'])
             ->where('status', 'Active')
             ->where('signal_status', 1)
+            ->where('is_public', $user->is_public)
             ->whereNot('user_id', \Auth::id())
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
@@ -65,8 +69,13 @@ class TradingController extends Controller
                         break;
                     // Add more cases as needed for other 'type' values
                 }
-            })
-            ->latest()
+            });
+
+        if ($first_leader && empty($first_leader->masterAccounts)) {
+            $masterAccounts = $masterAccounts->where('user_id', $first_leader->masterAccounts->first()->user_id);
+        }
+
+        $masterAccounts = $masterAccounts->latest()
             ->paginate(10);
 
         $masterAccounts->each(function ($master) {

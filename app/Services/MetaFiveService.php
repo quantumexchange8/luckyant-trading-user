@@ -130,6 +130,11 @@ class MetaFiveService {
         return $passwordResponse->json();
     }
 
+    public function userTrade($meta_login)
+    {
+        return Http::acceptJson()->get($this->baseURL . "/check_position/{$meta_login}")->json();
+    }
+
 }
 
 class dealAction

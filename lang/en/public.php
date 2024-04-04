@@ -1,5 +1,6 @@
 <?php
 return [
+    'user_got_trade' => "You still have an open trade. Please close it before subscribing to a master",
     'subscription_transaction_history' => "Subscription Transaction History",
     'rebate_history' => "Rebate History",
     'affiliate' => "Affiliate",

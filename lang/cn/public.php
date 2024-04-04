@@ -1,5 +1,6 @@
 <?php
 return [
+    'user_got_trade' => "您仍有未结算的交易，请在跟随交易者之前关闭它",
     'subscription_transaction_history' => "订阅交易历史",
     'rebate_history' => "返利历史",
     'affiliate' => "下线",

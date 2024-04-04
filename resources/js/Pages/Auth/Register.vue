@@ -276,7 +276,7 @@ const passwordValidation = () => {
                         />
                         <Input
                             id="username"
-                            type="username"
+                            type="text"
                             class="block w-full"
                             :placeholder="$t('public.username')"
                             v-model="form.username"

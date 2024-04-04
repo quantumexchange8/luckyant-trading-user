@@ -97,10 +97,16 @@ class TradingController extends Controller
         $masterAccount = Master::with('tradingAccount:id,meta_login,margin_leverage')->find($request->master_id);
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
+        $userTrade = $metaService->userTrade($meta_login);
         $subscriber = Subscriber::where('meta_login', $meta_login)
             ->whereIn('status', ['Pending', 'Subscribing'])
             ->first();
 
+        if ($userTrade) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.user_got_trade'));
+        }
         if ($subscriber) {
             return redirect()->back()
                 ->with('title', trans('public.invalid_action'))

@@ -39,7 +39,6 @@ class TradingController extends Controller
         $masterAccounts = Master::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,company'])
             ->where('status', 'Active')
             ->where('signal_status', 1)
-            ->where('is_public', $user->is_public)
             ->whereNot('user_id', \Auth::id())
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
@@ -71,8 +70,12 @@ class TradingController extends Controller
                 }
             });
 
-        if ($first_leader && empty($first_leader->masterAccounts)) {
-            $masterAccounts = $masterAccounts->where('user_id', $first_leader->masterAccounts->first()->user_id);
+        if ($first_leader) {
+            // Filter by the first leader's public status
+            $masterAccounts = $masterAccounts->where('is_public', $first_leader->is_public);
+
+            // Filter by the first leader's master accounts
+            $masterAccounts = $masterAccounts->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
         }
 
         $masterAccounts = $masterAccounts->latest()

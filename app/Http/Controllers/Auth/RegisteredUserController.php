@@ -192,6 +192,7 @@ class RegisteredUserController extends Controller
                 $userData['top_leader_id'] = $top_leader_id;
                 $userData['upline_id'] = $upline_id;
                 $userData['hierarchyList'] = $hierarchyList;
+                $userData['is_public'] = $check_referral_code->is_public;
 
                 if ($userData['top_leader_id'] != 7) {
                     $userData['rank_up_status'] = 'manual';

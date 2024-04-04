@@ -70,8 +70,10 @@ class User extends Authenticatable implements HasMedia
 
         $upline = explode("-", substr($this->hierarchyList, 1, -1));
         $count = count($upline) - 1;
-        if ($count > 0) {
-            while ($count > -1) {
+
+        // Check if there are elements in $upline before accessing
+        if ($count >= 0) {
+            while ($count >= 0) {
                 $user = User::find($upline[$count]);
                 if (!empty($user->leader_status) && $user->leader_status == 1) {
                     $first_leader = $user;

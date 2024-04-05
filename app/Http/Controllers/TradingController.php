@@ -70,12 +70,14 @@ class TradingController extends Controller
                 }
             });
 
-        if ($first_leader) {
-            // Filter by the first leader's public status
-            $masterAccounts = $masterAccounts->where('is_public', $first_leader->is_public);
+        if ($user->is_public == 0) {
+            if ($first_leader) {
+                // Filter by the first leader's public status
+                $masterAccounts = $masterAccounts->where('is_public', $first_leader->is_public);
 
-            // Filter by the first leader's master accounts
-            $masterAccounts = $masterAccounts->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
+                // Filter by the first leader's master accounts
+                $masterAccounts = $masterAccounts->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
+            }
         }
 
         $masterAccounts = $masterAccounts->latest()

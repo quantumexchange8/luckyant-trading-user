@@ -114,6 +114,8 @@ const getTotalTransactions = async () => {
         const response = await axios.get('/getTotalTransactions');
         totalDeposit.value = response.data.totalDeposit;
         totalWithdrawal.value = response.data.totalWithdrawal;
+        totalRebateEarn.value = response.data.totalRebateEarn;
+        totalTradeLot.value = response.data.totalTradeLot;
     } catch (error) {
         console.error('Error refreshing transactions data:', error);
     }

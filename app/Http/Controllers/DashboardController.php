@@ -14,6 +14,7 @@ use App\Models\Announcement;
 use Illuminate\Http\Request;
 use App\Models\TradingAccount;
 use App\Services\MetaFiveService;
+use App\Models\TradeRebateSummary;
 use App\Models\SettingPaymentMethod;
 use App\Services\SelectOptionService;
 use App\Models\CurrencyConversionRate;
@@ -135,10 +136,13 @@ class DashboardController extends Controller
         $user = \Auth::user();
 
         $transaction = Transaction::where('user_id', $user->id)->where('category', 'wallet')->where('status', 'Success');
+        $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)->where('status', 'Approved');
 
         return response()->json([
             'totalDeposit' => $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount'),
             'totalWithdrawal' => $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount'),
+            'totalRebateEarn' => $tradeRebateSummary->sum('rebate'),
+            'totalTradeLot' => $tradeRebateSummary->sum('rebate')
         ]);
     }
 

@@ -1,5 +1,17 @@
 <?php
 return [
+    'error_403' => "Error 403",
+    'not_right_roles' => "User does not have the right roles!",
+    'access_denied' => "Uh-oh! You don't have permission to access this page.",
+    'back_to_dashboard' => "Back to dashboard",
+    'error_404' => "Error 404",
+    'page_not_found' => "Page Not Found!",
+    'page_not_exist' => "Oops! The page you're looking for seems to have disappeared. Please go back to the dashboard.",
+    'error_500' => "Error 500",
+    'internal_server_error' => "Internal Server Error",
+    'server_error_message' => "Oops! Something went wrong on our end. Please try again later.",
+    'handler_title' => "Page Expired",
+    'handler_warning' => "Please try again later.",
     'approved' => "Approved",
     'live_account' => "Live Account",
     'personal' => "Personal",

@@ -1,5 +1,17 @@
 <?php
 return [
+    'error_403' => "错误 403",
+    'not_right_roles' => "用户没有正确的角色！",
+    'access_denied' => "哎呀！您没有权限访问此页面。",
+    'back_to_dashboard' => "返回仪表板",
+    'error_404' => "错误 404",
+    'page_not_found' => "页面未找到！",
+    'page_not_exist' => "哎呀！您正在寻找的页面似乎已经消失了。请返回仪表板。",
+    'error_500' => "错误 500",
+    'internal_server_error' => "服务器内部错误",
+    'server_error_message' => "哎呀！我们这边出了点问题。请稍后再试。",
+    'handler_title' => "页面已过期",
+    'handler_warning' => "请稍后重试。",
     'approved' => "已批准",
     'live_account' => "真实账户",
     'personal' => "个人",

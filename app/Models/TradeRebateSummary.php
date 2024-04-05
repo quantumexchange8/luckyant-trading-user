@@ -40,4 +40,9 @@ class TradeRebateSummary extends Model
         return $this->belongsTo(SymbolGroup::class, 'symbol_group', 'id');
     }
 
+    public function tradingAccount(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TradingAccount::class, 'meta_login', 'meta_login');
+    }
+
 }

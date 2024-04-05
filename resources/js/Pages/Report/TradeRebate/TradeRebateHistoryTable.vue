@@ -23,20 +23,42 @@ const formatter = ref({
 });
 
 const props = defineProps({
-    trade_rebates: Object
+    search: String,
+    date: String,
+    refresh: Boolean,
+    isLoading: Boolean,
+    historyType: String,
+    // exportStatus: Boolean,
 })
-const isLoading = ref(false);
 const date = ref('');
 const search = ref('');
-const refresh = ref(false);
+const refreshRebateHistory = ref(props.refresh);
+const rebateHistoryLoading = ref(props.isLoading);
+const emit = defineEmits(['update:loading', 'update:refresh', 'update:export']);
 const type = ref();
 const tradeType = ref();
 const tradeHistories = ref({data: []})
 const currentPage = ref(1)
 const { formatDateTime, formatAmount } = transactionFormat();
 
-const getResults = async (page = 1, search = '', date = '') => {
-    isLoading.value = true
+const sortDescending = ref('desc');
+const types = ref('')
+
+const toggleSort = (sortType) => {
+    sortDescending.value = sortDescending.value === 'desc' ? 'asc' : 'desc';
+    types.value = sortType;
+    console.log(sortType)
+}
+
+watch(
+    [() => props.search, () => props.date, () => props.historyType, () => types.value, () => sortDescending.value],
+    debounce(([searchValue, dateValue, typeValue, sortValue]) => {
+        getResults(1, searchValue, dateValue, typeValue, sortValue);
+    }, 300)
+);
+
+const getResults = async (page = 1, search = props.search, date = props.date, type = props.historyType, sortType = types.value, sort = sortDescending.value) => {
+    rebateHistoryLoading.value = true
     try {
         let url = `/report/getTradeRebateHistories?page=${page}`;
 
@@ -48,39 +70,50 @@ const getResults = async (page = 1, search = '', date = '') => {
             url += `&date=${date}`;
         }
 
+        if (type) {
+            url += `&type=${type}`;
+        }
+
+        if (sortType) {
+            url += `&sortType=${sortType}`;
+            url += `&sort=${sort}`;
+        }
+
         const response = await axios.get(url);
         tradeHistories.value = response.data;
 
     } catch (error) {
         console.error(error);
     } finally {
-        isLoading.value = false
+        rebateHistoryLoading.value = false
+        emit('update:loading', false);
     }
 }
 
 getResults()
 
-watch(
-    [search, date],
-    debounce(([serachValue, dateValue]) => {
-        getResults(1, serachValue, dateValue);
-    }, 300)
-);
-
-const handlePageChange = (newPage) => {
-    if (newPage >= 1) {
-        currentPage.value = newPage;
-        getResults(currentPage.value, search.value, date.value);
+watch(() => props.refresh, (newVal) => {
+    refreshRebateHistory.value = newVal;
+    if (newVal) {
+        refreshHistory();
+        emit('update:refresh', false);
     }
-};
+});
 
 const refreshHistory = () => {
-    getResults(1, search.value, date.value);
+    getResults(currentPage.value, props.search, props.date, props.historyType, types.value, sortDescending.value);
 
     toast.add({
         message: wTrans('public.successfully_refreshed'),
     });
 }
+
+const handlePageChange = (newPage) => {
+    if (newPage >= 1) {
+        currentPage.value = newPage;
+        getResults(currentPage.value, props.search, props.date, props.historyType, types.value, sortDescending.value);
+    }
+};
 
 const paginationClass = [
     'bg-transparent border-0 text-gray-600 dark:text-gray-400 dark:enabled:hover:text-white'
@@ -96,72 +129,44 @@ watchEffect(() => {
     }
 });
 
-// function loadSymbols(query, setOptions) {
-//     fetch(`/trading/getTradingSymbols?meta_login=${props.meta_login}&query=` + query)
-//         .then(response => response.json())
-//         .then(results => {
-//             setOptions(
-//                 results.map(history => {
-//                     return {
-//                         value: history.symbol,
-//                         label: history.symbol,
-//                     }
-//                 })
-//             )
-//         });
-// }
+const statusVariant = (transactionStatus) => {
+    if (transactionStatus === 'Processing') return 'processing';
+    if (transactionStatus === 'Success') return 'success';
+    if (transactionStatus === 'Rejected') return 'danger';
+}
+
+// watch(() => props.exportStatus, (newVal) => {
+//     refreshRebateHistory.value = newVal;
+//     if(newVal) {
+
+//         let url = `/transaction/getTransactionData?exportStatus=yes`;
+
+//         if (props.date) {
+//             url += `&date=${props.date}`;
+//         }
+
+//         if (props.search) {
+//             url += `&search=${props.search}`;
+//         }
+
+//         if (props.category) {
+//             url += `&category=${props.category}`;
+//         }
+
+//         if (props.methods) {
+//             url += `&methods=${props.methods}`;
+//         }
+
+//         window.location.href = url;
+//         emit('update:export', false);
+//     }
+// })
 </script>
 
 <template>
-    <div class="flex justify-between mb-3">
-        <h4 class="font-semibold text-lg dark:text-white">{{$t('public.rebate_history')}}</h4>
-        <RefreshIcon
-            :class="{ 'animate-spin': isLoading }"
-            class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white"
-            aria-hidden="true"
-            @click="refreshHistory"
-        />
-    </div>
-
-    <div class="flex flex-wrap gap-3 w-full justify-end items-center sm:flex-nowrap">
-        <div class="w-full sm:w-80">
-            <InputIconWrapper>
-                <template #icon>
-                    <SearchIcon aria-hidden="true" class="w-5 h-5" />
-                </template>
-                <!-- <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.report.search_placeholder')" v-model="search" /> -->
-                <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.search')" v-model="search" />
-            </InputIconWrapper>
-        </div>
-        <div class="w-full sm:w-80">
-            <vue-tailwind-datepicker
-                :placeholder="$t('public.date_placeholder')"
-                :formatter="formatter"
-                separator=" - "
-                v-model="date"
-                input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-dark-eval-2"
-            />
-        </div>
-        <!-- <div class="w-full sm:w-80">
-            <BaseListbox
-                v-model="tradeType"
-                :options="tradeActions"
-                :placeholder="$t('public.filters_placeholder')"
-                class="w-full"
-            />
-        </div>
-        <div class="w-full sm:w-80">
-            <Combobox
-                :load-options="loadSymbols"
-                v-model="type"
-                multiple
-                :placeholder="$t('public.filter_symbols')"
-            />
-        </div> -->
-    </div>
 
     <div class="mt-2 relative overflow-x-auto">
-        <div v-if="isLoading" class="w-full flex justify-center my-8">
+        <div v-if="rebateHistoryLoading" class="w-full flex justify-center my-8">
             <Loading />
         </div>
         <table v-else class="w-[650px] md:w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-5">
@@ -171,13 +176,17 @@ watchEffect(() => {
                     {{$t('public.date')}}
                 </th>
                 <th scope="col" class="p-3">
-                    {{$t('public.affiliate')}}
+                    <span v-if="historyType === 'Affiliate'">{{$t('public.affiliate')}}</span>
+                    <span v-if="historyType === 'Personal'">{{$t('public.live_account')}}</span>
                 </th>
                 <th scope="col" class="p-3 text-center">
                     {{$t('public.volume')}}
                 </th>
                 <th scope="col" class="p-3 text-center">
                     {{$t('public.rebate')}} ($)
+                </th>
+                <th scope="col" class="p-3 text-center">
+                    {{$t('public.status')}}
                 </th>
             </tr>
             </thead>
@@ -195,9 +204,13 @@ watchEffect(() => {
                     {{ formatDateTime(history.created_at) }}
                 </td>
                 <td class="p-3 inline-flex">
-                    <div class="grid">
-                        <span>{{ history.of_user.username }} ({{ history.meta_login }})</span>
+                    <div class="grid" v-if="historyType === 'Affiliate'">
+                        <span>{{ history.of_user.username }} - <span class="font-semibold">{{ history.meta_login }}</span></span>
                         <span class="dark:text-gray-400">{{ history.of_user.email }}</span>
+                    </div>
+                    <div class="grid" v-if="historyType === 'Personal'">
+                        <span class="font-semibold">{{ history.meta_login }}</span>
+                        <span class="dark:text-gray-400">{{ history.trading_account.trading_user.name }}</span>
                     </div>
                 </td>
                 <td class="p-3 font-semibold text-center">
@@ -206,11 +219,14 @@ watchEffect(() => {
                 <td class="p-3 font-semibold text-center">
                     {{ formatAmount(history.rebate) }}
                 </td>
+                <td class="p-3 flex items-center justify-center">
+                    <Badge :variant="statusVariant(history.status)">{{ $t('public.' + history.status.toLowerCase()) }}</Badge>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="flex justify-center mt-4" v-if="!isLoading">
+    <div class="flex justify-center mt-4" v-if="!rebateHistoryLoading">
         <TailwindPagination
             :item-classes=paginationClass
             :active-classes=paginationActiveClass

@@ -128,6 +128,9 @@ class TradingController extends Controller
             $metaService->getUserInfo($user->tradingAccounts);
         } catch (\Exception $e) {
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            return redirect()->back()
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
         }
 
         $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
@@ -145,8 +148,9 @@ class TradingController extends Controller
 
         // Format the remainder to ensure it represents the cents accurately
         $amount = number_format($remainder, 2, '.', '');
+        $amount = floatval($amount);
 
-        if ($amount != 0 && $amount != null) {
+        if ($amount > 0) {
             $deal = [];
             try {
                 $deal = $metaService->createDeal($tradingAccount->meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
@@ -156,7 +160,6 @@ class TradingController extends Controller
 
             // Calculate new wallet amount
             $new_wallet_amount = $wallet->balance + $amount;
-            $transaction_number = RunningNumberService::getID('transaction');
 
             // Create transaction
             Transaction::create([
@@ -165,7 +168,7 @@ class TradingController extends Controller
                 'to_wallet_id' => $wallet->id,
                 'from_meta_login' => $tradingAccount->meta_login,
                 'ticket' => $deal['deal_Id'],
-                'transaction_number' => $transaction_number,
+                'transaction_number' => RunningNumberService::getID('transaction'),
                 'transaction_type' => 'Withdrawal',
                 'amount' => $amount,
                 'transaction_charges' => 0,
@@ -179,23 +182,31 @@ class TradingController extends Controller
                 'balance' => $new_wallet_amount
             ]);
 
+            try {
+                $metaService->getUserInfo($user->tradingAccounts);
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+
+            $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
         }
 
         if ($masterAccount->subscription_fee > 0) {
             $transaction_number = RunningNumberService::getID('transaction');
 
             $transaction = Transaction::create([
-                'category' => 'trading_account',
+                'category' => 'wallet',
                 'user_id' => $user->id,
                 'from_wallet_id' => $wallet->id,
-//                'ticket' => $deal['deal_Id'],
                 'transaction_number' => $transaction_number,
                 'transaction_type' => 'SubscriptionFee',
                 'amount' => $masterAccount->subscription_fee,
                 'transaction_charges' => 0,
                 'transaction_amount' => $masterAccount->subscription_fee,
                 'status' => 'Processing',
-//                'comment' => $deal['conduct_Deal']['comment'],
             ]);
 
             // Create diff subscriptions data
@@ -206,13 +217,6 @@ class TradingController extends Controller
                 'meta_balance' => $tradingAccount->balance,
                 'transaction_id' => $transaction->id,
             ];
-
-            // Update meta_balance if withdrawal occurred
-            if ($amount != 0 && $amount != null) {
-                $remaining_balance = $tradingAccount->balance - $amount;
-                $subscriptionData['meta_balance'] = $remaining_balance;
-            }
-
         } else {
             $subscriptionData = [
                 'user_id' => $user->id,
@@ -220,17 +224,11 @@ class TradingController extends Controller
                 'meta_login' => $meta_login,
                 'meta_balance' => $tradingAccount->balance,
             ];
-
-            // Update meta_balance if withdrawal occurred
-            if ($amount != 0 && $amount != null) {
-                $remaining_balance = $tradingAccount->balance - $amount;
-                $subscriptionData['meta_balance'] = $remaining_balance;
-            }
         }
 
         $subscription_number = RunningNumberService::getID('subscription');
 
-        $subscription = Subscription::create($subscriptionData + [
+        Subscription::create($subscriptionData + [
             'master_id' => $masterAccount->id,
             'subscription_number' => $subscription_number,
             'subscription_period' => $masterAccount->roi_period,
@@ -238,24 +236,12 @@ class TradingController extends Controller
             'status' => 'Pending'
         ]);
 
-        Subscriber::create([
-            'user_id' => $user->id,
-            'trading_account_id' => $tradingAccount->id,
-            'meta_login' => $meta_login,
-            'master_id' => $masterAccount->id,
-            'master_meta_login' => $masterAccount->meta_login,
-            'subscription_id' => $subscription->id,
-            'status' => 'Pending'
-        ]);
-
         $metaService->disableTrade($meta_login);
 
-        if ($amount != 0 && $amount != null) {
-            $remaining_balance = $tradingAccount->balance - $amount;
-
+        if ($amount > 0) {
             return redirect()->back()
                 ->with('title', trans('public.success_subscribe'))
-                ->with('success', trans('public.successfully_subscribe_with_remainder', ['amount' => $amount, 'balance' => $remaining_balance]). ' ' . trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
+                ->with('success', trans('public.successfully_subscribe_with_remainder', ['amount' => $amount, 'balance' => $tradingAccount->balance]). ' ' . trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
         } else {
             return redirect()->back()
                 ->with('title', trans('public.success_subscribe'))
@@ -265,7 +251,7 @@ class TradingController extends Controller
 
     public function getSubscriptions(Request $request)
     {
-        $masterAccounts = Subscriber::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'master', 'master.tradingUser','subscription'])
+        $masterAccounts = Subscriber::with(['user:id,username,name,email', 'tradingUser:id,meta_login,name,company', 'master', 'master.tradingUser','subscription'])
             ->where('user_id', Auth::id())
             ->where('status', 'Subscribing')
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -533,5 +519,10 @@ class TradingController extends Controller
             ->get();
 
         return response()->json($symbols);
+    }
+
+    public function subscription_listing()
+    {
+        return Inertia::render('Trading/SubscriptionListing/SubscriptionListing');
     }
 }

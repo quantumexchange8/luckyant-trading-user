@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CopyTradeTransaction;
 use App\Models\User;
 use App\Services\passwordType;
 use Inertia\Inertia;
@@ -149,10 +150,6 @@ class AccountInfoController extends Controller
         $amount = $request->amount;
         $meta_login = $request->to_meta_login;
         $cash_wallet = Wallet::where('type', 'cash_wallet')->where('user_id', $user->id)->first();
-        $subscription = Subscription::where('user_id', $user->id)
-            ->where('meta_login', $meta_login)
-            ->where('status', 'Active')
-            ->first();
 
         $minEWalletAmount = $request->minEWalletAmount;
         $maxEWalletAmount = $request->maxEWalletAmount;
@@ -173,7 +170,7 @@ class AccountInfoController extends Controller
             if ($wallet->balance < $eWalletAmount || $amount <= 0) {
                 throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
             }
-            if ($cash_wallet->balance < $cashWalletAmount || $amount <= 0) {
+            if ($cash_wallet->balance < $cashWalletAmount) {
                 throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $cash_wallet->name])]);
             }
         } elseif ($wallet->balance < $amount || $amount <= 0) {
@@ -223,9 +220,32 @@ class AccountInfoController extends Controller
             $wallet->update(['balance' => $wallet->balance - $amount]);
         }
 
-        if ($subscription) {
-            $subscription->meta_balance += $amount;
-            $subscription->save();
+        $subscriptions = Subscription::with(['master:id,meta_login', 'tradingAccount'])
+            ->where('user_id', $user->id)
+            ->where('meta_login', $meta_login)
+            ->whereIn('status', ['Pending', 'Active'])
+            ->get();
+
+        if ($subscriptions) {
+            foreach ($subscriptions as $subscription) {
+                $subscription->meta_balance += $amount;
+                $subscription->save();
+                if ($subscription->status == 'Active') {
+                    CopyTradeTransaction::create([
+                        'user_id' => $user->id,
+                        'trading_account_id' => $subscription->tradingAccount->id,
+                        'meta_login' => $subscription->tradingAccount->meta_login,
+                        'subscription_id' => $subscription->id,
+                        'master_id' => $subscription->master->id,
+                        'master_meta_login' => $subscription->master->meta_login,
+                        'amount' => $subscription->tradingAccount->balance,
+                        'real_fund' => abs($subscription->tradingAccount->demo_fund - $subscription->tradingAccount->balance),
+                        'demo_fund' => $subscription->tradingAccount->demo_fund,
+                        'type' => 'Deposit',
+                        'status' => 'Success',
+                    ]);
+                }
+            }
         }
 
         return redirect()->back()

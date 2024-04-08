@@ -26,6 +26,11 @@ class Subscriber extends Model
         return $this->belongsTo(TradingAccount::class, 'trading_account_id', 'id');
     }
 
+    public function tradingUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TradingUser::class, 'meta_login', 'meta_login');
+    }
+
     public function master(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Master::class, 'master_id', 'id');

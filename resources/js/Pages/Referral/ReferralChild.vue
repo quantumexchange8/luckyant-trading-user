@@ -126,6 +126,9 @@ export default {
                                         {{ node.level }}</span>
                                 </div>
                                 <div class="text-xs font-normal dark:text-gray-400">
+                                    {{ node.email }}
+                                </div>
+                                <div class="text-xs font-normal dark:text-gray-400">
                                     {{$t('public.rank')}}: {{ node.rank }}
                                 </div>
                             </div>
@@ -179,6 +182,9 @@ export default {
                         <div class="flex whitespace-nowrap gap-2 text-sm font-semibold items-center">
                             <div class="whitespace-normal">{{ selectedAffiliate.username }}</div>
                             <span class="text-xs px-2 py-0.5 rounded-full text-primary-100 bg-primary-400 dark:bg-primary-600">{{ $t('public.level') }} {{ selectedAffiliate.level }}</span>
+                        </div>
+                        <div class="text-xs font-normal dark:text-gray-400">
+                            {{ node.email }}
                         </div>
                         <div class="text-xs font-normal dark:text-gray-400"> {{ $t('public.rank') }}: {{ selectedAffiliate.rank }} </div>
                     </div>

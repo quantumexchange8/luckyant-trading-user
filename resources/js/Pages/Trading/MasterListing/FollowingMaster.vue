@@ -98,8 +98,8 @@ watchEffect(() => {
 });
 
 const tabs = ref([
+    { title: "transaction_history", component: "TransactionHistory" },
     { title: "subscription_history", component: "SubscriptionHistory" },
-    { title: "transaction_history", component: "TransactionHistory" }
 ]);
 
 let selectedTab = ref(0);
@@ -268,11 +268,11 @@ function changeTab(index) {
                 <TabPanels class="pt-2">
                     <TabPanel v-for="(tab, index) in tabs" :key="index">
                         <div v-if="selectedTab === index">
-                            <SubscriptionHistory 
-                                v-if="tab.component === 'SubscriptionHistory'" 
-                            />
                             <TransactionHistory 
                                 v-if="tab.component === 'TransactionHistory'" 
+                            />
+                            <SubscriptionHistory 
+                                v-if="tab.component === 'SubscriptionHistory'" 
                             />
                         </div>
                     </TabPanel>

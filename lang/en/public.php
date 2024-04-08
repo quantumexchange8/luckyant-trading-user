@@ -1,5 +1,7 @@
 <?php
 return [
+    'total_roi' => "Total ROI",
+    'total_lot' => "Total Lot",
     'error_403' => "Error 403",
     'not_right_roles' => "User does not have the right roles!",
     'access_denied' => "Uh-oh! You don't have permission to access this page.",

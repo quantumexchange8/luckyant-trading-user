@@ -132,6 +132,22 @@ const statusVariant = (status) => {
                                     {{ masterListingDetail.roi_period }} {{ $t('public.days') }}
                                 </div>
                             </div>
+                            <div class="space-y-1">
+                                <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $t('public.total_roi') }}
+                                </div>
+                                <div class="text-xl">
+                                    {{ formatAmount(masterListingDetail.estimated_monthly_returns) }}
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $t('public.total_lot') }}
+                                </div>
+                                <div class="text-xl">
+                                    {{ formatAmount(masterListingDetail.estimated_lot_size) }}
+                                </div>
+                            </div>
 
                             <div class="flex flex-col gap-2 self-stretch col-span-2">
                                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">

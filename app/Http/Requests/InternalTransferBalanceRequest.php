@@ -11,7 +11,7 @@ class InternalTransferBalanceRequest extends FormRequest
         return [
             'from_meta_login' => ['required'],
             'to_meta_login' => ['required'],
-            'amount' => ['required', 'numeric', 'min:30'],
+            'amount' => ['required', 'numeric', 'min:1'],
         ];
     }
 

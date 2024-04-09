@@ -14,7 +14,7 @@ class DepositBalanceRequest extends FormRequest
             ->where('status', 'Active')
             ->first();
 
-        $amountRule = ['required', 'numeric', 'min:30'];
+        $amountRule = ['required', 'numeric', 'min:1'];
         
         // If subscription exists and amount must be in multiples of 100
         if ($subscription) {

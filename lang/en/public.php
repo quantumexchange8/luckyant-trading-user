@@ -417,4 +417,7 @@ return [
     'max_drawdown' => "Max Drawdown",
     "agreement" => "By proceeding, I agree that I have read the supporting documents and agree to the",
     "please_wait_for_seconds" => "Please wait for :seconds seconds to perform another transaction",
+    "copy_trade_transaction" => "Copy Trade Transaction",
+    "size" => "Size",
+    "pagination_result" => "Page :page_index of :page_count - :row_count results",
 ];

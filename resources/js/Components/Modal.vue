@@ -106,7 +106,7 @@ const maxWidthClass = computed(() => {
                             class="p-5 w-full dark:text-white"
                         >
                             <h2 class="flex justify-between pb-3 text-xl font-semibold dark:text-white border-b dark:border-gray-700">
-                                {{ props.title }}
+                                {{ title }}
                                 <button type="button" class="dark:hover:text-gray-300" @click="close">
                                     <XIcon
                                         aria-hidden="true"

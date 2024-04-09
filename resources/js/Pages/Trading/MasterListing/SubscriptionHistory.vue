@@ -82,15 +82,6 @@ const handlePageChange = (newPage) => {
     }
 };
 
-// watch(() => props.refresh, (newVal) => {
-//     refreshDeposit.value = newVal;
-//     if (newVal) {
-//         // Call the getResults function when refresh is true
-//         getResults();
-//         emit('update:refresh', false);
-//     }
-// });
-
 const subscriptionHistoryModal = ref(false);
 const subscriptionHistoryDetail = ref()
 

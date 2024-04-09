@@ -55,6 +55,11 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
                 :title="$t('public.sidebar.master_trader_listing')"
                 :active="route().current('trading.master_listing')"
             />
+            <SidebarCollapsibleItem
+                :href="route('trading.subscription_listing')"
+                :title="$t('public.subscriptions')"
+                :active="route().current('trading.subscription_listing')"
+            />
         </SidebarCollapsible>
 
         <SidebarCollapsible

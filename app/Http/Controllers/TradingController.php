@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SubscribeRequest;
 use App\Models\CopyTradeHistory;
+use App\Models\CopyTradeTransaction;
 use App\Models\Master;
 use App\Models\Subscriber;
 use App\Models\Subscription;
@@ -409,7 +410,14 @@ class TradingController extends Controller
             ->where('user_id', Auth::id())
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
-                $query->where('meta_login','like', $search);
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('master.tradingUser', function ($user) use ($search) {
+                        $user->where('name', 'like', $search)
+                            ->orWhere('meta_login', 'like', $search)
+                            ->orWhere('company', 'like', $search);
+                    });
+                })
+                    ->orWhere('meta_login', 'like', $search);
             })
             ->when($request->filled('date'), function ($query) use ($request) {
                 $date = $request->input('date');
@@ -524,5 +532,54 @@ class TradingController extends Controller
     public function subscription_listing()
     {
         return Inertia::render('Trading/SubscriptionListing/SubscriptionListing');
+    }
+
+    public function subscription_history()
+    {
+        return Inertia::render('Trading/SubscriptionListing/SubscriptionHistory');
+    }
+
+    public function getCopyTradeTransactions(Request $request)
+    {
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
+
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+
+        $query = CopyTradeTransaction::query()
+            ->with(['tradingUser:meta_login,name,company', 'master', 'master.tradingUser'])
+            ->where('user_id', Auth::id());
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->input('search') . '%';
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('master.tradingUser', function ($user) use ($search) {
+                    $user->where('name', 'like', $search)
+                        ->orWhere('meta_login', 'like', $search)
+                        ->orWhere('company', 'like', $search);
+                })
+                    ->orWhereHas('tradingUser', function ($to_wallet) use ($search) {
+                        $to_wallet->where('name', 'like', $search)
+                            ->orWhere('company', 'like', $search);
+                    });
+            })
+                ->orWhere('meta_login', 'like', $search);
+        }
+
+        if ($request->filled('date')) {
+            $date = $request->input('date');
+            $dateRange = explode(' - ', $date);
+            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }
+
+        $trade_rebates = $query->orderBy($column == null ? 'created_at' : $column, $sortOrder)
+            ->paginate($request->input('paginate', 10));
+
+        return response()->json($trade_rebates);
     }
 }

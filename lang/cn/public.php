@@ -417,4 +417,7 @@ return [
     'max_drawdown' => "最大缩减",
     "agreement" => "通过继续，我同意我已阅读支持文件并同意",
     "please_wait_for_seconds" => "请等待 :seconds 秒后再执行另一个交易",
+    "copy_trade_transaction" => "跟单交易明细",
+    "size" => "行数",
+    "pagination_result" => "显示 :page_index 至 :page_count 共 :row_count 条记录",
 ];

@@ -37,10 +37,14 @@ class TradingController extends Controller
         $user = Auth::user();
         $first_leader = $user->getFirstLeader();
 
-        $masterAccounts = Master::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,company'])
+        $masterAccounts = Master::with([
+            'user:id,username,name,email',
+            'tradingAccount:id,meta_login,balance,equity',
+            'tradingUser:id,name,company'
+        ])
             ->where('status', 'Active')
             ->where('signal_status', 1)
-            ->whereNot('user_id', \Auth::id())
+            ->whereNot('user_id', $user->id)
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
                 $query->whereHas('tradingAccount', function ($q) use ($search) {
@@ -71,24 +75,28 @@ class TradingController extends Controller
                 }
             });
 
-        if ($user->is_public == 0) {
-            if ($first_leader) {
-                // Filter by the first leader's public status
-                $masterAccounts = $masterAccounts->where('is_public', $first_leader->is_public);
-
-                // Filter by the first leader's master accounts
-                $masterAccounts = $masterAccounts->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
+        if ($user->is_public == 0 && $first_leader) {
+            $masterAccounts->where('is_public', $first_leader->is_public)
+                ->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
+        } elseif ($user->is_public == 1 && $first_leader) {
+            $masterAccounts->where('is_public', $first_leader->is_public);
+        } else {
+            if ($user->is_public == 0) {
+                $masterAccounts->where('is_public', $user->is_public)
+                    ->whereIn('id', $user->masterAccounts->pluck('id'));
+            } else {
+                $masterAccounts->where('is_public', $user->is_public);
             }
         }
 
-        $masterAccounts = $masterAccounts->latest()
-            ->paginate(10);
+        $masterAccounts = $masterAccounts->latest()->paginate(10);
 
         $masterAccounts->each(function ($master) {
-            $totalSubscriptionsFee = Subscription::where('master_id', $master->id)->where('status', 'Active')->sum('meta_balance');
+            $totalSubscriptionsFee = Subscription::where('master_id', $master->id)
+                ->where('status', 'Active')
+                ->sum('meta_balance');
 
             $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-//            $master->subscribersCount = $master->subscribers->count();
             $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
         });
 

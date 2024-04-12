@@ -20,15 +20,13 @@ class RenewSubscriptionCommand extends Command
 
     public function handle(): void
     {
-        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-04-02')->get();
+        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-04-03')->get();
 
         foreach ($subscriptions as $subscription) {
             $user = User::find($subscription->user_id);
-            $subscription->update([
-                'status' => 'Expired'
-            ]);
-
-            $calculatedDay = now()->addDays($subscription->subscription_period + 1)->startOfDay();
+            $expiredDate = $subscription->expired_date;
+            $carbonExpiredDate = \Carbon\Carbon::parse($expiredDate);
+            $calculatedDay = $carbonExpiredDate->addDays($subscription->subscription_period + 1)->startOfDay();
 
             $newSubscription = Subscription::create([
                 'user_id' => $subscription->user_id,
@@ -44,6 +42,7 @@ class RenewSubscriptionCommand extends Command
                 'expired_date' => $calculatedDay,
                 'status' => 'Active',
                 'approval_date' => $subscription->expired_date,
+                'handle_by' => 1
             ]);
 
             SubscriptionsSchedulerLog::create([

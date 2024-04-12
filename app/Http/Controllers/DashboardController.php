@@ -142,7 +142,7 @@ class DashboardController extends Controller
             'totalDeposit' => $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount'),
             'totalWithdrawal' => $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount'),
             'totalRebateEarn' => $tradeRebateSummary->sum('rebate'),
-            'totalTradeLot' => $tradeRebateSummary->sum('rebate')
+            'totalTradeLot' => $tradeRebateSummary->sum('volume')
         ]);
     }
 

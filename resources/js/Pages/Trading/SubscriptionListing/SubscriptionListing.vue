@@ -118,9 +118,6 @@ const closeModal = () => {
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <Badge :variant="statusVariant(subscriberAccount.subscription.status)" width="full">{{ $t('public.' + subscriberAccount.subscription.status.toLowerCase()) }}</Badge>
-                    </div>
                 </div>
 
                 <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">

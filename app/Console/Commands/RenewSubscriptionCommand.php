@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Subscription;
+use App\Models\SubscriptionsSchedulerLog;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
 use App\Models\User;
@@ -19,23 +20,13 @@ class RenewSubscriptionCommand extends Command
 
     public function handle(): void
     {
-        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-04-02')->get();
-        $metaService = new MetaFiveService();
-        $connection = $metaService->getConnectionStatus();
+        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-04-01')->get();
 
         foreach ($subscriptions as $subscription) {
             $user = User::find($subscription->user_id);
             $subscription->update([
                 'status' => 'Expired'
             ]);
-            $meta_account = TradingAccount::find($subscription->trading_account_id);
-            if ($connection == 0) {
-                try {
-                    $metaService->getUserInfo(collect([$meta_account]));
-                } catch (\Exception $e) {
-                    \Log::error('Error fetching trading accounts: '. $e->getMessage());
-                }
-            }
 
             $calculatedDay = now()->addDays($subscription->subscription_period + 1)->startOfDay();
 
@@ -43,7 +34,7 @@ class RenewSubscriptionCommand extends Command
                 'user_id' => $subscription->user_id,
                 'trading_account_id' => $subscription->trading_account_id,
                 'meta_login' => $subscription->meta_login,
-                'meta_balance' => $meta_account->balance,
+                'meta_balance' => $subscription->meta_balance,
                 'transaction_id' => $subscription->transaction_id,
                 'master_id' => $subscription->master_id,
                 'subscription_number' => RunningNumberService::getID('subscription'),
@@ -53,6 +44,15 @@ class RenewSubscriptionCommand extends Command
                 'expired_date' => $calculatedDay,
                 'status' => 'Active',
                 'approval_date' => now()
+            ]);
+
+            SubscriptionsSchedulerLog::create([
+                'old_subscription_id' => $subscription->id,
+                'new_subscription_id' => $newSubscription->id,
+                'old_expired_date' => $subscription->expired_date,
+                'new_expired_date' => $newSubscription->expired_date,
+                'old_status' => $subscription->status,
+                'new_status' => $newSubscription->status,
             ]);
 
             $cash_wallet = Wallet::where('user_id', $user->id)->where('type', 'cash_wallet')->first();

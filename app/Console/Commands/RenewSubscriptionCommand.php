@@ -19,7 +19,7 @@ class RenewSubscriptionCommand extends Command
 
     public function handle(): void
     {
-        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-03-24')->get();
+        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-03-30')->get();
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
 

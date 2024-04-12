@@ -11,6 +11,7 @@ import {SearchIcon} from "@heroicons/vue/outline";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import {usePage} from "@inertiajs/vue3";
+import NoData from "@/Components/NoData.vue";
 
 const copyTradeTransactions = ref({data: []});
 const sorting = ref();
@@ -163,7 +164,13 @@ const columns = [
             </div>
         </div>
     </div>
-    <div v-if="copyTradeTransactions.data.length > 0">
+    <div
+        v-if="copyTradeTransactions.data.length === 0"
+        class="w-full flex items-center justify-center"
+    >
+        <NoData />
+    </div>
+    <div v-else>
         <TanStackTable
             :data="copyTradeTransactions"
             :columns="columns"

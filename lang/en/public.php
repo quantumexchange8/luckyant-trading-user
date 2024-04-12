@@ -420,4 +420,5 @@ return [
     "copy_trade_transaction" => "Copy Trade Transaction",
     "size" => "Size",
     "pagination_result" => "Page :page_index of :page_count - :row_count results",
+    "no_data_to_display" => "No data to display",
 ];

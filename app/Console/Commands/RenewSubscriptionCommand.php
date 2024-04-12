@@ -20,7 +20,7 @@ class RenewSubscriptionCommand extends Command
 
     public function handle(): void
     {
-        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-04-10')->get();
+        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', '2024-04-11')->get();
 
         foreach ($subscriptions as $subscription) {
             $user = User::find($subscription->user_id);

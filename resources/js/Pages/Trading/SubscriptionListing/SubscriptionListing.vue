@@ -189,11 +189,11 @@ const closeModal = () => {
 
                 <div class="flex w-full gap-2 items-center">
                     <StopRenewSubscription
-                        v-if="subscriberAccount.subscription.status === 'Active'"
+                        v-if="subscriberAccount.status === 'Subscribing'"
                         :subscriberAccount="subscriberAccount"
                     />
                     <TerminateSubscription
-                        v-if="subscriberAccount.subscription.status === 'Active'"
+                        v-if="subscriberAccount.status === 'Subscribing'"
                         :subscriberAccount="subscriberAccount"
                     />
                 </div>

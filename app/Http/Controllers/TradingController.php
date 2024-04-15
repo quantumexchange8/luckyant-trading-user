@@ -295,14 +295,15 @@ class TradingController extends Controller
             ->paginate(10);
 
         $masterAccounts->each(function ($subscriber) {
-            $approvalDate = Carbon::parse($subscriber->subscription->approval_date);
+            $initialSubscriptionDate = Subscription::where('meta_login', $subscriber->meta_login)->first()->created_at;
+            $approvalDate = Carbon::parse($initialSubscriptionDate);
             $today = Carbon::today();
-            $interval = $today->diff($approvalDate);
 
             // Get the total number of days from the interval
             $join_days = $approvalDate->diffInDays($today);
 
             $subscriber->master->user->profile_photo = $subscriber->master->user->getFirstMediaUrl('profile_photo');
+            $subscriber->join_date = $initialSubscriptionDate;
             $subscriber->join_days = $join_days;
         });
 

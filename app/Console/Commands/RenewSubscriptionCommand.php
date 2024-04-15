@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\SubscriptionsSchedulerLog;
 use App\Models\TradingAccount;
@@ -24,6 +25,8 @@ class RenewSubscriptionCommand extends Command
 
         foreach ($subscriptions as $subscription) {
             $user = User::find($subscription->user_id);
+            $subscriber = Subscriber::where('meta_login', $subscription->meta_login)->first();
+
             $subscription->update([
                 'status' => 'Expired'
             ]);
@@ -46,6 +49,10 @@ class RenewSubscriptionCommand extends Command
                 'status' => 'Active',
                 'approval_date' => $subscription->expired_date,
                 'handle_by' => 1
+            ]);
+
+            $subscriber->update([
+                'subscription_id' => $newSubscription->id,
             ]);
 
             SubscriptionsSchedulerLog::create([

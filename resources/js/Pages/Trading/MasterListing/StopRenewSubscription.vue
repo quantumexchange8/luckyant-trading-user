@@ -143,10 +143,10 @@ const isExpiredWithin24Hours = computed(() => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.subscription_fee')}}
+                        {{$t('public.management_fee')}}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        $ {{ subscriberAccount.subscription.subscription_fee ? formatAmount(subscriberAccount.subscription.subscription_fee) : '0.00' }}
+                        {{ subscriberAccount.master.management_fee ? formatAmount(subscriberAccount.master.management_fee) : '0.00' }} %
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
@@ -162,7 +162,7 @@ const isExpiredWithin24Hours = computed(() => {
                         {{ $t('public.max_drawdown') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ subscriberAccount.master.max_drawdown }}
+                        {{ formatAmount(subscriberAccount.master.max_drawdown ? subscriberAccount.master.max_drawdown : 0) }} %
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">

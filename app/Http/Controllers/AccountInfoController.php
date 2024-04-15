@@ -615,11 +615,11 @@ class AccountInfoController extends Controller
             }
     
             if ($master_password) {
-                $metaService->changePassword($meta_login, passwordType::MAIN, $master_password);
+                $metaService->changePassword($meta_login, 0, $master_password);
             }
     
             if ($investor_password) {
-                $metaService->changePassword($meta_login, passwordType::INVESTOR, $investor_password);
+                $metaService->changePassword($meta_login, 1, $investor_password);
             }
     
             Notification::route('mail', $user->email)

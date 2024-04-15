@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
-use App\Mail\SendOtp;
-use App\Models\Country;
-use App\Models\User;
-use App\Models\VerifyOtp;
-use App\Models\Wallet;
-use App\Notifications\NewUserWelcomeNotification;
-use App\Notifications\OtpNotification;
-use App\Providers\RouteServiceProvider;
-use App\Services\RunningNumberService;
-use App\Services\SelectOptionService;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use Inertia\Inertia;
+use App\Mail\SendOtp;
+use Inertia\Response;
+use App\Models\Wallet;
+use App\Models\Country;
+use App\Models\VerifyOtp;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
+use App\Services\SelectOptionService;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\RegisterRequest;
+use App\Notifications\OtpNotification;
+use App\Services\RunningNumberService;
+use Illuminate\Auth\Events\Registered;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
+use App\Notifications\NewUserWelcomeNotification;
 
 class RegisteredUserController extends Controller
 {
@@ -48,7 +49,7 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|email|max:255|unique:' . User::class,
             'username' => 'required|string|max:255|unique:' . User::class,
             'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:8|unique:' . User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Password::min(6)->letters()->symbols()->numbers()->mixedCase()],
         ];
 
         $attributes = [

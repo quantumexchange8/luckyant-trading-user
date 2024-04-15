@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CopyTradeTransaction;
 use App\Models\User;
-use App\Services\passwordType;
 use Inertia\Inertia;
 use App\Models\Master;
 use App\Models\Wallet;
@@ -18,12 +16,15 @@ use App\Services\dealAction;
 use Illuminate\Http\Request;
 use App\Models\MasterRequest;
 use App\Models\TradingAccount;
+use App\Services\passwordType;
 use Illuminate\Support\Carbon;
 use App\Services\MetaFiveService;
+use App\Models\CopyTradeTransaction;
 use Illuminate\Support\Facades\Auth;
 use App\Services\SelectOptionService;
 use App\Services\RunningNumberService;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 use App\Http\Requests\DepositBalanceRequest;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\WithdrawBalanceRequest;
@@ -571,7 +572,6 @@ class AccountInfoController extends Controller
 
     public function changePassword(Request $request)
     {
-        // Define validation rules
         $rules = [
             'meta_login' => ['required'],
             'master_password' => ['required_without:investor_password'],
@@ -579,8 +579,14 @@ class AccountInfoController extends Controller
             'investor_password' => ['required_without:master_password'],
             'confirm_investor_password' => ['required_with:investor_password', 'same:investor_password'],
         ];
-
-        // Define attribute names
+    
+        if (!empty($request->master_password)) {
+            $rules['master_password'][] = Password::min(6)->letters()->symbols()->numbers()->mixedCase();
+        }
+        if (!empty($request->investor_password)) {
+            $rules['investor_password'][] = Password::min(6)->letters()->symbols()->numbers()->mixedCase();
+        }
+    
         $attributes = [
             'meta_login' => trans('public.meta_login'),
             'master_password' => trans('public.master_password'),
@@ -588,49 +594,41 @@ class AccountInfoController extends Controller
             'investor_password' => trans('public.investor_password'),
             'confirm_investor_password' => trans('public.confirm_investor_password'),
         ];
-
-        // Create validator instance with the rules and attribute names
+    
         $validator = Validator::make($request->all(), $rules);
-
-        // Set attribute names for validation messages
         $validator->setAttributeNames($attributes);
-
-        // Redirect back if validation fails
+    
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
-
             $user = Auth::user();
             $meta_login = $request->meta_login;
             $master_password = $request->master_password;
             $investor_password = $request->investor_password;
             $metaService = new MetaFiveService();
             $connection = $metaService->getConnectionStatus();
-
-            // If there is a connection issue
+    
             if ($connection != 0) {
                 return redirect()->back()
                     ->with('title', trans('public.server_under_maintenance'))
                     ->with('warning', trans('public.try_again_later'));
             }
-
-            // If master password is provided
+    
             if ($master_password) {
                 $metaService->changePassword($meta_login, passwordType::MAIN, $master_password);
             }
-
-            // If investor password is provided
+    
             if ($investor_password) {
                 $metaService->changePassword($meta_login, passwordType::INVESTOR, $investor_password);
             }
-
+    
             Notification::route('mail', $user->email)
                 ->notify(new ChangeTradingAccountPassowrdNotification($user, $meta_login, $master_password, $investor_password));
-
+    
+            // Return success message
+            return redirect()->back()
+                ->with('title', trans('public.success_change_password'))
+                ->with('success', trans('public.successfully_change_password'));
         }
-
-        return redirect()->back()
-            ->with('title', trans('public.success_change_password'))
-            ->with('success', trans('public.successfully_change_password'));
     }
-}
+    }

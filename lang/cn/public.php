@@ -105,6 +105,7 @@ return [
     'process' => "处理",
     'active' => "激活",
     'inactive' => "未激活",
+    'expired' => "已过期",
     'more' => "更多",
     'email_verification' => "电子邮件验证",
     'email_verification_message' => "感谢注册！在开始之前，请通过点击我们刚刚发送给您的链接来验证您的电子邮件地址。如果您没有收到邮件，我们将很乐意重新发送。",

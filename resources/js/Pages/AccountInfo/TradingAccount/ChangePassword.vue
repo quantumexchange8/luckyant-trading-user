@@ -53,7 +53,59 @@ const toggleInvestorPasswordVisibilityConfirm = () => {
     showPassword4.value = !showPassword4.value;
 }
 
-</script>
+const passwordRules = [
+    { message: 'register_terms_1', regex: /.{6,}/ },
+    { message: 'register_terms_2', regex: /[A-Z]+/ },
+    { message: 'register_terms_3', regex: /[a-z]+/ },
+    { message: 'register_terms_4', regex: /[0-9]+/ },
+    { message: 'register_terms_5', regex: /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]+/ }
+];
+
+const passwordValidation = () => {
+    let masterValid = false;
+    let investorValid = false;
+    let masterMessages = [];
+    let investorMessages = [];
+
+    // Check if either master_password or investor_password has data
+    const hasMasterPassword = form.master_password !== '';
+    const hasInvestorPassword = form.investor_password !== '';
+
+    // Validate master password
+    if (hasMasterPassword) {
+        for (let condition of passwordRules) {
+            const isConditionValid = condition.regex.test(form.master_password);
+
+            if (isConditionValid) {
+                masterValid = true;
+            }
+
+            masterMessages.push({
+                message: condition.message,
+                valid: isConditionValid,
+            });
+        }
+    }
+
+    // Validate investor password
+    if (hasInvestorPassword) {
+        for (let condition of passwordRules) {
+            const isConditionValid = condition.regex.test(form.investor_password);
+
+            if (isConditionValid) {
+                investorValid = true;
+            }
+
+            investorMessages.push({
+                message: condition.message,
+                valid: isConditionValid,
+            });
+        }
+    }
+
+    return { masterValid, masterMessages, investorValid, investorMessages };
+};
+ </script>
 
 <template>
     <form class="space-y-2">
@@ -111,6 +163,30 @@ const toggleInvestorPasswordVisibilityConfirm = () => {
                 <InputError :message="form.errors.confirm_master_password" class="mt-2" />
             </div>
         </div>
+
+        <div v-if="form.master_password" class="flex flex-col items-start gap-3 self-stretch py-2">
+            <div v-for="message in passwordValidation().masterMessages" :key="message.key" class="flex items-center gap-2 self-stretch">
+                <div
+                    :class="{
+                            'bg-success-500': message.valid,
+                            'bg-gray-400 dark:bg-dark-eval-3': !message.valid
+                        }"
+                    class="flex justify-center items-center w-5 h-5 rounded-full grow-0 shrink-0"
+                >
+                    <CheckIcon aria-hidden="true" class="text-white" />
+                </div>
+                <div
+                    class="text-sm"
+                    :class="{
+                            'text-gray-600 dark:text-gray-300': message.valid,
+                            'text-gray-400 dark:text-gray-500': !message.valid
+                        }"
+                >
+                    {{ $t('public.' + message.message) }}
+                </div>
+            </div>
+        </div>
+
         <div class="border-t border-gray-300 py-2"></div> 
         <div class="flex flex-col sm:flex-row gap-4 py-2">
             <Label class="text-sm dark:text-white w-full md:w-1/4" for="investor_password" :value="$t('public.investor_password')" />
@@ -166,6 +242,30 @@ const toggleInvestorPasswordVisibilityConfirm = () => {
                 <InputError :message="form.errors.confirm_investor_password" class="mt-2" />
             </div>
         </div>
+
+        <div v-if="form.investor_password" class="flex flex-col items-start gap-3 self-stretch py-2">
+            <div v-for="message in passwordValidation().investorMessages" :key="message.key" class="flex items-center gap-2 self-stretch">
+                <div
+                    :class="{
+                            'bg-success-500': message.valid,
+                            'bg-gray-400 dark:bg-dark-eval-3': !message.valid
+                        }"
+                    class="flex justify-center items-center w-5 h-5 rounded-full grow-0 shrink-0"
+                >
+                    <CheckIcon aria-hidden="true" class="text-white" />
+                </div>
+                <div
+                    class="text-sm"
+                    :class="{
+                            'text-gray-600 dark:text-gray-300': message.valid,
+                            'text-gray-400 dark:text-gray-500': !message.valid
+                        }"
+                >
+                    {{ $t('public.' + message.message) }}
+                </div>
+            </div>
+        </div>
+
 
         <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">

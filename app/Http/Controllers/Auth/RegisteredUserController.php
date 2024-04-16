@@ -263,4 +263,30 @@ class RegisteredUserController extends Controller
 
         return back()->with('toast', trans('public.success_sent_otp'));
     }
+
+    public function getAllCountries(Request $request)
+    {
+        $locale = app()->getLocale();
+
+        $countries = Country::query()
+            ->when($request->filled('query'), function ($query) use ($request) {
+                $search = $request->input('query');
+                $query->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('translations', 'like', "%{$search}%");
+                });
+            })
+            ->select('id', 'name', 'translations')
+            ->get()
+            ->map(function ($country) use ($locale) {
+                $translations = json_decode($country->translations, true);
+                $label = $translations[$locale] ?? $country->name;
+                return [
+                    'id' => $country->id,
+                    'name' => $label,
+                ];
+            });
+
+        return response()->json($countries);
+    }
 }

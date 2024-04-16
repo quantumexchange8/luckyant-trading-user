@@ -15,6 +15,8 @@ Route::middleware('guest')->group(function () {
 
     Route::get('register/{referral?}', [RegisteredUserController::class, 'create'])->name('register');
 
+    Route::get('getAllCountries', [RegisteredUserController::class, 'getAllCountries'])->name('getAllCountries');
+
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::post('register/first-step', [RegisteredUserController::class, 'firstStep'])->name('register.first.step');

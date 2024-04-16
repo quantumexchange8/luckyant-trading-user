@@ -134,18 +134,18 @@ const statusVariant = (status) => {
                             </div>
                             <div class="space-y-1">
                                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.total_roi') }}
+                                    {{ $t('public.estimated_monthly_returns') }}
                                 </div>
                                 <div class="text-xl">
-                                    {{ formatAmount(masterListingDetail.estimated_monthly_returns) }}
+                                    {{ masterListingDetail.estimated_monthly_returns }}
                                 </div>
                             </div>
                             <div class="space-y-1">
                                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.total_lot') }}
+                                    {{ $t('public.estimated_lot_size') }}
                                 </div>
                                 <div class="text-xl">
-                                    {{ formatAmount(masterListingDetail.estimated_lot_size) }}
+                                    {{ masterListingDetail.estimated_lot_size }}
                                 </div>
                             </div>
 

@@ -1,11 +1,9 @@
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3'
-import { EyeIcon, EyeOffIcon, CheckIcon, UserAddIcon } from '@heroicons/vue/outline'
+import { EyeIcon, EyeOffIcon, CheckIcon } from '@heroicons/vue/outline'
 import GuestLayout from '@/Layouts/Guest.vue'
-import InputIconWrapper from '@/Components/InputIconWrapper.vue'
 import Input from '@/Components/Input.vue'
 import Label from '@/Components/Label.vue'
-import ValidationErrors from '@/Components/ValidationErrors.vue'
 import Button from '@/Components/Button.vue'
 import {ref, watch, computed, watchEffect} from "vue";
 import RegisterCaption from "@/Components/Auth/RegisterCaption.vue";
@@ -13,9 +11,8 @@ import ReferralPic from "@/Components/Auth/ReferralPic.vue";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import CountryLists from '/public/data/countries.json'
-import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import Checkbox from "@/Components/Checkbox.vue";
-import Terms from "@/Components/Terms.vue";
+import Combobox from "@/Components/Combobox.vue";
 
 const props = defineProps({
     countries: Array,
@@ -33,6 +30,7 @@ const formatter = ref({
     month: 'MM'
 });
 const signUpTerm = 'register';
+const country = ref(null);
 
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value;
@@ -80,12 +78,18 @@ watch(() => form.all, (newValue) => {
     form.compensate = newValue;
 });
 
-watch(() => form.country, (newCountry) => {
-    const foundNationality = props.nationality.find(nationality => nationality.id === newCountry);
-    if (foundNationality) {
-        form.nationality = foundNationality.value;
+watch(country, (newCountry) => {
+    if (newCountry) {
+        form.country = newCountry.value;
+        const foundNationality = props.nationality.find(nationality => nationality.id === newCountry.value);
+        if (foundNationality) {
+            form.nationality = foundNationality.value;
+        } else {
+            form.nationality = ''; // Reset if not found
+        }
     } else {
-        form.nationality = null; // Reset if not found
+        country.value = null;
+        form.nationality = '';
     }
 });
 
@@ -98,9 +102,6 @@ const handleBackIdentity = (event) => {
 };
 
 const submit = () => {
-    form.country = form.country;
-    form.nationality = form.nationality;
-
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     })
@@ -195,6 +196,23 @@ const passwordValidation = () => {
 //         }
 //     }, 1000);
 // }
+
+
+/* search countries */
+function loadCountries(query, setOptions) {
+    fetch('/getAllCountries?query=' + query)
+        .then(response => response.json())
+        .then(results => {
+            setOptions(
+                results.map(country => {
+                    return {
+                        value: country.id,
+                        label: country.name,
+                    }
+                })
+            )
+        });
+}
 </script>
 
 <template>
@@ -476,9 +494,9 @@ const passwordValidation = () => {
                             for="country"
                             :value="$t('public.country')"
                         />
-                        <BaseListbox
-                            :options="countries"
-                            v-model="form.country"
+                        <Combobox
+                            :load-options="loadCountries"
+                            v-model="country"
                             :placeholder="$t('public.placeholder')"
                         />
                         <InputError :message="form.errors.country" />

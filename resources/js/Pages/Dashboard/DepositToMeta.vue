@@ -73,7 +73,7 @@ const closeModal = () => {
 const depositAmount = ref();
 const eWalletAmount = ref();
 const cashWalletAmount = ref();
-const maxEWalletAmount = ref();
+const maxEWalletAmount = ref(0);
 const minEWalletAmount = ref();
 
 const selectedPercentage = ref(20); // Default to 20%
@@ -84,12 +84,13 @@ watch(depositAmount, (newDepositAmount) => {
     cashWalletAmount.value = newDepositAmount - eWalletAmount.value;
     maxEWalletAmount.value = eWalletAmount.value;
     minEWalletAmount.value = maxEWalletAmount.value * 0.05;
-})
+});
 
 watch(eWalletAmount, (newEWalletAmount) => {
+    const parseEWalletAmount = parseFloat(newEWalletAmount); // Convert to number
     // Check if newEWalletAmount is within the range
-    if (newEWalletAmount >= minEWalletAmount.value && newEWalletAmount <= maxEWalletAmount.value) {
-        cashWalletAmount.value = depositAmount.value - newEWalletAmount;
+    if (parseEWalletAmount >= minEWalletAmount.value && parseEWalletAmount <= maxEWalletAmount.value) {
+        cashWalletAmount.value = depositAmount.value - parseEWalletAmount;
     }
 });
 </script>
@@ -152,7 +153,7 @@ watch(eWalletAmount, (newEWalletAmount) => {
             <div class="border-t boarder-gray-300 pt-5">
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ $t('public.'+ wallet.type) }} ({{ $t('public.max') }}: {{ selectedPercentage }}%)
+                        {{ $t('public.'+ wallet.type) }} ({{ $t('public.max') }}: $ {{ formatAmount(maxEWalletAmount) }})
                     </div>
                     <div class="flex items-center gap-2">
                         <Input

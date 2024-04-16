@@ -162,7 +162,11 @@ class AccountInfoController extends Controller
         } elseif ($eWalletAmount > $maxEWalletAmount) {
             throw ValidationException::withMessages(['eWalletAmount' => trans('public.max_e_wallet_error')]);
         }
-
+        
+        if (($eWalletAmount + $cashWalletAmount) !== $amount) {
+            throw ValidationException::withMessages(['amount' => trans('public.e_wallet_amount_error', ['SumAmount' => $eWalletAmount + $cashWalletAmount, 'DepositAmount' => $amount])]);
+        }
+        
         if (!preg_match('/^\d+(\.\d{1,2})?$/', $eWalletAmount)) {
             throw ValidationException::withMessages(['eWalletAmount' => trans('public.invalid_e_wallet_amount')]);
         }

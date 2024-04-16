@@ -42,6 +42,7 @@ return [
     'invalid_e_wallet_amount' => "The E-Wallet Amount must be an integer or a float,for example: 7, 5.5, or 12.05",
     'min_e_wallet_error' => "The E-Wallet Amount must be at least 1% of the Deposit Amount",
     'max_e_wallet_error' => "The E-Wallet Amount must be less than 20% of the Deposit Amount",
+    'e_wallet_amount_error' => "The sum of the E-Wallet Amount and Cash Wallet Amount $ :SumAmount exceeds the deposit amount: $ :DepositAmount",
     'max' => "Max",
     'percentage' => "Percentage",
     'auto payment' => "Auto Payment",

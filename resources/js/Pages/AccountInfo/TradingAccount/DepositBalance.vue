@@ -46,7 +46,7 @@ const submit = () => {
 const depositAmount = ref();
 const eWalletAmount = ref();
 const cashWalletAmount = ref();
-const maxEWalletAmount = ref();
+const maxEWalletAmount = ref(0);
 const minEWalletAmount = ref();
 
 const selectedPercentage = ref(20); // Default to 20%
@@ -60,9 +60,10 @@ watch(depositAmount, (newDepositAmount) => {
 })
 
 watch(eWalletAmount, (newEWalletAmount) => {
+    const parseEWalletAmount = parseFloat(newEWalletAmount); // Convert to number
     // Check if newEWalletAmount is within the range
-    if (newEWalletAmount >= minEWalletAmount.value && newEWalletAmount <= maxEWalletAmount.value) {
-        cashWalletAmount.value = depositAmount.value - newEWalletAmount;
+    if (parseEWalletAmount >= minEWalletAmount.value && parseEWalletAmount <= maxEWalletAmount.value) {
+        cashWalletAmount.value = depositAmount.value - parseEWalletAmount;
     }
 });
 
@@ -101,7 +102,7 @@ watch(eWalletAmount, (newEWalletAmount) => {
         <div class="border-t boarder-gray-300 pt-5" v-if="form.wallet_id === (walletSel.length > 1 ? walletSel[1].value : null)">
             <div class="flex items-center justify-between gap-2 self-stretch">
                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                    {{  walletSel[1].name }} ({{ $t('public.max') }}: {{ selectedPercentage }}%)
+                    {{  walletSel[1].name }} ({{ $t('public.max') }}: $ {{ formatAmount(maxEWalletAmount) }})
                 </div>
                 <div class="flex items-center gap-2">
                     <Input

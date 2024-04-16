@@ -42,6 +42,7 @@ return [
     'invalid_e_wallet_amount' => "电子钱包金额必须为整数或浮点数,例如: 7、5.5 或 12.05",
     'min_e_wallet_error' => "电子钱包金额必须至少是存款金额的1%",
     'max_e_wallet_error' => "电子钱包金额必须小于存款金额的20%",
+    'e_wallet_amount_error' => "电子钱包金额和现金钱包金额之和 $ :SumAmount 超过了存款金额：$ :DepositAmount",
     'max' => "最大值",
     'percentage' => "百分比",
     'auto payment' => "自动支付",

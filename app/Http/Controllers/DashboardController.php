@@ -42,7 +42,7 @@ class DashboardController extends Controller
 
         $registerUrl = route('register');
         $registerLink = $registerUrl . '/' . \Auth::user()->referral_code;
-        
+
         $locale = app()->getLocale();
 
         $rank = SettingRank::where('id', \Auth::user()->setting_rank_id)->first();
@@ -135,15 +135,30 @@ class DashboardController extends Controller
     {
         $user = \Auth::user();
 
-        $transaction = Transaction::where('user_id', $user->id)->where('category', 'wallet')->where('status', 'Success');
+        $transaction = Transaction::where('user_id', $user->id)
+            ->where('category', 'wallet')
+            ->where('status', 'Success');
 
-        $depositDemoFund = Transaction::where('user_id', $user->id)->where('fund_type', 'DemoFund')->where('transaction_type', 'Deposit')->where('status', 'Success')->sum('transaction_amount');
-        $withdrawalDemoFund = Transaction::where('user_id', $user->id)->where('fund_type', 'DemoFund')->where('transaction_type', 'Withdrawal')->where('status', 'Success')->sum('transaction_amount');
-        
+        $depositDemoFund = Transaction::where('user_id', $user->id)
+            ->where('category', 'trading_account')
+            ->where('fund_type', 'DemoFund')
+            ->where('transaction_type', 'Deposit')
+            ->where('status', 'Success')
+            ->sum('transaction_amount');
+
+//        $withdrawalDemoFund = Transaction::where('user_id', $user->id)
+//            ->where('fund_type', 'DemoFund')
+//            ->where('transaction_type', 'Withdrawal')
+//            ->where('status', 'Success')
+//            ->sum('transaction_amount');
+
         $totalDeposit = $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount') + $depositDemoFund;
-        $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount') + $withdrawalDemoFund;
 
-        $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)->where('status', 'Approved');
+
+        $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount');
+
+        $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)
+            ->where('status', 'Approved');
 
         return response()->json([
             'totalDeposit' => $totalDeposit,

@@ -136,11 +136,18 @@ class DashboardController extends Controller
         $user = \Auth::user();
 
         $transaction = Transaction::where('user_id', $user->id)->where('category', 'wallet')->where('status', 'Success');
+
+        $depositDemoFund = Transaction::where('user_id', $user->id)->where('fund_type', 'DemoFund')->where('transaction_type', 'Deposit')->where('status', 'Success')->sum('transaction_amount');
+        $withdrawalDemoFund = Transaction::where('user_id', $user->id)->where('fund_type', 'DemoFund')->where('transaction_type', 'Withdrawal')->where('status', 'Success')->sum('transaction_amount');
+        
+        $totalDeposit = $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount') + $depositDemoFund;
+        $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount') + $withdrawalDemoFund;
+
         $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)->where('status', 'Approved');
 
         return response()->json([
-            'totalDeposit' => $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount'),
-            'totalWithdrawal' => $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount'),
+            'totalDeposit' => $totalDeposit,
+            'totalWithdrawal' => $totalWithdrawal,
             'totalRebateEarn' => $tradeRebateSummary->sum('rebate'),
             'totalTradeLot' => $tradeRebateSummary->sum('volume')
         ]);

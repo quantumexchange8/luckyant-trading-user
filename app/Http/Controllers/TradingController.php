@@ -112,8 +112,8 @@ class TradingController extends Controller
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
         $userTrade = $metaService->userTrade($meta_login);
-        $subscriber = Subscriber::where('meta_login', $meta_login)
-            ->whereIn('status', ['Pending', 'Subscribing'])
+        $subscriptions = Subscription::where('meta_login', $meta_login)
+            ->whereIn('status', ['Pending', 'Active'])
             ->first();
 
         if ($userTrade) {
@@ -121,7 +121,7 @@ class TradingController extends Controller
                 ->with('title', trans('public.invalid_action'))
                 ->with('warning', trans('public.user_got_trade'));
         }
-        if ($subscriber) {
+        if ($subscriptions) {
             return redirect()->back()
                 ->with('title', trans('public.invalid_action'))
                 ->with('warning', trans('public.try_again_later'));

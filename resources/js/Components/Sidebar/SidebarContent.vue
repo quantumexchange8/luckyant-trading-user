@@ -134,9 +134,15 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
             </template>
 
             <SidebarCollapsibleItem
-                :href="route('report.tradeRebateHisoty')"
+                :href="route('report.trade_rebate_history')"
                 :title="$t('public.sidebar.trade_rebate')"
-                :active="route().current('trading.tradeRebateHisoty')"
+                :active="route().current('report.trade_rebate_history')"
+            />
+
+            <SidebarCollapsibleItem
+                :href="route('report.wallet_history')"
+                :title="$t('public.sidebar.wallet_history')"
+                :active="route().current('report.wallet_history')"
             />
         </SidebarCollapsible>
 

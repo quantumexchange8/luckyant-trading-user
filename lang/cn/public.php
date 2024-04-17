@@ -126,6 +126,7 @@ return [
         'affiliate_subscriptions' => "介绍计划订阅",
         'report' => "报告",
         'trade_rebate' => "交易返利",
+        'wallet_history' => "钱包明细",
         'profile' => "个人资料"
     ],
     'copy' => "复制",
@@ -424,4 +425,10 @@ return [
     "pagination_result" => "显示 :page_index 至 :page_count 共 :row_count 条记录",
     "no_data_to_display" => "没有数据显示",
     'invalid_date' => '输入的日期无效',
+    "all" => "全部",
+    "wallet" => "钱包",
+    "LotSizeRebate" => "交易返佣",
+    "SameLevelRewards" => "同级奖励",
+    "total_rewards" => "总奖励",
+    "loading" => "加载中...",
 ];

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Wallet;
+use App\Models\WalletLog;
+use App\Services\SelectOptionService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -45,7 +48,7 @@ class ReportController extends Controller
                         })
                         ->orWhereHas('tradingAccount.tradingUser', function ($subQuery) use ($search) {
                             $subQuery->where('name', 'like', $search);
-                        });        
+                        });
                 });
             })
             ->when($request->filled('date'), function ($query) use ($request) {
@@ -72,5 +75,70 @@ class ReportController extends Controller
             ->paginate(10);
 
         return response()->json($tradeRebatehistories);
+    }
+
+    public function wallet_history()
+    {
+        return Inertia::render('Report/WalletHistory/WalletHistory', [
+            'walletsSel' => (new SelectOptionService())->getAllWallets(),
+            'bonusTypeSel' => (new SelectOptionService())->getBonusType(),
+            'wallets' => Wallet::where('user_id', \Auth::id())->whereNot('type', 'cash_wallet')->get()
+        ]);
+    }
+
+    public function getWalletLogs(Request $request)
+    {
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
+
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+
+        $walletLogs = WalletLog::with('wallet')
+            ->where('user_id', \Auth::id())
+            ->where('category', 'bonus');
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->input('search') . '%';
+            $walletLogs->where(function ($q) use ($search) {
+                $q->whereHas('wallet', function ($user) use ($search) {
+                    $user->where('name', 'like', $search);
+                })
+                    ->orWhere('amount', 'like', $search);
+            });
+        }
+
+        if ($request->filled('type')) {
+            $type = $request->input('type');
+            $walletLogs->where('purpose', $type);
+        }
+
+        if ($request->filled('wallet_id')) {
+            $wallet_id = $request->input('wallet_id');
+            $walletLogs->whereHas('wallet', function ($query) use ($wallet_id) {
+                $query->where('id', $wallet_id);
+            });
+        }
+
+        if ($request->filled('date')) {
+            $date = $request->input('date');
+            $dateRange = explode(' - ', $date);
+            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+
+            $walletLogs->whereBetween('created_at', [$start_date, $end_date]);
+        }
+
+        $totalBonus = $walletLogs->sum('amount');
+
+        $results = $walletLogs
+            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
+            ->paginate($request->input('paginate', 10));
+
+        return response()->json([
+            'walletLogs' => $results,
+            'totalBonus' => $totalBonus,
+        ]);
     }
 }

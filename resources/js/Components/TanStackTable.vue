@@ -125,7 +125,7 @@ watch(pageIndex, (newPageNumber) => {
                     class="p-3"
                     :class="{
                         'cursor-pointer select-none': header.column.getCanSort(),
-                        'bg-primary-100': header.column.getIsSorted()
+                        'bg-primary-100 dark:bg-gray-800': header.column.getIsSorted()
                     }"
                     @click="header.column.getToggleSortingHandler()?.($event)"
                 >

@@ -6,6 +6,7 @@ use App\Models\Country;
 use App\Models\Wallet;
 use App\Models\PaymentAccount;
 use App\Models\SettingLeverage;
+use App\Models\WalletLog;
 
 class SelectOptionService
 {
@@ -93,6 +94,27 @@ class SelectOptionService
                 'label' => $country->currency_name . ' (' . $country->currency . ')',
             ];
         });
+    }
+
+    public function getAllWallets(): \Illuminate\Support\Collection
+    {
+        return Wallet::where('user_id', \Auth::id())->get()->map(function ($wallet) {
+            return [
+                'value' => $wallet->id,
+                'label' => trans('public.' . $wallet->type),
+                'balance' => $wallet->balance,
+            ];
+        })->prepend(['value' => '', 'label' => trans('public.all')]);
+    }
+
+    public function getBonusType(): \Illuminate\Support\Collection
+    {
+        return WalletLog::distinct()->pluck('purpose')->map(function ($transactionType) {
+            return [
+                'value' => $transactionType,
+                'label' => trans('public.' . $transactionType),
+            ];
+        })->prepend(['value' => '', 'label' => trans('public.all')]);
     }
 
 }

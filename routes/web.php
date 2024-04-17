@@ -185,8 +185,10 @@ Route::middleware('auth')->group(function () {
      * ==============================
      */
     Route::prefix('report')->group(function () {
-        Route::get('/tradeRebateHisoty', [ReportController::class, 'tradeRebate'])->name('report.tradeRebateHisoty');
+        Route::get('/trade_rebate', [ReportController::class, 'tradeRebate'])->name('report.trade_rebate_history');
         Route::get('/getTradeRebateHistories', [ReportController::class, 'getTradeRebateHistories'])->name('report.getTradeRebateHistories');
+        Route::get('/wallet_history', [ReportController::class, 'wallet_history'])->name('report.wallet_history');
+        Route::get('/getWalletLogs', [ReportController::class, 'getWalletLogs'])->name('report.getWalletLogs');
     });
 
 });

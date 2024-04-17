@@ -162,11 +162,11 @@ class AccountInfoController extends Controller
         } elseif ($eWalletAmount > $maxEWalletAmount) {
             throw ValidationException::withMessages(['eWalletAmount' => trans('public.max_e_wallet_error')]);
         }
-        
+
         if (($eWalletAmount + $cashWalletAmount) !== $amount) {
             throw ValidationException::withMessages(['amount' => trans('public.e_wallet_amount_error', ['SumAmount' => $eWalletAmount + $cashWalletAmount, 'DepositAmount' => $amount])]);
         }
-        
+
         if (!preg_match('/^\d+(\.\d{1,2})?$/', $eWalletAmount)) {
             throw ValidationException::withMessages(['eWalletAmount' => trans('public.invalid_e_wallet_amount')]);
         }
@@ -399,19 +399,8 @@ class AccountInfoController extends Controller
             $tradingAccount = TradingAccount::where('user_id', Auth::id())->whereNot('meta_login', $request->meta_login)->get();
         } elseif ($request->type == 'subscribe') {
             $tradingAccount = TradingAccount::where('user_id', Auth::id())
-                ->where(function ($query) {
-                    $query->whereDoesntHave('masterAccount', function ($subQuery) {
-                        $subQuery->whereNotNull('trading_account_id');
-                    })
-                        ->whereDoesntHave('subscriber', function ($subQuery) {
-                            $subQuery->whereNotNull('trading_account_id');
-                        });
-                })
-                ->orWhere(function ($query) {
-                    $query->whereHas('subscriber', function ($subQuery) {
-                        $subQuery->where('user_id', Auth::id())
-                            ->whereNotIn('status', ['Pending', 'Subscribing']);
-                    });
+                ->whereDoesntHave('subscription', function ($subQuery) {
+                    $subQuery->whereIn('status', ['Pending', 'Active']);
                 })
                 ->whereNot('meta_login', $request->meta_login)
                 ->get();
@@ -583,14 +572,14 @@ class AccountInfoController extends Controller
             'investor_password' => ['required_without:master_password'],
             'confirm_investor_password' => ['required_with:investor_password', 'same:investor_password'],
         ];
-    
+
         if (!empty($request->master_password)) {
             $rules['master_password'][] = Password::min(6)->letters()->symbols()->numbers()->mixedCase();
         }
         if (!empty($request->investor_password)) {
             $rules['investor_password'][] = Password::min(6)->letters()->symbols()->numbers()->mixedCase();
         }
-    
+
         $attributes = [
             'meta_login' => trans('public.meta_login'),
             'master_password' => trans('public.master_password'),
@@ -598,10 +587,10 @@ class AccountInfoController extends Controller
             'investor_password' => trans('public.investor_password'),
             'confirm_investor_password' => trans('public.confirm_investor_password'),
         ];
-    
+
         $validator = Validator::make($request->all(), $rules);
         $validator->setAttributeNames($attributes);
-    
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
@@ -611,24 +600,24 @@ class AccountInfoController extends Controller
             $investor_password = $request->investor_password;
             $metaService = new MetaFiveService();
             $connection = $metaService->getConnectionStatus();
-    
+
             if ($connection != 0) {
                 return redirect()->back()
                     ->with('title', trans('public.server_under_maintenance'))
                     ->with('warning', trans('public.try_again_later'));
             }
-    
+
             if ($master_password) {
                 $metaService->changePassword($meta_login, 0, $master_password);
             }
-    
+
             if ($investor_password) {
                 $metaService->changePassword($meta_login, 1, $investor_password);
             }
-    
+
             Notification::route('mail', $user->email)
                 ->notify(new ChangeTradingAccountPassowrdNotification($user, $meta_login, $master_password, $investor_password));
-    
+
             // Return success message
             return redirect()->back()
                 ->with('title', trans('public.success_change_password'))

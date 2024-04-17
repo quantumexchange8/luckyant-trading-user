@@ -1,6 +1,6 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watchEffect} from "vue";
 import Modal from "@/Components/Modal.vue";
 import {transactionFormat} from "@/Composables/index.js";
 import BaseListbox from "@/Components/BaseListbox.vue";
@@ -54,7 +54,7 @@ const submit = () => {
     if (selectedTradingAccount){
         const label = selectedTradingAccount.label;
         const amountString = label.split('(')[1].split(')')[0];
-        amount.value = parseFloat(amountString.replace(/[^0-9.]/g, '')); 
+        amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));
         amountReturned.value = (amount.value % 100).toFixed(2);
         amount.value = (amount.value - amountReturned.value).toFixed(2);
     };
@@ -90,6 +90,12 @@ const openTermsModal = () => {
 const closeTermsModal = () => {
     termsModal.value = false
 }
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getTradingAccounts();
+    }
+});
 </script>
 
 <template>

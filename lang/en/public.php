@@ -423,4 +423,5 @@ return [
     "size" => "Size",
     "pagination_result" => "Page :page_index of :page_count - :row_count results",
     "no_data_to_display" => "No data to display",
+    'invalid_date' => 'The input date is invalid',
 ];

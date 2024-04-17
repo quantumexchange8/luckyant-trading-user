@@ -488,6 +488,7 @@ function loadCountries(query, setOptions) {
                             <InputError :message="form.errors.dob_day" />
                         </div>
                     </div>
+                    <InputError :message="form.errors.dob" />
 
                     <div class="space-y-1.5">
                         <Label

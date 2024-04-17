@@ -423,4 +423,5 @@ return [
     "size" => "行数",
     "pagination_result" => "显示 :page_index 至 :page_count 共 :row_count 条记录",
     "no_data_to_display" => "没有数据显示",
+    'invalid_date' => '输入的日期无效',
 ];

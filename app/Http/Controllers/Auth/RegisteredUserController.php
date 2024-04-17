@@ -91,8 +91,8 @@ class RegisteredUserController extends Controller
                 'name' => 'required|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u|max:255',
                 'chinese_name' => 'nullable|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u',
                 'dob_year' => 'required|numeric|digits:4|min:1900',
-                'dob_month' => 'required|numeric|min:1|max:12',
-                'dob_day' => 'required|numeric|min:1|max:31',
+                'dob_month' => 'required|numeric|min:1',
+                'dob_day' => 'required|numeric|min:1',
                 'country' => 'required',
                 'nationality' => 'required',
             ];
@@ -120,6 +120,13 @@ class RegisteredUserController extends Controller
 
             // Validate the request
             $validator->validate();
+            
+            if($request->dob_year && $request->dob_month && $request->dob_day){
+                $dob = date($request->dob_year . '-' . $request->dob_month . '-' . $request->dob_day);
+                if ($dob && !checkdate($request->dob_month, $request->dob_day, $request->dob_year)) {
+                    throw ValidationException::withMessages(['dob' => trans('public.invalid_date')]);
+                }
+            }
         }
 
         return to_route('register');

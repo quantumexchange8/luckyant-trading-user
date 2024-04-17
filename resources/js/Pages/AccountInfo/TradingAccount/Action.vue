@@ -99,7 +99,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
-                v-if="accountCounts > 1 && (!account.subscriber || account.balance_out)"
+                v-if="accountCounts > 1 && (!account.subscriber && account.balance_out)"
                 @click="openAccountActionModal('internal_transfer')"
             >
                 <div class="flex items-center gap-2">
@@ -110,7 +110,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
-                v-if="!masterAccountLogin.includes(account.meta_login) && (!account.master_request || account.master_request.status == 'Pending')"
+                v-if="!masterAccountLogin.includes(account.meta_login) && (!account.master_request || account.master_request.status === 'Pending')"
                 @click="openAccountActionModal('become_master')"
             >
                 <div class="flex items-center gap-2">

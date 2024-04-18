@@ -70,7 +70,7 @@ class SelectOptionService
 
             return [
                 'value' => $country->id,
-                'label' => $translations[$locale] ?? $country->name,
+                'label' => $translations[$locale] ?? $country->name, //$translations['cn']
             ];
         });
     }

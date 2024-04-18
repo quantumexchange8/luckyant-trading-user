@@ -177,6 +177,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/affiliateSubscriptionData', [ReferralController::class, 'affiliateSubscriptionData'])->name('referral.affiliateSubscriptionData');
         Route::get('/affiliateListing', [ReferralController::class, 'affiliateListing'])->name('referral.affiliateListing');
         Route::get('/affiliateListingData', [ReferralController::class, 'affiliateListingData'])->name('referral.affiliateListingData');
+        Route::get('/getAllCountries', [ReferralController::class, 'getAllCountries'])->name('referral.getAllCountries');
     });
 
     /**

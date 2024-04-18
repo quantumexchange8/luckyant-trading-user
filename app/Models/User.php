@@ -107,11 +107,16 @@ class User extends Authenticatable implements HasMedia
 
     public function wallets(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Wallet::class, 'user_id', 'id' );
+        return $this->hasMany(Wallet::class, 'user_id', 'id');
     }
 
     public function rank(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(SettingRank::class, 'id', 'setting_rank_id' );
+        return $this->hasOne(SettingRank::class, 'id', 'setting_rank_id');
+    }
+
+    public function userCountry(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Country::class, 'id', 'country');
     }
 }

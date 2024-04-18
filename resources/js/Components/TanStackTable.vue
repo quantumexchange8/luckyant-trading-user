@@ -166,66 +166,66 @@ watch(pageIndex, (newPageNumber) => {
             </tr>
             </tbody>
         </table>
-        <div class="py-4 flex flex-col md:flex-row gap-2 md:items-center md:justify-between w-full">
-            <div class="text-sm">
-                {{ $t('public.pagination_result', { page_index: table.getState().pagination.pageIndex + 1, page_count: table.getPageCount(), row_count: table.getRowCount() }) }}
-            </div>
+    </div>
+    <div class="py-4 flex flex-col md:flex-row gap-2 md:items-center md:justify-between w-full">
+        <div class="text-sm">
+            {{ $t('public.pagination_result', { page_index: table.getState().pagination.pageIndex + 1, page_count: table.getPageCount(), row_count: table.getRowCount() }) }}
+        </div>
 
-            <div class="flex items-center gap-4">
-                <Button
-                    variant="gray"
-                    type="button"
-                    @click="handleFirstLastPage('goToFirstPage')"
-                    pill
-                    size="sm"
-                    v-slot="{iconSizeClasses}"
-                    :disabled="!table.getCanPreviousPage()"
-                >
-                    <ChevronLeftDoubleIcon class="w-4" />
-                </Button>
-                <Button
-                    type="button"
-                    variant="gray"
-                    @click="handlePageChange('previous', table.getState().pagination.pageIndex)"
-                    :disabled="!table.getCanPreviousPage()"
-                    pill
-                    size="sm"
-                    v-slot="{iconSizeClasses}"
-                >
-                    <ChevronLeftIcon class="w-4" />
-                </Button>
-                <Input
-                    id="page"
-                    type="number"
-                    min="1"
-                    :max="table.getPageCount()"
-                    class="block w-20"
-                    placeholder="Page"
-                    v-model="pageIndex"
-                />
-                <Button
-                    type="button"
-                    variant="gray"
-                    @click="handlePageChange('next', table.getState().pagination.pageIndex)"
-                    :disabled="!table.getCanNextPage()"
-                    pill
-                    size="sm"
-                    v-slot="{iconSizeClasses}"
-                >
-                    <ChevronRightIcon class="w-4" />
-                </Button>
-                <Button
-                    variant="gray"
-                    type="button"
-                    @click="handleFirstLastPage('goToLastPage')"
-                    pill
-                    size="sm"
-                    v-slot="{iconSizeClasses}"
-                    :disabled="!table.getCanNextPage()"
-                >
-                    <ChevronRightDoubleIcon class="w-4" />
-                </Button>
-            </div>
+        <div class="flex items-center justify-center gap-4">
+            <Button
+                variant="gray"
+                type="button"
+                @click="handleFirstLastPage('goToFirstPage')"
+                pill
+                size="sm"
+                v-slot="{iconSizeClasses}"
+                :disabled="!table.getCanPreviousPage()"
+            >
+                <ChevronLeftDoubleIcon class="w-4" />
+            </Button>
+            <Button
+                type="button"
+                variant="gray"
+                @click="handlePageChange('previous', table.getState().pagination.pageIndex)"
+                :disabled="!table.getCanPreviousPage()"
+                pill
+                size="sm"
+                v-slot="{iconSizeClasses}"
+            >
+                <ChevronLeftIcon class="w-4" />
+            </Button>
+            <Input
+                id="page"
+                type="number"
+                min="1"
+                :max="table.getPageCount()"
+                class="block w-20"
+                placeholder="Page"
+                v-model="pageIndex"
+            />
+            <Button
+                type="button"
+                variant="gray"
+                @click="handlePageChange('next', table.getState().pagination.pageIndex)"
+                :disabled="!table.getCanNextPage()"
+                pill
+                size="sm"
+                v-slot="{iconSizeClasses}"
+            >
+                <ChevronRightIcon class="w-4" />
+            </Button>
+            <Button
+                variant="gray"
+                type="button"
+                @click="handleFirstLastPage('goToLastPage')"
+                pill
+                size="sm"
+                v-slot="{iconSizeClasses}"
+                :disabled="!table.getCanNextPage()"
+            >
+                <ChevronRightDoubleIcon class="w-4" />
+            </Button>
         </div>
     </div>
 </template>

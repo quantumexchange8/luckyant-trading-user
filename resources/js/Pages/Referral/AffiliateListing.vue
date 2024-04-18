@@ -6,22 +6,22 @@ import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import { SearchIcon, ArrowLeftIcon, ArrowRightIcon, RefreshIcon } from "@heroicons/vue/outline";
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import BaseListbox from "@/Components/BaseListbox.vue";
-import { ref, watch, watchEffect } from "vue";
+import {h, ref, watch} from "vue";
 import { usePage } from "@inertiajs/vue3";
-import Loading from "@/Components/Loading.vue";
-import Badge from "@/Components/Badge.vue";
-import { TailwindPagination } from "laravel-vue-pagination";
 import { transactionFormat } from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
 import Modal from "@/Components/Modal.vue";
 import Combobox from "@/Components/Combobox.vue";
 import toast from "@/Composables/toast.js";
-import { wTrans } from 'laravel-vue-i18n';
+import {trans} from 'laravel-vue-i18n';
+import TanStackTable from "@/Components/TanStackTable.vue";
+import NoData from "@/Components/NoData.vue";
+import StatusBadge from "@/Components/StatusBadge.vue";
+import {Users01Icon, CurrencyDollarCircleIcon} from "@/Components/Icons/outline.jsx";
 
 const props = defineProps({
     rankLists: Array,
-    totalAffiliate: Number,
-    totalDeposit: [String,Number],
+    countries: Array,
 })
 
 const formatter = ref({
@@ -29,44 +29,104 @@ const formatter = ref({
     month: 'MM'
 });
 
-const isLoading = ref(false);
+const pageSizes = [
+    {value: 5, label: 5 },
+    {value: 10, label: 10 },
+    {value: 20, label: 20 },
+    {value: 50, label: 50 },
+    {value: 100, label: 100 },
+]
+
+const totalAffiliate = ref(null);
+const totalDeposit = ref(null);
 const date = ref('');
 const search = ref('');
-const rank = ref();
+const rank = ref('');
+const country = ref();
 const refresh = ref(false);
-const affiliateListings = ref({ data: [] })
-const currentPage = ref(1)
+const affiliateListings = ref({ data: [] });
+const sorting = ref();
+const pageSize = ref(10);
+const action = ref('');
+const currentPage = ref(1);
 const { formatDateTime, formatAmount } = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
 
-const getResults = async (page = 1, search = '', date = '', rank = '') => {
-    isLoading.value = true
+const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterDate = date.value, filterRank = rank.value, filterCountry = country.value, columnName = sorting.value) => {
     try {
         let url = `/referral/affiliateListingData?page=${page}`;
 
-        if (search) {
-            url += `&search=${search}`;
+        if (paginate) {
+            url += `&paginate=${paginate}`;
         }
 
-        if (date) {
-            url += `&date=${date}`;
+        if (filterSearch) {
+            url += `&search=${filterSearch}`;
         }
 
-        if (rank) {
-            url += `&rank=${rank}`;
+        if (filterDate) {
+            url += `&date=${filterDate}`;
+        }
+
+        if (filterRank) {
+            url += `&rank=${filterRank}`;
+        }
+
+        if (filterCountry) {
+            url += `&country=${filterCountry.value}`;
+        }
+
+        if (columnName) {
+            // Convert the object to JSON and encode it to send as a query parameter
+            const encodedColumnName = encodeURIComponent(JSON.stringify(columnName));
+            url += `&columnName=${encodedColumnName}`;
         }
 
         const response = await axios.get(url);
-        affiliateListings.value = response.data;
+        affiliateListings.value = response.data.downlineUsers;
+        totalAffiliate.value = response.data.totalAffiliate;
+        totalDeposit.value = response.data.totalDeposit;
 
     } catch (error) {
         console.error(error);
-    } finally {
-        isLoading.value = false
     }
 }
 
-getResults()
+getResults();
+
+const columns = [
+    {
+        accessorKey: 'created_at',
+        header: 'join_date',
+        cell: info => formatDateTime(info.getValue()),
+    },
+    {
+        accessorKey: 'username',
+        header: 'username',
+    },
+    {
+        accessorKey: 'affiliate_rank',
+        header: 'rank',
+        enableSorting: false,
+    },
+    {
+        accessorKey: 'affiliate_country',
+        header: 'country',
+        enableSorting: false,
+    },
+    {
+        accessorKey: 'subscription_amount',
+        header: 'total_deposit',
+        enableSorting: false,
+        cell: info => '$ ' + formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'status',
+        header: 'status',
+        enableSorting: false,
+        cell: ({ row }) => h(StatusBadge, {value: row.original.status}),
+    },
+];
 
 const clearFilter = () => {
     search.value = '';
@@ -74,48 +134,42 @@ const clearFilter = () => {
     rank.value = '';
 }
 
-watch(
-    [search, date, rank],
-    debounce(([serachValue, dateValue, rankValue]) => {
-        getResults(1, serachValue, dateValue, rankValue);
-    }, 300)
-);
-
-const handlePageChange = (newPage) => {
-    if (newPage >= 1) {
-        currentPage.value = newPage;
-        getResults(currentPage.value, search.value, date.value, rank.value);
-    }
-};
-
-const refreshHistory = () => {
-    getResults(1, search.value, date.value, rank.value);
-
-    toast.add({
-        message: wTrans('public.successfully_refreshed'),
-    });
-}
-
-const paginationClass = [
-    'bg-transparent border-0 text-gray-600 dark:text-gray-400 dark:enabled:hover:text-white'
-];
-
-const paginationActiveClass = [
-    'border dark:border-gray-600 dark:bg-gray-600 rounded-full text-primary-500 dark:text-primary-300'
-];
-
-watchEffect(() => {
-    if (usePage().props.title !== null) {
-        getResults();
+watch([currentPage, action], ([currentPageValue, newAction]) => {
+    if (newAction === 'goToFirstPage' || newAction === 'goToLastPage') {
+        getResults(currentPageValue, pageSize.value);
+    } else {
+        getResults(currentPageValue, pageSize.value);
     }
 });
 
-const statusVariant = (transactionStatus) => {
-    if (transactionStatus === 'Pending') return 'processing';
-    if (transactionStatus === 'Success') return 'success';
-    if (transactionStatus === 'Rejected') return 'danger';
-}
+watch(
+    [sorting, pageSize],
+    ([sortingValue, pageSizeValue]) => {
+        getResults(1, pageSizeValue, search.value, date.value, rank.value, country.value, sortingValue);
+    }
+);
 
+watch(
+    [search, date, rank, country],
+    debounce(([searchValue, dateValue, rankValue, countryValue]) => {
+        getResults(1, pageSize.value, searchValue, dateValue, rankValue, countryValue, sorting.value);
+    }, 300)
+);
+
+function loadCountries(query, setOptions) {
+    fetch('/referral/getAllCountries?query=' + query)
+        .then(response => response.json())
+        .then(results => {
+            setOptions(
+                results.map(country => {
+                    return {
+                        value: country.id,
+                        label: country.name,
+                    }
+                })
+            )
+        });
+}
 </script>
 
 <template>
@@ -128,155 +182,124 @@ const statusVariant = (transactionStatus) => {
             </div>
         </template>
 
-        <div class="grid grid-cols-2 w-full gap-4">
-            <div class="flex flex-col gap-5 p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                <div>
-                    {{ $t('public.total_affiliate') }}
+        <div class="grid grid-cols-1 sm:grid-cols-2 w-full gap-4">
+            <div class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+                <div class="flex flex-col gap-4">
+                    <div>
+                        {{ $t('public.total_affiliate') }}
+                    </div>
+                    <div class="text-2xl font-bold">
+                        <span v-if="totalAffiliate !== null">
+                            {{ totalAffiliate }}
+                        </span>
+                        <span v-else>
+                            {{ $t('public.loading') }}
+                        </span>
+                    </div>
                 </div>
-                <div class="text-2xl font-bold">
-                    {{ (props.totalAffiliate) }}
+                <div class="rounded-full flex items-center justify-center w-14 h-14 bg-primary-200">
+                    <Users01Icon class="text-primary-500 w-8 h-8" />
                 </div>
             </div>
-
-            <div class="flex flex-col gap-5 p-6 md:col-span-1 col-span-3 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                <div>
-                    {{ $t('public.total_deposit') }}
+            <div class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+                <div class="flex flex-col gap-4">
+                    <div>
+                        {{ $t('public.total_deposit') }}
+                    </div>
+                    <div class="text-2xl font-bold">
+                        <span v-if="totalDeposit !== null">
+                            $ {{ formatAmount(totalDeposit) }}
+                        </span>
+                        <span v-else>
+                            {{ $t('public.loading') }}
+                        </span>
+                    </div>
                 </div>
-                <div class="text-2xl font-bold">
-                    {{ formatAmount(props.totalDeposit) }}
+                <div class="rounded-full flex items-center justify-center w-14 h-14 bg-success-200">
+                    <CurrencyDollarCircleIcon class="text-success-500 w-8 h-8" />
                 </div>
             </div>
         </div>
 
-
-        <div
-            class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-lg shadow-lg dark:bg-gray-900 border border-gray-300 dark:border-gray-600">
-            <div class="flex justify-between mb-3">
-                <h4 class="font-semibold text-lg dark:text-white">{{ $t('public.affiliate') }}</h4>
-                <RefreshIcon
-                    :class="{ 'animate-spin': isLoading }"
-                    class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white" aria-hidden="true"
-                    @click="refreshHistory"
-                />
-            </div>
-
-            <div class="flex flex-wrap gap-3 w-full justify-end items-center sm:flex-nowrap">
-                <div class="w-full sm:w-80">
+        <div class="flex flex-col gap-5 items-start self-stretch my-8">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full">
+                <div class="w-full">
                     <InputIconWrapper>
                         <template #icon>
                             <SearchIcon aria-hidden="true" class="w-5 h-5" />
                         </template>
-                        <!-- <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.report.search_placeholder')" v-model="search" /> -->
                         <Input
-                            withIcon id="search"
+                            withIcon
+                            id="search"
                             type="text"
-                            class="w-full block dark:border-transparent"
+                            class="w-full block"
                             :placeholder="$t('public.search')"
                             v-model="search"
                         />
                     </InputIconWrapper>
                 </div>
-                <div class="w-full sm:w-80">
+                <div class="w-full">
                     <vue-tailwind-datepicker
                         :placeholder="$t('public.date_placeholder')"
                         :formatter="formatter"
                         separator=" - "
                         v-model="date"
-                        input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-800" />
+                        input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-800"
+                    />
                 </div>
-                <div class="w-full sm:w-80">
+                <div class="w-full">
                     <BaseListbox
                         id="rankID"
-                        class="w-full block dark:border-transparent"
                         v-model="rank"
                         :options="rankLists"
                         :placeholder="$t('public.filter_rank')"
                     />
                 </div>
-                <div class="w-full sm:w-auto">
-                    <Button
-                        type="button"
-                        variant="transparent"
-                        @click="clearFilter"
-                        class="w-full justify-center"
-                    >
-                        {{ $t('public.clear') }}
-                    </Button>
+                <div class="w-full">
+                    <Combobox
+                        :load-options="loadCountries"
+                        v-model="country"
+                        :placeholder="$t('public.placeholder')"
+                    />
                 </div>
             </div>
-
-            <div class="mt-2 relative overflow-x-auto">
-                <div v-if="isLoading" class="w-full flex justify-center my-8">
-                    <Loading />
-                </div>
-                <table v-else class="w-[650px] md:w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-5">
-                    <thead
-                        class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
-                        <tr>
-                            <th scope="col" class="p-3">
-                                {{ $t('public.username') }}
-                            </th>
-                            <th scope="col" class="p-3">
-                                {{ $t('public.join_date') }}
-                            </th>
-                            <th scope="col" class="p-3 text-center">
-                                {{ $t('public.rank') }}
-                            </th>
-                            <th scope="col" class="p-3 text-center">
-                                {{ $t('public.country') }}
-                            </th>
-                            <th scope="col" class="p-3 text-center">
-                                {{ $t('public.status') }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="affiliateListings.data.length === 0">
-                            <th colspan="4" class="py-4 text-lg text-center">
-                                {{ $t('public.no_history') }}
-                            </th>
-                        </tr>
-                        <tr v-for="affiliateListing in affiliateListings.data"
-                            class="bg-white dark:bg-transparent text-xs text-gray-900 dark:text-white border-b dark:border-gray-800 hover:bg-primary-50 dark:hover:bg-gray-600">
-                            <td class="p-3">
-                                {{ affiliateListing.username }}
-                            </td>
-                            <td class="p-3">
-                                {{ formatDateTime(affiliateListing.created_at) }}
-                            </td>
-                            <td class="p-3 text-center">
-                                {{ affiliateListing.rank }}
-                            </td>
-                            <td class="p-3 text-center">
-                                {{ affiliateListing.country }}
-                            </td>
-                            <td class="p-3 flex items-center justify-center">
-                                <Badge :variant="statusVariant(affiliateListing.status)">{{ $t('public.' + affiliateListing.status.toLowerCase()) }}</Badge>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="flex justify-center mt-4" v-if="!isLoading">
-                <TailwindPagination
-                    :item-classes=paginationClass
-                    :active-classes=paginationActiveClass
-                    :data="affiliateListings"
-                    :limit=2
-                    @pagination-change-page="handlePageChange"
+            <div class="flex justify-end gap-4 items-center w-full">
+                <Button
+                    type="button"
+                    variant="secondary"
+                    @click="clearFilter"
                 >
-                    <template #prev-nav>
-                        <span class="flex gap-2">
-                            <ArrowLeftIcon class="w-5 h-5" /> <span
-                                class="hidden sm:flex">{{ $t('public.previous') }}</span>
-                        </span>
-                    </template>
-                    <template #next-nav>
-                        <span class="flex gap-2"><span class="hidden sm:flex">{{ $t('public.next') }}</span>
-                            <ArrowRightIcon class="w-5 h-5" />
-                        </span>
-                    </template>
-                </TailwindPagination>
+                    {{ $t('public.clear') }}
+                </Button>
+            </div>
+        </div>
+
+        <div class="p-5 my-8 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
+            <div class="flex justify-end items-center gap-2">
+                <div class="text-sm">
+                    {{ $t('public.size') }}
+                </div>
+                <div>
+                    <BaseListbox
+                        :options="pageSizes"
+                        v-model="pageSize"
+                    />
+                </div>
+            </div>
+            <div
+                v-if="affiliateListings.data.length === 0"
+                class="w-full flex items-center justify-center"
+            >
+                <NoData />
+            </div>
+            <div v-else>
+                <TanStackTable
+                    :data="affiliateListings"
+                    :columns="columns"
+                    @update:sorting="sorting = $event"
+                    @update:action="action = $event"
+                    @update:currentPage="currentPage = $event"
+                />
             </div>
         </div>
     </AuthenticatedLayout>

@@ -83,9 +83,30 @@ class AccountInfoController extends Controller
         }
 
         $metaAccount = $metaService->createUser($user, $group, $leverage);
+        $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance');
+
+        // dd($metaAccount);
+        // "name" => "Test User 34"
+        // "login" => 457499
+        // "currency" => "USD"
+        // "leverage" => 500
+        // "server" => "LuckyAntTrading-Live"
+        // "mainPassword" => "qCAZo3E8lr-"
+        // "investPassword" => "icuuk3fKEv-"
+        // "mtRetCode_ResponseCode" => 0
+      
+        // $dummyMetaAccount = [
+        //     'account' => '123456',
+        //     'leverage' => '100',
+        //     'server' => 'DemoServer',
+        //     'login' => 'demo123',
+        //     'mainPassword' => 'password123',
+        //     'investPassword' => 'investor123',
+        // ];
+        // $dummyBalance = 50.00;
 
         Notification::route('mail', $user->email)
-            ->notify(new AddTradingAccountNotification($metaAccount, $user));
+            ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
 
         return back()->with('toast', trans('public.created_trading_account'));
     }

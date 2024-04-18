@@ -100,13 +100,12 @@ const exportMember = () => {
                             :formatter="formatter"
                             separator=" - "
                             v-model="date"
-                            input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-dark-eval-2"
+                            input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-800"
                         />
                     </div>
                     <div class="w-full">
                         <BaseListbox
                             id="category"
-                            class="w-full rounded-lg text-base text-black dark:text-white dark:bg-gray-600"
                             v-model="category"
                             :options="typeFilter"
                             placeholder="Filter Category"
@@ -115,7 +114,6 @@ const exportMember = () => {
                     <div class="w-full">
                         <BaseListbox
                             id="methods"
-                            class="w-full rounded-lg text-base text-black dark:text-white dark:bg-gray-600"
                             v-model="methods"
                             :options="paymentMethods"
                             placeholder="Filter Methods"

@@ -109,10 +109,10 @@ watchEffect(() => {
             class="p-5 my-5 mb-28 bg-white overflow-hidden md:overflow-visible rounded-lg shadow-lg dark:bg-gray-900 border border-gray-300 dark:border-gray-600">
             <div class="flex justify-between mb-3">
                 <h4 class="font-semibold text-lg dark:text-white">{{ $t('public.subscription_transaction_history') }}</h4>
-                <RefreshIcon 
+                <RefreshIcon
                     :class="{ 'animate-spin': isLoading }"
                     class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white" aria-hidden="true"
-                    @click="refreshHistory" 
+                    @click="refreshHistory"
                 />
             </div>
 
@@ -123,22 +123,22 @@ watchEffect(() => {
                             <SearchIcon aria-hidden="true" class="w-5 h-5" />
                         </template>
                         <!-- <Input withIcon id="search" type="text" class="w-full block dark:border-transparent" :placeholder="$t('public.report.search_placeholder')" v-model="search" /> -->
-                        <Input 
-                            withIcon id="search" 
-                            type="text" 
+                        <Input
+                            withIcon id="search"
+                            type="text"
                             class="w-full block dark:border-transparent"
-                            :placeholder="$t('public.search')" 
-                            v-model="search" 
+                            :placeholder="$t('public.search')"
+                            v-model="search"
                         />
                     </InputIconWrapper>
                 </div>
                 <div class="w-full sm:w-80">
-                    <vue-tailwind-datepicker 
-                        :placeholder="$t('public.date_placeholder')" 
+                    <vue-tailwind-datepicker
+                        :placeholder="$t('public.date_placeholder')"
                         :formatter="formatter"
-                        separator=" - " 
+                        separator=" - "
                         v-model="date"
-                        input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-dark-eval-2" />
+                        input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-800" />
                 </div>
             </div>
 
@@ -202,11 +202,11 @@ watchEffect(() => {
                 </table>
             </div>
             <div class="flex justify-center mt-4" v-if="!isLoading">
-                <TailwindPagination 
-                    :item-classes=paginationClass 
+                <TailwindPagination
+                    :item-classes=paginationClass
                     :active-classes=paginationActiveClass
-                    :data="subscriptionHistories" 
-                    :limit=2 
+                    :data="subscriptionHistories"
+                    :limit=2
                     @pagination-change-page="handlePageChange"
                 >
                     <template #prev-nav>

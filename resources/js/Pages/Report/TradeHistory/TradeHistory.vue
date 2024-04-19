@@ -25,7 +25,6 @@ import { DashboardIcon, CoinsHandIcon, ReportIcon } from '@/Components/Icons/out
 const props = defineProps({
     tradingAccounts: Array,
 })
-console.log(props.tradingAccounts)
 const { formatDateTime, formatAmount } = transactionFormat();
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -120,7 +119,7 @@ const getResults = async (page = 1, paginate = 10, tradingAccount = '', type = n
     }
 };
 // Call getResults initially
-getResults(1, 10, props.tradingAccounts[0].value);
+getResults(1, 10, tradingAccount.value);
 
 const columns = [
     {
@@ -184,18 +183,20 @@ const columns = [
 // }
 
 function loadSymbols(query, setOptions) {
-    fetch(`/trading/getTradingSymbols?meta_login=${tradingAccount.value}&query=` + query)
-        .then(response => response.json())
-        .then(results => {
-            setOptions(
-                results.map(history => {
-                    return {
-                        value: history.symbol,
-                        label: history.symbol,
-                    }
-                })
-            )
-        });
+    watchEffect(() => {
+        fetch(`/trading/getTradingSymbols?meta_login=${tradingAccount.value}&query=${query}`)
+            .then(response => response.json())
+            .then(results => {
+                setOptions(
+                    results.map(history => {
+                        return {
+                            value: history.symbol,
+                            label: history.symbol,
+                        }
+                    })
+                )
+            });
+    });
 }
 
 </script>

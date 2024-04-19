@@ -6,6 +6,7 @@ use App\Models\Country;
 use App\Models\Wallet;
 use App\Models\PaymentAccount;
 use App\Models\SettingLeverage;
+use App\Models\TradingAccount;
 use App\Models\WalletLog;
 
 class SelectOptionService
@@ -115,6 +116,16 @@ class SelectOptionService
                 'label' => trans('public.' . $transactionType),
             ];
         })->prepend(['value' => '', 'label' => trans('public.all')]);
+    }
+
+    public function getTradingAccounts(): \Illuminate\Support\Collection
+    {
+        return TradingAccount::where('user_id', \Auth::id())->get()->map(function ($tradingAccounts) {
+            return [
+                'value' => $tradingAccounts->meta_login,
+                'label' => $tradingAccounts->meta_login,
+            ];
+        });
     }
 
 }

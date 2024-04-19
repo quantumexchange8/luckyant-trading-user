@@ -37,6 +37,7 @@ const currentPage = ref(1)
 const { formatDateTime, formatAmount } = transactionFormat();
 
 const tradeActions = [
+    {value: '', label:"All"},
     {value: 'BUY', label:"BUY"},
     {value: 'SELL', label:"SELL"},
 ];

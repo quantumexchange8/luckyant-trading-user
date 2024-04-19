@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Wallet;
 use App\Models\WalletLog;
-use App\Services\SelectOptionService;
-use Inertia\Inertia;
+use App\Models\TradeHistory;
 use Illuminate\Http\Request;
+use App\Models\TradingAccount;
 use Illuminate\Support\Carbon;
 use App\Models\TradeRebateSummary;
+use App\Services\SelectOptionService;
 
 class ReportController extends Controller
 {
@@ -140,5 +142,67 @@ class ReportController extends Controller
             'walletLogs' => $results,
             'totalBonus' => $totalBonus,
         ]);
+    }
+
+    public function trade_history()
+    {    
+        return Inertia::render('Report/TradeHistory/TradeHistory', [
+            'tradingAccounts' => (new SelectOptionService())->getTradingAccounts(),
+        ]);
+    }
+
+    public function getTradeHistories(Request $request)
+    {    
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
+    
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+        
+        $tradingAccountExists = TradingAccount::where('user_id', \Auth::id())
+            ->where('meta_login', $request->input('meta_login'))
+            ->exists();
+
+        if ($tradingAccountExists) {
+            $tradeHistories = TradeHistory::query();
+        
+            if ($request->filled('meta_login')) {
+                $metaLogin = $request->input('meta_login');
+                $tradeHistories->where('meta_login', $metaLogin);
+            }
+                
+            if ($request->filled('date')) {
+                $date = $request->input('date');
+                $dateRange = explode(' - ', $date);
+                $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+                $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+                $tradeHistories->whereBetween('time_close', [$start_date, $end_date]);
+            }
+        
+            if ($request->filled('type')) {
+                $type = $request->input('type');
+                $types = explode(',', $type); // Convert comma-separated string to array
+                $tradeHistories->whereIn('symbol', $types);
+            }
+        
+            if ($request->filled('tradeType')) {
+                $tradeType = $request->input('tradeType');
+                $tradeHistories->where('trade_type', $tradeType);
+            }
+        
+            $totalProfit = $tradeHistories->sum('trade_profit');
+            $totalTradeLot = $tradeHistories->sum('volume');
+            // Apply sorting and pagination
+            $tradeHistories = $tradeHistories->where('trade_status', 'Closed')
+                ->orderBy($column, $sortOrder)
+                ->paginate($request->input('paginate', 10));
+        
+                return response()->json([
+                    'tradeHistories' => $tradeHistories,
+                    'totalProfit' => $totalProfit,
+                    'totalTradeLot' => $totalTradeLot,
+                ]);
+        }
     }
 }

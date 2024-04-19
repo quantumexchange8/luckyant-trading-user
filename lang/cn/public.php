@@ -127,7 +127,8 @@ return [
         'report' => "报告",
         'trade_rebate' => "交易返利",
         'wallet_history' => "钱包明细",
-        'profile' => "个人资料"
+        'profile' => "个人资料",
+        'trade_history' => "交易历史",
     ],
     'copy' => "复制",
     'copied' => "已复制！",
@@ -140,6 +141,7 @@ return [
     'total_withdrawal' => "总提款",
     'total_rebate_earn' => "总返利收入",
     'total_trade_lots' => "总交易手数",
+    'total_profit' => "总收益",
     'referral_qr' => "通过QR链接分享您的推荐链接",
     'details' => "详细信息",
     'is_loading' => "加载中...",

@@ -128,6 +128,7 @@ return [
         'trade_rebate' => "Trade Rebate",
         'wallet_history' => "Wallet History",
         'profile' => "Profile",
+        'trade_history' => "Trade History"
     ],
     'copy' => "Copy",
     'copied' => "Copied!",
@@ -140,6 +141,7 @@ return [
     'total_withdrawal' => "Total Withdrawal",
     'total_rebate_earn' => "Total Rebate Earn",
     'total_trade_lots' => "Total Trade Lots",
+    'total_profit' => "Total Profit",
     'referral_qr' => "Share your referral link through QR link",
     'details' => "Details",
     'is_loading' => "Loading...",

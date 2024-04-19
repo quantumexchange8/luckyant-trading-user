@@ -1,5 +1,6 @@
 <?php
 return [
+    'Lucky Ant Trading' => "Lucky Ant Trading",
     'total_roi' => "Total ROI",
     'total_lot' => "Total Lot",
     'error_403' => "Error 403",

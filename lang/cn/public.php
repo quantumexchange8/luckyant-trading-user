@@ -1,5 +1,6 @@
 <?php
 return [
+    "luckyant-trading" => "蚂蚁科技团队",
     'total_roi' => "总收益",
     'total_lot' => "总手数",
     'error_403' => "错误 403",

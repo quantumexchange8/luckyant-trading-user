@@ -8,7 +8,7 @@
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
         @endif
 
-        <title inertia>{{ config('app.name', 'Lucky Ant Trading') }}</title>
+        <title inertia>{{ trans('public.luckyant-trading') }}</title>
 
         <!-- Fonts -->
         <link

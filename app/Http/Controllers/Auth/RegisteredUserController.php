@@ -120,7 +120,7 @@ class RegisteredUserController extends Controller
 
             // Validate the request
             $validator->validate();
-            
+
             if($request->dob_year && $request->dob_month && $request->dob_day){
                 $dob = date($request->dob_year . '-' . $request->dob_month . '-' . $request->dob_day);
                 if ($dob && !checkdate($request->dob_month, $request->dob_day, $request->dob_year)) {
@@ -184,7 +184,7 @@ class RegisteredUserController extends Controller
             'phone' => $phone,
             'dob' => $dob,
             'password' => Hash::make($request->password),
-            'role' => 'member',
+            'role' => 'user',
             'top_leader_id' => null,
         ];
 

@@ -72,7 +72,6 @@ class ProfileController extends Controller
 
         $users = User::where('dial_code', $request->dial_code)
             ->whereNot('id', $user->id)
-            ->where('role', 'member')
             ->where('status', 'Active')
             ->get();
 

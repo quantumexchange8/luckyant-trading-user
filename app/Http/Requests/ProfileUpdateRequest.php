@@ -25,6 +25,9 @@ class ProfileUpdateRequest extends FormRequest
             'nationality' => ['required'],
             'identification_number' => ['required'],
             'address' => ['required'],
+            'proof_front' => ['nullable', 'image', 'max:2048'],
+            'proof_back' => ['nullable', 'image', 'max:2048'],
+            'profile_photo' => ['nullable', 'image', 'max:2048'],
         ];
     }
 
@@ -45,6 +48,9 @@ class ProfileUpdateRequest extends FormRequest
             'nationality' => trans('public.nationality'),
             'identification_number' => trans('public.identification_number'),
             'address' => trans('public.address'),
+            'proof_front' => trans('public.proof_of_identity') . ' (' . trans('public.front') . ')',
+            'proof_back' => trans('public.proof_of_identity') . ' (' . trans('public.back') . ')',
+            'profile_photo' => trans('public.profile_photo'),
         ];
     }
 }

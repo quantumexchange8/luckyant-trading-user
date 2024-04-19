@@ -168,6 +168,7 @@ watchEffect(() => {
         <div class="flex flex-col sm:flex-row gap-5">
             <div class="flex flex-col gap-4 items-center justify-center w-full sm:w-1/3">
                 <AvatarInput class="h-24 w-24 rounded-full" v-model="form.profile_photo" :default-src="profileImg ? profileImg : 'https://img.freepik.com/free-icon/user_318-159711.jpg'" />
+                <InputError :message="form.errors.profile_photo" class="mt-2" />
                 <div class="flex flex-col items-center">
                     <div class="font-semibold text-gray-800 dark:text-white">
                         {{ user.name }}

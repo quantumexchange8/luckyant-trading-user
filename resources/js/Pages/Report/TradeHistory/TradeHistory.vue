@@ -219,7 +219,7 @@ function loadSymbols(query, setOptions) {
                     </div>
                     <div class="text-2xl font-bold">
                         <span v-if="totalProfit !== null">
-                            {{ formatAmount(totalProfit) }}
+                           $ {{ formatAmount(totalProfit) }}
                         </span>
                         <span v-else>
                             {{ $t('public.loading') }}
@@ -237,7 +237,7 @@ function loadSymbols(query, setOptions) {
                     </div>
                     <div class="text-2xl font-bold">
                         <span v-if="totalTradeLot !== null">
-                            $ {{ formatAmount(totalTradeLot) }}
+                            {{ formatAmount(totalTradeLot) }}
                         </span>
                         <span v-else>
                             {{ $t('public.loading') }}

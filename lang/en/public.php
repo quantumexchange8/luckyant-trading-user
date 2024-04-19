@@ -253,6 +253,7 @@ return [
     'identification_no' => "Identification No",
     'identification_number' => "Identification Number",
     'proof_of_identity' => "Proof of Identity",
+    'profile_photo' => "Profile Photo",
     'front' => "Front",
     'click_add_account' => "Click to add account",
     'currency' => "Currency",

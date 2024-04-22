@@ -191,8 +191,8 @@ class ReportController extends Controller
                 $tradeHistories->where('trade_type', $tradeType);
             }
         
-            $totalProfit = $tradeHistories->sum('trade_profit');
-            $totalTradeLot = $tradeHistories->sum('volume');
+            $totalProfit = $tradeHistories->where('trade_status', 'Closed')->sum('trade_profit');
+            $totalTradeLot = $tradeHistories->where('trade_status', 'Closed')->sum('volume');
             // Apply sorting and pagination
             $tradeHistories = $tradeHistories->where('trade_status', 'Closed')
                 ->orderBy($column, $sortOrder)

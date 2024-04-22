@@ -192,7 +192,7 @@ watchEffect(() => {
                                 v-for="management_fee in masterAccount.master_management_fee"
                                 class="font-semibold"
                             >
-                                {{ management_fee.penalty_days }} {{ $t('public.day') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
+                                {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
                             </div>
                         </div>
                     </div>
@@ -318,7 +318,7 @@ watchEffect(() => {
                 v-for="management_fee in masterAccount.master_management_fee"
                 class="text-sm font-semibold"
             >
-                {{ management_fee.penalty_days }} {{ $t('public.day') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }} %
+                {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }} %
             </div>
         </div>
     </Modal>

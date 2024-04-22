@@ -107,7 +107,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                             v-for="management_fee in subscriberAccount.master.master_management_fee"
                             class="font-semibold"
                         >
-                            {{ management_fee.penalty_days }} {{ $t('public.day') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
+                            {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
                         </div>
                     </div>
                 </div>

@@ -183,12 +183,17 @@ watchEffect(() => {
                             {{ masterAccount.estimated_lot_size }}
                         </div>
                     </div>
-                    <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="flex justify-between gap-2 self-stretch">
                         <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                             {{ $t('public.management_fee') }}
                         </div>
-                        <div class="text-base text-gray-800 dark:text-white font-semibold">
-                           {{ formatAmount(masterAccount.management_fee) }} %
+                        <div class="text-base flex flex-col text-gray-800 dark:text-white font-semibold">
+                            <div
+                                v-for="management_fee in masterAccount.master_management_fee"
+                                class="font-semibold"
+                            >
+                                {{ management_fee.penalty_days }} {{ $t('public.day') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
+                            </div>
                         </div>
                     </div>
                     <div class="flex items-center justify-between gap-2 self-stretch">
@@ -305,5 +310,16 @@ watchEffect(() => {
 
     <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
         <div v-html="terms.contents" class="prose dark:text-white"></div>
+        <div class="pt-4">
+            <div class="text-gray-600 dark:text-gray-400">
+                {{ $t('public.management_fee') }}
+            </div>
+            <div
+                v-for="management_fee in masterAccount.master_management_fee"
+                class="text-sm font-semibold"
+            >
+                {{ management_fee.penalty_days }} {{ $t('public.day') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }} %
+            </div>
+        </div>
     </Modal>
 </template>

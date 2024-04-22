@@ -40,7 +40,8 @@ class TradingController extends Controller
         $masterAccounts = Master::with([
             'user:id,username,name,email',
             'tradingAccount:id,meta_login,balance,equity',
-            'tradingUser:id,name,company'
+            'tradingUser:id,name,company',
+            'masterManagementFee'
         ])
             ->where('status', 'Active')
             ->where('signal_status', 1)
@@ -260,7 +261,7 @@ class TradingController extends Controller
 
     public function getSubscriptions(Request $request)
     {
-        $masterAccounts = Subscriber::with(['user:id,username,name,email', 'tradingUser:id,meta_login,name,company', 'master', 'master.tradingUser','subscription'])
+        $masterAccounts = Subscriber::with(['user:id,username,name,email', 'tradingUser:id,meta_login,name,company', 'master', 'master.tradingUser', 'master.masterManagementFee', 'subscription'])
             ->where('user_id', Auth::id())
             ->where('status', 'Subscribing')
             ->when($request->filled('search'), function ($query) use ($request) {

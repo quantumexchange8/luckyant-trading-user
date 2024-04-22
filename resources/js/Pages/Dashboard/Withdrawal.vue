@@ -135,7 +135,7 @@ const handleButtonClick = () => {
                             id="amount"
                             type="number"
                             min="0"
-                            :placeholder="'$ ' + formatAmount(withdrawalFee.value)"
+                            :placeholder="'$ ' + formatAmount(10)"
                             class="block w-full"
                             v-model="withdrawalAmount"
                             :invalid="form.errors.amount"

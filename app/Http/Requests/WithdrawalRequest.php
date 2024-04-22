@@ -9,9 +9,8 @@ class WithdrawalRequest extends FormRequest
 {
     public function rules(): array
     {
-        $withdrawal_fee = Setting::where('slug', 'withdrawal-fee')->first();
         return [
-            'amount' => ['required', 'numeric', 'min:' . $withdrawal_fee->value],
+            'amount' => ['required', 'numeric', 'min:10'],
             'wallet_id' => ['required'],
             'wallet_address' => ['required'],
         ];

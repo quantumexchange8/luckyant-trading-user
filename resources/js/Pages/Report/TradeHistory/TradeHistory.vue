@@ -123,7 +123,7 @@ getResults(1, 10, tradingAccount.value);
 
 const columns = [
     {
-        accessorKey: 'created_at',
+        accessorKey: 'time_close',
         header: 'date',
         cell: info => formatDateTime(info.getValue()),
     },

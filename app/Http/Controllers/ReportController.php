@@ -145,33 +145,33 @@ class ReportController extends Controller
     }
 
     public function trade_history()
-    {    
+    {
         return Inertia::render('Report/TradeHistory/TradeHistory', [
             'tradingAccounts' => (new SelectOptionService())->getTradingAccounts(),
         ]);
     }
 
     public function getTradeHistories(Request $request)
-    {    
+    {
         $columnName = $request->input('columnName'); // Retrieve encoded JSON string
         // Decode the JSON
         $decodedColumnName = json_decode(urldecode($columnName), true);
-    
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'time_close';
         $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
-        
+
         $tradingAccountExists = TradingAccount::where('user_id', \Auth::id())
             ->where('meta_login', $request->input('meta_login'))
             ->exists();
 
         if ($tradingAccountExists) {
             $tradeHistories = TradeHistory::query();
-        
+
             if ($request->filled('meta_login')) {
                 $metaLogin = $request->input('meta_login');
                 $tradeHistories->where('meta_login', $metaLogin);
             }
-                
+
             if ($request->filled('date')) {
                 $date = $request->input('date');
                 $dateRange = explode(' - ', $date);
@@ -179,25 +179,25 @@ class ReportController extends Controller
                 $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
                 $tradeHistories->whereBetween('time_close', [$start_date, $end_date]);
             }
-        
+
             if ($request->filled('type')) {
                 $type = $request->input('type');
                 $types = explode(',', $type); // Convert comma-separated string to array
                 $tradeHistories->whereIn('symbol', $types);
             }
-        
+
             if ($request->filled('tradeType')) {
                 $tradeType = $request->input('tradeType');
                 $tradeHistories->where('trade_type', $tradeType);
             }
-        
+
             $totalProfit = $tradeHistories->where('trade_status', 'Closed')->sum('trade_profit');
             $totalTradeLot = $tradeHistories->where('trade_status', 'Closed')->sum('volume');
             // Apply sorting and pagination
             $tradeHistories = $tradeHistories->where('trade_status', 'Closed')
                 ->orderBy($column, $sortOrder)
                 ->paginate($request->input('paginate', 10));
-        
+
                 return response()->json([
                     'tradeHistories' => $tradeHistories,
                     'totalProfit' => $totalProfit,

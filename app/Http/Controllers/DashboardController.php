@@ -63,6 +63,7 @@ class DashboardController extends Controller
             'withdrawalFeePercentage' => Setting::where('slug', 'withdrawal-fee-percentage')->first(),
             'registerLink' => $registerLink,
             'rank' => $translations[$locale] ?? $rank->name,
+            'total_global_trading_lot_size' => Setting::where('slug', 'total-global-trading-lot-size')->first(),
         ]);
     }
 

@@ -13,7 +13,7 @@ import Tooltip from "@/Components/Tooltip.vue";
 import Button from "@/Components/Button.vue";
 import Input from "@/Components/Input.vue";
 import Badge from "@/Components/Badge.vue";
-import {LinkIcon} from "@/Components/Icons/outline.jsx"
+import {LinkIcon, Coins04Icon} from "@/Components/Icons/outline.jsx"
 
 const user = usePage().props.auth.user
 const { formatDateTime, formatAmount } = transactionFormat();
@@ -26,6 +26,7 @@ const props = defineProps({
     paymentDetails: Object,
     withdrawalFee: Object,
     withdrawalFeePercentage: Object,
+    total_global_trading_lot_size: Object,
     registerLink: String,
     countries: Array,
     rank: String,
@@ -260,6 +261,20 @@ getTotalTransactions();
                 </div>
                 <!-- TickerTape -->
                 <iframe scrolling="no" allowtransparency="true" frameborder="0" src="https://s.tradingview.com/embed-widget/ticker-tape/?locale=en#%7B%22symbols%22%3A%5B%7B%22proName%22%3A%22FOREXCOM%3ASPXUSD%22%2C%22title%22%3A%22S%26P%20500%22%7D%2C%7B%22proName%22%3A%22FOREXCOM%3ANSXUSD%22%2C%22title%22%3A%22US%20100%22%7D%2C%7B%22proName%22%3A%22FX_IDC%3AEURUSD%22%2C%22title%22%3A%22EUR%2FUSD%22%7D%2C%7B%22proName%22%3A%22BITSTAMP%3ABTCUSD%22%2C%22title%22%3A%22Bitcoin%22%7D%2C%7B%22proName%22%3A%22BITSTAMP%3AETHUSD%22%2C%22title%22%3A%22Ethereum%22%7D%5D%2C%22showSymbolLogo%22%3Atrue%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22displayMode%22%3A%22adaptive%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A44%2C%22utm_source%22%3A%22currenttech.pro%22%2C%22utm_medium%22%3A%22widget%22%2C%22utm_campaign%22%3A%22ticker-tape%22%2C%22page-uri%22%3A%22currenttech.pro%2Fdemocrm%2Fpublic%2Fmember%2Fdashboard%22%7D" style="box-sizing: border-box; display: block; height: 50px; width: 100%;"></iframe>
+
+                <div class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            {{ $t('public.total_global_trading_lot_size') }}
+                        </div>
+                        <div class="text-2xl font-bold">
+                            {{ formatAmount(total_global_trading_lot_size ? total_global_trading_lot_size.value : 0) }}
+                        </div>
+                    </div>
+                    <div class="rounded-full flex items-center justify-center w-14 h-14 bg-primary-200">
+                        <Coins04Icon class="text-primary-500 w-8 h-8" />
+                    </div>
+                </div>
             </div>
 
             <div class="flex flex-col gap-5 w-full sm:w-[480px] sm:pl-5 sm:border-l-2 sm:border-gray-300 h-full">

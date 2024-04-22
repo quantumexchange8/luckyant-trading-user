@@ -435,4 +435,5 @@ return [
     "SameLevelRewards" => "同级奖励",
     "total_rewards" => "总奖励",
     "loading" => "加载中...",
+    "total_global_trading_lot_size" => "全球交易手数统计",
 ];

@@ -1,6 +1,6 @@
 <?php
 return [
-    'Lucky Ant Trading' => "Lucky Ant Trading",
+    'luckyant-trading' => "Lucky Ant Trading",
     'total_roi' => "Total ROI",
     'total_lot' => "Total Lot",
     'error_403' => "Error 403",
@@ -435,4 +435,5 @@ return [
     "SameLevelRewards" => "Peer Rewards",
     "total_rewards" => "Total Rewards",
     "loading" => "Loading...",
+    "total_global_trading_lot_size" => "Total Global Trading Lot Size",
 ];

@@ -20,6 +20,7 @@ use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -335,6 +336,13 @@ class TradingController extends Controller
 
     public function terminateSubscription(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'terms' => ['accepted']
+        ]);
+        $validator->setAttributeNames([
+            'terms' => trans('public.terms_and_conditions'),
+        ]);
+
         $subscription = Subscription::find($request->subscription_id);
         $subscriber = Subscriber::where('subscription_id', $subscription->id)->first();
 
@@ -344,24 +352,35 @@ class TradingController extends Controller
                 ->with('warning', trans('public.terminated_subscription_error'));
         }
 
-        $subscription->update([
-            'termination_date' => now(),
-            'status' => 'Terminated',
-            'auto_renewal' => false,
-        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        } else {
+            $subscription->update([
+                'termination_date' => now(),
+                'status' => 'Terminated',
+                'auto_renewal' => false,
+            ]);
 
-        $subscriber->update([
-            'unsubscribe_date' => now(),
-            'status' => 'Unsubscribed'
-        ]);
+            $subscriber->update([
+                'unsubscribe_date' => now(),
+                'status' => 'Unsubscribed'
+            ]);
 
-        return redirect()->back()
-            ->with('title', trans('public.success_terminate'))
-            ->with('success', trans('public.successfully_terminate'). ': ' . $subscription->subscription_number);
+            return redirect()->back()
+                ->with('title', trans('public.success_terminate'))
+                ->with('success', trans('public.successfully_terminate'). ': ' . $subscription->subscription_number);
+        }
     }
 
     public function renewalSubscription(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'terms' => ['accepted']
+        ]);
+        $validator->setAttributeNames([
+            'terms' => trans('public.terms_and_conditions'),
+        ]);
+
         $subscription = Subscription::find($request->subscription_id);
 
         if ($subscription->status == 'Terminated') {
@@ -370,48 +389,52 @@ class TradingController extends Controller
                 ->with('warning', trans('public.try_again_later'));
         }
 
-        $renewRequest = SubscriptionRenewalRequest::where('subscription_id', $subscription->id)
-            ->where('status', 'Pending')
-            ->latest()
-            ->first();
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        } else {
+            $renewRequest = SubscriptionRenewalRequest::where('subscription_id', $subscription->id)
+                ->where('status', 'Pending')
+                ->latest()
+                ->first();
 
-        if ($renewRequest) {
+            if ($renewRequest) {
+                return redirect()->back()
+                    ->with('title', trans('public.invalid_action'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+
+            $messages = [
+                'stop_renewal' => [
+                    'title' => trans('public.success_stop_renewal'),
+                    'success' => trans('public.successfully_stop_auto_renew'),
+                ],
+                'request_auto_renewal' => [
+                    'title' => trans('public.success_request_renewal'),
+                    'success' => trans('public.successfully_request_renewal'),
+                ],
+            ];
+
+            if (array_key_exists($request->action, $messages)) {
+                if ($request->action == 'stop_renewal') {
+                    $subscription->update([
+                        'auto_renewal' => false,
+                    ]);
+                } elseif ($request->action == 'request_auto_renewal') {
+                    SubscriptionRenewalRequest::create([
+                        'user_id' => $subscription->user_id,
+                        'subscription_id' => $subscription->id,
+                    ]);
+                }
+
+                return redirect()->back()
+                    ->with('title', $messages[$request->action]['title'])
+                    ->with('success', $messages[$request->action]['success']);
+            }
+
             return redirect()->back()
                 ->with('title', trans('public.invalid_action'))
                 ->with('warning', trans('public.try_again_later'));
         }
-
-        $messages = [
-            'stop_renewal' => [
-                'title' => trans('public.success_stop_renewal'),
-                'success' => trans('public.successfully_stop_auto_renew'),
-            ],
-            'request_auto_renewal' => [
-                'title' => trans('public.success_request_renewal'),
-                'success' => trans('public.successfully_request_renewal'),
-            ],
-        ];
-
-        if (array_key_exists($request->action, $messages)) {
-            if ($request->action == 'stop_renewal') {
-                $subscription->update([
-                    'auto_renewal' => false,
-                ]);
-            } elseif ($request->action == 'request_auto_renewal') {
-                SubscriptionRenewalRequest::create([
-                    'user_id' => $subscription->user_id,
-                    'subscription_id' => $subscription->id,
-                ]);
-            }
-
-            return redirect()->back()
-                ->with('title', $messages[$request->action]['title'])
-                ->with('success', $messages[$request->action]['success']);
-        }
-
-        return redirect()->back()
-            ->with('title', trans('public.invalid_action'))
-            ->with('warning', trans('public.try_again_later'));
     }
 
     public function getSubscriptionHistories(Request $request)
@@ -541,7 +564,9 @@ class TradingController extends Controller
 
     public function subscription_listing()
     {
-        return Inertia::render('Trading/SubscriptionListing/SubscriptionListing');
+        return Inertia::render('Trading/SubscriptionListing/SubscriptionListing', [
+            'terms' => Term::where('type', 'subscribe')->first()
+        ]);
     }
 
     public function subscription_history()

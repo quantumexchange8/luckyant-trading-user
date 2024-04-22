@@ -6,9 +6,13 @@ import Modal from "@/Components/Modal.vue";
 import {ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import {useForm, usePage} from "@inertiajs/vue3";
+import Label from "@/Components/Label.vue";
+import InputError from "@/Components/InputError.vue";
+import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
-    subscriberAccount: Object
+    subscriberAccount: Object,
+    terms: Object,
 })
 
 const terminationModal = ref(false);
@@ -21,6 +25,7 @@ const openTerminationModal = () => {
 
 const form = useForm({
     subscription_id: props.subscriberAccount.subscription.id,
+    terms: '',
 })
 
 const closeModal = () => {
@@ -53,6 +58,16 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
 
     return { widthResult, remainingTime };
 };
+
+const termsModal = ref(false);
+
+const openTermsModal = () => {
+    termsModal.value = true
+}
+
+const closeTermsModal = () => {
+    termsModal.value = false
+}
 </script>
 
 <template>
@@ -100,19 +115,6 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.management_fee')}}
-                    </div>
-                    <div class="text-base flex flex-col text-gray-800 dark:text-white font-semibold">
-                        <div
-                            v-for="management_fee in subscriberAccount.master.master_management_fee"
-                            class="font-semibold"
-                        >
-                            {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                         {{$t('public.roi_period')}} ({{ subscriberAccount.subscription.subscription_period }} {{ $t('public.days') }})
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
@@ -153,11 +155,44 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
             {{$t('public.confirm_terminate_warning_1')}} {{ subscriberAccount.subscription.meta_login }} {{$t('public.confirm_terminate_warning_2')}}
         </div>
 
+        <div class="flex items-center">
+            <div class="flex items-center h-5">
+                <Checkbox id="terms" v-model="form.terms"/>
+            </div>
+            <div class="ml-3">
+                <label for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
+                    {{ $t('public.agreement') }}
+                    <div
+                        class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
+                        @click="openTermsModal"
+                    >
+                        {{ $t('public.terms_and_conditions') }}
+                    </div>
+                </label>
+            </div>
+        </div>
+        <InputError :message="form.errors.terms" />
+
         <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
                 {{$t('public.cancel')}}
             </Button>
             <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
+        </div>
+    </Modal>
+
+    <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
+        <div v-html="terms.contents" class="prose dark:text-white"></div>
+        <div class="pt-4">
+            <div class="text-gray-600 dark:text-gray-400">
+                {{ $t('public.management_fee') }}
+            </div>
+            <div
+                v-for="management_fee in subscriberAccount.master.master_management_fee"
+                class="text-sm font-semibold"
+            >
+                {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }} %
+            </div>
         </div>
     </Modal>
 </template>

@@ -12,6 +12,10 @@ import {EyeIcon} from "@heroicons/vue/outline";
 import Modal from "@/Components/Modal.vue";
 import SubscriptionHistory from "@/Pages/Trading/MasterListing/SubscriptionHistory.vue";
 
+const props = defineProps({
+    terms: Object,
+})
+
 const subscriberAccounts = ref({data: []})
 const { formatAmount, formatDateTime } = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
@@ -191,10 +195,12 @@ const closeModal = () => {
                     <StopRenewSubscription
                         v-if="subscriberAccount.status === 'Subscribing'"
                         :subscriberAccount="subscriberAccount"
+                        :terms="terms"
                     />
                     <TerminateSubscription
                         v-if="subscriberAccount.status === 'Subscribing'"
                         :subscriberAccount="subscriberAccount"
+                        :terms="terms"
                     />
                 </div>
             </div>

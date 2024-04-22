@@ -183,19 +183,6 @@ watchEffect(() => {
                             {{ masterAccount.estimated_lot_size }}
                         </div>
                     </div>
-                    <div class="flex justify-between gap-2 self-stretch">
-                        <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                            {{ $t('public.management_fee') }}
-                        </div>
-                        <div class="text-base flex flex-col text-gray-800 dark:text-white font-semibold">
-                            <div
-                                v-for="management_fee in masterAccount.master_management_fee"
-                                class="font-semibold"
-                            >
-                                {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
-                            </div>
-                        </div>
-                    </div>
                     <div class="flex items-center justify-between gap-2 self-stretch">
                         <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                             {{ $t('public.roi_period') }}

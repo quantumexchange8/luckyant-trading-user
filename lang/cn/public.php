@@ -436,4 +436,5 @@ return [
     "total_rewards" => "总奖励",
     "loading" => "加载中...",
     "total_global_trading_lot_size" => "全球交易手数统计",
+    "subscribing_alert" => "您已经订阅了主帐户",
 ];

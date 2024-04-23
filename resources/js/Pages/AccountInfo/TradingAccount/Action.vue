@@ -73,7 +73,7 @@ const closeModal = () => {
         <CreditCardAddIcon />
         {{ $t('public.balance_in') }}
     </Button>
-    <Dropdown v-if="(!account.subscriber || account.subscriber.status === 'Unsubscribed') && !props.type" align="right" width="48">
+    <Dropdown v-if="(!account.subscriber || account.subscriber.status === 'Unsubscribed') && !props.type && account.balance_out" align="right" width="48">
         <template #trigger>
             <span class="inline-flex rounded-md">
                 <Button
@@ -110,7 +110,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
-                v-if="!masterAccountLogin.includes(account.meta_login) && (!account.master_request || account.master_request.status === 'Pending')"
+                v-if="!masterAccountLogin.includes(account.meta_login) && (!account.master_request || account.master_request.status === 'Pending') && account.balance_out"
                 @click="openAccountActionModal('become_master')"
             >
                 <div class="flex items-center gap-2">

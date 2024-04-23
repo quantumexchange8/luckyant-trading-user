@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subscriber;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Master;
@@ -85,26 +86,6 @@ class AccountInfoController extends Controller
         $metaAccount = $metaService->createUser($user, $group, $leverage);
         $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance');
 
-        // dd($metaAccount);
-        // "name" => "Test User 34"
-        // "login" => 457499
-        // "currency" => "USD"
-        // "leverage" => 500
-        // "server" => "LuckyAntTrading-Live"
-        // "mainPassword" => "qCAZo3E8lr-"
-        // "investPassword" => "icuuk3fKEv-"
-        // "mtRetCode_ResponseCode" => 0
-      
-        // $dummyMetaAccount = [
-        //     'account' => '123456',
-        //     'leverage' => '100',
-        //     'server' => 'DemoServer',
-        //     'login' => 'demo123',
-        //     'mainPassword' => 'password123',
-        //     'investPassword' => 'investor123',
-        // ];
-        // $dummyBalance = 50.00;
-
         Notification::route('mail', $user->email)
             ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
 
@@ -129,7 +110,7 @@ class AccountInfoController extends Controller
             }
         }
 
-        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login,company', 'subscriber', 'masterRequest:id,trading_account_id,status', 'subscriber.master.tradingUser:id,name,company'])
+        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login,company', 'masterRequest:id,trading_account_id,status'])
             ->where('user_id', \Auth::id())
             ->whereDoesntHave('masterAccount', function ($query) {
                 $query->whereNotNull('trading_account_id');
@@ -138,13 +119,22 @@ class AccountInfoController extends Controller
             ->get();
 
         $tradingAccounts->each(function ($tradingAccount) {
-            if ($tradingAccount->subscriber && \Carbon\Carbon::parse($tradingAccount->subscriber->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
+            $activeSubscriber = Subscriber::with(['master', 'master.tradingUser'])
+                ->where('meta_login', $tradingAccount->meta_login)
+                ->where('status', 'Subscribing')
+                ->first();
+
+            if ($activeSubscriber && \Carbon\Carbon::parse($activeSubscriber->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
+                $tradingAccount->balance_out = false;
+            } elseif ($activeSubscriber) {
                 $tradingAccount->balance_out = false;
             } elseif ($tradingAccount->demo_fund > 0) {
                 $tradingAccount->balance_out = false;
             } else {
                 $tradingAccount->balance_out = true;
             }
+
+            $tradingAccount->active_subscriber = $activeSubscriber;
         });
 
         $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login,company'])->where('user_id', \Auth::id())->get();
@@ -293,7 +283,12 @@ class AccountInfoController extends Controller
         $user = Auth::user();
         $wallet = Wallet::find($request->to_wallet_id);
         $amount = $request->amount;
-        $tradingAccount = TradingAccount::with('subscriber')->where('meta_login', $request->from_meta_login)->first();
+        $tradingAccount = TradingAccount::where('meta_login', $request->from_meta_login)->first();
+
+        $activeSubscriber = Subscriber::with(['master', 'master.tradingUser'])
+            ->where('meta_login', $tradingAccount->meta_login)
+            ->where('status', 'Subscribing')
+            ->first();
 
         try {
             $metaService->getUserInfo(collect([$tradingAccount]));
@@ -301,12 +296,17 @@ class AccountInfoController extends Controller
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
         }
 
-        // Check if balance is sufficient
-        if (!empty($tradingAccount->subscriber) &&
-            !empty($tradingAccount->unsubscribe_date) &&
-            $tradingAccount->subscriber->unsubscribe_date->greaterThan(Carbon::now()->subHours(24))
+        // Check if just terminate
+        if (!empty($activeSubscriber) &&
+            !empty($activeSubscriber->unsubscribe_date) &&
+            $activeSubscriber->unsubscribe_date->greaterThan(Carbon::now()->subHours(24))
         ) {
             throw ValidationException::withMessages(['amount' => trans('public.terminatiion_message')]);
+        }
+
+        // Check if got subscribing master
+        if (!empty($activeSubscriber)) {
+            throw ValidationException::withMessages(['amount' => trans('public.subscribing_alert')]);
         }
 
         // Check if balance is sufficient

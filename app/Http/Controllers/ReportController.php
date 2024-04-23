@@ -132,6 +132,8 @@ class ReportController extends Controller
             $walletLogs->whereBetween('created_at', [$start_date, $end_date]);
         }
 
+        $bonusRewardAmountQuery = clone $walletLogs;
+        $rewardAmountQuery = clone $walletLogs;
         $totalBonus = $walletLogs->sum('amount');
 
         $results = $walletLogs
@@ -141,6 +143,8 @@ class ReportController extends Controller
         return response()->json([
             'walletLogs' => $results,
             'totalBonus' => $totalBonus,
+            'bonusAmount' => $bonusRewardAmountQuery->where('wallet_type', 'bonus_wallet')->sum('amount'),
+            'ewalletAmount' => $rewardAmountQuery->where('wallet_type', 'e_wallet')->sum('amount'),
         ]);
     }
 

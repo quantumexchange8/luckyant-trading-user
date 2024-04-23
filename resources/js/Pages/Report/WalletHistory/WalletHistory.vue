@@ -22,6 +22,8 @@ const props = defineProps({
 })
 
 const totalBonus = ref(null);
+const bonusAmount = ref(null);
+const ewalletAmount = ref(null);
 const walletLogs = ref({data: []});
 const sorting = ref();
 const search = ref('');
@@ -103,6 +105,8 @@ const getResults = async (page = 1, paginate = 10, filterSearch = search.value, 
         const response = await axios.get(url);
         walletLogs.value = response.data.walletLogs;
         totalBonus.value = response.data.totalBonus;
+        bonusAmount.value = response.data.bonusAmount;
+        ewalletAmount.value = response.data.ewalletAmount;
     } catch (error) {
         console.error(error);
     }
@@ -178,7 +182,7 @@ const clearFilter = () => {
                         {{ $t('public.' + wallet.type) }}
                     </div>
                     <div class="text-2xl font-bold">
-                        $ {{ formatAmount(wallet.balance)}}
+                        $ {{ formatAmount(wallet.type === 'bonus_wallet' ? bonusAmount : ewalletAmount) }}
                     </div>
                 </div>
                 <div

@@ -42,13 +42,13 @@ Lucky Ant Trading Team
 以下是您的MT5交易账户的详细信息:
 
 **账户类型**: MT5交易账户  
-**账户编号：**: {{ $metaAccount['login'] }}  
-**初始存款：**: {{ $balance }}  
+**账户编号**: {{ $metaAccount['login'] }}  
+**初始存款**: {{ $balance }}  
 **杠杆比例**: 1:{{ $metaAccount['leverage'] }}  
-**交易服务器： Server**: {{ $metaAccount['server'] }}  
-**登录用户名：**: {{ $metaAccount['login'] }}  
-**主密码：**: {{ $metaAccount['mainPassword'] }}  
-**观察密码：**: {{ $metaAccount['investPassword'] }}
+**交易服务器**: {{ $metaAccount['server'] }}  
+**登录用户名**: {{ $metaAccount['login'] }}  
+**主密码**: {{ $metaAccount['mainPassword'] }}  
+**观察密码**: {{ $metaAccount['investPassword'] }}
 
 您可以使用以上登录凭据访问我们的交易平台并开始交易。如果您对MT5交易平台有任何疑问或需要帮助,请随时联系我们的客户服务团队。我们的工作人员致力于为您提供支持和协助。
 

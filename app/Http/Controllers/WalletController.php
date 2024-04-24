@@ -21,8 +21,10 @@ use App\Models\CurrencyConversionRate;
 use App\Services\RunningNumberService;
 use App\Http\Requests\WithdrawalRequest;
 use App\Notifications\TransferNotification;
+use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\InternalTransferRequest;
 use Illuminate\Validation\ValidationException;
+use App\Notifications\DepositConfirmationNotification;
 
 class WalletController extends Controller
 {
@@ -307,6 +309,7 @@ class WalletController extends Controller
                         'balance' => $walletTotalBalance,
                     ]);
 
+                    Notification::route('mail', $transaction->user->email)->notify(new DepositConfirmationNotification($transaction));
                 } elseif ($result['status'] == 'EXPIRED') {
                     $transaction->update([
                         'status' => 'Failed'
@@ -378,6 +381,7 @@ class WalletController extends Controller
                         'balance' => $walletTotalBalance,
                     ]);
 
+                    Notification::route('mail', $transaction->user->email)->notify(new DepositConfirmationNotification($transaction));
                 } else {
                     $transaction->update([
                         'txn_hash' => $result['transactionHash'],

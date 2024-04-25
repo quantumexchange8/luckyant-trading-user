@@ -42,7 +42,6 @@ const pageSize = ref(10);
 const action = ref('');
 const currentPage = ref(1);
 const currentLocale = ref(usePage().props.locale);
-const symbols = ref();
 
 const tradeActions = [
     {value: '', label:"All"},
@@ -122,8 +121,8 @@ const getResults = async (page = 1, paginate = 10, tradingAccount = '', type = n
     }
 };
 // Call getResults initially
-if (tradingAccount) {
-  getResults(1, 10, tradingAccount.value);
+if(tradingAccount){
+    getResults(1, 10, tradingAccount.value);
 }
 
 const columns = [
@@ -186,24 +185,26 @@ const columns = [
 //     tradeType.value = '';
 //     date.value = '';
 // }
-if (tradingAccount) {
-    const symbols = function loadSymbols(query, setOptions) {
+
+function loadSymbols(query, setOptions) {
+    if(tradingAccount){
         watchEffect(() => {
-            fetch(`/trading/getTradingSymbols?meta_login=${tradingAccount.value}&query=${query}`)
-                .then(response => response.json())
-                .then(results => {
-                    setOptions(
-                        results.map(history => {
-                            return {
-                                value: history.symbol,
-                                label: history.symbol,
-                            }
-                        })
-                    )
-                });
-        });
+        fetch(`/trading/getTradingSymbols?meta_login=${tradingAccount.value}&query=${query}`)
+            .then(response => response.json())
+            .then(results => {
+                setOptions(
+                    results.map(history => {
+                        return {
+                            value: history.symbol,
+                            label: history.symbol,
+                        }
+                    })
+                )
+            });
+    });
     }
 }
+
 </script>
 
 <template>
@@ -224,7 +225,7 @@ if (tradingAccount) {
                     </div>
                     <div class="text-2xl font-bold">
                         <span v-if="totalProfit !== null">
-                           $ {{ formatAmount(totalProfit) }}
+                            $ {{ totalProfit !== '' ? formatAmount(totalProfit) : '0' }}
                         </span>
                         <span v-else>
                             {{ $t('public.loading') }}
@@ -242,7 +243,7 @@ if (tradingAccount) {
                     </div>
                     <div class="text-2xl font-bold">
                         <span v-if="totalTradeLot !== null">
-                            {{ formatAmount(totalTradeLot) }}
+                            {{ totalTradeLot !== '' ? formatAmount(totalTradeLot) : '0' }}
                         </span>
                         <span v-else>
                             {{ $t('public.loading') }}
@@ -284,7 +285,7 @@ if (tradingAccount) {
                 </div>
                 <div class="w-full">
                     <Combobox
-                        :load-options="symbols"
+                        :load-options="loadSymbols"
                         v-model="type"
                         multiple
                         :placeholder="$t('public.filter_symbols')"

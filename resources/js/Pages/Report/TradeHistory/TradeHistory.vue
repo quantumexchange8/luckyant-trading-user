@@ -65,12 +65,14 @@ watch([currentPage, action], ([currentPageValue, newAction]) => {
     }
 });
 
-watch(
-    [sorting, pageSize],
-    ([sortingValue, pageSizeValue]) => {
-        getResults(1, pageSizeValue, tradingAccount.value, type.value, tradeType.value, date.value, sorting.value);
-    }
-);
+if (tradingAccount !== null) {
+    watch(
+        [sorting, pageSize],
+        ([sortingValue, pageSizeValue]) => {
+            getResults(1, pageSizeValue, tradingAccount.value, type.value, tradeType.value, date.value, sorting.value);
+        }
+    );
+}
 
 if (tradingAccount !== null) {
     watch(

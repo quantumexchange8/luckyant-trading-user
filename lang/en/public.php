@@ -26,7 +26,7 @@ return [
     'trade_rebate_report' => "Trade Rebate Report",
     'total_rebate_amount' => "Total Rebate Amount",
     'total_trade_volume' => "Total Trade Volume",
-    'amount_multiples_of_100' => "Amount must be multiplies of 100",
+    'amount_multiples_of_100' => "Please enter an amount that is divisible by 100",
     'amount_return_cash_wallet' => "Amount returned to cash wallet",
     'amount_to_follow_master' => "Amount to follow master",
     'confirm_submit' => "Confirm Submit",
@@ -436,5 +436,8 @@ return [
     "total_rewards" => "Total Rewards",
     "loading" => "Loading...",
     "total_global_trading_lot_size" => "Total Global Trading Lot Size",
-    "subscribing_alert" => "You are already subscribing to a master account"
+    "subscribing_alert" => "You are already subscribing to a master account",
+    "table_action" => "Action",
+    "auto" => "Auto",
+    "expiring" => "Expiring",
 ];

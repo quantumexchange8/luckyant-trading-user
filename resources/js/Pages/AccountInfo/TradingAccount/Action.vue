@@ -78,8 +78,8 @@ const closeModal = () => {
             <span class="inline-flex rounded-md">
                 <Button
                     type="button"
-                    variant="transparent"
-                    class="flex justify-center"
+                    variant="primary-transparent"
+                    class="flex justify-center w-20"
                 >
                     {{ $t('public.more') }}
                 </Button>

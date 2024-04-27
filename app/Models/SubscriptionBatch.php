@@ -22,9 +22,11 @@ class SubscriptionBatch extends Model
         'subscriber_id',
         'subscription_number',
         'subscription_period',
+        'transaction_id',
         'subscription_fee',
-        'termination_date',
+        'settlement_start_date',
         'settlement_date',
+        'termination_date',
         'status',
         'auto_renewal',
         'approval_date',
@@ -38,4 +40,29 @@ class SubscriptionBatch extends Model
         'settlement_date' => 'datetime',
         'approval_date' => 'datetime',
     ];
+
+    public function tradingAccount(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TradingAccount::class, 'trading_account_id', 'id');
+    }
+
+    public function master(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Master::class, 'master_id', 'id');
+    }
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function transaction(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Transaction::class, 'transaction_id', 'id');
+    }
+
+    public function tradingUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TradingUser::class, 'master_meta_login', 'meta_login');
+    }
 }

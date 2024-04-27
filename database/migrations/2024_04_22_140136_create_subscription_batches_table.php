@@ -13,22 +13,24 @@ return new class extends Migration {
             $table->unsignedBigInteger('trading_account_id');
             $table->unsignedInteger('meta_login');
             $table->decimal('meta_balance')->nullable();
-            $table->decimal('real_fund')->default(0);
-            $table->decimal('demo_fund')->default(0);
+            $table->decimal('real_fund', 13, 2)->default(0);
+            $table->decimal('demo_fund', 13, 2)->default(0);
             $table->unsignedBigInteger('master_id')->nullable();
             $table->unsignedInteger('master_meta_login')->nullable();
             $table->string('type')->nullable();
             $table->unsignedBigInteger('subscriber_id')->nullable();
             $table->string('subscription_number')->nullable();
             $table->integer('subscription_period')->nullable();
+            $table->unsignedBigInteger('transaction_id')->nullable();
             $table->decimal('subscription_fee')->nullable();
-            $table->dateTime('termination_date')->nullable();
+            $table->dateTime('settlement_start_date')->nullable();
             $table->dateTime('settlement_date')->nullable();
+            $table->dateTime('termination_date')->nullable();
             $table->string('status')->nullable();
-            $table->boolean('auto_renewal')->nullable();
+            $table->boolean('auto_renewal')->default(1);
             $table->dateTime('approval_date')->nullable();
             $table->text('remarks')->nullable();
-            $table->decimal('claimed_profit')->default(0);
+            $table->string('claimed_profit', 20)->nullable();
             $table->unsignedBigInteger('handle_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
@@ -48,6 +50,10 @@ return new class extends Migration {
             $table->foreign('subscriber_id')
                 ->references('id')
                 ->on('subscribers')
+                ->onUpdate('cascade');
+            $table->foreign('transaction_id')
+                ->references('id')
+                ->on('transactions')
                 ->onUpdate('cascade');
             $table->foreign('handle_by')
                 ->references('id')

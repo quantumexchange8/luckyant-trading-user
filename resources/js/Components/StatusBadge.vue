@@ -24,6 +24,8 @@ const variantClasses = computed(() => {
         return 'bg-success-400 dark:bg-success-500'
     } else if (props.value.toLowerCase() === 'rejected' || props.value.toLowerCase() === 'terminated') {
         return 'bg-error-400 dark:bg-error-500'
+    } else if (props.value.toLowerCase() === 'expiring') {
+        return 'bg-warning-500 dark:bg-warning-400'
     } else if (props.value.toLowerCase() === 'pending') {
         return 'bg-blue-400 dark:bg-blue-500'
     }

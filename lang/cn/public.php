@@ -26,7 +26,7 @@ return [
     'trade_rebate_report' => "交易返利报告",
     'total_rebate_amount' => "总返利金额",
     'total_trade_volume' => "总交易量",
-    'amount_multiples_of_100' => "金额必须是100的倍数",
+    'amount_multiples_of_100' => "请输入能被100整除的金额",
     'amount_return_cash_wallet' => "退回至现金钱包的金额",
     'amount_to_follow_master' => "跟随交易者的金额",
     'confirm_submit' => "确认提交",
@@ -437,4 +437,7 @@ return [
     "loading" => "加载中...",
     "total_global_trading_lot_size" => "全球交易手数统计",
     "subscribing_alert" => "您已经订阅了主帐户",
+    "table_action" => "操作",
+    "auto" => "自动",
+    "expiring" => "即将到期",
 ];

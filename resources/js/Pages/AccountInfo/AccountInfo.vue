@@ -27,8 +27,8 @@ const props = defineProps({
 const { formatAmount } = transactionFormat();
 const user = usePage().props.auth.user;
 const addingTradingAccount = ref(false)
-const totalEquity = ref();
-const totalBalance = ref();
+const totalEquity = ref(null);
+const totalBalance = ref(null);
 
 const addTradingAccount = () => {
     addingTradingAccount.value = true
@@ -52,7 +52,7 @@ const closeModal = () => {
     addingTradingAccount.value = false
 }
 
-const refreshData = async () => {    
+const refreshData = async () => {
     const response = await axios.get('/account_info/refreshTradingAccountsData');
     totalEquity.value = response.data.totalEquity;
     totalBalance.value = response.data.totalBalance;
@@ -92,14 +92,28 @@ setInterval(refreshData, 10000);
                 class="border-2 border-primary-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-primary-300"
             >
                 <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_equity') }}</legend>
-                <p class="text-xl font-medium sm:text-3xl">{{ totalEquity ? '$ ' + formatAmount(totalEquity) : $t('public.is_loading') }}</p>
+                <div class="text-xl font-medium sm:text-3xl">
+                        <span v-if="totalEquity !== null">
+                            $ {{ formatAmount(totalEquity) }}
+                        </span>
+                        <span v-else>
+                            {{ $t('public.loading') }}
+                        </span>
+                </div>
             </fieldset>
 
             <fieldset
                 class="border-2 border-purple-500 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-purple-300"
             >
                 <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_balance') }}</legend>
-                <p class="text-xl font-medium sm:text-3xl">{{ totalBalance ? '$ ' + formatAmount(totalBalance) : $t('public.is_loading') }}</p>
+                <div class="text-xl font-medium sm:text-3xl">
+                        <span v-if="totalBalance !== null">
+                            $ {{ formatAmount(totalBalance) }}
+                        </span>
+                    <span v-else>
+                            {{ $t('public.loading') }}
+                        </span>
+                </div>
             </fieldset>
 
         </div>
@@ -220,7 +234,7 @@ setInterval(refreshData, 10000);
                     <div class="mt-6 flex justify-end">
                         <Button
                             type="button"
-                            variant="transparent"
+                            variant="primary-transparent"
                             @click="closeModal">
                             {{ $t('public.cancel') }}
                         </Button>

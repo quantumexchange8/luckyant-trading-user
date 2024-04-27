@@ -142,7 +142,7 @@ const currentLocale = ref(usePage().props.locale);
         <div class="w-full sm:w-auto">
             <Button
                 type="button"
-                variant="transparent"
+                variant="primary-transparent"
                 @click="clearFilter"
                 class="w-full justify-center"
             >

@@ -669,7 +669,7 @@ function loadCountries(query, setOptions) {
                         @click="prevStep"
                         class="px-12"
                     >
-                        <span>{{ $t('public.back') }}</span>
+                        <span>{{ $t('public.previous') }}</span>
                     </Button>
 
                     <Button type="button" v-if="formStep !== 3" @click="nextStep" class="px-12">

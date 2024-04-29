@@ -97,7 +97,7 @@ return [
     'trade_assessment_acknowledgment' => "我意识到我完全负责评估我可能参与的任何交易的优点和风险。",
     'compensation_disclosure' => "我理解 Lucky Ant Trading 可能通过一次性或定期支付的推荐费用来补偿第三方。",
     'accept_all' => "我接受所有的条款和条件。",
-    'back' => "返回",
+    'back' => "背面",
     'previous' => "上一步",
     'next' => "下一步",
     'email_password_reset_link' => "邮件密码重置链接",

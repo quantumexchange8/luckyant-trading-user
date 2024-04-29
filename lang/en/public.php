@@ -436,5 +436,6 @@ return [
     "total_rewards" => "Total Rewards",
     "loading" => "Loading...",
     "total_global_trading_lot_size" => "Total Global Trading Lot Size",
-    "subscribing_alert" => "You are already subscribing to a master account"
+    "subscribing_alert" => "You are already subscribing to a master account",
+    "total_active_balance" => "Total Active Balance",
 ];

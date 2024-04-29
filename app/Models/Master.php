@@ -46,7 +46,12 @@ class Master extends Model
 
     public function copyTradeHistories(): \Illuminate\Database\Eloquent\Relations\hasMany
     {
-        return $this->hasMany(CopyTradeHistory::class, 'master_id', 'id');
+        return $this->hasMany(CopyTradeHistory::class, 'meta_login', 'meta_login');
+    }
+
+    public function tradeHistories(): \Illuminate\Database\Eloquent\Relations\hasMany
+    {
+        return $this->hasMany(TradeHistory::class, 'meta_login', 'meta_login');
     }
 
     public function masterManagementFee(): \Illuminate\Database\Eloquent\Relations\hasMany

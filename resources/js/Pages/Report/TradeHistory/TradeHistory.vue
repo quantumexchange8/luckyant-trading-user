@@ -30,7 +30,7 @@ const formatter = ref({
     date: 'YYYY-MM-DD',
     month: 'MM'
 });
-const tradingAccount = ref(props.tradingAccounts[0].value);
+const tradingAccount = props.tradingAccounts[0] && props.tradingAccounts.length > 0  ? ref(props.tradingAccounts[0].value)  : null;
 const tradeHistories = ref({ data: [] });
 const totalProfit = ref('');
 const totalTradeLot = ref('');
@@ -65,20 +65,24 @@ watch([currentPage, action], ([currentPageValue, newAction]) => {
     }
 });
 
-watch(
-    [sorting, pageSize],
-    ([sortingValue, pageSizeValue]) => {
-        getResults(1, pageSizeValue, tradingAccount.value, type.value, tradeType.value, date.value, sorting.value);
-    }
-);
+if (tradingAccount !== null) {
+    watch(
+        [sorting, pageSize],
+        ([sortingValue, pageSizeValue]) => {
+            getResults(1, pageSizeValue, tradingAccount.value, type.value, tradeType.value, date.value, sorting.value);
+        }
+    );
+}
 
-watch(
-    [tradingAccount, type, tradeType, date],
-    debounce(([tradingAccountValue, typeValue, tradeTypeValue, dateValue]) => {
-        const typeStrings = typeValue ? typeValue.map(item => item.value) : null;
-        getResults(1, pageSize.value, tradingAccountValue, typeStrings, tradeTypeValue, dateValue, sorting.value);
-    }, 300)
-);
+if (tradingAccount !== null) {
+    watch(
+        [tradingAccount, type, tradeType, date],
+        debounce(([tradingAccountValue, typeValue, tradeTypeValue, dateValue]) => {
+            const typeStrings = typeValue ? typeValue.map(item => item.value) : null;
+            getResults(1, pageSize.value, tradingAccountValue, typeStrings, tradeTypeValue, dateValue, sorting.value);
+        }, 300)
+    );
+}
 
 const getResults = async (page = 1, paginate = 10, tradingAccount = '', type = null, tradeType = '', date = '', columnName = sorting.value) => {
     try {
@@ -119,7 +123,9 @@ const getResults = async (page = 1, paginate = 10, tradingAccount = '', type = n
     }
 };
 // Call getResults initially
-getResults(1, 10, tradingAccount.value);
+if(tradingAccount){
+    getResults(1, 10, tradingAccount.value);
+}
 
 const columns = [
     {
@@ -183,7 +189,8 @@ const columns = [
 // }
 
 function loadSymbols(query, setOptions) {
-    watchEffect(() => {
+    if(tradingAccount){
+        watchEffect(() => {
         fetch(`/trading/getTradingSymbols?meta_login=${tradingAccount.value}&query=${query}`)
             .then(response => response.json())
             .then(results => {
@@ -197,6 +204,7 @@ function loadSymbols(query, setOptions) {
                 )
             });
     });
+    }
 }
 
 </script>
@@ -219,7 +227,7 @@ function loadSymbols(query, setOptions) {
                     </div>
                     <div class="text-2xl font-bold">
                         <span v-if="totalProfit !== null">
-                           $ {{ formatAmount(totalProfit) }}
+                            $ {{ totalProfit !== '' ? formatAmount(totalProfit) : '0' }}
                         </span>
                         <span v-else>
                             {{ $t('public.loading') }}
@@ -237,7 +245,7 @@ function loadSymbols(query, setOptions) {
                     </div>
                     <div class="text-2xl font-bold">
                         <span v-if="totalTradeLot !== null">
-                            {{ formatAmount(totalTradeLot) }}
+                            {{ totalTradeLot !== '' ? formatAmount(totalTradeLot) : '0' }}
                         </span>
                         <span v-else>
                             {{ $t('public.loading') }}

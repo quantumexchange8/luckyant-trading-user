@@ -440,4 +440,5 @@ return [
     "table_action" => "Action",
     "auto" => "Auto",
     "expiring" => "Expiring",
+    "swap_master" => "Swap Master",
 ];

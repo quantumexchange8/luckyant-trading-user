@@ -18,7 +18,8 @@ import Action from "@/Pages/Trading/SubscriptionListing/Partials/Action.vue";
 
 const props = defineProps({
     terms: Object,
-    masterSel: Array
+    masterSel: Array,
+    swapMasterSel: Array,
 })
 
 const formatter = ref({
@@ -130,7 +131,8 @@ const columns = [
         enableSorting: false,
         cell: ({ row }) => h(Action, {
             subscription: row.original,
-            terms: props.terms
+            terms: props.terms,
+            swapMasterSel: props.swapMasterSel
         }),
     },
 ];

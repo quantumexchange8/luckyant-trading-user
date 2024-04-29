@@ -440,4 +440,5 @@ return [
     "table_action" => "操作",
     "auto" => "自动",
     "expiring" => "即将到期",
+    "swap_master" => "换主账号",
 ];

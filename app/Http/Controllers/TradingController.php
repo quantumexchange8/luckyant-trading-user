@@ -18,6 +18,7 @@ use App\Models\Wallet;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
+use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -573,9 +574,21 @@ class TradingController extends Controller
                 ];
             });
 
+        // TODO: check master status
+        $availableMaster = Master::with('tradingUser')
+            ->whereNotIn('id', $subscribed_master_id)
+            ->get()
+            ->map(function ($master) {
+                return [
+                    'value' => $master->id,
+                    'label' => $master->tradingUser->name,
+                ];
+            });
+
         return Inertia::render('Trading/SubscriptionListing/SubscriptionListing', [
             'terms' => Term::where('type', 'subscribe')->first(),
-            'masterSel' => $masterSel
+            'masterSel' => $masterSel,
+            'swapMasterSel' => $availableMaster,
         ]);
     }
 

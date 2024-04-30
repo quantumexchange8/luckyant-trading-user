@@ -116,7 +116,7 @@ const currentLocale = ref(usePage().props.locale);
             <div class="w-full sm:w-auto">
                 <Button
                     type="button"
-                    variant="transparent"
+                    variant="primary-transparent"
                     @click="clearFilter"
                     class="w-full justify-center"
                 >
@@ -161,20 +161,36 @@ const currentLocale = ref(usePage().props.locale);
 <!--                <div class="col-span-2">-->
 <!--                    chart-->
 <!--                </div>-->
-                <div class="space-y-1">
-                    <div class="text-xs flex justify-center">
-                       {{ $t('public.subscribers') }}
+                <div class="flex flex-col gap-1 items-center justify-center">
+                    <div class="text-xs flex justify-center text-center">
+                       {{ $t('public.sharing_profit') }}
                     </div>
-                    <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ masterAccount.total_subscribers }}</span>
+                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                        {{ formatAmount(masterAccount.sharing_profit, 0) }} %
                     </div>
                 </div>
-                <div class="space-y-1">
-                    <div class="text-xs flex justify-center">
+                <div class="flex flex-col gap-1 items-center justify-center">
+                    <div class="text-xs flex justify-center text-center">
                         {{ $t('public.roi_period') }}
                     </div>
-                    <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ masterAccount.roi_period }} {{ $t('public.days') }}</span>
+                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                        {{ masterAccount.roi_period }} {{ $t('public.days') }}
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1 items-center justify-center">
+                    <div class="text-xs flex justify-center text-center">
+                        {{ $t('public.estimated_monthly_returns') }}
+                    </div>
+                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                        {{ masterAccount.estimated_monthly_returns }}
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1 items-center justify-center">
+                    <div class="text-xs flex justify-center text-center">
+                        {{ $t('public.estimated_lot_size') }}
+                    </div>
+                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                        {{ masterAccount.estimated_lot_size }}
                     </div>
                 </div>
             </div>
@@ -186,7 +202,7 @@ const currentLocale = ref(usePage().props.locale);
                 />
                 <Button
                     type="button"
-                    variant="transparent"
+                    variant="primary-transparent"
                     class="w-full flex justify-center"
                     @click.prevent="openDetails(masterAccount.id)"
                 >

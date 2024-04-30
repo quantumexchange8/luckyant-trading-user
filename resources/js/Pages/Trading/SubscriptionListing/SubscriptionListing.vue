@@ -1,72 +1,176 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
-import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
-import Badge from "@/Components/Badge.vue";
-import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
-import {ref} from "vue";
+import {h, ref, watch, watchEffect} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import {usePage} from "@inertiajs/vue3";
 import Button from "@/Components/Button.vue";
-import CopyTradeTransaction from "@/Pages/Trading/SubscriptionListing/CopyTradeTransaction.vue";
-import {EyeIcon} from "@heroicons/vue/outline";
-import Modal from "@/Components/Modal.vue";
-import SubscriptionHistory from "@/Pages/Trading/MasterListing/SubscriptionHistory.vue";
+import {EyeIcon, SearchIcon} from "@heroicons/vue/outline";
+import InputIconWrapper from "@/Components/InputIconWrapper.vue";
+import TanStackTable from "@/Components/TanStackTable.vue";
+import NoData from "@/Components/NoData.vue";
+import Input from "@/Components/Input.vue";
+import VueTailwindDatepicker from "vue-tailwind-datepicker";
+import BaseListbox from "@/Components/BaseListbox.vue";
+import StatusBadge from "@/Components/StatusBadge.vue";
+import debounce from "lodash/debounce.js";
+import {trans} from "laravel-vue-i18n";
+import Action from "@/Pages/Trading/SubscriptionListing/Partials/Action.vue";
+import SubscriptionAccount from "@/Pages/Trading/SubscriptionListing/SubscriptionAccount.vue";
 
 const props = defineProps({
     terms: Object,
+    masterSel: Array,
+    swapMasterSel: Array,
 })
 
-const subscriberAccounts = ref({data: []})
-const { formatAmount, formatDateTime } = transactionFormat();
+const formatter = ref({
+    date: 'YYYY-MM-DD',
+    month: 'MM'
+});
+
+const pageSizes = [
+    {value: 5, label: 5},
+    {value: 10, label: 10},
+    {value: 20, label: 20},
+    {value: 50, label: 50},
+    {value: 100, label: 100},
+]
+
+const totalAccounts = ref(null);
+const totalAmount = ref(null);
+const date = ref('');
+const search = ref('');
+const master = ref('');
+const subscriptions = ref({data: []});
+const sorting = ref();
+const pageSize = ref(10);
+const action = ref('');
+const currentPage = ref(1);
+const {formatDateTime, formatAmount} = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
-const isLoading = ref(false);
-const approvalDate = ref('');
-const unsubscribeDate = ref('');
-const getResults = async (page = 1, search = '', type = '', date = '') => {
-    isLoading.value = true
+
+const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterDate = date.value, filterMaster = master.value, columnName = sorting.value) => {
     try {
         let url = `/trading/getSubscriptions?page=${page}`;
 
-        if (search) {
-            url += `&search=${search}`;
+        if (paginate) {
+            url += `&paginate=${paginate}`;
         }
 
-        if (type) {
-            url += `&type=${type}`;
+        if (filterSearch) {
+            url += `&search=${filterSearch}`;
         }
 
-        if (date) {
-            url += `&date=${date}`;
+        if (filterDate) {
+            url += `&date=${filterDate}`;
+        }
+
+        if (filterMaster) {
+            url += `&master=${filterMaster}`;
+        }
+
+        if (columnName) {
+            // Convert the object to JSON and encode it to send as a query parameter
+            const encodedColumnName = encodeURIComponent(JSON.stringify(columnName));
+            url += `&columnName=${encodedColumnName}`;
         }
 
         const response = await axios.get(url);
-        subscriberAccounts.value = response.data;
-        approvalDate.value = response.data.approval_date;
-        unsubscribeDate.value = response.data.unsubscribe_date;
+        subscriptions.value = response.data;
+        totalAccounts.value = response.data.totalAccounts;
+        totalAmount.value = response.data.totalAmount;
+
     } catch (error) {
         console.error(error);
-    } finally {
-        isLoading.value = false
     }
 }
 
 getResults();
 
-const statusVariant = (status) => {
-    if (status === 'Pending') return 'processing';
-    if (status === 'Active') return 'success';
-    if (status === 'Rejected' || 'Terminated') return 'danger';
+const columns = [
+    {
+        accessorKey: 'created_at',
+        header: 'date',
+        cell: info => formatDateTime(info.getValue()),
+    },
+    {
+        accessorKey: 'meta_login',
+        header: 'live_account',
+    },
+    {
+        accessorKey: currentLocale.value === 'cn' ? ('master.trading_user.company' === null ? 'master.trading_user.company' : 'master.trading_user.name') : 'master.trading_user.name',
+        header: 'master',
+        enableSorting: false,
+    },
+    {
+        accessorKey: 'master_meta_login',
+        header: 'account_no',
+    },
+    {
+        accessorKey: 'subscription_number',
+        header: 'subscription_number',
+    },
+    {
+        accessorKey: 'meta_balance',
+        header: 'amount',
+        cell: info => '$ ' + formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'subscription_period',
+        header: 'roi_period',
+        cell: info => info.getValue() + ' ' + trans('public.days'),
+    },
+    {
+        accessorKey: 'status',
+        header: 'status',
+        enableSorting: false,
+        cell: ({ row }) => h(StatusBadge, {value: row.original.status}),
+    },
+    // {
+    //     accessorKey: 'action',
+    //     header: 'table_action',
+    //     enableSorting: false,
+    //     cell: ({ row }) => h(Action, {
+    //         subscription: row.original,
+    //         terms: props.terms,
+    //         swapMasterSel: props.swapMasterSel
+    //     }),
+    // },
+];
+
+const clearFilter = () => {
+    search.value = '';
+    date.value = '';
+    master.value = '';
 }
 
-const historyModal = ref(false);
+watch([currentPage, action], ([currentPageValue, newAction]) => {
+    if (newAction === 'goToFirstPage' || newAction === 'goToLastPage') {
+        getResults(currentPageValue, pageSize.value);
+    } else {
+        getResults(currentPageValue, pageSize.value);
+    }
+});
 
-const openHistoryModal = () => {
-    historyModal.value = true;
-}
+watch(
+    [sorting, pageSize],
+    ([sortingValue, pageSizeValue]) => {
+        getResults(1, pageSizeValue, search.value, date.value, master.value, sortingValue);
+    }
+);
 
-const closeModal = () => {
-    historyModal.value = false;
-}
+watch(
+    [search, date, master],
+    debounce(([searchValue, dateValue, masterValue]) => {
+        getResults(1, pageSize.value, searchValue, dateValue, masterValue, sorting.value);
+    }, 300)
+);
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getResults();
+    }
+});
 </script>
 
 <template>
@@ -76,142 +180,79 @@ const closeModal = () => {
                 <h2 class="text-xl font-semibold leading-tight">
                     {{ $t('public.subscriptions') }}
                 </h2>
-
-                 <Button
-                     type="button"
-                     size="sm"
-                     v-slot="{ iconSizeClasses }"
-                     class="flex gap-1"
-                     external
-                     :href="route('trading.subscription_history')"
-                 >
-                     <EyeIcon :class="iconSizeClasses" />
-                     {{ $t('public.view_details') }}
-                 </Button>
             </div>
         </template>
 
-        <div
-            class="grid grid-cols-1 sm:grid-cols-3 gap-5 my-5"
-        >
-            <div
-                v-for="subscriberAccount in subscriberAccounts.data"
-                class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg hover:cursor-pointer hover:bg-gray-50 hover:shadow-primary-300"
-            >
-                <div class="flex justify-between items-center w-full">
-                    <div class="flex gap-2 items-center">
-                        <img
-                            class="object-cover w-12 h-12 rounded-full"
-                            :src="subscriberAccount.master.user.profile_photo ? subscriberAccount.master.user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
-                            alt="userPic"
+        <div class="flex flex-col gap-5 items-start self-stretch my-8">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+                <div class="w-full">
+                    <InputIconWrapper>
+                        <template #icon>
+                            <SearchIcon aria-hidden="true" class="w-5 h-5"/>
+                        </template>
+                        <Input
+                            withIcon
+                            id="search"
+                            type="text"
+                            class="w-full block"
+                            :placeholder="$t('public.search')"
+                            v-model="search"
                         />
-                        <div class="flex flex-col">
-                            <div class="flex gap-1 items-center">
-                                <div v-if="currentLocale === 'en'" class="text-sm">
-                                    {{ subscriberAccount.master.trading_user.name }}
-                                </div>
-                                <div v-if="currentLocale === 'cn'" class="text-sm">
-                                    {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
-                                </div>
-                                <div class="bg-primary-100 text-primary-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-primary-900 dark:text-primary-300">
-                                    Master
-                                </div>
-                            </div>
-                            <div class="font-semibold">
-                                {{ subscriberAccount.master.meta_login }}
-                            </div>
-                        </div>
-                    </div>
+                    </InputIconWrapper>
                 </div>
-
-                <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
-                    <div class="flex gap-1">
-                        <div class="text-sm">{{ $t('public.join_date') }}:</div>
-                        <div class="text-sm font-semibold">{{ formatDateTime(subscriberAccount.join_date, false) }}</div>
-                    </div>
-                    <div class="flex gap-1">
-                        <div class="text-sm">{{ $t('public.join_day') }}:</div>
-                        <div class="text-sm font-semibold">{{ subscriberAccount.join_days }}</div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full">
-                    <div class="space-y-1">
-                        <div class="text-xs flex justify-center">
-                            {{ $t('public.live_account') }}
-                        </div>
-                        <div class="flex justify-center">
-                            <div v-if="currentLocale === 'en'" class="text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ subscriberAccount.trading_user.name }}
-                            </div>
-                            <div v-if="currentLocale === 'cn'" class="text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ subscriberAccount.trading_user.company ? subscriberAccount.trading_user.company : subscriberAccount.trading_user.name }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="text-xs flex justify-center">
-                            {{ $t('public.account_number') }}
-                        </div>
-                        <div class="flex justify-center">
-                            <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.meta_login }}</span>
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="text-xs flex justify-center">
-                            {{ $t('public.sharing_profit') }}
-                        </div>
-                        <div class="flex justify-center">
-                            <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%</span>
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="text-xs flex justify-center">
-                            {{ $t('public.amount') }}
-                        </div>
-                        <div class="flex justify-center">
-                            <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription.meta_balance ? subscriberAccount.subscription.meta_balance : 0) }}</span>
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="text-xs flex justify-center">
-                            {{ $t('public.estimated_roi') }}
-                        </div>
-                        <div class="flex justify-center">
-                            <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.estimated_monthly_returns }}</span>
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="text-xs flex justify-center">
-                            {{ $t('public.roi_period') }}
-                        </div>
-                        <div class="flex justify-center">
-                            <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} {{ $t('public.days') }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex w-full gap-2 items-center">
-                    <StopRenewSubscription
-                        v-if="subscriberAccount.status === 'Subscribing'"
-                        :subscriberAccount="subscriberAccount"
-                        :terms="terms"
+                <div class="w-full">
+                    <vue-tailwind-datepicker
+                        :placeholder="$t('public.date_placeholder')"
+                        :formatter="formatter"
+                        separator=" - "
+                        v-model="date"
+                        input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-800"
                     />
-                    <TerminateSubscription
-                        v-if="subscriberAccount.status === 'Subscribing'"
-                        :subscriberAccount="subscriberAccount"
-                        :terms="terms"
-                    />
+                </div>
+                <div class="flex justify-end gap-4 items-center w-full">
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        @click="clearFilter"
+                    >
+                        {{ $t('public.clear') }}
+                    </Button>
                 </div>
             </div>
         </div>
 
-        <div class="p-5 my-5 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
-            <div class="mb-4 font-semibold">
-                {{ $t('public.copy_trade_transaction') }}
-            </div>
-            <CopyTradeTransaction />
-        </div>
+        <SubscriptionAccount
+            :terms="terms"
+            @update:master="master = $event"
+        />
 
+        <div class="p-5 my-8 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
+            <div class="flex justify-end items-center gap-2">
+                <div class="text-sm">
+                    {{ $t('public.size') }}
+                </div>
+                <div>
+                    <BaseListbox
+                        :options="pageSizes"
+                        v-model="pageSize"
+                    />
+                </div>
+            </div>
+            <div
+                v-if="subscriptions.data.length === 0"
+                class="w-full flex items-center justify-center"
+            >
+                <NoData/>
+            </div>
+            <div v-else>
+                <TanStackTable
+                    :data="subscriptions"
+                    :columns="columns"
+                    @update:sorting="sorting = $event"
+                    @update:action="action = $event"
+                    @update:currentPage="currentPage = $event"
+                />
+            </div>
+        </div>
     </AuthenticatedLayout>
 </template>

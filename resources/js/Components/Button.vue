@@ -7,7 +7,7 @@ const props = defineProps({
         type: String,
         default: 'primary',
         validator(value) {
-            return ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'black', 'transparent', 'primary-opacity', 'gray', 'purple'].includes(value)
+            return ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'black', 'transparent', 'primary-transparent', 'primary-opacity', 'gray', 'purple'].includes(value)
         },
     },
     type: {
@@ -67,11 +67,13 @@ const variantClasses = (variant) => ({
     'bg-green-500 text-white hover:bg-green-600 focus:ring-green-500 shadow-lg': variant === 'success',
     'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500 shadow-lg': variant === 'danger',
     'bg-warning-500 text-white hover:bg-warning-600 focus:ring-warning-500 shadow-lg': variant === 'warning',
-    'bg-cyan-500 text-white hover:bg-cyan-600 focus:ring-cyan-500': variant === 'info',
+    'bg-primary-400 text-white hover:bg-primary-600 focus:ring-primary-500': variant === 'info',
     'bg-black text-gray-300 hover:text-white hover:bg-gray-800 focus:ring-black dark:hover:bg-dark-eval-3':
         variant === 'black',
     'bg-transparent text-gray-700 hover:text-gray-400 dark:text-gray-300 dark:hover:text-white focus:ring-transparent':
         variant === 'transparent',
+    'bg-transparent text-primary-600 hover:text-primary-700 dark:text-primary-300 dark:hover:text-white focus:ring-transparent':
+        variant === 'primary-transparent',
     'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 text-gray-600 dark:text-white hover:text-white dark:hover:bg-gray-500 focus:ring-gray-200': variant === 'gray',
     'bg-purple-500 text-white hover:bg-purple-700 focus:ring-purple-600 shadow-lg': variant === 'purple',
 })

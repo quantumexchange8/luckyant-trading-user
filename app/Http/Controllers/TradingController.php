@@ -6,8 +6,10 @@ use App\Http\Requests\SubscribeRequest;
 use App\Models\CopyTradeHistory;
 use App\Models\CopyTradeTransaction;
 use App\Models\Master;
+use App\Models\MasterManagementFee;
 use App\Models\Subscriber;
 use App\Models\Subscription;
+use App\Models\SubscriptionBatch;
 use App\Models\SubscriptionRenewalRequest;
 use App\Models\Term;
 use App\Models\TradeHistory;
@@ -17,6 +19,7 @@ use App\Models\Wallet;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
+use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -114,16 +117,19 @@ class TradingController extends Controller
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
         $userTrade = $metaService->userTrade($meta_login);
-        $subscriptions = Subscription::where('meta_login', $meta_login)
-            ->whereIn('status', ['Pending', 'Active'])
+        $subscriber = Subscriber::where('meta_login', $meta_login)
+            ->whereIn('status', ['Pending', 'Subscribing'])
             ->first();
 
+        // check open trade
         if ($userTrade) {
             return redirect()->back()
                 ->with('title', trans('public.invalid_action'))
                 ->with('warning', trans('public.user_got_trade'));
         }
-        if ($subscriptions) {
+
+        // check meta subscriber status
+        if ($subscriber) {
             return redirect()->back()
                 ->with('title', trans('public.invalid_action'))
                 ->with('warning', trans('public.try_again_later'));
@@ -205,6 +211,7 @@ class TradingController extends Controller
             $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
         }
 
+        $subscriberData = [];
         if ($masterAccount->subscription_fee > 0) {
             $transaction_number = RunningNumberService::getID('transaction');
 
@@ -221,29 +228,22 @@ class TradingController extends Controller
             ]);
 
             // Create diff subscriptions data
-            $subscriptionData = [
-                'user_id' => $user->id,
-                'trading_account_id' => $tradingAccount->id,
-                'meta_login' => $meta_login,
-                'meta_balance' => $tradingAccount->balance,
+            $subscriberData = [
+                'initial_subscription_fee' => $masterAccount->subscription_fee,
                 'transaction_id' => $transaction->id,
-            ];
-        } else {
-            $subscriptionData = [
-                'user_id' => $user->id,
-                'trading_account_id' => $tradingAccount->id,
-                'meta_login' => $meta_login,
-                'meta_balance' => $tradingAccount->balance,
             ];
         }
 
-        $subscription_number = RunningNumberService::getID('subscription');
-
-        Subscription::create($subscriptionData + [
+        // change to subscriber
+        Subscriber::create($subscriberData + [
+            'user_id' => $user->id,
+            'trading_account_id' => $tradingAccount->id,
+            'meta_login' => $meta_login,
+            'initial_meta_balance' => $tradingAccount->balance,
             'master_id' => $masterAccount->id,
-            'subscription_number' => $subscription_number,
-            'subscription_period' => $masterAccount->roi_period,
-            'subscription_fee' => $masterAccount->subscription_fee,
+            'master_meta_login' => $masterAccount->meta_login,
+            'roi_period' => $masterAccount->roi_period,
+            'subscribe_amount' => $tradingAccount->balance,
             'status' => 'Pending'
         ]);
 
@@ -262,54 +262,53 @@ class TradingController extends Controller
 
     public function getSubscriptions(Request $request)
     {
-        $masterAccounts = Subscriber::with(['user:id,username,name,email', 'tradingUser:id,meta_login,name,company', 'master', 'master.tradingUser', 'master.masterManagementFee', 'subscription'])
-            ->where('user_id', Auth::id())
-            ->where('status', 'Subscribing')
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = '%' . $request->input('search') . '%';
-                $query->whereHas('master', function ($q) use ($search) {
-                    $q->where('meta_login', 'like', $search);
-                })
-                    ->orWhereHas('user', function ($q2) use ($search) {
-                        $q2->where('name', 'like', $search)
-                            ->orWhere('email', 'like', $search);
-                    });
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
+
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+
+        $query = SubscriptionBatch::with(['master', 'master.tradingUser', 'master.masterManagementFee'])
+            ->where('user_id', Auth::id());
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->input('search') . '%';
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('master.tradingUser', function ($user) use ($search) {
+                    $user->where('name', 'like', $search)
+                        ->orWhere('meta_login', 'like', $search)
+                        ->orWhere('company', 'like', $search);
+                });
             })
-            ->when($request->filled('type'), function ($query) use ($request) {
-                $type = $request->input('type');
-                switch ($type) {
-                    case 'max_equity':
-                        $query->orderByDesc('min_join_equity');
-                        break;
-                    case 'min_equity':
-                        $query->orderBy('min_join_equity');
-                        break;
-                    case 'max_sub':
-                        $query->withCount('subscribers')->orderByDesc('subscribers_count');
-                        break;
-                    case 'min_sub':
-                        $query->withCount('subscribers')->orderBy('subscribers_count');
-                        break;
-                    // Add more cases as needed for other 'type' values
-                }
-            })
-            ->latest()
-            ->paginate(10);
+                ->orWhere('meta_login', 'like', $search);
+        }
 
-        $masterAccounts->each(function ($subscriber) {
-            $initialSubscriptionDate = Subscription::where('meta_login', $subscriber->meta_login)->first()->created_at;
-            $approvalDate = Carbon::parse($initialSubscriptionDate);
-            $today = Carbon::today();
+        if ($request->filled('date')) {
+            $date = $request->input('date');
+            $dateRange = explode(' - ', $date);
+            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
 
-            // Get the total number of days from the interval
-            $join_days = $approvalDate->diffInDays($today);
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }
 
-            $subscriber->master->user->profile_photo = $subscriber->master->user->getFirstMediaUrl('profile_photo');
-            $subscriber->join_date = $initialSubscriptionDate;
-            $subscriber->join_days = $join_days;
-        });
+        if ($request->filled('master')) {
+            $master = $request->input('master');
+            $query->whereHas('master', function ($q) use ($master) {
+                $q->where('id', $master);
+            });
+        } else {
+            $query->whereHas('master', function ($q) use ($query) {
+                $q->where('id', $query->latest()->first()->master_id);
+            });
+        }
 
-        return response()->json($masterAccounts);
+        $results = $query
+            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
+            ->paginate($request->input('paginate', 10));
+
+        return response()->json($results);
     }
 
     public function masterListingDetail($id)
@@ -344,7 +343,6 @@ class TradingController extends Controller
         ]);
 
         $subscription = Subscription::find($request->subscription_id);
-        $subscriber = Subscriber::where('subscription_id', $subscription->id)->first();
 
         if ($subscription->status == 'Terminated') {
             return redirect()->back()
@@ -355,16 +353,28 @@ class TradingController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
+            Subscriber::where('subscription_id', $subscription->id)->first()->update([
+                'unsubscribe_date' => now(),
+                'status' => 'Unsubscribed',
+                'auto_renewal' => false
+            ]);
+
             $subscription->update([
                 'termination_date' => now(),
                 'status' => 'Terminated',
                 'auto_renewal' => false,
             ]);
 
-            $subscriber->update([
-                'unsubscribe_date' => now(),
-                'status' => 'Unsubscribed'
-            ]);
+            $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
+                ->where('status', 'Active')
+                ->get();
+
+            foreach ($subscription_batches as $subscription_batch) {
+                $subscription_batch->update([
+                    'auto_renewal' => false,
+                    'status' => 'Terminated'
+                ]);
+            }
 
             return redirect()->back()
                 ->with('title', trans('public.success_terminate'))
@@ -416,9 +426,26 @@ class TradingController extends Controller
 
             if (array_key_exists($request->action, $messages)) {
                 if ($request->action == 'stop_renewal') {
+                    Subscriber::where('subscription_id', $subscription->id)->first()->update([
+                        'status' => 'Expiring',
+                        'auto_renewal' => false
+                    ]);
+
                     $subscription->update([
                         'auto_renewal' => false,
+                        'status' => 'Expiring'
                     ]);
+
+                    $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
+                        ->where('status', 'Active')
+                        ->get();
+
+                    foreach ($subscription_batches as $subscription_batch) {
+                        $subscription_batch->update([
+                            'auto_renewal' => false,
+                            'status' => 'Expiring'
+                        ]);
+                    }
                 } elseif ($request->action == 'request_auto_renewal') {
                     SubscriptionRenewalRequest::create([
                         'user_id' => $subscription->user_id,
@@ -564,8 +591,25 @@ class TradingController extends Controller
 
     public function subscription_listing()
     {
+        $subscribed_master_id = Subscriber::where('user_id', Auth::id())
+            ->where('status', 'Subscribing')
+            ->get()
+            ->pluck('master_id');
+
+        // TODO: check master status
+        $availableMaster = Master::with('tradingUser')
+            ->whereNotIn('id', $subscribed_master_id)
+            ->get()
+            ->map(function ($master) {
+                return [
+                    'value' => $master->id,
+                    'label' => $master->tradingUser->name,
+                ];
+            });
+
         return Inertia::render('Trading/SubscriptionListing/SubscriptionListing', [
-            'terms' => Term::where('type', 'subscribe')->first()
+            'terms' => Term::where('type', 'subscribe')->first(),
+            'swapMasterSel' => $availableMaster,
         ]);
     }
 
@@ -616,5 +660,47 @@ class TradingController extends Controller
             ->paginate($request->input('paginate', 10));
 
         return response()->json($trade_rebates);
+    }
+
+    public function getSubscriberAccounts(Request $request)
+    {
+        $user = Auth::user();
+
+        $subscribers = Subscriber::with(['master', 'master.tradingUser', 'tradingUser:id,name,meta_login', 'subscription'])
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['Subscribing', 'Expiring'])
+            ->get();
+
+        $subscribers->each(function ($subscriber) {
+            $approvalDate = Carbon::parse($subscriber->approval_date);
+            $today = Carbon::today();
+            $join_days = $approvalDate->diffInDays($today);
+            $subscription_batches = $subscriber->subscription_batches;
+
+            $penalty_exempt = 0;
+
+            foreach ($subscription_batches as $batch) {
+                $penalty_days = $subscriber->master->masterManagementFee->last()->penalty_days;
+                $penalty_exempt_date = $batch->created_at->addDays($penalty_days);
+
+                if ($today > $penalty_exempt_date) {
+                    $penalty_exempt += $batch->meta_balance;
+                }
+            }
+
+            $management_fee = MasterManagementFee::where('master_id', $subscriber->master_id)
+                ->where('penalty_days', '>', $join_days)
+                ->first();
+
+            $subscriber->join_days = $join_days;
+            $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
+            $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
+            $subscriber->management_fee = $management_fee->penalty_percentage;
+            $subscriber->penalty_exempt = $penalty_exempt;
+        });
+
+        return response()->json([
+            'subscribers' => $subscribers
+        ]);
     }
 }

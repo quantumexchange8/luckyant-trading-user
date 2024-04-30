@@ -13,10 +13,16 @@ class Subscriber extends Model
         'user_id',
         'trading_account_id',
         'meta_login',
+        'initial_meta_balance',
+        'initial_subscription_fee',
+        'transaction_id',
         'master_id',
         'master_meta_login',
+        'roi_period',
+        'subscribe_amount',
         'subscription_id',
         'status',
+        'auto_renewal',
         'approval_date',
         'unsubscribe_date',
     ];
@@ -44,5 +50,10 @@ class Subscriber extends Model
     public function subscription(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Subscription::class, 'subscription_id', 'id');
+    }
+
+    public function subscription_batches(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SubscriptionBatch::class, 'subscriber_id', 'id');
     }
 }

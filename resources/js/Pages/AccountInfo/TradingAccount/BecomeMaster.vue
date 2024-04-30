@@ -141,7 +141,7 @@ const roiPeriod = [
 
         <!-- Submit button -->
         <div class="pt-5 flex justify-end">
-            <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
+            <Button variant="primary-transparent" type="button" class="justify-center" @click.prevent="closeModal">
                 {{$t('public.cancel')}}
             </Button>
             <Button

@@ -135,7 +135,7 @@ watchEffect(() => {
                         {{ $t('public.amount') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription_amount ? subscriberAccount.subscription_amount : 0, 0) }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.meta_balance : 0, 0) }}</span>
                     </div>
                 </div>
                 <div class="space-y-1">

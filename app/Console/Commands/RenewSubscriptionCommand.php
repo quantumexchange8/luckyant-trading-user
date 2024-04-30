@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Subscriber;
 use App\Models\Subscription;
+use App\Models\SubscriptionBatch;
 use App\Models\SubscriptionsSchedulerLog;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
@@ -21,18 +22,21 @@ class RenewSubscriptionCommand extends Command
 
     public function handle(): void
     {
-        $subscriptions = Subscription::where('status', 'Active')->whereDate('expired_date', now())->get();
+        $subscriptions = Subscription::where('status', 'Active')
+            ->whereDate('expired_date', '<', now())
+            ->get();
 
         foreach ($subscriptions as $subscription) {
             $user = User::find($subscription->user_id);
             $subscriber = Subscriber::where('meta_login', $subscription->meta_login)->first();
+            $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)->get();
 
             $subscription->update([
                 'status' => 'Expired'
             ]);
             $expiredDate = $subscription->expired_date;
             $carbonExpiredDate = \Carbon\Carbon::parse($expiredDate);
-            $calculatedDay = $carbonExpiredDate->addDays($subscription->subscription_period + 1)->startOfDay();
+            $calculatedDay = $carbonExpiredDate->addDays($subscription->subscription_period)->endOfDay();
 
             $newSubscription = Subscription::create([
                 'user_id' => $subscription->user_id,
@@ -54,6 +58,12 @@ class RenewSubscriptionCommand extends Command
             $subscriber->update([
                 'subscription_id' => $newSubscription->id,
             ]);
+
+            foreach ($subscription_batches as $batch) {
+                $batch->update([
+                    'subscription_id' => $newSubscription->id,
+                ]);
+            }
 
             SubscriptionsSchedulerLog::create([
                 'old_subscription_id' => $subscription->id,

@@ -270,7 +270,7 @@ const closeModal = () => {
                 <div class="space-y-2">
                     <Label
                         for="crypto_name"
-                        :value="$t('public.tether')"
+                        :value="$t('public.payment_service')"
                     />
                     <Input
                         id="crypto_name"

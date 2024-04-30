@@ -30,7 +30,7 @@ class PaymentAccountRequest extends FormRequest
     {
         return [
             'payment_account_name' => trans($this->payment_method == 'Bank' ? 'bank_account_name' : 'wallet_address'),
-            'payment_platform_name' => trans($this->payment_method == 'Bank' ? 'bank_name' : 'tether'),
+            'payment_platform_name' => trans($this->payment_method == 'Bank' ? 'bank_name' : 'payment_service'),
             'account_no' => trans($this->payment_method == 'Bank' ? 'account_number' : 'wallet_address'),
             'bank_swift_code' => trans('bank_swift_code'),
         ];

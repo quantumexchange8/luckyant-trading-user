@@ -184,13 +184,13 @@ class AccountInfoController extends Controller
 
         if ($wallet->type == 'e_wallet') {
             if ($wallet->balance < $eWalletAmount || $amount <= 0) {
-                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
+                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $wallet->type)])]);
             }
             if ($cash_wallet->balance < $cashWalletAmount) {
-                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $cash_wallet->name])]);
+                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $cash_wallet->type)])]);
             }
         } elseif ($wallet->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $wallet->type)])]);
         }
 
         $deal = [];

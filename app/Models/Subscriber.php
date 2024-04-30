@@ -50,4 +50,9 @@ class Subscriber extends Model
     {
         return $this->belongsTo(Subscription::class, 'subscription_id', 'id');
     }
+
+    public function subscription_batches(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SubscriptionBatch::class, 'subscriber_id', 'id');
+    }
 }

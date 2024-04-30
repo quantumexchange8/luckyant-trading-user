@@ -442,4 +442,7 @@ return [
     "auto" => "自动",
     "expiring" => "即将到期",
     "swap_master" => "换主账号",
+    "subscribing" => "订阅中",
+    "exempt_amount" => "免税金额",
+    "management_period" => "管理期",
 ];

@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->unsignedInteger('master_meta_login')->nullable();
             $table->string('type')->nullable();
             $table->unsignedBigInteger('subscriber_id')->nullable();
+            $table->unsignedBigInteger('subscription_id')->nullable();
             $table->string('subscription_number')->nullable();
             $table->integer('subscription_period')->nullable();
             $table->unsignedBigInteger('transaction_id')->nullable();
@@ -50,6 +51,10 @@ return new class extends Migration {
             $table->foreign('subscriber_id')
                 ->references('id')
                 ->on('subscribers')
+                ->onUpdate('cascade');
+            $table->foreign('subscription_id')
+                ->references('id')
+                ->on('subscriptions')
                 ->onUpdate('cascade');
             $table->foreign('transaction_id')
                 ->references('id')

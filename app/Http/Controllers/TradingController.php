@@ -297,6 +297,10 @@ class TradingController extends Controller
             $query->whereHas('master', function ($q) use ($master) {
                 $q->where('id', $master);
             });
+        } else {
+            $query->whereHas('master', function ($q) use ($query) {
+                $q->where('id', $query->latest()->first()->master_id);
+            });
         }
 
         $results = $query
@@ -564,16 +568,6 @@ class TradingController extends Controller
             ->get()
             ->pluck('master_id');
 
-        $masterSel = Master::with('tradingUser')
-            ->whereIn('id', $subscribed_master_id)
-            ->get()
-            ->map(function ($master) {
-                return [
-                    'value' => $master->id,
-                    'label' => $master->tradingUser->name,
-                ];
-            });
-
         // TODO: check master status
         $availableMaster = Master::with('tradingUser')
             ->whereNotIn('id', $subscribed_master_id)
@@ -587,7 +581,6 @@ class TradingController extends Controller
 
         return Inertia::render('Trading/SubscriptionListing/SubscriptionListing', [
             'terms' => Term::where('type', 'subscribe')->first(),
-            'masterSel' => $masterSel,
             'swapMasterSel' => $availableMaster,
         ]);
     }
@@ -639,5 +632,43 @@ class TradingController extends Controller
             ->paginate($request->input('paginate', 10));
 
         return response()->json($trade_rebates);
+    }
+
+    public function getSubscriberAccounts(Request $request)
+    {
+        $user = Auth::user();
+
+        $subscribers = Subscriber::with(['master', 'master.tradingUser', 'master.user'])
+            ->where('user_id', $user->id)
+            ->where('status', 'Subscribing')
+            ->get();
+
+        $subscribers->each(function ($subscriber) {
+            $approvalDate = Carbon::parse($subscriber->approval_date);
+            $today = Carbon::today();
+            $join_days = $approvalDate->diffInDays($today);
+            $subscription_batches = $subscriber->subscription_batches;
+
+            $penalty_exempt = 0;
+
+            foreach ($subscription_batches as $batch) {
+                $penalty_days = $subscriber->master->masterManagementFee->last()->penalty_days;
+                $penalty_exempt_date = $batch->created_at->addDays($penalty_days);
+
+                if ($today > $penalty_exempt_date) {
+                    $penalty_exempt += $batch->meta_balance;
+                }
+            }
+
+            $subscriber->master->user->profile_photo = $subscriber->master->user->getFirstMediaUrl('profile_photo');
+            $subscriber->join_days = $join_days;
+            $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
+            $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
+            $subscriber->penalty_exempt = $penalty_exempt;
+        });
+
+        return response()->json([
+            'subscribers' => $subscribers
+        ]);
     }
 }

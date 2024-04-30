@@ -442,4 +442,7 @@ return [
     "auto" => "Auto",
     "expiring" => "Expiring",
     "swap_master" => "Swap Master",
+    "subscribing" => "Subscribing",
+    "exempt_amount" => "Exempt Amount",
+    "management_period" => "Management Period",
 ];

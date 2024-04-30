@@ -15,6 +15,7 @@ import StatusBadge from "@/Components/StatusBadge.vue";
 import debounce from "lodash/debounce.js";
 import {trans} from "laravel-vue-i18n";
 import Action from "@/Pages/Trading/SubscriptionListing/Partials/Action.vue";
+import SubscriptionAccount from "@/Pages/Trading/SubscriptionListing/SubscriptionAccount.vue";
 
 const props = defineProps({
     terms: Object,
@@ -125,16 +126,16 @@ const columns = [
         enableSorting: false,
         cell: ({ row }) => h(StatusBadge, {value: row.original.status}),
     },
-    {
-        accessorKey: 'action',
-        header: 'table_action',
-        enableSorting: false,
-        cell: ({ row }) => h(Action, {
-            subscription: row.original,
-            terms: props.terms,
-            swapMasterSel: props.swapMasterSel
-        }),
-    },
+    // {
+    //     accessorKey: 'action',
+    //     header: 'table_action',
+    //     enableSorting: false,
+    //     cell: ({ row }) => h(Action, {
+    //         subscription: row.original,
+    //         terms: props.terms,
+    //         swapMasterSel: props.swapMasterSel
+    //     }),
+    // },
 ];
 
 const clearFilter = () => {
@@ -183,7 +184,7 @@ watchEffect(() => {
         </template>
 
         <div class="flex flex-col gap-5 items-start self-stretch my-8">
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
                 <div class="w-full">
                     <InputIconWrapper>
                         <template #icon>
@@ -208,14 +209,6 @@ watchEffect(() => {
                         input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-800"
                     />
                 </div>
-                <div class="w-full">
-                    <BaseListbox
-                        id="rankID"
-                        v-model="master"
-                        :options="masterSel"
-                        :placeholder="$t('public.master')"
-                    />
-                </div>
                 <div class="flex justify-end gap-4 items-center w-full">
                     <Button
                         type="button"
@@ -227,6 +220,10 @@ watchEffect(() => {
                 </div>
             </div>
         </div>
+
+        <SubscriptionAccount
+            @update:master="master = $event"
+        />
 
         <div class="p-5 my-8 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
             <div class="flex justify-end items-center gap-2">

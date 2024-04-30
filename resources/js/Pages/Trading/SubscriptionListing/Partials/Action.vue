@@ -43,21 +43,6 @@ const closeModal = () => {
 
 <template>
     <Tooltip
-        :content="$t('public.swap_master')"
-        placement="bottom"
-    >
-        <Button
-            type="button"
-            pill
-            class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
-            variant="primary"
-            @click="openSubscriptionModal('swap_master')"
-        >
-            <RefreshCw03Icon aria-hidden="true" class="w-5 h-5 absolute" />
-        </Button>
-    </Tooltip>
-
-    <Tooltip
         v-if="subscription.auto_renewal"
         :content="$t('public.stop_renewal')"
         placement="bottom"
@@ -105,14 +90,6 @@ const closeModal = () => {
     </Tooltip>
 
     <Modal :show="subscriptionModal" :title="$t('public.' + modalComponent)" @close="closeModal">
-        <template v-if="modalComponent === 'swap_master'">
-            <SwapMaster
-                :subscription="subscription"
-                :swapMasterSel="swapMasterSel"
-                @update:subscriptionModal="subscriptionModal = $event"
-            />
-        </template>
-
         <template v-if="modalComponent === 'stop_renewal' || modalComponent === 'request_renewal'">
             <StopRenewSubscription
                 :subscription="subscription"

@@ -20,17 +20,19 @@ const baseClasses = [
 ]
 
 const variantClasses = computed(() => {
-    if (props.value.toLowerCase() === 'success' || props.value.toLowerCase() === 'active') {
-        return 'bg-success-400 dark:bg-success-500'
-    } else if (props.value.toLowerCase() === 'rejected' || props.value.toLowerCase() === 'terminated') {
-        return 'bg-error-400 dark:bg-error-500'
-    } else if (props.value.toLowerCase() === 'expiring') {
-        return 'bg-warning-500 dark:bg-warning-400'
-    } else if (props.value.toLowerCase() === 'pending') {
-        return 'bg-blue-400 dark:bg-blue-500'
-    }
-    return 'bg-primary-600'
-})
+    const variantMap = {
+        success: 'bg-success-400 dark:bg-success-500',
+        active: 'bg-success-400 dark:bg-success-500',
+        subscribing: 'bg-success-400 dark:bg-success-500',
+        rejected: 'bg-error-400 dark:bg-error-500',
+        terminated: 'bg-error-400 dark:bg-error-500',
+        expiring: 'bg-warning-500 dark:bg-warning-400',
+        pending: 'bg-blue-400 dark:bg-blue-500',
+    };
+
+    const variant = props.value.toLowerCase();
+    return variantMap[variant] || 'bg-primary-600';
+});
 
 const widthClass = computed(() => {
     return {

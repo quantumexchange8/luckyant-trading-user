@@ -337,7 +337,7 @@ return [
     'roi_date' => "投资回报率日期",
     'progress' => "处理中",
     'confirm_terminate_warning_1' => "确认后，请注意账户编号",
-    'confirm_terminate_warning_2' => "将无法在24小时内平衡。感谢您的耐心和理解。",
+    'confirm_terminate_warning_2' => "将无法在24小时内转出金额。感谢您的耐心和理解。",
     'no_trading_account' => "没有交易账户",
     'no_master_account' => "没有主账户",
     'account_name' => "账户姓名",
@@ -445,4 +445,5 @@ return [
     "subscribing" => "订阅中",
     "exempt_amount" => "免税金额",
     "management_period" => "管理期",
+    "return_amount" => "返回金额",
 ];

@@ -445,4 +445,5 @@ return [
     "subscribing" => "Subscribing",
     "exempt_amount" => "Exempt Amount",
     "management_period" => "Management Period",
+    "return_amount" => "Return Amount",
 ];

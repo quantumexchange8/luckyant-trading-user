@@ -16,7 +16,7 @@ const props = defineProps({
 })
 
 const baseClasses = [
-    'flex px-2 py-1 justify-center text-white rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out',
+    'flex px-2 py-1 justify-center text-xs text-white rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out',
 ]
 
 const variantClasses = computed(() => {

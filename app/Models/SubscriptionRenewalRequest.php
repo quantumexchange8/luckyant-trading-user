@@ -11,7 +11,7 @@ class SubscriptionRenewalRequest extends Model
 
     protected $fillable = [
         'user_id',
-        'subscription_batch_id',
+        'subscription_id',
         'status',
         'approval_date',
         'remarks',

@@ -12,22 +12,27 @@ import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
     subscription: Object,
+    subscriberAccount: Object,
     terms: Object,
 })
 
 const { formatDateTime, formatAmount } = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
-const emit = defineEmits(['update:subscriptionModal']);
+const renewSubscriptionModal = ref(false);
+
+const openRenewSubscriptionModal = () => {
+    renewSubscriptionModal.value = true;
+}
+
+const closeModal = () => {
+    renewSubscriptionModal.value = false;
+}
 
 const form = useForm({
     subscription_id: props.subscription.id,
     action: '',
     terms: ''
 })
-
-const closeModal = () => {
-    emit('update:subscriptionModal', false);
-}
 
 const submit = () => {
     if (props.subscription.auto_renewal === 1) {
@@ -69,7 +74,7 @@ const statusVariant = (autoRenewal) => {
     }
 }
 
-const expiredDate = ref(props.subscription.settlement_date);
+const expiredDate = ref(props.subscription.next_pay_date);
 const isExpiredWithin24Hours = computed(() => {
     if (!expiredDate.value) {
         return false; // No expiration date, button should be enabled
@@ -93,119 +98,148 @@ const closeTermsModal = () => {
 </script>
 
 <template>
-    <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
-        <div class="flex flex-col items-start gap-3 self-stretch">
-            <div class="text-lg font-semibold dark:text-white">
-                <div v-if="currentLocale === 'en'">
-                    {{ subscription.master.trading_user.name }}
-                </div>
-                <div v-if="currentLocale === 'cn'">
-                    {{ subscription.master.trading_user.company ? subscription.master.trading_user.company : subscription.master.trading_user.name }}
-                </div>
-            </div>
-            <div class="flex items-center justify-between gap-2 self-stretch">
-                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    {{$t('public.account_number')}}
-                </div>
-                <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                    {{ subscription.meta_login }}
-                </div>
-            </div>
-            <div class="flex items-center justify-between gap-2 self-stretch">
-                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    {{$t('public.subscription_number')}}
-                </div>
-                <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                    {{ subscription.subscription_number }}
-                </div>
-            </div>
-            <div class="flex items-center justify-between gap-2 self-stretch">
-                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    {{$t('public.roi_period')}} ({{ subscription.subscription_period }} {{ $t('public.days') }})
-                </div>
-                <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                    {{ formatDateTime(subscription.settlement_date, false) }}
-                </div>
-            </div>
-            <div class="flex items-start justify-between gap-2 self-stretch">
-                <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                    {{$t('public.management_fee')}}
-                </div>
-                <div class="text-sm sm:text-base flex flex-col text-gray-800 dark:text-white font-semibold">
-                    <div
-                        v-for="management_fee in subscription.master.master_management_fee"
-                        class="font-semibold"
-                    >
-                        {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }}%
-                    </div>
-                </div>
-            </div>
-            <div class="flex items-center justify-between gap-2 self-stretch">
-                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    {{ $t('public.max_drawdown') }}
-                </div>
-                <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                    {{ subscription.master.max_drawdown ? subscription.master.max_drawdown : '-' }}
-                </div>
-            </div>
-            <div class="flex items-center justify-between gap-2 self-stretch">
-                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    {{$t('public.auto_renewal')}}
-                </div>
-                <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                    <Badge :variant="statusVariant(subscription.auto_renewal)">{{ subscription.auto_renewal === 1 ? $t('public.auto') : $t('public.expiring') }}</Badge>
-                </div>
-            </div>
-            <div class="flex flex-col gap-2 self-stretch">
-                <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                    {{$t('public.progress')}}
-                </div>
-                <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
-                    <div
-                        :style="{ width: `${calculateWidthPercentage(subscription.settlement_start_date, subscription.settlement_date, subscription.subscription_period).widthResult}%` }"
-                        class="rounded-full bg-gradient-to-r from-primary-300 to-success-400 dark:from-primary-400 dark:to-success-500 transition-all duration-500 ease-out"
-                    >
-                    </div>
-                </div>
-                <div class="mb-2 flex items-center justify-between text-xs">
-                    <div class="dark:text-gray-400">
-                        {{ formatDateTime(subscription.created_at, false) }}
-                    </div>
-                    <div class="dark:text-gray-400">
-                        {{ formatDateTime(subscription.settlement_date, false) }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="text-gray-600 dark:text-gray-400 text-sm sm:text-base text-justify my-4">
-        {{ subscription.auto_renewal === 1 ? $t('public.stop_renewal_confirmation', {meta_login: subscription.meta_login}) : $t('public.request_renewal_confirmation') }}
-    </div>
+    <Button
+        v-if="subscriberAccount.auto_renewal === 1"
+        type="button"
+        variant="warning"
+        size="sm"
+        class="flex gap-2 justify-center w-full"
+        v-slot="{ iconSizeClasses }"
+        @click="openRenewSubscriptionModal"
+    >
+        <CreditCardXIcon
+            aria-hidden="true"
+            :class="iconSizeClasses"
+        />
+        {{ $t('public.stop_renewal') }}
+    </Button>
+    <Button
+        v-else
+        type="button"
+        variant="gray"
+        size="sm"
+        class="flex gap-2 justify-center w-full"
+        v-slot="{ iconSizeClasses }"
+        :disabled="isExpiredWithin24Hours"
+        @click="openRenewSubscriptionModal"
+    >
+        <CreditCardCheckIcon
+            aria-hidden="true"
+            :class="iconSizeClasses"
+        />
+        {{ $t('public.request_renewal') }}
+    </Button>
 
-    <div class="flex items-center">
-        <div class="flex items-center h-5">
-            <Checkbox id="terms" v-model="form.terms"/>
-        </div>
-        <div class="ml-3">
-            <label for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
-                {{ $t('public.agreement') }}
-                <div
-                    class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
-                    @click="openTermsModal"
-                >
-                    {{ $t('public.terms_and_conditions') }}
+    <Modal :show="renewSubscriptionModal" :title="subscriberAccount.auto_renewal === 1 ? $t('public.stop_renewal') : $t('public.request_renewal')" @close="closeModal">
+        <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+            <div class="flex flex-col items-start gap-3 self-stretch">
+                <div class="text-lg font-semibold dark:text-white">
+                    <div v-if="currentLocale === 'en'">
+                        {{ subscriberAccount.master.trading_user.name }}
+                    </div>
+                    <div v-if="currentLocale === 'cn'">
+                        {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
+                    </div>
                 </div>
-            </label>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.account_number')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        {{ subscriberAccount.meta_login }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.subscription_number')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        {{ subscription.subscription_number }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.roi_period')}} ({{ subscription.subscription_period }} {{ $t('public.days') }})
+                    </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        {{ formatDateTime(subscription.next_pay_date, false) }}
+                    </div>
+                </div>
+                <div class="flex items-start justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.management_fee')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-error-500 font-bold">
+                        {{ formatAmount(subscriberAccount.management_fee, 0) }}%
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{ $t('public.max_drawdown') }}
+                    </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        {{ subscriberAccount.master.max_drawdown ? subscriberAccount.master.max_drawdown : '-' }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.auto_renewal')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        <Badge :variant="statusVariant(subscriberAccount.auto_renewal)">{{ subscriberAccount.auto_renewal === 1 ? $t('public.auto') : $t('public.expiring') }}</Badge>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.progress')}}
+                    </div>
+                    <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
+                        <div
+                            :style="{ width: `${calculateWidthPercentage(subscription.approval_date, subscription.next_pay_date, subscription.subscription_period).widthResult}%` }"
+                            class="rounded-full bg-gradient-to-r from-primary-300 to-success-400 dark:from-primary-400 dark:to-success-500 transition-all duration-500 ease-out"
+                        >
+                        </div>
+                    </div>
+                    <div class="mb-2 flex items-center justify-between text-xs">
+                        <div class="dark:text-gray-400">
+                            {{ formatDateTime(subscription.approval_date, false) }}
+                        </div>
+                        <div class="dark:text-gray-400">
+                            {{ formatDateTime(subscription.next_pay_date, false) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <InputError :message="form.errors.terms" />
+        <div class="text-gray-600 dark:text-gray-400 text-sm sm:text-base text-justify my-4">
+            {{ subscription.auto_renewal === 1 ? $t('public.stop_renewal_confirmation', {meta_login: subscription.meta_login}) : $t('public.request_renewal_confirmation') }}
+        </div>
 
-    <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
-        <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-            {{$t('public.cancel')}}
-        </Button>
-        <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
-    </div>
+        <div class="flex items-center">
+            <div class="flex items-center h-5">
+                <Checkbox id="terms" v-model="form.terms"/>
+            </div>
+            <div class="ml-3">
+                <label for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
+                    {{ $t('public.agreement') }}
+                    <div
+                        class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
+                        @click="openTermsModal"
+                    >
+                        {{ $t('public.terms_and_conditions') }}
+                    </div>
+                </label>
+            </div>
+        </div>
+        <InputError :message="form.errors.terms" />
+
+        <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+            <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
+                {{$t('public.cancel')}}
+            </Button>
+            <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
+        </div>
+    </Modal>
 
     <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
         <div v-html="terms.contents" class="prose dark:text-white"></div>
@@ -214,7 +248,7 @@ const closeTermsModal = () => {
                 {{ $t('public.management_fee') }}
             </div>
             <div
-                v-for="management_fee in subscription.master.master_management_fee"
+                v-for="management_fee in subscriberAccount.master.master_management_fee"
                 class="text-sm font-semibold dark:text-white"
             >
                 {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }} %

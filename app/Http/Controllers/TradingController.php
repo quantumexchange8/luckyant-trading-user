@@ -6,6 +6,7 @@ use App\Http\Requests\SubscribeRequest;
 use App\Models\CopyTradeHistory;
 use App\Models\CopyTradeTransaction;
 use App\Models\Master;
+use App\Models\MasterManagementFee;
 use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\SubscriptionBatch;
@@ -341,8 +342,7 @@ class TradingController extends Controller
             'terms' => trans('public.terms_and_conditions'),
         ]);
 
-        $subscription = SubscriptionBatch::find($request->subscription_id);
-        $subscriber = Subscriber::find($subscription->subscriber_id);
+        $subscription = Subscription::find($request->subscription_id);
 
         if ($subscription->status == 'Terminated') {
             return redirect()->back()
@@ -353,16 +353,28 @@ class TradingController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
+            Subscriber::where('subscription_id', $subscription->id)->first()->update([
+                'unsubscribe_date' => now(),
+                'status' => 'Unsubscribed',
+                'auto_renewal' => false
+            ]);
+
             $subscription->update([
                 'termination_date' => now(),
                 'status' => 'Terminated',
                 'auto_renewal' => false,
             ]);
 
-            $subscriber->update([
-                'unsubscribe_date' => now(),
-                'status' => 'Unsubscribed'
-            ]);
+            $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
+                ->where('status', 'Active')
+                ->get();
+
+            foreach ($subscription_batches as $subscription_batch) {
+                $subscription_batch->update([
+                    'auto_renewal' => false,
+                    'status' => 'Terminated'
+                ]);
+            }
 
             return redirect()->back()
                 ->with('title', trans('public.success_terminate'))
@@ -379,7 +391,7 @@ class TradingController extends Controller
             'terms' => trans('public.terms_and_conditions'),
         ]);
 
-        $subscription = SubscriptionBatch::find($request->subscription_id);
+        $subscription = Subscription::find($request->subscription_id);
 
         if ($subscription->status == 'Terminated') {
             return redirect()->back()
@@ -390,7 +402,7 @@ class TradingController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
-            $renewRequest = SubscriptionRenewalRequest::where('subscription_batch_id', $subscription->id)
+            $renewRequest = SubscriptionRenewalRequest::where('subscription_id', $subscription->id)
                 ->where('status', 'Pending')
                 ->latest()
                 ->first();
@@ -414,14 +426,30 @@ class TradingController extends Controller
 
             if (array_key_exists($request->action, $messages)) {
                 if ($request->action == 'stop_renewal') {
+                    Subscriber::where('subscription_id', $subscription->id)->first()->update([
+                        'status' => 'Expiring',
+                        'auto_renewal' => false
+                    ]);
+
                     $subscription->update([
                         'auto_renewal' => false,
                         'status' => 'Expiring'
                     ]);
+
+                    $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
+                        ->where('status', 'Active')
+                        ->get();
+
+                    foreach ($subscription_batches as $subscription_batch) {
+                        $subscription_batch->update([
+                            'auto_renewal' => false,
+                            'status' => 'Expiring'
+                        ]);
+                    }
                 } elseif ($request->action == 'request_auto_renewal') {
                     SubscriptionRenewalRequest::create([
                         'user_id' => $subscription->user_id,
-                        'subscription_batch_id' => $subscription->id,
+                        'subscription_id' => $subscription->id,
                     ]);
                 }
 
@@ -638,9 +666,9 @@ class TradingController extends Controller
     {
         $user = Auth::user();
 
-        $subscribers = Subscriber::with(['master', 'master.tradingUser', 'master.user'])
+        $subscribers = Subscriber::with(['master', 'master.tradingUser', 'tradingUser:id,name,meta_login', 'subscription'])
             ->where('user_id', $user->id)
-            ->where('status', 'Subscribing')
+            ->whereIn('status', ['Subscribing', 'Expiring'])
             ->get();
 
         $subscribers->each(function ($subscriber) {
@@ -660,10 +688,14 @@ class TradingController extends Controller
                 }
             }
 
-            $subscriber->master->user->profile_photo = $subscriber->master->user->getFirstMediaUrl('profile_photo');
+            $management_fee = MasterManagementFee::where('master_id', $subscriber->master_id)
+                ->where('penalty_days', '>', $join_days)
+                ->first();
+
             $subscriber->join_days = $join_days;
             $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
             $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
+            $subscriber->management_fee = $management_fee->penalty_percentage;
             $subscriber->penalty_exempt = $penalty_exempt;
         });
 

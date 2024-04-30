@@ -1,9 +1,15 @@
 <script setup>
-import {ref} from "vue";
+import {ref, watchEffect} from "vue";
 import Badge from "@/Components/Badge.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import {usePage} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
+import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
+import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
+
+const props = defineProps({
+    terms: Object
+})
 
 const selectedSubscriberAccount = ref();
 const subscriberAccounts = ref(null);
@@ -30,7 +36,9 @@ const getResults = async (page = 1, search = '', type = '', date = '') => {
         const response = await axios.get(url);
         subscriberAccounts.value = response.data.subscribers;
         selectedSubscriberAccount.value = subscriberAccounts.value[0]
-        emit('update:master', selectedSubscriberAccount.value.master_id)
+        if (selectedSubscriberAccount.value) {
+            emit('update:master', selectedSubscriberAccount.value.master_id)
+        }
     } catch (error) {
         console.error(error);
     }
@@ -42,10 +50,17 @@ const selectSubscriberAccount = (subscriber) => {
     selectedSubscriberAccount.value = subscriber;
     emit('update:master', subscriber.master_id)
 }
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getResults();
+    }
+});
 </script>
 
 <template>
     <div
+        v-if="subscriberAccounts !== null"
         class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-5"
     >
         <div
@@ -57,12 +72,7 @@ const selectSubscriberAccount = (subscriber) => {
             @click="selectSubscriberAccount(subscriberAccount)"
         >
             <div class="flex justify-between items-center w-full">
-                <div class="flex gap-2">
-                    <img
-                        class="object-cover w-12 h-12 rounded-full"
-                        :src="subscriberAccount.master.user.profile_photo ? subscriberAccount.master.user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
-                        alt="userPic"
-                    />
+                <div class="flex gap-2 items-start">
                     <div class="flex flex-col">
                         <div v-if="currentLocale === 'en'" class="text-sm">
                             {{ subscriberAccount.master.trading_user.name }}
@@ -74,11 +84,12 @@ const selectSubscriberAccount = (subscriber) => {
                             {{ subscriberAccount.master.meta_login }}
                         </div>
                     </div>
+                    <StatusBadge
+                        :value="subscriberAccount.status"
+                        width="w-20"
+                    />
                 </div>
-                <StatusBadge
-                    :value="subscriberAccount.status"
-                    width="w-20"
-                />
+<!--                Swap-->
             </div>
 
             <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
@@ -93,11 +104,22 @@ const selectSubscriberAccount = (subscriber) => {
             </div>
 
             <div class="grid grid-cols-2 gap-4 w-full">
-                <div class="space-y-1 col-span-2">
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.live_account') }}
+                    </div>
                     <div class="flex justify-center gap-2">
-                        <div>{{ $t('public.account_no') }}</div>
-                        <div class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.meta_login }}
-                        </div>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.trading_user.name }}
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.account_number') }}
+                    </div>
+                    <div class="flex justify-center gap-2">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.meta_login }}
+                        </span>
                     </div>
                 </div>
                 <div class="space-y-1">
@@ -121,7 +143,13 @@ const selectSubscriberAccount = (subscriber) => {
                         {{ $t('public.exempt_amount') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.penalty_exempt ? subscriberAccount.penalty_exempt : 0, 0) }}</span>
+                        <span
+                            :class="{
+                                'text-success-500': subscriberAccount && subscriberAccount.penalty_exempt > 0,
+                                'text-gray-800 dark:text-gray-100': subscriberAccount && subscriberAccount.penalty_exempt === 0,
+                            }"
+                            class="font-semibold"
+                        >$ {{ formatAmount(subscriberAccount.penalty_exempt ? subscriberAccount.penalty_exempt : 0, 0) }}</span>
                     </div>
                 </div>
                 <div class="space-y-1">
@@ -134,14 +162,18 @@ const selectSubscriberAccount = (subscriber) => {
                 </div>
             </div>
 
-<!--            <div class="flex w-full gap-2 items-center">-->
-<!--                <div>-->
-<!--                    action-->
-<!--                </div>-->
-<!--                <div>-->
-<!--                    action-->
-<!--                </div>-->
-<!--            </div>-->
+            <div class="flex w-full gap-2 items-center">
+                <StopRenewSubscription
+                    :subscription="subscriberAccount.subscription"
+                    :subscriberAccount="subscriberAccount"
+                    :terms="terms"
+                />
+                <TerminateSubscription
+                    :subscription="subscriberAccount.subscription"
+                    :subscriberAccount="subscriberAccount"
+                    :terms="terms"
+                />
+            </div>
         </div>
     </div>
 </template>

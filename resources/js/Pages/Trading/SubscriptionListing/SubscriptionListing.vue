@@ -222,6 +222,7 @@ watchEffect(() => {
         </div>
 
         <SubscriptionAccount
+            :terms="terms"
             @update:master="master = $event"
         />
 

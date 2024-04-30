@@ -22,6 +22,7 @@ class Subscriber extends Model
         'subscribe_amount',
         'subscription_id',
         'status',
+        'auto_renewal',
         'approval_date',
         'unsubscribe_date',
     ];

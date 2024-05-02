@@ -126,16 +126,16 @@ const columns = [
         enableSorting: false,
         cell: ({ row }) => h(StatusBadge, {value: row.original.status}),
     },
-    // {
-    //     accessorKey: 'action',
-    //     header: 'table_action',
-    //     enableSorting: false,
-    //     cell: ({ row }) => h(Action, {
-    //         subscription: row.original,
-    //         terms: props.terms,
-    //         swapMasterSel: props.swapMasterSel
-    //     }),
-    // },
+    {
+        accessorKey: 'action',
+        header: 'table_action',
+        enableSorting: false,
+        cell: ({ row }) => h(Action, {
+            subscription: row.original,
+            terms: props.terms,
+            swapMasterSel: props.swapMasterSel
+        }),
+    },
 ];
 
 const clearFilter = () => {

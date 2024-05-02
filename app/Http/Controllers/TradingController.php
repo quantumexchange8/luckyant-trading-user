@@ -10,6 +10,7 @@ use App\Models\MasterManagementFee;
 use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\SubscriptionBatch;
+use App\Models\SubscriptionPenaltyLog;
 use App\Models\SubscriptionRenewalRequest;
 use App\Models\Term;
 use App\Models\TradeHistory;
@@ -308,6 +309,15 @@ class TradingController extends Controller
             ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
             ->paginate($request->input('paginate', 10));
 
+        $results->each(function ($batch) {
+            $approvalDate = Carbon::parse($batch->approval_date);
+            $today = Carbon::today();
+            $join_days = $approvalDate->diffInDays($today);
+
+            $batch->join_days = $join_days;
+            $batch->management_period = $batch->master->masterManagementFee->sum('penalty_days');
+        });
+
         return response()->json($results);
     }
 
@@ -433,7 +443,6 @@ class TradingController extends Controller
 
                     $subscription->update([
                         'auto_renewal' => false,
-                        'status' => 'Expiring'
                     ]);
 
                     $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
@@ -668,7 +677,15 @@ class TradingController extends Controller
 
         $subscribers = Subscriber::with(['master', 'master.tradingUser', 'tradingUser:id,name,meta_login', 'subscription'])
             ->where('user_id', $user->id)
-            ->whereIn('status', ['Subscribing', 'Expiring'])
+            ->whereNot('status', 'Rejected')
+            ->orderByRaw("
+        CASE
+            WHEN status = 'Subscribing' THEN 1
+            WHEN status = 'Expiring' THEN 2
+            WHEN status = 'Unsubscribed' THEN 3
+            ELSE 4
+        END")
+            ->latest()
             ->get();
 
         $subscribers->each(function ($subscriber) {
@@ -702,5 +719,11 @@ class TradingController extends Controller
         return response()->json([
             'subscribers' => $subscribers
         ]);
+    }
+
+    public function getPenaltyDetail(Request $request)
+    {
+        $penalty = SubscriptionPenaltyLog::where('subscription_batch_id', $request->subscription_batch_id)->first();
+        return response()->json($penalty);
     }
 }

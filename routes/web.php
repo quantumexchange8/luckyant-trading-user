@@ -124,6 +124,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/subscription_history', [TradingController::class, 'subscription_history'])->name('trading.subscription_history');
         Route::get('/getCopyTradeTransactions', [TradingController::class, 'getCopyTradeTransactions'])->name('trading.getCopyTradeTransactions');
         Route::get('/getSubscriberAccounts', [TradingController::class, 'getSubscriberAccounts'])->name('trading.getSubscriberAccounts');
+        Route::get('/getPenaltyDetail', [TradingController::class, 'getPenaltyDetail'])->name('trading.getPenaltyDetail');
 
         Route::post('/subscribeMaster', [TradingController::class, 'subscribeMaster'])->name('trading.subscribeMaster');
         Route::post('/renewalSubscription', [TradingController::class, 'renewalSubscription'])->name('trading.renewalSubscription');

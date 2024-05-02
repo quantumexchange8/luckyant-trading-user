@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import Tooltip from "@/Components/Tooltip.vue";
-import {RefreshCw03Icon, XCircleIcon, InfoCircleIcon} from "@/Components/Icons/outline.jsx";
+import {RefreshCw03Icon, MemberDetailIcon, InfoCircleIcon} from "@/Components/Icons/outline.jsx";
 import {BanIcon} from "@heroicons/vue/outline";
 import Button from "@/Components/Button.vue";
 import Modal from "@/Components/Modal.vue";
@@ -10,6 +10,7 @@ import {useForm} from "@inertiajs/vue3";
 import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
 import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
 import SwapMaster from "@/Pages/Trading/SubscriptionListing/Partials/SwapMaster.vue";
+import SubscriptionBatchDetail from "@/Pages/Trading/SubscriptionListing/Partials/SubscriptionBatchDetail.vue";
 
 const props = defineProps({
     subscription: Object,
@@ -22,16 +23,12 @@ const modalComponent = ref('');
 
 const openSubscriptionModal = (componentType) => {
     subscriptionModal.value = true;
-    if (componentType === 'stop_renewal') {
-        modalComponent.value = 'stop_renewal';
+    if (componentType === 'view') {
+        modalComponent.value = 'view_details';
     } else if (componentType === 'swap_master') {
         modalComponent.value = 'swap_master';
     }  else if (componentType === 'terminate') {
         modalComponent.value = 'terminate';
-    } else if (componentType === 'view') {
-        modalComponent.value = 'view_details';
-    } else if (componentType === 'request_renewal') {
-        modalComponent.value = 'request_renewal';
     }
 }
 
@@ -43,8 +40,7 @@ const closeModal = () => {
 
 <template>
     <Tooltip
-        v-if="subscription.auto_renewal"
-        :content="$t('public.stop_renewal')"
+        :content="$t('public.view_details')"
         placement="bottom"
     >
         <Button
@@ -52,56 +48,16 @@ const closeModal = () => {
             pill
             class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
             variant="gray"
-            @click="openSubscriptionModal('stop_renewal')"
+            @click="openSubscriptionModal('view')"
         >
-            <BanIcon aria-hidden="true" class="w-6 h-6 absolute" />
-        </Button>
-    </Tooltip>
-
-    <Tooltip
-        v-if="subscription.status !== 'Terminated' && !subscription.auto_renewal"
-        :content="$t('public.request_renewal')"
-        placement="bottom"
-    >
-        <Button
-            type="button"
-            pill
-            class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
-            variant="info"
-            @click="openSubscriptionModal('request_renewal')"
-        >
-            <InfoCircleIcon aria-hidden="true" class="w-6 h-6 absolute" />
-        </Button>
-    </Tooltip>
-
-    <Tooltip
-        :content="$t('public.terminate')"
-        placement="bottom"
-    >
-        <Button
-            type="button"
-            pill
-            class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"
-            variant="danger"
-            @click="openSubscriptionModal('terminate')"
-        >
-            <XCircleIcon aria-hidden="true" class="w-6 h-6 absolute" />
+            <MemberDetailIcon aria-hidden="true" class="w-6 h-6 absolute" />
         </Button>
     </Tooltip>
 
     <Modal :show="subscriptionModal" :title="$t('public.' + modalComponent)" @close="closeModal">
-        <template v-if="modalComponent === 'stop_renewal' || modalComponent === 'request_renewal'">
-            <StopRenewSubscription
+        <template v-if="modalComponent === 'view_details'">
+            <SubscriptionBatchDetail
                 :subscription="subscription"
-                :terms="terms"
-                @update:subscriptionModal="subscriptionModal = $event"
-            />
-        </template>
-
-        <template v-if="modalComponent === 'terminate'">
-            <TerminateSubscription
-                :subscription="subscription"
-                :terms="terms"
                 @update:subscriptionModal="subscriptionModal = $event"
             />
         </template>

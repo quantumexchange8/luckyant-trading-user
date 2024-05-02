@@ -446,4 +446,6 @@ return [
     "exempt_amount" => "免税金额",
     "management_period" => "管理期",
     "return_amount" => "返回金额",
+    "unsubscribed" => "退订",
+    "termination_date" => "终止日期",
 ];

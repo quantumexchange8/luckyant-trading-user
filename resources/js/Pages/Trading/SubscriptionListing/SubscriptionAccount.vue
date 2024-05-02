@@ -162,7 +162,10 @@ watchEffect(() => {
                 </div>
             </div>
 
-            <div class="flex w-full gap-2 items-center">
+            <div
+                v-if="subscriberAccount.status === 'Subscribing'"
+                class="flex w-full gap-2 items-center"
+            >
                 <StopRenewSubscription
                     :subscription="subscriberAccount.subscription"
                     :subscriberAccount="subscriberAccount"

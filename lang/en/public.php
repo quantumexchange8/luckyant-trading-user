@@ -446,4 +446,6 @@ return [
     "exempt_amount" => "Exempt Amount",
     "management_period" => "Management Period",
     "return_amount" => "Return Amount",
+    "unsubscribed" => "Unsubscribed",
+    "termination_date" => "Termination Date",
 ];

@@ -24,4 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // });
 
 Route::get('getMaster', [MasterController::class, 'getMaster']);
-Route::get('getMasterLiveTrades', [MasterController::class, 'getMasterLiveTrades']);
+Route::get('getLiveAccount', [MasterController::class, 'getLiveAccount']);
+Route::get('getMasterGrowth', [MasterController::class, 'getMasterGrowth']);
+Route::get('getMasterLatestTrades', [MasterController::class, 'getMasterLatestTrades']);
+Route::get('getMasterCurrency', [MasterController::class, 'getMasterCurrency']);
+Route::get('getMasterOpenTrade', [MasterController::class, 'getMasterOpenTrade']);

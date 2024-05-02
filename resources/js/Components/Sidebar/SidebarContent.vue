@@ -79,6 +79,12 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
                 :active="route().current('transaction.transaction_listing')"
             />
 
+            <SidebarCollapsibleItem
+                :href="route('transaction.transfer_history')"
+                :title="$t('public.sidebar.transfer_history')"
+                :active="route().current('transaction.transfer_history')"
+            />
+
 <!--            <SidebarCollapsibleItem-->
 <!--                :href="route('transaction.wallet')"-->
 <!--                :title="$t('public.sidebar.wallet')"-->

@@ -414,7 +414,7 @@ class MasterController extends Controller
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
-        $userTrade = $metaService->userTrade($request->meta_login);
+        $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->latest()->get();
 
         if ($connection != 0) {
             return response()->json([

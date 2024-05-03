@@ -265,55 +265,53 @@ class MasterController extends Controller
             ]);
         }
     
-        // Get the earliest and latest timestamps for the meta_login
-        $earliestTimestamp = TradeHistory::where('meta_login', $request->meta_login)
+        // Get the earliest and latest dates for the meta_login
+        $earliestDate = TradeHistory::where('meta_login', $request->meta_login)
             ->where('trade_status', 'Closed')
             ->orderBy('created_at')
             ->value('created_at');
-        
-        // $latestTimestamp = TradeHistory::where('meta_login', $request->meta_login)
-        //     ->where('trade_status', 'Closed')
-        //     ->orderByDesc('created_at')
-        //     ->value('created_at');
-    
-        $latestTimestamp = now();
-        
+
+        // Convert the earliest date to a Carbon instance
+        $earliestDate = Carbon::parse($earliestDate);
+
+        // Get the current date
+        $currentDate = now();
+
         // Calculate the interval size based on the actual date range
-        $intervalSeconds = ($latestTimestamp->timestamp - $earliestTimestamp->timestamp) / 9; // 9 intervals between 10 points
-    
+        $intervalDays = $earliestDate->diffInDays($currentDate) / 9; // 9 intervals between 10 points
+
         // Initialize the interval dates array with the start and end dates
         $intervalDates = [];
-    
+
         // Add the start date
-        $intervalDates[] = $earliestTimestamp->format('Y-m-d');
-    
+        $intervalDates[] = $earliestDate->format('Y-m-d');
+
         // Calculate and add the remaining 8 dates within the intervals
-        $currentTimestamp = clone $earliestTimestamp;
+        $currentDatePointer = clone $earliestDate;
         for ($i = 0; $i < 8; $i++) {
-            // Increment the current timestamp by the interval size
-            $currentTimestamp->addSeconds($intervalSeconds);
-            // Add the current timestamp to the interval dates array
-            $intervalDates[] = $currentTimestamp->format('Y-m-d');
+            // Increment the current date by the interval size (in days)
+            $currentDatePointer->addDays($intervalDays);
+            // Add the current date to the interval dates array
+            $intervalDates[] = $currentDatePointer->format('Y-m-d');
         }
-    
+
         // Add the end date
-        $intervalDates[] = $latestTimestamp->format('Y-m-d');
-    
+        $intervalDates[] = $currentDate->format('Y-m-d');
+
         $tradeProfitPct = [];
-        $cumulativeProfit = 0;
-    
+
         // Iterate over the interval dates to calculate cumulative trade profit percentages
         foreach ($intervalDates as $date) {
-            // Sum trade profit percentages up to the current date
-            $cumulativeProfit += TradeHistory::where('meta_login', $request->meta_login)
+            // Get the sum of trade profit percentages up to the current date
+            $profitUntilDate = TradeHistory::where('meta_login', $request->meta_login)
                 ->where('trade_status', 'Closed')
-                ->where('created_at', '<=', $date)
+                ->whereDate('created_at', '<=', $date)
                 ->sum('trade_profit_pct');
-            
-            // Add the cumulative profit to the array
-            $tradeProfitPct[] = $cumulativeProfit;
+
+            // Add the sum to the array
+            $tradeProfitPct[] = $profitUntilDate;
         }
-    
+                            
         // Return the response with the interval dates and cumulative trade profit percentages
         return response()->json([
             'status' => 'success',

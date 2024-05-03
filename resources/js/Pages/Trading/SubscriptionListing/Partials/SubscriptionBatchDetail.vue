@@ -16,7 +16,6 @@ const batchDetail = ref(null);
 
 onMounted(async () => {
     try {
-        console.log(props.subscription.id)
         const response = await axios.get('getPenaltyDetail?subscription_batch_id=' + props.subscription.id);
         batchDetail.value = response.data;
     } catch (error) {

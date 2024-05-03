@@ -82,8 +82,16 @@ class TradingController extends Controller
             });
 
         if ($user->is_public == 0 && $first_leader) {
-            $masterAccounts->where('is_public', $first_leader->is_public)
-                ->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
+            if ($first_leader->masterAccounts->isNotEmpty()) {
+                $masterAccounts->where('is_public', $first_leader->is_public)
+                    ->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
+            } else {
+                $upper_leader = $first_leader->getFirstLeader();
+                if ($user->is_public == 0 && $upper_leader) {
+                    $masterAccounts->where('is_public', $upper_leader->is_public)
+                        ->whereIn('user_id', $upper_leader->masterAccounts->pluck('user_id'));
+                }
+            }
         } elseif ($user->is_public == 1 && $first_leader) {
             $masterAccounts->where('is_public', $first_leader->is_public);
         } else {
@@ -312,7 +320,7 @@ class TradingController extends Controller
         $results->each(function ($batch) {
             $approvalDate = Carbon::parse($batch->approval_date);
             $today = Carbon::today();
-            $join_days = $approvalDate->diffInDays($today);
+            $join_days = $approvalDate->diffInDays($batch->status == 'Terminated' ? $batch->termination_date : $today);
 
             $batch->join_days = $join_days;
             $batch->management_period = $batch->master->masterManagementFee->sum('penalty_days');
@@ -691,7 +699,7 @@ class TradingController extends Controller
         $subscribers->each(function ($subscriber) {
             $approvalDate = Carbon::parse($subscriber->approval_date);
             $today = Carbon::today();
-            $join_days = $approvalDate->diffInDays($today);
+            $join_days = $approvalDate->diffInDays($subscriber->status == 'Unsubscribed' ? $subscriber->unsubscribe_date : $today);
             $subscription_batches = $subscriber->subscription_batches;
 
             $penalty_exempt = 0;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subscription;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -140,21 +141,15 @@ class DashboardController extends Controller
             ->where('category', 'wallet')
             ->where('status', 'Success');
 
-        $depositDemoFund = Transaction::where('user_id', $user->id)
-            ->where('category', 'trading_account')
-            ->where('fund_type', 'DemoFund')
-            ->where('transaction_type', 'Deposit')
-            ->where('status', 'Success')
-            ->sum('transaction_amount');
-
 //        $withdrawalDemoFund = Transaction::where('user_id', $user->id)
 //            ->where('fund_type', 'DemoFund')
 //            ->where('transaction_type', 'Withdrawal')
 //            ->where('status', 'Success')
 //            ->sum('transaction_amount');
 
-        $totalDeposit = $transaction->where('transaction_type', 'Deposit')->sum('transaction_amount') + $depositDemoFund;
-
+        $totalDeposit = Subscription::where('user_id',$user->id)
+            ->where('status', 'Active')
+            ->sum('meta_balance');
 
         $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount');
 

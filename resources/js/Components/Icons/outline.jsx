@@ -461,3 +461,60 @@ export const Coins04Icon = defineComponent({
     },
 })
 
+export const MemberDetailIcon = defineComponent({
+    setup() {
+        return () => (
+            <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.93229 7.3335H5.93229M7.26563 10.0002H5.93229M11.2656 4.66683H5.93229M13.9323 7.00016V4.5335C13.9323 3.41339 13.9323 2.85334 13.7143 2.42552C13.5226 2.04919 13.2166 1.74323 12.8403 1.55148C12.4124 1.3335 11.8524 1.3335 10.7323 1.3335H6.46563C5.34552 1.3335 4.78547 1.3335 4.35764 1.55148C3.98132 1.74323 3.67536 2.04919 3.48361 2.42552C3.26562 2.85334 3.26562 3.41339 3.26562 4.5335V11.4668C3.26562 12.5869 3.26562 13.147 3.48361 13.5748C3.67536 13.9511 3.98132 14.2571 4.35764 14.4488C4.78547 14.6668 5.34552 14.6668 6.46563 14.6668H8.26563M15.2656 14.6668L14.2656 13.6668M14.9323 12.0002C14.9323 13.2888 13.8876 14.3335 12.599 14.3335C11.3103 14.3335 10.2656 13.2888 10.2656 12.0002C10.2656 10.7115 11.3103 9.66683 12.599 9.66683C13.8876 9.66683 14.9323 10.7115 14.9323 12.0002Z" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        )
+    }
+})
+
+export const MinusCircleIcon = defineComponent({
+    setup() {
+        return () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8 12H16M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        )
+    }
+})
+
+export const XCircleIcon = defineComponent({
+    setup() {
+        return () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M15 9L9 15M9 9L15 15M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        )
+    }
+})
+
+export const InfoCircleIcon = defineComponent({
+    setup() {
+        return () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        )
+    }
+})
+
+export const RefreshCw03Icon = defineComponent({
+    setup() {
+        return () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M14 22C14 22 14.8492 21.8787 18.364 18.364C21.8787 14.8492 21.8787 9.15076 18.364 5.63604C17.1187 4.39077 15.5993 3.58669 14 3.22383M14 22H20M14 22L14 16M10 2.00019C10 2.00019 9.15076 2.12152 5.63604 5.63624C2.12132 9.15095 2.12132 14.8494 5.63604 18.3642C6.88131 19.6094 8.40072 20.4135 10 20.7764M10 2.00019L4 2M10 2.00019L10 8"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        )
+    }
+})

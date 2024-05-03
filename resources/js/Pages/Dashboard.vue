@@ -170,7 +170,7 @@ getTotalTransactions();
                                     <div class="grid grid-cols-2 gap-4 w-full mt-4">
                                         <div class="space-y-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.total_deposit') }}
+                                                {{ $t('public.total_active_balance') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalDeposit) }}</span>

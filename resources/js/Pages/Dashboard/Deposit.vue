@@ -35,7 +35,7 @@ const paymentType = [
     //     imgUrl: BankImg
     // },
     {
-        name: 'tether',
+        name: 'payment_service',
         value: 'Crypto',
         imgUrl: cryptoImg
     },
@@ -126,7 +126,7 @@ const getPaymentDetails = async (settingPaymentValue) => {
 
 watch(selected, (newType) => {
     if (newType) {
-        if (newType.name === 'tether') {
+        if (newType.name === 'payment_service') {
             getPaymentDetails(newType.value)
             selectBank.value = null
         } else {
@@ -274,7 +274,7 @@ const copyWalletAddress = () => {
                 />
             </div>
 
-            <div v-if="selected != null ? selected.name === 'tether' : '' " class="space-y-2">
+            <div v-if="selected != null ? selected.name === 'payment_service' : '' " class="space-y-2">
                 <div class="flex flex-col items-center justify-center gap-2">
                     <qrcode-vue :class="['border-4 border-white']" :value="paymentDetails.account_no" :size="200"></qrcode-vue>
                     <input type="hidden" id="cryptoWalletAddress" :value="paymentDetails.account_no">
@@ -288,8 +288,8 @@ const copyWalletAddress = () => {
             </div>
 
             <div v-if="selected != null ? selected.name === 'payment_merchant' : '' " class="space-y-2">
-                <div class="flex gap-2">
-                   {{ $t('public.tether_payment') }}
+                <div class="flex gap-2 dark:text-white">
+                   {{ $t('public.payment_service_message') }}
                 </div>
             </div>
 
@@ -299,7 +299,7 @@ const copyWalletAddress = () => {
                 </div>
                 <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ paymentDetails.payment_method === 'Bank' ? $t('public.bank_name') : $t('public.tether') }}
+                        {{ paymentDetails.payment_method === 'Bank' ? $t('public.bank_name') : $t('public.payment_service') }}
                     </div>
                     <div class="text-base text-gray-800 dark:text-white font-semibold">
                         {{ paymentDetails.payment_platform_name }}

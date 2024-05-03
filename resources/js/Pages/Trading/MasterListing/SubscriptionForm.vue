@@ -303,7 +303,7 @@ watchEffect(() => {
             </div>
             <div
                 v-for="management_fee in masterAccount.master_management_fee"
-                class="text-sm font-semibold"
+                class="text-sm font-semibold dark:text-white"
             >
                 {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }} %
             </div>

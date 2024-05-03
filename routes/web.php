@@ -123,6 +123,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/subscription_listing', [TradingController::class, 'subscription_listing'])->name('trading.subscription_listing');
         Route::get('/subscription_history', [TradingController::class, 'subscription_history'])->name('trading.subscription_history');
         Route::get('/getCopyTradeTransactions', [TradingController::class, 'getCopyTradeTransactions'])->name('trading.getCopyTradeTransactions');
+        Route::get('/getSubscriberAccounts', [TradingController::class, 'getSubscriberAccounts'])->name('trading.getSubscriberAccounts');
+        Route::get('/getPenaltyDetail', [TradingController::class, 'getPenaltyDetail'])->name('trading.getPenaltyDetail');
 
         Route::post('/subscribeMaster', [TradingController::class, 'subscribeMaster'])->name('trading.subscribeMaster');
         Route::post('/renewalSubscription', [TradingController::class, 'renewalSubscription'])->name('trading.renewalSubscription');
@@ -137,7 +139,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('transaction')->group(function () {
         Route::get('/transaction_listing', [TransactionController::class, 'index'])->name('transaction.transaction_listing');
         Route::get('/getTransactionData', [TransactionController::class, 'getTransactionData'])->name('transaction.getTransactionData');
-
+        Route::get('/transfer_history', [TransactionController::class, 'transfer_history'])->name('transaction.transfer_history');
+        Route::get('/getTransferHistory', [TransactionController::class, 'getTransferHistory'])->name('transaction.getTransferHistory');
 
          /**
          * ==============================

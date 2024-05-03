@@ -96,7 +96,7 @@ function dismiss() {
                                 v-if="alertButton !== 'OK'"
                                 type="button"
                                 class="w-full flex justify-center"
-                                variant="transparent"
+                                variant="primary-transparent"
                                 @click="dismiss"
                             >
                                 {{ $t('public.later') }}

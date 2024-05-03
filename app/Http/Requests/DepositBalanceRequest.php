@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Subscriber;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Subscription;
 
@@ -9,15 +10,15 @@ class DepositBalanceRequest extends FormRequest
 {
     public function rules(): array
     {
-        $subscription = Subscription::where('user_id', $this->user()->id)
+        $subscriber = Subscriber::where('user_id', $this->user()->id)
             ->where('meta_login', $this->to_meta_login)
-            ->where('status', 'Active')
+            ->where('status', 'Subscribing')
             ->first();
 
         $amountRule = ['required', 'numeric', 'min:1'];
-        
+
         // If subscription exists and amount must be in multiples of 100
-        if ($subscription) {
+        if ($subscriber) {
             $amountRule[] = 'integer';
             $amountRule[] = function ($attribute, $value, $fail) {
                 if ($value % 100 !== 0) {

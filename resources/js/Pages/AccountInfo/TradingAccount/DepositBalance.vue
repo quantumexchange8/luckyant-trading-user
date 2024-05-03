@@ -17,12 +17,12 @@ const { formatAmount } = transactionFormat();
 
 const form = useForm({
     wallet_id: props.walletSel[0].value,
-    amount: '',
+    amount: 0,
     to_meta_login: props.account.meta_login,
-    eWalletAmount: '',
-    cashWalletAmount: '',
-    maxEWalletAmount: '',
-    minEWalletAmount: '',
+    eWalletAmount: 0,
+    cashWalletAmount: 0,
+    maxEWalletAmount: 0,
+    minEWalletAmount: 0,
 })
 
 const closeModal = () => {
@@ -33,7 +33,7 @@ const submit = () => {
     form.amount = parseFloat(depositAmount.value);
     form.eWalletAmount = parseFloat(eWalletAmount.value);
     form.cashWalletAmount = parseFloat(cashWalletAmount.value);
-    form.maxEWalletAmount = parseFloat(maxEWalletAmount.value);
+    form.maxEWalletAmount = maxEWalletAmount.value;
     form.minEWalletAmount = parseFloat(minEWalletAmount.value);
     form.post(route('account_info.depositTradingAccount'), {
         onSuccess: () => {

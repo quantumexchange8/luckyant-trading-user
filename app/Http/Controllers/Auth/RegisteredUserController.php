@@ -90,7 +90,7 @@ class RegisteredUserController extends Controller
             $additionalRules = [
                 'name' => 'required|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u|max:255',
                 'chinese_name' => 'nullable|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u',
-                'dob_year' => 'required|numeric|digits:4|min:1900',
+                'dob_year' => 'required|numeric|digits:4|min:1900|max:'.date('Y'),
                 'dob_month' => 'required|numeric|min:1',
                 'dob_day' => 'required|numeric|min:1',
                 'country' => 'required',

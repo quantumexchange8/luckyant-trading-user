@@ -5,6 +5,7 @@ import Label from '@/Components/Label.vue'
 import Input from '@/Components/Input.vue'
 import InputError from '@/Components/InputError.vue'
 import Button from '@/Components/Button.vue'
+import { CheckIcon } from '@heroicons/vue/outline'
 
 const passwordInput = ref(null)
 const currentPasswordInput = ref(null)
@@ -31,10 +32,49 @@ const updatePassword = () => {
         },
     })
 }
+
+const passwordRules = [
+    { message: 'register_terms_1', regex: /.{6,}/ },
+    { message: 'register_terms_2', regex: /[A-Z]+/ },
+    { message: 'register_terms_3', regex: /[a-z]+/ },
+    { message: 'register_terms_4', regex: /[0-9]+/ },
+    { message: 'register_terms_5', regex: /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]+/ }
+];
+
+const passwordValidation = () => {
+    let valid = false;
+    let messages = [];
+
+    for (let condition of passwordRules) {
+        const isConditionValid = condition.regex.test(form.password);
+
+        if (isConditionValid) {
+            valid = true;
+        }
+
+        messages.push({
+            message: condition.message,
+            valid: isConditionValid,
+        });
+    }
+
+    // Check if the new password matches the confirm password
+    const isMatch = form.password === form.password_confirmation;
+
+    messages.push({
+        message: 'register_terms_6',
+        valid: isMatch && form.password !== '',
+    });
+
+    // Set valid to false if there's any condition that failed
+    valid = valid && isMatch;
+
+    return { valid, messages };
+};
 </script>
 
 <template>
-    <section>
+    <div class="w-full">
         <header>
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
                 {{ $t('public.update_password') }}
@@ -44,60 +84,92 @@ const updatePassword = () => {
                 {{ $t('public.update_password_message') }}
             </p>
         </header>
+    </div>
 
-        <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <div>
-                <Label for="current_password" :value="$t('public.current_password')" />
+    <form>
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="space-y-6">
+                <div>
+                    <Label for="current_password" :value="$t('public.current_password')" />
 
-                <Input
-                    id="current_password"
-                    ref="currentPasswordInput"
-                    v-model="form.current_password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="current-password"
-                />
+                    <Input
+                        id="current_password"
+                        ref="currentPasswordInput"
+                        v-model="form.current_password"
+                        type="password"
+                        class="mt-1 block w-full"
+                        autocomplete="current-password"
+                        :invalid="form.errors.current_password"
+                    />
 
-                <InputError
-                    :message="form.errors.current_password"
-                    class="mt-2"
-                />
+                    <InputError
+                        :message="form.errors.current_password"
+                        class="mt-2"
+                    />
+                </div>
+
+                <div>
+                    <Label for="password" :value="$t('public.new_password')" />
+
+                    <Input
+                        id="password"
+                        ref="passwordInput"
+                        v-model="form.password"
+                        type="password"
+                        class="mt-1 block w-full"
+                        autocomplete="new-password"
+                        :invalid="form.errors.password"
+                    />
+
+                    <InputError :message="form.errors.password" class="mt-2" />
+                </div>
+
+                <div>
+                    <Label for="password_confirmation" :value="$t('public.confirm_password')" />
+
+                    <Input
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        class="mt-1 block w-full"
+                        autocomplete="new-password"
+                        :invalid="form.errors.password_confirmation"
+                    />
+
+                    <InputError
+                        :message="form.errors.password_confirmation"
+                        class="mt-2"
+                    />
+                </div>
             </div>
 
-            <div>
-                <Label for="password" :value="$t('public.new_password')" />
-
-                <Input
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-
-                <InputError :message="form.errors.password" class="mt-2" />
+            <div class="flex flex-col items-start gap-3 self-stretch">
+                <div v-for="message in passwordValidation().messages" :key="message.key" class="flex items-center gap-2 self-stretch">
+                    <div
+                        :class="{
+                                'bg-success-500': message.valid,
+                                'bg-gray-400 dark:bg-dark-eval-3': !message.valid
+                            }"
+                        class="flex justify-center items-center w-5 h-5 rounded-full grow-0 shrink-0"
+                    >
+                        <CheckIcon aria-hidden="true" class="text-white" />
+                    </div>
+                    <div
+                        class="text-sm"
+                        :class="{
+                                'text-gray-600 dark:text-gray-300': message.valid,
+                                'text-gray-400 dark:text-gray-500': !message.valid
+                            }"
+                    >
+                        {{ $t('public.' + message.message) }}
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <div>
-                <Label for="password_confirmation" :value="$t('public.confirm_password')" />
-
-                <Input
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    :message="form.errors.password_confirmation"
-                    class="mt-2"
-                />
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button :disabled="form.processing">{{ $t('public.save') }}</Button>
+        <div class="w-full mt-8">
+            <div class="flex justify-end items-center gap-4">
+                <Button :disabled="form.processing" @click.prevent="updatePassword">{{ $t('public.save') }}</Button>
 
                 <Transition
                     enter-from-class="opacity-0"
@@ -112,6 +184,6 @@ const updatePassword = () => {
                     </p>
                 </Transition>
             </div>
-        </form>
-    </section>
+        </div>
+    </form>
 </template>

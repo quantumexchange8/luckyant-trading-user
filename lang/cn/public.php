@@ -437,4 +437,5 @@ return [
     "loading" => "加载中...",
     "total_global_trading_lot_size" => "全球交易手数统计",
     "subscribing_alert" => "您已经订阅了主帐户",
+    'successfully_update_password' => "成功更新账户密码",
 ];

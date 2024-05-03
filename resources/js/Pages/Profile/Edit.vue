@@ -105,9 +105,9 @@ onMounted(() => {
                             </div>
 
                             <div
-                                class="p-4 sm:p-8 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
+                                class="p-4 sm:p-8 flex flex-col gap-5 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
                             >
-                                <UpdatePasswordForm class="max-w-xl" />
+                                <UpdatePasswordForm />
                             </div>
                         </div>
                     </TabPanel>

@@ -57,7 +57,7 @@ class MasterController extends Controller
             'metaUser' => $MetaData
         ]);
     }
-//Lack performance fee, growth, drawdown part
+
     public function getLiveAccount()
     {
         $master = Master::query()
@@ -96,7 +96,6 @@ class MasterController extends Controller
             $averageLoss = round($tradeHistories->where('trade_profit', '<', 0)->avg('trade_profit'), 2);
             $totalProfit = $tradeHistories->where('trade_profit', '>', 0)->sum('trade_profit');
             $totalLoss = $tradeHistories->where('trade_profit', '<', 0)->sum('trade_profit');
-            $netProfit = $totalProfit - $totalLoss;
 
             $startDate = '2020-01-01'; // The date for get result
             $currentDate = Carbon::now()->format('Y-m-d H:i:s');
@@ -106,13 +105,9 @@ class MasterController extends Controller
             // Initialize $earliestDate as empty
             $earliestDate = '';
 
-            // Iterate through $dealHistories to find the earliest date
-            foreach ($dealHistories as $deal) {
-                $dealDate = date('Y-m-d', $deal['time']);
-                if ($earliestDate === '' || $dealDate < $earliestDate) {
-                    $earliestDate = $dealDate;
-                }
-            }
+            // Get the earliest date from the tradeHistory
+            $earliestDate = $tradeHistories->min('time_close');
+            $earliestDate = date('Y-m-d', strtotime($earliestDate));
             
             // Ensure $dealHistories is a collection
             if (is_array($dealHistories)) {
@@ -130,60 +125,26 @@ class MasterController extends Controller
                 $totalWithdrawal = $dealHistories->filter(function($deal) {
                     return $deal['action'] === 2 && $deal['profit'] < 0;
                 })->sum('profit');
-
-                // Find the initial capital (first deposit)
-                $initialCapital = $dealHistories->first(function ($deal) {
-                    return $deal['action'] === 2 && $deal['profit'] > 0;
-                });
-                $initialCapital = $initialCapital ? $initialCapital['profit'] : 0;
             } else {
                 // Handle the case where $dealHistories is null
                 $totalDeposit = 0;
                 $totalWithdrawal = 0;
-                $initialCapital = 0;
             }
             
-            $finalCapital = $totalDeposit - $initialCapital;
+            $totalGrowth = $tradeHistories->sum('trade_profit_pct');
 
-            $totalGrowth = $initialCapital !== 0 ? (($finalCapital - $initialCapital) / $initialCapital) * 100 : 0;
-
-            // Assuming the date information is stored in the 'created_at' field
+            // Assuming the date information is stored in the 'time_close' field
             $currentMonthStartDate = date('Y-m-01');
             $currentMonthEndDate = date('Y-m-t');
 
-            // Filter deals for the current month using timestamps
-            $currentMonthDeals = $dealHistories->filter(function($deal) use ($currentMonthStartDate, $currentMonthEndDate) {
-                $dealTimestamp = $deal['time'];
-                $dealDate = date('Y-m-d', $dealTimestamp);
-                return $dealDate >= $currentMonthStartDate && $dealDate <= $currentMonthEndDate;
-            });
+            $currentMonthGrowth = $tradeHistories->whereBetween('time_close', [$currentMonthStartDate, $currentMonthEndDate])->sum('trade_profit_pct');
 
-            if($currentMonthDeals !== null){
-                // Calculate total deposit and withdrawal for the current month
-                $currentMonthTotalDeposit = $currentMonthDeals->filter(function($deal) {
-                    return $deal['action'] === 2 && $deal['profit'] > 0;
-                })->sum('profit');
-
-                // Find the initial capital for the current month (first deposit)
-                $currentMonthInitialDeposit = $currentMonthDeals->first(function ($deal) {
-                    return $deal['action'] === 2 && $deal['profit'] > 0;
-                });
-                $currentMonthInitialCapital = $currentMonthInitialDeposit ? $currentMonthInitialDeposit['profit'] : 0;
-            } else {
-                // Handle the case where $dealHistories is null
-                $currentMonthTotalDeposit = 0;
-                $currentMonthInitialCapital = 0;
-            }
-
-            // Calculate final capital and current month growth
-            $currentMonthFinalCapital = $currentMonthTotalDeposit - $currentMonthInitialCapital;
-
-            $currentMonthGrowth = $currentMonthInitialCapital !== 0 ? (($currentMonthFinalCapital - $currentMonthInitialCapital) / $currentMonthInitialCapital) * 100 : 0;
-
+            $maxDailyGrowth = $tradeHistories->max('trade_profit_pct');
+                                    
             // Calculate total trades in the last 30 days
-            $totalTradesLast30Days = $tradeHistories->where('created_at', '>=', Carbon::today()->subDays(30))->count();
+            $totalTradesLast30Days = $tradeHistories->where('time_close', '>=', Carbon::today()->subDays(30))->count();
 
-            $latestTrade = $tradeHistories->isNotEmpty() ? strtotime($tradeHistories->max('created_at')) : null;
+            $latestTrade = $tradeHistories->isNotEmpty() ? strtotime($tradeHistories->max('time_close')) : null;
             $longsWon = $totalTrade != 0 ? $tradeHistories->where('trade_type', 'BUY')->where('trade_profit', '>', 0)->count() : 'N/A';
             $shortsWon = $totalTrade != 0 ? $tradeHistories->where('trade_type', 'SELL')->where('trade_profit', '>', 0)->count() : 'N/A';
             $longsWonPercentage = $totalTrade != 0 ? round($tradeHistories->where('trade_type', 'BUY')->where('trade_profit', '>', 0)->count() / $tradeHistories->where('trade_type', 'BUY')->count() * 100, 2) : 'N/A';
@@ -222,6 +183,7 @@ class MasterController extends Controller
             $metaAccount['withdrawals'] = round(abs($totalWithdrawal), 2);
             $metaAccount['totalGrowth'] = round($totalGrowth, 2);
             $metaAccount['currentMonthGrowth'] = round($currentMonthGrowth, 2);
+            $metaAccount['maxDailyGrowth'] = round($maxDailyGrowth, 2);
             $metaAccount['startDate'] =$earliestDate;
             $metaAccount['totalLot'] = round($totalVolume, 2);
             $metaAccount['totalTrade'] = $totalTrade;
@@ -268,8 +230,8 @@ class MasterController extends Controller
         // Get the earliest and latest dates for the meta_login
         $earliestDate = TradeHistory::where('meta_login', $request->meta_login)
             ->where('trade_status', 'Closed')
-            ->orderBy('created_at')
-            ->value('created_at');
+            ->orderBy('time_close')
+            ->value('time_close');
 
         // Convert the earliest date to a Carbon instance
         $earliestDate = Carbon::parse($earliestDate);
@@ -305,7 +267,7 @@ class MasterController extends Controller
             // Get the sum of trade profit percentages up to the current date
             $profitUntilDate = TradeHistory::where('meta_login', $request->meta_login)
                 ->where('trade_status', 'Closed')
-                ->whereDate('created_at', '<=', $date)
+                ->whereDate('time_close', '<=', $date)
                 ->sum('trade_profit_pct');
 
             // Add the sum to the array
@@ -412,7 +374,7 @@ class MasterController extends Controller
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
-        $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->latest()->get();
+        $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('created_at','2024-01-01')->latest()->get();
 
         if ($connection != 0) {
             return response()->json([

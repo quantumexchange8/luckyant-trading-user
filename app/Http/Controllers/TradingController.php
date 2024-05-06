@@ -390,6 +390,7 @@ class TradingController extends Controller
             foreach ($subscription_batches as $subscription_batch) {
                 $subscription_batch->update([
                     'auto_renewal' => false,
+                    'termination_date' => now(),
                     'status' => 'Terminated'
                 ]);
             }

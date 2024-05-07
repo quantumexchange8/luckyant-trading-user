@@ -177,7 +177,7 @@ class MasterController extends Controller
 
             $metaAccount = $metaService->getMetaAccount($master->meta_login);
             $metaAccount['name'] = $name;
-            $metaAccount['totalProfit'] = $totalProfits;
+            $metaAccount['totalProfit'] = round($totalProfits, 2);
             $metaAccount['deposits'] = round($totalDeposit, 2);
             $metaAccount['withdrawals'] = round(abs($totalWithdrawal), 2);
             $metaAccount['totalGrowth'] = round($totalGrowth, 2);

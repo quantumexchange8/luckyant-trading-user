@@ -179,6 +179,7 @@ class MasterController extends Controller
 
             $metaAccount = $metaService->getMetaAccount($master->meta_login);
             $metaAccount['name'] = $name;
+            $metaAccount['totalProfit'] = $totalProfit;
             $metaAccount['deposits'] = round($totalDeposit, 2);
             $metaAccount['withdrawals'] = round(abs($totalWithdrawal), 2);
             $metaAccount['totalGrowth'] = round($totalGrowth, 2);
@@ -374,7 +375,7 @@ class MasterController extends Controller
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
-        $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('created_at', '>=','2024-01-01')->latest()->get();
+        $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('time_open', '>','2024-04-15')->latest()->get();
 
         if ($connection != 0) {
             return response()->json([

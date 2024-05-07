@@ -94,8 +94,6 @@ class MasterController extends Controller
             $totalTrade = $tradeHistories->count();
             $averageProfit = round($tradeHistories->where('trade_profit', '>', 0)->avg('trade_profit'), 2);
             $averageLoss = round($tradeHistories->where('trade_profit', '<', 0)->avg('trade_profit'), 2);
-            $totalProfit = $tradeHistories->where('trade_profit', '>', 0)->sum('trade_profit');
-            $totalLoss = $tradeHistories->where('trade_profit', '<', 0)->sum('trade_profit');
 
             $startDate = '2020-01-01'; // The date for get result
             $currentDate = Carbon::now()->format('Y-m-d H:i:s');
@@ -179,7 +177,7 @@ class MasterController extends Controller
 
             $metaAccount = $metaService->getMetaAccount($master->meta_login);
             $metaAccount['name'] = $name;
-            $metaAccount['totalProfit'] = $totalProfit;
+            $metaAccount['totalProfit'] = $totalProfits;
             $metaAccount['deposits'] = round($totalDeposit, 2);
             $metaAccount['withdrawals'] = round(abs($totalWithdrawal), 2);
             $metaAccount['totalGrowth'] = round($totalGrowth, 2);

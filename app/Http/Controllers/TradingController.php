@@ -565,6 +565,13 @@ class TradingController extends Controller
 
     public function getTradeHistories(Request $request, $meta_login)
     {
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
+
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'time_close';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+
         $tradeHistories = TradeHistory::where('meta_login', $meta_login)
             ->when($request->filled('date'), function ($query) use ($request) {
                 $date = $request->input('date');
@@ -581,10 +588,11 @@ class TradingController extends Controller
             ->when($request->filled('tradeType'), function ($query) use ($request) {
                 $tradeType = $request->input('tradeType');
                 $query->where('trade_type', $tradeType);
-            })
-            ->where('trade_status', 'Closed')
-            ->orderByDesc('time_close')
-            ->paginate(10);
+            });
+            
+            $tradeHistories = $tradeHistories->where('trade_status', 'Closed')
+                ->orderBy($column, $sortOrder)
+                ->paginate($request->input('paginate', 10));
 
         return response()->json($tradeHistories);
     }

@@ -16,6 +16,8 @@ import Modal from "@/Components/Modal.vue";
 import Combobox from "@/Components/Combobox.vue";
 import toast from "@/Composables/toast.js";
 import { wTrans } from 'laravel-vue-i18n';
+import NoData from "@/Components/NoData.vue";
+import TanStackTable from "@/Components/TanStackTable.vue";
 
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -33,7 +35,10 @@ const refresh = ref(false);
 const type = ref();
 const tradeType = ref();
 const tradeHistories = ref({data: []})
+const action = ref('');
+const sorting = ref();
 const currentPage = ref(1)
+const pageSize = ref(10);
 const { formatDateTime, formatAmount } = transactionFormat();
 
 const tradeActions = [
@@ -42,21 +47,62 @@ const tradeActions = [
     {value: 'SELL', label:"SELL"},
 ];
 
-const getResults = async (page = 1, type = null, date = '', tradeType = '') => {
-    isLoading.value = true
+const pageSizes = [
+    { value: 5, label: 5 },
+    { value: 10, label: 10 },
+    { value: 20, label: 20 },
+    { value: 50, label: 50 },
+    { value: 100, label: 100 },
+];
+
+watch([currentPage, action], ([currentPageValue, newAction]) => {
+    if (newAction === 'goToFirstPage' || newAction === 'goToLastPage') {
+        getResults(currentPageValue, pageSize.value);
+    } else {
+        getResults(currentPageValue, pageSize.value);
+    }
+});
+
+watch(
+    [sorting, pageSize],
+    ([sortingValue, pageSizeValue]) => {
+        getResults(1, pageSizeValue, type.value, tradeType.value, date.value, sorting.value);
+    }
+);
+
+watch(
+    [type, tradeType, date],
+    debounce(([typeValue, tradeTypeValue, dateValue]) => {
+        const typeStrings = typeValue ? typeValue.map(item => item.value) : null;
+        getResults(1, pageSize.value, typeStrings, tradeTypeValue, dateValue, sorting.value);
+    }, 300)
+);
+
+const getResults = async (page = 1, paginate = 10, type = null, tradeType = '', date = '', columnName = sorting.value) => {
+    // isLoading.value = true
     try {
         let url = `/trading/getTradeHistories/${props.meta_login}?page=${page}`;
 
+        if (paginate) {
+            url += `&paginate=${paginate}`;
+        }
+
         if (type) {
             url += `&type=${type}`;
+        }
+
+        if (tradeType) {
+            url += `&tradeType=${tradeType}`;
         }
 
         if (date) {
             url += `&date=${date}`;
         }
 
-        if (tradeType) {
-            url += `&tradeType=${tradeType}`;
+        if (columnName) {
+            // Convert the object to JSON and encode it to send as a query parameter
+            const encodedColumnName = encodeURIComponent(JSON.stringify(columnName));
+            url += `&columnName=${encodedColumnName}`;
         }
 
         const response = await axios.get(url);
@@ -71,40 +117,93 @@ const getResults = async (page = 1, type = null, date = '', tradeType = '') => {
 
 getResults()
 
-watch(
-    [type, date, tradeType],
-    debounce(([typeValue, dateValue, tradeType]) => {
-        const typeStrings = typeValue ? typeValue.map(item => item.value) : null;
-        getResults(1, typeStrings, dateValue, tradeType);
-    }, 300)
-);
-
-const handlePageChange = (newPage) => {
-    if (newPage >= 1) {
-        currentPage.value = newPage;
-        const typeStrings = type.value ? type.value.map(item => item.value) : null;
-
-        getResults(currentPage.value, typeStrings, date.value, tradeType.value);
-    }
-};
-
-const refreshHistory = () => {
-    const typeStrings = type.value ? type.value.map(item => item.value) : null;
-
-    getResults(1, typeStrings, date.value, tradeType.value);
-
-    toast.add({
-        message: wTrans('public.successfully_refreshed'),
-    });
-}
-
-const paginationClass = [
-    'bg-transparent border-0 text-gray-600 dark:text-gray-400 dark:enabled:hover:text-white'
+const columns = [
+    {
+        accessorKey: 'time_close',
+        header: 'date',
+        cell: info => formatDateTime(info.getValue()),
+    },
+    {
+        accessorKey: 'symbol',
+        header: 'symbol',
+        cell: info => info.getValue(),
+    },
+    {
+        accessorKey: 'ticket',
+        header: 'ticket_number',
+        cell: info => info.getValue(),
+    },
+    {
+        accessorKey: 'trade_type',
+        header: 'action',
+        cell: info => info.getValue(),
+    },
+    {
+        accessorKey: 'volume',
+        header: 'volume',
+        cell: info => formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'price_open',
+        header: 'open_price',
+        cell: info => '$ ' + formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'price_close',
+        header: 'close_price',
+        cell: info => '$ ' + formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'trade_swap',
+        header: 'swap',
+        cell: info => formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'trade_profit',
+        header: 'profit',
+        cell: info => '$ ' + formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'trade_profit_pct',
+        header: 'change',
+        cell: info => formatAmount(info.getValue()) + ' %',
+    },
 ];
 
-const paginationActiveClass = [
-    'border dark:border-gray-600 dark:bg-gray-600 rounded-full text-primary-500 dark:text-primary-300'
-];
+// watch(
+//     [type, date, tradeType],
+//     debounce(([typeValue, dateValue, tradeType]) => {
+//         const typeStrings = typeValue ? typeValue.map(item => item.value) : null;
+//         getResults(1, typeStrings, dateValue, tradeType);
+//     }, 300)
+// );
+
+// const handlePageChange = (newPage) => {
+//     if (newPage >= 1) {
+//         currentPage.value = newPage;
+//         const typeStrings = type.value ? type.value.map(item => item.value) : null;
+
+//         getResults(currentPage.value, typeStrings, date.value, tradeType.value);
+//     }
+// };
+
+// const refreshHistory = () => {
+//     const typeStrings = type.value ? type.value.map(item => item.value) : null;
+
+//     getResults(1, typeStrings, date.value, tradeType.value);
+
+//     toast.add({
+//         message: wTrans('public.successfully_refreshed'),
+//     });
+// }
+
+// const paginationClass = [
+//     'bg-transparent border-0 text-gray-600 dark:text-gray-400 dark:enabled:hover:text-white'
+// ];
+
+// const paginationActiveClass = [
+//     'border dark:border-gray-600 dark:bg-gray-600 rounded-full text-primary-500 dark:text-primary-300'
+// ];
 
 watchEffect(() => {
     if (usePage().props.title !== null) {
@@ -131,12 +230,12 @@ function loadSymbols(query, setOptions) {
 <template>
     <div class="flex justify-between mb-3">
         <h4 class="font-semibold text-lg dark:text-white">{{$t('public.trade_history')}}</h4>
-        <RefreshIcon
+        <!-- <RefreshIcon
             :class="{ 'animate-spin': isLoading }"
             class="flex-shrink-0 w-5 h-5 cursor-pointer dark:text-white"
             aria-hidden="true"
             @click="refreshHistory"
-        />
+        /> -->
     </div>
 
     <div class="flex flex-wrap gap-3 w-full justify-end items-center sm:flex-nowrap">
@@ -167,101 +266,32 @@ function loadSymbols(query, setOptions) {
         </div>
     </div>
 
-    <div class="mt-2 relative overflow-x-auto">
-        <div v-if="isLoading" class="w-full flex justify-center my-8">
-            <Loading />
-        </div>
-        <table v-else class="w-[650px] md:w-full text-sm text-left text-gray-500 dark:text-gray-400 mt-5">
-            <thead class="text-xs font-medium text-gray-400 uppercase dark:bg-transparent dark:text-gray-400 border-b dark:border-gray-800">
-            <tr>
-                <th scope="col" class="p-3">
-                    {{$t('public.date')}} ({{ $t('public.close') }})
-                </th>
-                <th scope="col" class="p-3">
-                    {{$t('public.symbol')}}
-                </th>
-                <th scope="col" class="p-3">
-                    {{$t('public.ticket_number')}}
-                </th>
-                <th scope="col" class="p-3">
-                    {{$t('public.action')}}
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.volume')}}
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.open_price')}}
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.close_price')}}
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.profit')}} ($)
-                </th>
-                <th scope="col" class="p-3 text-center">
-                    {{$t('public.change')}} (%)
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-if="tradeHistories.data.length === 0">
-                <th colspan="9" class="py-4 text-lg text-center">
-                    {{$t('public.no_history')}}
-                </th>
-            </tr>
-            <tr
-                v-for="history in tradeHistories.data"
-                class="bg-white dark:bg-transparent text-xs text-gray-900 dark:text-white border-b dark:border-gray-800 hover:bg-primary-50 dark:hover:bg-gray-600"
+    <div class="p-5 my-8 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
+            <div class="flex justify-end items-center gap-2">
+                <div class="text-sm">
+                    {{ $t('public.size') }}
+                </div>
+                <div>
+                    <BaseListbox
+                        :options="pageSizes"
+                        v-model="pageSize"
+                    />
+                </div>
+            </div>
+            <div
+                v-if="tradeHistories.data.length === 0"
+                class="w-full flex items-center justify-center"
             >
-                <td class="p-3">
-                    {{ formatDateTime(history.time_close) }}
-                </td>
-                <td class="p-3">
-                    {{ history.symbol }}
-                </td>
-                <td class="p-3">
-                    {{ history.ticket }}
-                </td>
-                <td class="p-3">
-                    {{ history.trade_type }}
-                </td>
-                <td class="p-3 text-center">
-                    {{ formatAmount(history.volume) }}
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    {{ history.price_open ? history.price_open : '0.00' }}
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    {{ history.price_close ? history.price_close : '0.00' }}
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    <div :class="{ 'text-error-500': history.trade_profit < 0, 'text-success-500': history.trade_profit > 0 }">
-                        {{ history.trade_profit ? formatAmount(history.trade_profit) : '0.00' }}
-                    </div>
-                </td>
-                <td class="p-3 font-semibold text-center">
-                    <div :class="{ 'text-error-500': history.trade_profit_pct < 0, 'text-success-500': history.trade_profit_pct > 0 }">
-                        {{ history.trade_profit_pct ? formatAmount(history.trade_profit_pct) : '-' }}
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="flex justify-center mt-4" v-if="!isLoading">
-        <TailwindPagination
-            :item-classes=paginationClass
-            :active-classes=paginationActiveClass
-            :data="tradeHistories"
-            :limit=2
-            @pagination-change-page="handlePageChange"
-        >
-            <template #prev-nav>
-                <span class="flex gap-2"><ArrowLeftIcon class="w-5 h-5" /> <span class="hidden sm:flex">{{$t('public.previous')}}</span></span>
-            </template>
-            <template #next-nav>
-                <span class="flex gap-2"><span class="hidden sm:flex">{{$t('public.next')}}</span> <ArrowRightIcon class="w-5 h-5" /></span>
-            </template>
-        </TailwindPagination>
-    </div>
+                <NoData />
+            </div>
+            <div v-else>
+                <TanStackTable
+                    :data="tradeHistories"
+                    :columns="columns"
+                    @update:sorting="sorting = $event"
+                    @update:action="action = $event"
+                    @update:currentPage="currentPage = $event"
+                />
+            </div>
+        </div>
 </template>

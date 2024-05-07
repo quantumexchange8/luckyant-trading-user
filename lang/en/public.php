@@ -385,6 +385,7 @@ return [
     'profit' => "Profit",
     'volume' => "Volume",
     'rebate' => "Rebate",
+    'swap' => "Swap",
     'trade_history' => "Trade History",
     'filter_symbols' => "Filter Symbols",
     'filter_rank' => "Filter Rank",

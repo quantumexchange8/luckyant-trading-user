@@ -141,7 +141,6 @@ const columns = [
 const clearFilter = () => {
     search.value = '';
     date.value = '';
-    master.value = '';
 }
 
 watch([currentPage, action], ([currentPageValue, newAction]) => {

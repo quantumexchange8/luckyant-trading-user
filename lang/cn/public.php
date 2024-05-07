@@ -385,6 +385,7 @@ return [
     'profit' => "收益",
     'volume' => "手数",
     'rebate' => "返利",
+    'swap' => "交换",
     'trade_history' => "交易历史",
     'filter_symbols' => "搜索产品",
     'filter_rank' => "筛选级别",

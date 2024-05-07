@@ -170,6 +170,11 @@ const columns = [
         cell: info => '$ ' + formatAmount(info.getValue()),
     },
     {
+        accessorKey: 'trade_swap',
+        header: 'swap',
+        cell: info => formatAmount(info.getValue()),
+    },
+    {
         accessorKey: 'trade_profit',
         header: 'profit',
         cell: info => '$ ' + formatAmount(info.getValue()),

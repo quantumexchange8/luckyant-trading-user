@@ -15,6 +15,7 @@ import SubscriptionBatchDetail from "@/Pages/Trading/SubscriptionListing/Partial
 const props = defineProps({
     subscription: Object,
     terms: Object,
+    terminateBadgeStatus: Boolean,
     swapMasterSel: Array
 })
 
@@ -58,6 +59,8 @@ const closeModal = () => {
         <template v-if="modalComponent === 'view_details'">
             <SubscriptionBatchDetail
                 :subscription="subscription"
+                :terms="terms"
+                :terminateBadgeStatus="terminateBadgeStatus"
                 @update:subscriptionModal="subscriptionModal = $event"
             />
         </template>

@@ -428,7 +428,7 @@ return [
     'transaction_amount' => "Transaction Amount",
     'wallet_adjustment' => "Wallet Adjustment",
     'max_drawdown' => "Max Drawdown",
-    "agreement" => "By proceeding, I agree that I have read the supporting documents and agree to the",
+    "agreement" => "By proceeding, I agree that I have read the supporting documents and agree to the ",
     "please_wait_for_seconds" => "Please wait for :seconds seconds to perform another transaction",
     "copy_trade_transaction" => "Copy Trade Transaction",
     "size" => "Size",
@@ -455,4 +455,5 @@ return [
     "unsubscribed" => "Unsubscribed",
     "termination_date" => "Termination Date",
     'successfully_update_password' => "Successfully Updated Password",
+    'terminate_details' => "Terminate Details",
 ];

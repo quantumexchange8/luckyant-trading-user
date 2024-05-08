@@ -455,4 +455,5 @@ return [
     "unsubscribed" => "退订",
     "termination_date" => "终止日期",
     'successfully_update_password' => "成功更新账户密码",
+    'terminate_details' => "终止详情",
 ];

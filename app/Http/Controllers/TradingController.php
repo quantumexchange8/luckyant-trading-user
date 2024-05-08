@@ -748,4 +748,43 @@ class TradingController extends Controller
         $penalty = SubscriptionPenaltyLog::where('subscription_batch_id', $request->subscription_batch_id)->first();
         return response()->json($penalty);
     }
+
+    public function terminateBatch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'terms' => ['accepted']
+        ])->setAttributeNames([
+            'terms' => trans('public.terms_and_conditions'),
+        ]);
+
+        $subscription_batch = SubscriptionBatch::find($request->id);
+
+        if ($subscription_batch->status == 'Terminated') {
+            return redirect()->back()
+                ->with('title', trans('public.terminated'))
+                ->with('warning', trans('public.terminated_subscription_error'));
+        }
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        } else {
+            $subscription_batch->update([
+                'auto_renewal' => false,
+                'termination_date' => now(),
+                'status' => 'Terminated'
+            ]);
+
+            $subscriber = Subscriber::find($subscription_batch->subscriber_id);
+            $subscriber->subscribe_amount -= $subscription_batch->meta_balance;
+            $subscriber->save();
+
+            $subscription = Subscription::find($subscription_batch->subscription_id);
+            $subscription->meta_balance -= $subscription_batch->meta_balance;
+            $subscription->save();
+
+            return redirect()->back()
+                ->with('title', trans('public.success_terminate'))
+                ->with('success', trans('public.successfully_terminate'). ': ' . $subscription->subscription_number);
+        }
+    }
 }

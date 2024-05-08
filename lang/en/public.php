@@ -367,7 +367,7 @@ return [
     'register_terms_5' => "Must contain one of the special characters",
     'register_terms_6' => "New password matches confirm password",
     'bank' => "Bank",
-    'payment_merchant' => "USDT  Sprit Pay (TRC)",
+    'payment_merchant' => "Tether (USDT)",
     'terminate' => "Terminate",
     'crypto' => "Crypto",
     'level' => "Level",

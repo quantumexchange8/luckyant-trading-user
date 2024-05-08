@@ -140,24 +140,18 @@ watchEffect(() => {
                 </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        {{ $t('public.exempt_amount') }}
+                        {{ $t('public.estimated_roi') }}
                     </div>
                     <div class="flex justify-center">
-                        <span
-                            :class="{
-                                'text-success-500': subscriberAccount && subscriberAccount.penalty_exempt > 0,
-                                'text-gray-800 dark:text-gray-100': subscriberAccount && subscriberAccount.penalty_exempt === 0,
-                            }"
-                            class="font-semibold"
-                        >$ {{ formatAmount(subscriberAccount.penalty_exempt ? subscriberAccount.penalty_exempt : 0, 0) }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ subscriberAccount.master.estimated_monthly_returns }}</span>
                     </div>
                 </div>
                 <div class="space-y-1">
                     <div class="text-xs flex justify-center">
-                        {{ $t('public.management_period') }}
+                        {{ $t('public.roi_period') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.management_period }} {{ $t('public.days') }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} {{ $t('public.days') }}</span>
                     </div>
                 </div>
             </div>

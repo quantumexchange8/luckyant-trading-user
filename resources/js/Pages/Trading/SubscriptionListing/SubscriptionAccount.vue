@@ -143,7 +143,7 @@ watchEffect(() => {
                         {{ $t('public.estimated_roi') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ subscriberAccount.master.estimated_monthly_returns }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.estimated_monthly_returns }}</span>
                     </div>
                 </div>
                 <div class="space-y-1">

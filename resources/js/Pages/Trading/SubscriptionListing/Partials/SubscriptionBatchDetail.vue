@@ -13,11 +13,13 @@ const emit = defineEmits(['update:subscriptionModal']);
 const { formatDateTime, formatAmount } = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
 const batchDetail = ref(null);
+const managementFeeAmount = ref(0);
 
 onMounted(async () => {
     try {
         const response = await axios.get('getPenaltyDetail?subscription_batch_id=' + props.subscription.id);
         batchDetail.value = response.data;
+        managementFeeAmount.value = props.subscription.meta_balance * ((props.subscription.management_fee) / 100)
     } catch (error) {
         console.error(error);
     }
@@ -102,7 +104,7 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                         {{$t('public.join_day')}}
                     </div>
                     <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        {{ subscription.join_days }} {{ $t('public.days') }} / {{ subscription.management_period }} {{ $t('public.days') }}
+                        {{ subscription.join_days }} {{ $t('public.days') }}
                     </div>
                 </div>
                 <div class="flex items-start justify-between gap-2 self-stretch">
@@ -182,5 +184,28 @@ const calculateWidthPercentage = (starting_date, expired_date, period) => {
                 </div>
             </div>
         </div>
+<!--        <div class="flex flex-col gap-2">-->
+<!--            <div class="text-gray-600 font-semibold">-->
+<!--                {{ $t('public.terminate_details') }}-->
+<!--            </div>-->
+<!--            <div class="grid">-->
+<!--                <div class="flex items-start justify-between gap-2 self-stretch">-->
+<!--                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">-->
+<!--                        {{$t('public.management_fee')}} ({{ formatAmount(subscription.management_fee, 0) }}%)-->
+<!--                    </div>-->
+<!--                    <div class="text-sm sm:text-base text-error-500 font-bold">-->
+<!--                        $ {{ formatAmount(managementFeeAmount) }}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="flex items-start justify-between gap-2 self-stretch">-->
+<!--                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">-->
+<!--                        {{$t('public.return_amount')}}-->
+<!--                    </div>-->
+<!--                    <div class="text-sm sm:text-base text-success-500 font-bold">-->
+<!--                        $ {{ formatAmount(subscription.meta_balance - managementFeeAmount) }}-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </template>

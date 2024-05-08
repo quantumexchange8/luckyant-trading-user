@@ -89,7 +89,7 @@ getResults();
 
 const columns = [
     {
-        accessorKey: 'created_at',
+        accessorKey: 'approval_date',
         header: 'date',
         cell: info => formatDateTime(info.getValue()),
     },

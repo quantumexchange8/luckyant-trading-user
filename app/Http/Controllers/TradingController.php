@@ -275,7 +275,7 @@ class TradingController extends Controller
         // Decode the JSON
         $decodedColumnName = json_decode(urldecode($columnName), true);
 
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'approval_date';
         $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
 
         $query = SubscriptionBatch::with(['master', 'master.tradingUser', 'master.masterManagementFee'])
@@ -299,7 +299,7 @@ class TradingController extends Controller
             $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
             $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
 
-            $query->whereBetween('created_at', [$start_date, $end_date]);
+            $query->whereBetween('approval_date', [$start_date, $end_date]);
         }
 
         if ($request->filled('master')) {
@@ -314,7 +314,7 @@ class TradingController extends Controller
         }
 
         $results = $query
-            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
+            ->orderBy($column == null ? 'approval_date' : $column, $sortOrder)
             ->paginate($request->input('paginate', 10));
 
         $results->each(function ($batch) {
@@ -322,8 +322,13 @@ class TradingController extends Controller
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($batch->status == 'Terminated' ? $batch->termination_date : $today);
 
+            $management_fee = MasterManagementFee::where('master_id', $batch->master_id)
+                ->where('penalty_days', '>', $join_days)
+                ->first();
+
             $batch->join_days = $join_days;
             $batch->management_period = $batch->master->masterManagementFee->sum('penalty_days');
+            $batch->management_fee = $management_fee->penalty_percentage;
         });
 
         return response()->json($results);
@@ -589,7 +594,7 @@ class TradingController extends Controller
                 $tradeType = $request->input('tradeType');
                 $query->where('trade_type', $tradeType);
             });
-            
+
             $tradeHistories = $tradeHistories->where('trade_status', 'Closed')
                 ->orderBy($column, $sortOrder)
                 ->paginate($request->input('paginate', 10));

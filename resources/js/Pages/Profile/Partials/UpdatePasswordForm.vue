@@ -87,7 +87,7 @@ const passwordValidation = () => {
     </div>
 
     <form>
-        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div class="w-full flex flex-col gap-5">
             <div class="space-y-6">
                 <div>
                     <Label for="current_password" :value="$t('public.current_password')" />

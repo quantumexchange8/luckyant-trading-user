@@ -456,4 +456,12 @@ return [
     "termination_date" => "终止日期",
     'successfully_update_password' => "成功更新账户密码",
     'terminate_details' => "终止详情",
+    'security_pin' => "安全密码",
+    'security_pin_caption' => "使用密码加固您的账户安全。",
+    'current_pin' => "当前安全密码",
+    'current_pin_invalid' => "错误安全密码",
+    'new_pin' => "新安全密码",
+    'confirm_pin' => "确认安全密码",
+    'successfully_update_pin' => "成功更新安全密码",
+    'setup_security_pin' => "设置安全密码",
 ];

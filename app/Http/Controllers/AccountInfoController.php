@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Subscriber;
 use App\Models\SubscriptionBatch;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use App\Models\Master;
 use App\Models\Wallet;
@@ -630,6 +631,7 @@ class AccountInfoController extends Controller
             'confirm_master_password' => ['required_with:master_password', 'same:master_password'],
             'investor_password' => ['required_without:master_password'],
             'confirm_investor_password' => ['required_with:investor_password', 'same:investor_password'],
+            'security_pin' => ['required'],
         ];
 
         if (!empty($request->master_password)) {
@@ -645,6 +647,7 @@ class AccountInfoController extends Controller
             'confirm_master_password' => trans('public.confirm_master_password'),
             'investor_password' => trans('public.investor_password'),
             'confirm_investor_password' => trans('public.confirm_investor_password'),
+            'security_pin' => trans('public.security_pin'),
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -654,6 +657,11 @@ class AccountInfoController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
             $user = Auth::user();
+
+            if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
+                throw ValidationException::withMessages(['security_pin' => trans('public.current_pin_invalid')]);
+            }
+
             $meta_login = $request->meta_login;
             $master_password = $request->master_password;
             $investor_password = $request->investor_password;

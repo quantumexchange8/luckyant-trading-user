@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use App\Models\Wallet;
 use App\Models\Setting;
@@ -400,7 +401,14 @@ class WalletController extends Controller
         $paymentAccount = PaymentAccount::find($request->wallet_address);
         $conversion_rate = CurrencyConversionRate::where('base_currency', $paymentAccount->currency)->first();
 
+        if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
+            return back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.current_pin_invalid'));
+        }
+
         $wallet = Wallet::find($request->wallet_id);
+
         if ($wallet->balance < $amount) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
         }
@@ -567,7 +575,7 @@ class WalletController extends Controller
         if (!$isToUserInUserHierarchy && !$isUserInToUserHierarchy) {
             throw ValidationException::withMessages(['wallet_address' => trans('public.hierarchy_validation_error')]);
         }
-        
+
         // Check if balance is sufficient
         if ($from_wallet->balance < $amount || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $from_wallet->name])]);

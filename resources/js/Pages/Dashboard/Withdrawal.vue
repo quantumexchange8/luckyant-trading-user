@@ -1,15 +1,18 @@
 <script setup>
 import Button from "@/Components/Button.vue";
 import {BanIcon, CurrencyDollarIcon} from "@heroicons/vue/outline";
-import {ref, computed, watch} from "vue";
+import {ref, computed, watch, watchEffect} from "vue";
 import Modal from "@/Components/Modal.vue";
 import Label from "@/Components/Label.vue";
 import {XIcon} from "@/Components/Icons/outline.jsx";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
-import {useForm} from "@inertiajs/vue3";
+import {useForm, usePage} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
+import VOtpInput from "vue3-otp-input";
+import UserPin from "@/Pages/Profile/Partials/UserPin.vue";
+import DepositBalance from "@/Pages/AccountInfo/TradingAccount/DepositBalance.vue";
 
 const props = defineProps({
     wallet: Object,
@@ -22,6 +25,8 @@ const { formatAmount } = transactionFormat();
 const withdrawalAmount = ref();
 const selectedWallet = ref(props.wallet);
 const selectedPaymentAccount = ref(null);
+const user = usePage().props.auth.user;
+const checkCurrentPin = ref(false);
 
 const openWithdrawalModal = () => {
     withdrawalModal.value = true;
@@ -35,6 +40,7 @@ const form = useForm({
     amount: '',
     wallet_address: '',
     transaction_charges: '',
+    security_pin: '',
 })
 
 const submit = () => {
@@ -79,6 +85,24 @@ const handleButtonClick = () => {
         withdrawalAmount.value = '';
     }
 }
+
+const inputClasses = ['rounded-lg w-full py-2.5 border border-gray-300 dark:border-gray-800 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500']
+
+const setupSecurityPinModal = ref(false);
+
+const openSetupModal = () => {
+    setupSecurityPinModal.value = true
+}
+
+const closeSetupModal = () => {
+    setupSecurityPinModal.value = false
+}
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        checkCurrentPin.value = true;
+    }
+});
 </script>
 
 <template>
@@ -125,7 +149,7 @@ const handleButtonClick = () => {
         </div>
         <form
             v-else-if="paymentAccountSel.length > 0"
-            class="space-y-2 mt-2"
+            class="space-y-4 mt-2"
         >
             <div class="flex flex-col sm:flex-row gap-4">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
@@ -160,13 +184,58 @@ const handleButtonClick = () => {
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-4 pt-2 pb-5">
+            <div class="flex flex-col sm:flex-row gap-4">
                 <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="wallet_address" :value="$t('public.to_account')" />
                 <div class="flex flex-col w-full">
                     <BaseListbox
                         :options="paymentAccountSel"
                         v-model="selectedPaymentAccount"
                         :error="!!form.errors.wallet_address"
+                    />
+                </div>
+            </div>
+
+            <div v-if="checkCurrentPin || user.security_pin" class="flex flex-col sm:flex-row gap-4 pb-5">
+                <Label
+                    for="pin"
+                    class="text-sm dark:text-white w-full md:w-1/4 pt-0.5"
+                    :value="$t('public.security_pin')"
+                />
+                <div class="flex flex-col w-full">
+                    <VOtpInput
+                        :input-classes="inputClasses"
+                        class="flex gap-2"
+                        separator=""
+                        inputType="password"
+                        :num-inputs="6"
+                        v-model:value="form.security_pin"
+                        :should-auto-focus="false"
+                        :should-focus-order="true"
+                    />
+
+                    <InputError
+                        :message="form.errors.security_pin"
+                        class="mt-2"
+                    />
+                </div>
+            </div>
+
+            <div v-else class="flex flex-col sm:flex-row gap-4 pb-5">
+                <div class="text-sm dark:text-white w-full md:w-1/4 pt-0.5">
+                    {{ $t('public.security_pin') }}
+                </div>
+                <div class="flex flex-col w-full">
+                    <Button
+                        type="button"
+                        class="flex justify-center w-full sm:w-fit"
+                        @click="openSetupModal"
+                    >
+                        {{ $t('public.setup_security_pin') }}
+                    </Button>
+
+                    <InputError
+                        :message="form.errors.security_pin"
+                        class="mt-2"
                     />
                 </div>
             </div>
@@ -212,6 +281,14 @@ const handleButtonClick = () => {
             >
                 {{ $t('public.add_payment_account') }}
             </Button>
+        </div>
+    </Modal>
+
+    <Modal :show="setupSecurityPinModal" :title="$t('public.setup_security_pin')" @close="closeSetupModal">
+        <div class="flex flex-col gap-5">
+            <UserPin
+                @update:setupSecurityPinModal="setupSecurityPinModal = $event"
+            />
         </div>
     </Modal>
 </template>

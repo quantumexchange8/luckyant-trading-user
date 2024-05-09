@@ -1,12 +1,15 @@
 <script setup>
-import {useForm} from "@inertiajs/vue3";
+import {useForm, usePage} from "@inertiajs/vue3";
 import Label from "@/Components/Label.vue";
 import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
 import Button from "@/Components/Button.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import { EyeIcon, EyeOffIcon, CheckIcon, UserAddIcon } from '@heroicons/vue/outline'
-import {ref} from "vue";
+import {ref, watchEffect} from "vue";
+import VOtpInput from "vue3-otp-input";
+import UserPin from "@/Pages/Profile/Partials/UserPin.vue";
+import Modal from "@/Components/Modal.vue";
 
 const props = defineProps({
     account: Object,
@@ -22,6 +25,7 @@ const form = useForm({
     confirm_master_password: '',
     investor_password: '',
     confirm_investor_password: '',
+    security_pin: '',
 })
 
 const closeModal = () => {
@@ -105,6 +109,27 @@ const passwordValidation = () => {
 
     return { masterValid, masterMessages, investorValid, investorMessages };
 };
+
+const user = usePage().props.auth.user;
+const checkCurrentPin = ref(false);
+
+const inputClasses = ['rounded-lg w-full py-2.5 border border-gray-300 dark:border-gray-800 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500']
+
+const setupSecurityPinModal = ref(false);
+
+const openSetupModal = () => {
+    setupSecurityPinModal.value = true
+}
+
+const closeSetupModal = () => {
+    setupSecurityPinModal.value = false
+}
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        checkCurrentPin.value = true;
+    }
+});
  </script>
 
 <template>
@@ -187,7 +212,7 @@ const passwordValidation = () => {
             </div>
         </div>
 
-        <div class="border-t border-gray-300 py-2"></div> 
+        <div class="border-t border-gray-300 py-2"></div>
         <div class="flex flex-col sm:flex-row gap-4 py-2">
             <Label class="text-sm dark:text-white w-full md:w-1/4" for="investor_password" :value="$t('public.investor_password')" />
             <div class="flex flex-col w-full">
@@ -266,6 +291,50 @@ const passwordValidation = () => {
             </div>
         </div>
 
+        <div v-if="checkCurrentPin || user.security_pin" class="flex flex-col sm:flex-row gap-4 pb-5">
+            <Label
+                for="pin"
+                class="text-sm dark:text-white w-full md:w-1/4 pt-0.5"
+                :value="$t('public.security_pin')"
+            />
+            <div class="flex flex-col w-full">
+                <VOtpInput
+                    :input-classes="inputClasses"
+                    class="flex gap-2"
+                    separator=""
+                    inputType="password"
+                    :num-inputs="6"
+                    v-model:value="form.security_pin"
+                    :should-auto-focus="false"
+                    :should-focus-order="true"
+                />
+
+                <InputError
+                    :message="form.errors.security_pin"
+                    class="mt-2"
+                />
+            </div>
+        </div>
+
+        <div v-else class="flex flex-col sm:flex-row gap-4 pb-5">
+            <div class="text-sm dark:text-white w-full md:w-1/4 pt-0.5">
+                {{ $t('public.security_pin') }}
+            </div>
+            <div class="flex flex-col w-full">
+                <Button
+                    type="button"
+                    class="flex justify-center w-full sm:w-fit"
+                    @click="openSetupModal"
+                >
+                    {{ $t('public.setup_security_pin') }}
+                </Button>
+
+                <InputError
+                    :message="form.errors.security_pin"
+                    class="mt-2"
+                />
+            </div>
+        </div>
 
         <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
             <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
@@ -274,4 +343,12 @@ const passwordValidation = () => {
             <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
         </div>
     </form>
+
+    <Modal :show="setupSecurityPinModal" :title="$t('public.setup_security_pin')" @close="closeSetupModal">
+        <div class="flex flex-col gap-5">
+            <UserPin
+                @update:setupSecurityPinModal="setupSecurityPinModal = $event"
+            />
+        </div>
+    </Modal>
 </template>

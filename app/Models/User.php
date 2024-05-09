@@ -40,6 +40,7 @@ class User extends Authenticatable implements HasMedia
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'security_pin' => 'hashed',
     ];
 
     public function setReferralId(): void

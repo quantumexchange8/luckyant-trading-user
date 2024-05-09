@@ -456,4 +456,12 @@ return [
     "termination_date" => "Termination Date",
     'successfully_update_password' => "Successfully Updated Password",
     'terminate_details' => "Terminate Details",
+    'security_pin' => "Security Pin",
+    'security_pin_caption' => "Strengthen your account security with a PIN.",
+    'current_pin' => "Current Pin",
+    'current_pin_invalid' => "Invalid Current Pin",
+    'new_pin' => "New Pin",
+    'confirm_pin' => "Confirm Pin",
+    'successfully_update_pin' => "Successfully Updated Security Pin",
+    'setup_security_pin' => "Setup security pin",
 ];

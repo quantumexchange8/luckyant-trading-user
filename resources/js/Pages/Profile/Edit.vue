@@ -7,6 +7,7 @@ import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import Button from "@/Components/Button.vue";
 import PaymentAccount from "@/Pages/Profile/PaymentAccount/PaymentAccount.vue";
 import {onMounted, ref} from "vue";
+import UserPin from "@/Pages/Profile/Partials/UserPin.vue";
 
 defineProps({
     mustVerifyEmail: Boolean,
@@ -104,10 +105,17 @@ onMounted(() => {
                                 />
                             </div>
 
-                            <div
-                                class="p-4 sm:p-8 flex flex-col gap-5 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
-                            >
-                                <UpdatePasswordForm />
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                                <div
+                                    class="p-4 sm:p-8 flex flex-col gap-5 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
+                                >
+                                    <UpdatePasswordForm />
+                                </div>
+                                <div
+                                    class="p-4 sm:p-8 flex flex-col gap-5 bg-white dark:bg-gray-900 shadow sm:rounded-lg"
+                                >
+                                    <UserPin />
+                                </div>
                             </div>
                         </div>
                     </TabPanel>

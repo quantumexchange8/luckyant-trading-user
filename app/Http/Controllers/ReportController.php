@@ -99,7 +99,8 @@ class ReportController extends Controller
 
         $walletLogs = WalletLog::with('wallet')
             ->where('user_id', \Auth::id())
-            ->where('category', 'bonus');
+            ->where('category', 'bonus')
+            ->whereNot('purpose', 'ProfitSharing');
 
         if ($request->filled('search')) {
             $search = '%' . $request->input('search') . '%';

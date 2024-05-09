@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subscription;
+use App\Models\TradeHistory;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -153,12 +154,17 @@ class DashboardController extends Controller
 
         $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount');
 
+        $metaLogins = TradingAccount::where('user_id', $user->id)->get()->pluck('meta_login');
+
+        $totalProfit = TradeHistory::whereIn('meta_login', $metaLogins)->where('trade_status', 'Closed')->sum('trade_profit');
+
         $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)
             ->where('status', 'Approved');
 
         return response()->json([
             'totalDeposit' => $totalDeposit,
             'totalWithdrawal' => $totalWithdrawal,
+            'totalProfit' => $totalProfit,
             'totalRebateEarn' => $tradeRebateSummary->sum('rebate'),
             'totalTradeLot' => $tradeRebateSummary->sum('volume')
         ]);

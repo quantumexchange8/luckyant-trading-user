@@ -51,6 +51,7 @@ const announcementModal = ref(false);
 const firstTimeLogin = ref(props.firstTimeLogin);
 const totalDeposit = ref('0.00');
 const totalWithdrawal = ref('0.00');
+const totalProfit = ref('0.00');
 const totalTradeLot = ref('0.00');
 const totalRebateEarn = ref('0.00');
 
@@ -115,6 +116,7 @@ const getTotalTransactions = async () => {
         const response = await axios.get('/getTotalTransactions');
         totalDeposit.value = response.data.totalDeposit;
         totalWithdrawal.value = response.data.totalWithdrawal;
+        totalProfit.value = response.data.totalProfit;
         totalRebateEarn.value = response.data.totalRebateEarn;
         totalTradeLot.value = response.data.totalTradeLot;
     } catch (error) {
@@ -167,8 +169,8 @@ getTotalTransactions();
                                     <div class="text-lg text-gray-600 dark:text-white border-b border-gray-300 pb-2">
                                         {{ $t('public.overview') }}
                                     </div>
-                                    <div class="grid grid-cols-2 gap-4 w-full mt-4">
-                                        <div class="space-y-2 w-full">
+                                    <div class="grid grid-cols-6 gap-4 w-full mt-4">
+                                        <div class="space-y-2 col-span-3 sm:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_active_balance') }}
                                             </div>
@@ -176,15 +178,15 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalDeposit) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 w-full">
+                                        <div class="space-y-2 col-span-3 sm:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.total_withdrawal') }}
+                                                {{ $t('public.total_profit') }}
                                             </div>
-                                            <div class="py-2 flex justify-center rounded-md border border-error-500">
-                                                <span class="text-error-500 font-semibold">$ {{ formatAmount(totalWithdrawal) }}</span>
+                                            <div class="py-2 flex justify-center rounded-md border border-success-500">
+                                                <span class="text-success-500 font-semibold">$ {{ formatAmount(totalProfit) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 w-full">
+                                        <div class="space-y-2 col-span-3 sm:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_rebate_earn') }}
                                             </div>
@@ -192,12 +194,20 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalRebateEarn) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 w-full">
+                                        <div class="space-y-2 col-span-3 sm:col-span-3 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_trade_lots') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-gray-500">
                                                 <span class="text-gray-500 font-semibold">{{ formatAmount(totalTradeLot) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 w-full">
+                                            <div class="text-sm font-semibold flex justify-center">
+                                                {{ $t('public.total_withdrawal') }}
+                                            </div>
+                                            <div class="py-2 flex justify-center rounded-md border border-error-500">
+                                                <span class="text-error-500 font-semibold">$ {{ formatAmount(totalWithdrawal) }}</span>
                                             </div>
                                         </div>
                                     </div>

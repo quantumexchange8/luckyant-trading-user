@@ -147,7 +147,7 @@ return [
     'total_withdrawal' => "总提款",
     'total_rebate_earn' => "总返利收入",
     'total_trade_lots' => "总交易手数",
-    'total_profit' => "总收益",
+    'total_profit' => "总盈利",
     'referral_qr' => "通过QR链接分享您的推荐链接",
     'details' => "详细信息",
     'is_loading' => "加载中...",

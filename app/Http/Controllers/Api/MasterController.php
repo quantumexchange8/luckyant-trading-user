@@ -86,7 +86,7 @@ class MasterController extends Controller
             // Retrieve the name of the user from the tradingUser table based on meta_login
             $user = TradingUser::where('meta_login', $master->meta_login)->first();
             $name = $user ? $user->name : null;
-    
+
             // Filter trade histories with 'closed' status
             $tradeHistories = $master->tradeHistories->where('trade_status', 'Closed');
 
@@ -99,6 +99,19 @@ class MasterController extends Controller
             $currentDate = Carbon::now()->format('Y-m-d H:i:s');
 
             $dealHistories = $metaService->dealHistory($master->meta_login, $startDate, $currentDate);
+
+            // foreach ($dealHistories as &$deal) {
+            //     // Convert "time" to date
+            //     $deal['time'] = date('Y-m-d H:i:s', $deal['time']);
+            // }
+            
+            // // Filter deal histories with profit less than 0
+            // $filteredDealHistories = array_filter($dealHistories, function($deal) {
+            //     return $deal['action'] === 2 && $deal['profit'] < 0;
+            // });
+            
+            // // Display filtered deal histories
+            // dd($filteredDealHistories);
             
             // Initialize $earliestDate as empty
             $earliestDate = '';
@@ -106,63 +119,62 @@ class MasterController extends Controller
             // Get the earliest date from the tradeHistory
             $earliestDate = $tradeHistories->min('time_close');
             $earliestDate = date('Y-m-d', strtotime($earliestDate));
-            
+
             // Ensure $dealHistories is a collection
             if (is_array($dealHistories)) {
                 $dealHistories = collect($dealHistories);
             }
-            
+
             // Check if $dealHistories is not null before filtering
             if ($dealHistories !== null) {
                 // Filter $dealHistories for deposits (action is 2 and profit is positive)
                 $totalDeposit = $dealHistories->filter(function($deal) {
                     return $deal['action'] === 2 && $deal['profit'] > 0;
                 })->sum('profit');
-            
+
                 // Filter $dealHistories for withdrawals (action is 2 and profit is negative)
                 $totalWithdrawal = $dealHistories->filter(function($deal) {
                     return $deal['action'] === 2 && $deal['profit'] < 0;
                 })->sum('profit');
+
+                // Find the initial capital (first deposit)
+                $initialCapital = $dealHistories->first(function ($deal) {
+                    return $deal['action'] === 2 && $deal['profit'] > 0;
+                });
+                $initialCapital = $initialCapital ? $initialCapital['profit'] : 0;
             } else {
                 // Handle the case where $dealHistories is null
                 $totalDeposit = 0;
                 $totalWithdrawal = 0;
+                $initialCapital = 0;
             }
-            
-            $totalGrowth = $tradeHistories->sum('trade_profit_pct');
 
-            // Assuming the date information is stored in the 'time_close' field
-            $currentMonthStartDate = date('Y-m-01');
-            $currentMonthEndDate = date('Y-m-t');
-
-            $currentMonthGrowth = $tradeHistories->whereBetween('time_close', [$currentMonthStartDate, $currentMonthEndDate])->sum('trade_profit_pct');
-
-            $maxDailyGrowth = $tradeHistories->max('trade_profit_pct');
-                                    
             // Calculate total trades in the last 30 days
             $totalTradesLast30Days = $tradeHistories->where('time_close', '>=', Carbon::today()->subDays(30))->count();
 
             $latestTrade = $tradeHistories->isNotEmpty() ? strtotime($tradeHistories->max('time_close')) : null;
             $longsWon = $totalTrade != 0 ? $tradeHistories->where('trade_type', 'BUY')->where('trade_profit', '>', 0)->count() : 'N/A';
             $shortsWon = $totalTrade != 0 ? $tradeHistories->where('trade_type', 'SELL')->where('trade_profit', '>', 0)->count() : 'N/A';
+            $totalWonTrade = $totalTrade != 0 ? $tradeHistories->where('trade_profit', '>', 0)->count() : 'N/A';
+            $totalLossTrade = $totalTrade != 0 ? $tradeHistories->where('trade_profit', '<', 0)->count() : 'N/A';
             $longsWonPercentage = $totalTrade != 0 ? round($tradeHistories->where('trade_type', 'BUY')->where('trade_profit', '>', 0)->count() / $tradeHistories->where('trade_type', 'BUY')->count() * 100, 2) : 'N/A';
             $shortsWonPercentage = $totalTrade != 0 ? round($tradeHistories->where('trade_type', 'SELL')->where('trade_profit', '>', 0)->count() / $tradeHistories->where('trade_type', 'SELL')->count() * 100, 2) : 'N/A';
-                    
+
             // Get the best and worst trade
             $bestTrade = $tradeHistories->max('trade_profit') ?? 'N/A';
             $worstTrade = $tradeHistories->min('trade_profit') ?? 'N/A';
-                    
+
             // Get the best and worst trade in terms of pips
             $totalLongsTrade = $totalTrade != 0 ? $tradeHistories->where('trade_type', 'BUY')->count() : 'N/A';
             $totalShortsTrade = $totalTrade != 0 ? $tradeHistories->where('trade_type', 'SELL')->count() : 'N/A';
 
-            // Calculate profitability
-            $profitability = $averageProfit != 0 && ($averageLoss != 0 && $averageLoss != 1 && $averageLoss != -1) ? ($averageProfit / abs($averageLoss)) * 100 : $averageProfit;
-
             // Calculate profit factor
             $totalProfits = $tradeHistories->where('trade_profit', '>', 0)->sum('trade_profit');
             $totalLosses = abs($tradeHistories->where('trade_profit', '<', 0)->sum('trade_profit'));
-            $profitFactor = ($totalTrade != 0 && $totalLosses != 0) ? $totalProfits / $totalLosses : $totalProfits;
+            $profitFactor = ($totalProfits != 0 && $totalLosses != 0) ? $totalProfits / $totalLosses : 0;
+
+            // Calculate profitability
+            $profitability = $totalTrade != 0 && $totalWonTrade != 0 ? (($totalWonTrade) / $totalTrade) * 100 : 0;
 
             // Calculate the mean of trade profits
             $mean = $totalTrade != 0 ? $tradeHistories->avg('trade_profit') : null;
@@ -175,9 +187,101 @@ class MasterController extends Controller
             // Calculate the standard deviation
             $standardDeviation = $totalTrade != 0 ? sqrt($sumSquaredDifferences / $totalTrade) : null;
 
+            // Calculate the total profit
+            $totalProfit = $tradeHistories->sum('trade_profit');
+
+            // Check if $dealHistories is not null before filtering
+            if ($dealHistories !== null) {
+                // Filter $dealHistories for withdrawals (action is 2 and profit is negative)
+                $Withdrawal = $dealHistories->filter(function($deal) {
+                    return $deal['action'] === 2 && $deal['profit'] < 0;
+                });
+
+                // Find the initial capital (first deposit)
+                $initialCapital = $dealHistories->first(function ($deal) {
+                    return $deal['action'] === 2 && $deal['profit'] > 0;
+                });
+                $initialCapital = $initialCapital ? $initialCapital['profit'] : 0;
+            } else {
+                // Handle the case where $dealHistories is null
+                $Withdrawal = '';
+                $initialCapital = 0;
+            }
+
+            if($Withdrawal != null) {
+            // Iterate through each item in the $Withdrawal array
+                $Withdrawal->transform(function($item) {
+                    // Convert the UNIX timestamp to a date format
+                    $item['time'] = Carbon::createFromTimestamp($item['time'])->toDateTimeString();
+                    return $item;
+                });
+            }
+
+            $tradeHistories = TradeHistory::where('meta_login', $master->meta_login)
+                    ->where('trade_status', 'Closed')
+                    ->get();
+
+            // Merge the withdrawal records into $tradeHistories based on time_close
+            $tradeHistories = $tradeHistories->concat($Withdrawal->map(function($withdrawal) {
+                $withdrawalRecord = new \stdClass();
+                $withdrawalRecord->meta_login = $withdrawal['login'];
+                $withdrawalRecord->symbol = ''; // You may need to set the symbol here
+                $withdrawalRecord->trade_type = 'Withdrawal';
+                $withdrawalRecord->time_close = $withdrawal['time']; // Assuming time_close is used for withdrawal time
+                $withdrawalRecord->trade_profit = $withdrawal['profit'];
+                return $withdrawalRecord;
+            }));
+
+            // Sort the combined collection by time_close in descending order
+            $tradeHistories = $tradeHistories->sortBy(function ($trade) {
+                return strtotime($trade->time_close);
+            })->values();
+
+            $tradeHistories->transform(function ($trade) {
+                $trade->time_close = date('Y-m-d', strtotime($trade->time_close));
+                return $trade;
+            });
+            
+            $initialInvestment = $initialCapital;
+
+            // Calculate trade profit percentage for each trade
+            foreach ($tradeHistories as $trade) {
+                $trade->initialInvestment = round($initialInvestment, 2);
+                if($trade->trade_type != 'Withdrawal') {
+                    // Calculate trade profit percentage
+                    $tradeProfitPercentage = ($trade->trade_profit / $initialInvestment) * 100;
+
+                    // Add initial investment and tradeProfitPercentage key to the trade record
+                    $trade->tradeProfitPercentage = round($tradeProfitPercentage, 2);
+
+                }
+
+                // Update initial investment for next iteration
+                $initialInvestment += $trade->trade_profit;
+            }
+
+            // Group trade histories by date and calculate total growth for each day
+            $groupedTradeHistories = $tradeHistories->groupBy('time_close')->map(function($trades) {
+                return $trades->sum('tradeProfitPercentage');
+            });
+
+            // Calculate total growth, current month growth, and max daily growth
+            $totalGrowth = $groupedTradeHistories->sum();
+            $currentMonthStartDate = date('Y-m-01');
+            $currentMonthEndDate = date('Y-m-t');
+            $currentMonthGrowth = $groupedTradeHistories->filter(function($value, $key) use ($currentMonthStartDate, $currentMonthEndDate) {
+                return ($key >= $currentMonthStartDate && $key <= $currentMonthEndDate);
+            })->sum();
+            $maxDailyGrowth = $groupedTradeHistories->max();
+
+            // Round the values to two decimal places
+            $totalGrowth = round($totalGrowth, 2);
+            $currentMonthGrowth = round($currentMonthGrowth, 2);
+            $maxDailyGrowth = round($maxDailyGrowth, 2);
+
             $metaAccount = $metaService->getMetaAccount($master->meta_login);
             $metaAccount['name'] = $name;
-            $metaAccount['totalProfit'] = round($totalProfits, 2);
+            $metaAccount['totalProfit'] = round($totalProfit, 2);
             $metaAccount['deposits'] = round($totalDeposit, 2);
             $metaAccount['withdrawals'] = round(abs($totalWithdrawal), 2);
             $metaAccount['totalGrowth'] = round($totalGrowth, 2);
@@ -259,18 +363,94 @@ class MasterController extends Controller
         // Add the end date
         $intervalDates[] = $currentDate->format('Y-m-d');
 
+        $startDate = '2020-01-01'; // The date for get result
+        $currentDate = Carbon::now()->format('Y-m-d H:i:s');
+
+        $dealHistories = $metaService->dealHistory($request->meta_login, $startDate, $currentDate);
+
+        // Ensure $dealHistories is a collection
+        if (is_array($dealHistories)) {
+            $dealHistories = collect($dealHistories);
+        }
+
+        // Check if $dealHistories is not null before filtering
+        if ($dealHistories !== null) {
+            // Filter $dealHistories for withdrawals (action is 2 and profit is negative)
+            $Withdrawal = $dealHistories->filter(function($deal) {
+                return $deal['action'] === 2 && $deal['profit'] < 0;
+            });
+
+            // Find the initial capital (first deposit)
+            $initialCapital = $dealHistories->first(function ($deal) {
+                return $deal['action'] === 2 && $deal['profit'] > 0;
+            });
+            $initialCapital = $initialCapital ? $initialCapital['profit'] : 0;
+        } else {
+            // Handle the case where $dealHistories is null
+            $Withdrawal = '';
+            $initialCapital = 0;
+        }
+
+        if($Withdrawal != null) {
+        // Iterate through each item in the $Withdrawal array
+            $Withdrawal->transform(function($item) {
+                // Convert the UNIX timestamp to a date format
+                $item['time'] = Carbon::createFromTimestamp($item['time'])->toDateTimeString();
+                return $item;
+            });
+        }
+
+        $tradeHistories = TradeHistory::where('meta_login', $request->meta_login)
+                ->where('trade_status', 'Closed')
+                ->get();
+
+        // Merge the withdrawal records into $tradeHistories based on time_close
+        $tradeHistories = $tradeHistories->concat($Withdrawal->map(function($withdrawal) {
+            $withdrawalRecord = new \stdClass();
+            $withdrawalRecord->meta_login = $withdrawal['login'];
+            $withdrawalRecord->symbol = ''; // You may need to set the symbol here
+            $withdrawalRecord->trade_type = 'Withdrawal';
+            $withdrawalRecord->time_close = $withdrawal['time']; // Assuming time_close is used for withdrawal time
+            $withdrawalRecord->trade_profit = $withdrawal['profit'];
+            return $withdrawalRecord;
+        }));
+
+        // Sort the combined collection by time_close in descending order
+        $tradeHistories = $tradeHistories->sortBy(function ($trade) {
+            return strtotime($trade->time_close);
+        })->values();
+
+        $initialInvestment = $initialCapital;
+
+        // Calculate trade profit percentage for each trade
+        foreach ($tradeHistories as $trade) {
+            $trade->initialInvestment = round($initialInvestment, 2);
+            if($trade->trade_type != 'Withdrawal') {
+                // Calculate trade profit percentage
+                $tradeProfitPercentage = ($trade->trade_profit / $initialInvestment) * 100;
+
+                // Add initial investment and tradeProfitPercentage key to the trade record
+                $trade->tradeProfitPercentage = round($tradeProfitPercentage, 2);
+
+            }
+
+            // Update initial investment for next iteration
+            $initialInvestment += $trade->trade_profit;
+
+        }
+        
         $tradeProfitPct = [];
 
         // Iterate over the interval dates to calculate cumulative trade profit percentages
         foreach ($intervalDates as $date) {
             // Get the sum of trade profit percentages up to the current date
-            $profitUntilDate = TradeHistory::where('meta_login', $request->meta_login)
+            $profitUntilDate = $tradeHistories->where('meta_login', $request->meta_login)
                 ->where('trade_status', 'Closed')
-                ->whereDate('time_close', '<=', $date)
-                ->sum('trade_profit_pct');
+                ->where('time_close', '<=', $date)
+                ->sum('tradeProfitPercentage');
 
             // Add the sum to the array
-            $tradeProfitPct[] = $profitUntilDate;
+            $tradeProfitPct[] = round($profitUntilDate, 2);
         }
                             
         // Return the response with the interval dates and cumulative trade profit percentages

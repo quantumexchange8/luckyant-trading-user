@@ -136,17 +136,10 @@ class MasterController extends Controller
                 $totalWithdrawal = $dealHistories->filter(function($deal) {
                     return $deal['action'] === 2 && $deal['profit'] < 0;
                 })->sum('profit');
-
-                // Find the initial capital (first deposit)
-                $initialCapital = $dealHistories->first(function ($deal) {
-                    return $deal['action'] === 2 && $deal['profit'] > 0;
-                });
-                $initialCapital = $initialCapital ? $initialCapital['profit'] : 0;
             } else {
                 // Handle the case where $dealHistories is null
                 $totalDeposit = 0;
                 $totalWithdrawal = 0;
-                $initialCapital = 0;
             }
 
             // Calculate total trades in the last 30 days

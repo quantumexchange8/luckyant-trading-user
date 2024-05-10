@@ -464,4 +464,7 @@ return [
     'confirm_pin' => "确认安全密码",
     'successfully_update_pin' => "成功更新安全密码",
     'setup_security_pin' => "设置安全密码",
+    'successfully_updated_account' => "成功更新支付账户",
+    'success_delete' => "成功删除",
+    'successfully_deleted_account' => "成功删除支付账户",
 ];

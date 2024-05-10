@@ -464,4 +464,7 @@ return [
     'confirm_pin' => "Confirm Pin",
     'successfully_update_pin' => "Successfully Updated Security Pin",
     'setup_security_pin' => "Setup security pin",
+    'successfully_updated_account' => "Successfully Updated Payment Account",
+    'success_delete' => "Success Delete",
+    'successfully_deleted_account' => "Successfully Deleted Payment Account",
 ];

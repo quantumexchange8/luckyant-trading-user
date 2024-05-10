@@ -76,6 +76,8 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/update', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('/addPaymentAccount', [ProfileController::class, 'addPaymentAccount'])->name('profile.addPaymentAccount');
+        Route::post('/editPaymentAccount', [ProfileController::class, 'editPaymentAccount'])->name('profile.editPaymentAccount');
+        Route::post('/deletePaymentAccount', [ProfileController::class, 'deletePaymentAccount'])->name('profile.deletePaymentAccount');
         Route::delete('/delete_profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 

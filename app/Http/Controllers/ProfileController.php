@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Country;
@@ -168,6 +170,56 @@ class ProfileController extends Controller
         PaymentAccount::create($data);
 
         return back()->with('title', trans('public.success_created_account'))->with('success', trans('public.successfully_created_account'));
+    }
+
+    public function editPaymentAccount(PaymentAccountRequest $request)
+    {
+        $user = Auth::user();
+        $paymentAccount = PaymentAccount::find($request->payment_account_id);
+
+        if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
+            return back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.current_pin_invalid'));
+        }
+
+        $paymentAccount->update([
+            'payment_account_name' => $request->payment_account_name,
+            'payment_platform_name' => $request->payment_platform_name,
+            'account_no' => $request->account_no,
+            'bank_branch_address' => $request->bank_branch_address,
+            'bank_swift_code' => $request->bank_swift_code,
+            'bank_code' => $request->bank_code,
+            'bank_code_type' => $request->bank_code_type,
+            'country' => $request->country,
+            'currency' => $request->currency,
+        ]);
+
+        return back()->with('title', trans('public.success_update'))->with('success', trans('public.successfully_updated_account'));
+    }
+
+    public function deletePaymentAccount(Request $request)
+    {
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'security_pin' => ['required'],
+        ])->setAttributeNames([
+            'security_pin' => trans('public.security_pin'),
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        } else {
+            if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
+                throw ValidationException::withMessages(['security_pin' => trans('public.current_pin_invalid')]);
+            }
+
+            $paymentAccount = PaymentAccount::find($request->payment_account_id);
+
+            $paymentAccount->delete();
+
+            return back()->with('title', trans('public.success_delete'))->with('success', trans('public.successfully_deleted_account'));
+        }
     }
 
     // protected function processImage(Request $request): void

@@ -12,6 +12,7 @@ class PaymentAccountRequest extends FormRequest
             'payment_account_name' => ['required'],
             'payment_platform_name' => ['required'],
             'account_no' => ['required'],
+            'security_pin' => ['sometimes', 'required'],
         ];
 
         if ($this->payment_method == 'Bank') {
@@ -26,6 +27,18 @@ class PaymentAccountRequest extends FormRequest
         return true;
     }
 
+    public function withValidator($validator): void
+    {
+        // checks user current password
+        // before making changes
+        $validator->after(function ($validator) {
+            if ($this->security_pin && !\Hash::check($this->security_pin, $this->user()->security_pin) ) {
+                $validator->errors()->add('security_pin', trans('public.current_pin_invalid'));
+            }
+        });
+        return;
+    }
+
     public function attributes(): array
     {
         return [
@@ -33,6 +46,7 @@ class PaymentAccountRequest extends FormRequest
             'payment_platform_name' => trans($this->payment_method == 'Bank' ? 'public.bank_name' : 'public.payment_service'),
             'account_no' => trans($this->payment_method == 'Bank' ? 'public.account_number' : 'public.wallet_address'),
             'bank_swift_code' => trans('public.bank_swift_code'),
+            'security_pin' => trans('public.security_pin'),
         ];
     }
 }

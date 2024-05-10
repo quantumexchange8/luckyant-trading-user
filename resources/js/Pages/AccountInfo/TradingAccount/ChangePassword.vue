@@ -113,7 +113,7 @@ const passwordValidation = () => {
 const user = usePage().props.auth.user;
 const checkCurrentPin = ref(false);
 
-const inputClasses = ['rounded-lg w-full py-2.5 border border-gray-300 dark:border-gray-800 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500']
+const inputClasses = ['rounded-lg w-full py-2.5 bg-white dark:bg-gray-800 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-50 border border-gray-300 dark:border-gray-800 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500']
 
 const setupSecurityPinModal = ref(false);
 

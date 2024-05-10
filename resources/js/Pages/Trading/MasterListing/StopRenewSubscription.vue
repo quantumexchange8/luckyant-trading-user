@@ -19,9 +19,13 @@ const props = defineProps({
 const { formatDateTime, formatAmount } = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
 const renewSubscriptionModal = ref(false);
+const managementFeeAmount = ref(0);
+const terminationDate = new Date(props.subscription.expired_date);
+terminationDate.setDate(terminationDate.getDate() + 1);
 
 const openRenewSubscriptionModal = () => {
     renewSubscriptionModal.value = true;
+    managementFeeAmount.value = props.subscription.meta_balance * ((props.subscriberAccount.management_fee_for_stop_renewal) / 100)
 }
 
 const closeModal = () => {
@@ -165,20 +169,44 @@ const closeTermsModal = () => {
                         {{ formatDateTime(subscription.next_pay_date, false) }}
                     </div>
                 </div>
-                <div class="flex items-start justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.management_fee')}}
-                    </div>
-                    <div class="text-sm sm:text-base text-error-500 font-bold">
-                        {{ formatAmount(subscriberAccount.management_fee, 0) }}%
-                    </div>
-                </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
                     <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         {{ $t('public.max_drawdown') }}
                     </div>
                     <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
                         {{ subscriberAccount.master.max_drawdown ? subscriberAccount.master.max_drawdown : '-' }}
+                    </div>
+                </div>
+                <div class="flex items-start justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.amount')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-primary-500 dark:text-primary-400 font-bold">
+                        $ {{ formatAmount(subscription.meta_balance) }}
+                    </div>
+                </div>
+                <div class="flex items-start justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.management_fee')}} ({{ formatAmount(subscriberAccount.management_fee_for_stop_renewal, 0) }}%)
+                    </div>
+                    <div class="text-sm sm:text-base text-error-500 font-bold">
+                         $ {{ formatAmount(managementFeeAmount) }}
+                    </div>
+                </div>
+                <div class="flex items-start justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.return_amount')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-success-500 font-bold">
+                        $ {{ formatAmount(subscription.meta_balance - managementFeeAmount) }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.termination_date')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        {{ formatDateTime(terminationDate, false) }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">

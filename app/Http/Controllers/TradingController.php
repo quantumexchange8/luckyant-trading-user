@@ -718,6 +718,8 @@ class TradingController extends Controller
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($subscriber->status == 'Unsubscribed' ? $subscriber->unsubscribe_date : $today);
             $subscription_batches = $subscriber->subscription_batches;
+            $expiredDate = Carbon::parse($subscriber->subscription->expired_date);
+            $daysDifference = $approvalDate->diffInDays($expiredDate);
 
             $penalty_exempt = 0;
 
@@ -730,14 +732,13 @@ class TradingController extends Controller
                 }
             }
 
-            $management_fee = MasterManagementFee::where('master_id', $subscriber->master_id)
-                ->where('penalty_days', '>', $join_days)
-                ->first();
+            $management_fee = MasterManagementFee::where('master_id', $subscriber->master_id);
 
             $subscriber->join_days = $join_days;
             $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
             $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
-            $subscriber->management_fee = $management_fee->penalty_percentage;
+            $subscriber->management_fee = $management_fee->where('penalty_days', '>', $join_days)->first()->penalty_percentage;
+            $subscriber->management_fee_for_stop_renewal = $management_fee->where('penalty_days', '>', $daysDifference)->first()->penalty_percentage;
             $subscriber->penalty_exempt = $penalty_exempt;
         });
 

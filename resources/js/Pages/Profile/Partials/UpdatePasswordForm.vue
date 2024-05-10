@@ -6,14 +6,18 @@ import Input from '@/Components/Input.vue'
 import InputError from '@/Components/InputError.vue'
 import Button from '@/Components/Button.vue'
 import { CheckIcon } from '@heroicons/vue/outline'
+import VOtpInput from "vue3-otp-input";
 
 const passwordInput = ref(null)
 const currentPasswordInput = ref(null)
+const otpRequested = ref(false);
+const countdown = ref(60);
 
 const form = useForm({
     current_password: '',
     password: '',
     password_confirmation: '',
+    otp: '',
 })
 
 const updatePassword = () => {
@@ -71,6 +75,35 @@ const passwordValidation = () => {
 
     return { valid, messages };
 };
+
+const inputClasses = ['rounded-lg w-full py-2.5 mt-1 border border-gray-300 dark:border-gray-800 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500']
+
+let countdownIntervalId;
+
+const requestOTP = () => {
+    otpRequested.value = true;
+    event.preventDefault(); // Prevent default form submission behavior
+    form.post(route('profile.sendOtp'))
+    startCountdown();
+}
+
+const resendOTP = () => {
+    countdown.value = 60;
+    clearInterval(countdownIntervalId);
+    event.preventDefault(); // Prevent default form submission behavior
+    form.post(route('profile.sendOtp'))
+    startCountdown();
+}
+
+const startCountdown = () => {
+    countdownIntervalId = setInterval(() => {
+        countdown.value -= 1;
+        if (countdown.value === 0) {
+            clearInterval(countdownIntervalId);
+        }
+    }, 1000);
+}
+
 </script>
 
 <template>
@@ -141,6 +174,33 @@ const passwordValidation = () => {
                         class="mt-2"
                     />
                 </div>
+
+                <div>
+                    <Label for="otp" :value="$t('public.otp_verification')" />
+                    <div class="flex justify-start items-center gap-4 mt-1">
+                        <Button size="sm" v-if="!otpRequested" :disabled="form.processing" @click.prevent="requestOTP">{{ $t('public.request_otp') }}</Button>
+                    </div>
+
+                    <VOtpInput v-if="otpRequested"
+                            :input-classes="inputClasses"
+                            class="flex gap-2"
+                            separator=""
+                            inputType="password"
+                            :num-inputs="6"
+                            v-model:value="form.otp"
+                            :should-auto-focus="false"
+                            :should-focus-order="true"
+                    />
+                    <InputError :message="form.errors.otp" class="mt-2" />
+                    <div class="flex justify-end items-center gap-4 my-1 text-sm" v-if="otpRequested && countdown > 0">
+                        {{ $t('public.remaining_time') }} {{ countdown }}s
+                    </div>
+                    <div class="flex justify-end items-center gap-4 my-1" v-if="otpRequested && countdown <= 0">
+                        <span class="text-sm text-primary-500 dark:text-primary-600 underline cursor-pointer" @click="resendOTP()">
+                            {{ $t('public.resend_otp_request') }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <div class="flex flex-col items-start gap-3 self-stretch">
@@ -170,19 +230,6 @@ const passwordValidation = () => {
         <div class="w-full mt-8">
             <div class="flex justify-end items-center gap-4">
                 <Button :disabled="form.processing" @click.prevent="updatePassword">{{ $t('public.save') }}</Button>
-
-                <Transition
-                    enter-from-class="opacity-0"
-                    leave-to-class="opacity-0"
-                    class="transition ease-in-out"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        {{ $t('public.saved') }}.
-                    </p>
-                </Transition>
             </div>
         </div>
     </form>

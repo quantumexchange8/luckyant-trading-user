@@ -467,4 +467,11 @@ return [
     'successfully_updated_account' => "成功更新支付账户",
     'success_delete' => "成功删除",
     'successfully_deleted_account' => "成功删除支付账户",
+    'otp_verification' => "OTP验证",
+    'request_otp' => "请求OTP",
+    'resend_otp_request' => "重新发送OTP请求",
+    'remaining_time' => "剩余时间",
+    'invalid_otp' => '无效的OTP',
+    'otp' => "OTP",
+    'password_change_restriction' => "您在过去的24小时内更改了密码。在此期间不允许提款。",
 ];

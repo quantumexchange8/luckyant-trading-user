@@ -1,6 +1,6 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3'
-import { MailIcon, LockClosedIcon } from '@heroicons/vue/outline'
+import { MailIcon, LockClosedIcon, CheckIcon } from '@heroicons/vue/outline'
 import InputIconWrapper from '@/Components/InputIconWrapper.vue'
 import Button from '@/Components/Button.vue'
 import GuestLayout from '@/Layouts/Guest.vue'
@@ -25,6 +25,46 @@ const submit = () => {
         onFinish: () => form.reset('password', 'password_confirmation'),
     })
 }
+
+const passwordRules = [
+    { message: 'register_terms_1', regex: /.{6,}/ },
+    { message: 'register_terms_2', regex: /[A-Z]+/ },
+    { message: 'register_terms_3', regex: /[a-z]+/ },
+    { message: 'register_terms_4', regex: /[0-9]+/ },
+    { message: 'register_terms_5', regex: /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]+/ }
+];
+
+const passwordValidation = () => {
+    let valid = false;
+    let messages = [];
+
+    for (let condition of passwordRules) {
+        const isConditionValid = condition.regex.test(form.password);
+
+        if (isConditionValid) {
+            valid = true;
+        }
+
+        messages.push({
+            message: condition.message,
+            valid: isConditionValid,
+        });
+    }
+
+    // Check if the new password matches the confirm password
+    const isMatch = form.password === form.password_confirmation;
+
+    messages.push({
+        message: 'register_terms_6',
+        valid: isMatch && form.password !== '',
+    });
+
+    // Set valid to false if there's any condition that failed
+    valid = valid && isMatch;
+
+    return { valid, messages };
+};
+
 </script>
 
 <template>
@@ -67,6 +107,28 @@ const submit = () => {
                     <Button class="w-full justify-center" :disabled="form.processing">
                         {{ $t('public.reset_password') }}
                     </Button>
+                </div>
+            </div>
+            <div class="flex flex-col mt-5 items-start gap-3 self-stretch">
+                <div v-for="message in passwordValidation().messages" :key="message.key" class="flex items-center gap-2 self-stretch">
+                    <div
+                        :class="{
+                                'bg-success-500': message.valid,
+                                'bg-gray-400 dark:bg-dark-eval-3': !message.valid
+                            }"
+                        class="flex justify-center items-center w-5 h-5 rounded-full grow-0 shrink-0"
+                    >
+                        <CheckIcon aria-hidden="true" class="text-white" />
+                    </div>
+                    <div
+                        class="text-sm"
+                        :class="{
+                                'text-gray-600 dark:text-gray-300': message.valid,
+                                'text-gray-400 dark:text-gray-500': !message.valid
+                            }"
+                    >
+                        {{ $t('public.' + message.message) }}
+                    </div>
                 </div>
             </div>
         </form>

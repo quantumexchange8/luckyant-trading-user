@@ -467,4 +467,11 @@ return [
     'successfully_updated_account' => "Successfully Updated Payment Account",
     'success_delete' => "Success Delete",
     'successfully_deleted_account' => "Successfully Deleted Payment Account",
+    'otp_verification' => "OTP Verification",
+    'request_otp' => "Request OTP",
+    'resend_otp_request' => "Resend OTP Request",
+    'remaining_time' => "Remaining time",
+    'invalid_otp' => 'Invalid OTP',
+    'otp' => "OTP",
+    'password_change_restriction' => "You have changed your password within the last 24 hours. Withdrawals are not permitted during this time."
 ];

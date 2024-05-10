@@ -24,8 +24,8 @@ class OtpNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('Verification Code: '. $this->otp)
-            ->line('Thank you for using our application!');
+            ->subject('One - Time Password Notification')
+            ->markdown('emails.otp_verification_email', ['otp' => $this->otp]);
     }
 
     public function toArray($notifiable): array

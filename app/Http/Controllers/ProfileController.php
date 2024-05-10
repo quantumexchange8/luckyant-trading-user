@@ -8,15 +8,19 @@ use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Country;
+use App\Models\VerifyOtp;
 use App\Models\SettingRank;
 use Illuminate\Http\Request;
 use App\Models\PaymentAccount;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Services\SelectOptionService;
 use Illuminate\Http\RedirectResponse;
+use App\Notifications\OtpNotification;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\PaymentAccountRequest;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Validation\ValidationException;
 
@@ -220,6 +224,27 @@ class ProfileController extends Controller
 
             return back()->with('title', trans('public.success_delete'))->with('success', trans('public.successfully_deleted_account'));
         }
+    }
+
+    public function sendOtp(Request $request)
+    {
+        $user = Auth::user();
+        $email = $user->email;
+    
+        // Generate a random six-digit OTP
+        $otp = random_int(100000, 999999);
+    
+        // Get or create the OTP record
+        $verifyOtp = VerifyOtp::updateOrCreate(
+            ['email' => $email],
+            ['otp' => $otp, 'created_at' => Carbon::now()]
+        );
+    
+        // Send the OTP notification
+        Notification::route('mail', $email)
+            ->notify(new OtpNotification($verifyOtp->otp));
+    
+        return back()->with('toast', trans('public.success_sent_otp'));
     }
 
     // protected function processImage(Request $request): void

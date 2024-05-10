@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/addPaymentAccount', [ProfileController::class, 'addPaymentAccount'])->name('profile.addPaymentAccount');
         Route::post('/editPaymentAccount', [ProfileController::class, 'editPaymentAccount'])->name('profile.editPaymentAccount');
         Route::post('/deletePaymentAccount', [ProfileController::class, 'deletePaymentAccount'])->name('profile.deletePaymentAccount');
+        Route::post('/sendOtp', [ProfileController::class, 'sendOtp'])->name('profile.sendOtp');
         Route::delete('/delete_profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 

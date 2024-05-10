@@ -409,33 +409,43 @@ class WalletController extends Controller
 
         $wallet = Wallet::find($request->wallet_id);
 
+        $currentTime = Carbon::now();
+        $passwordChangedTime = Carbon::parse($user->password_changed_at);
+        $hoursDifference = $passwordChangedTime->diffInHours($currentTime);
+
+        if($hoursDifference < 24) {
+            return back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.password_change_restriction'));
+        }
+
         if ($wallet->balance < $amount) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
         }
         $withdrawal_fee = $request->transaction_charges;
         $final_amount = $amount - $withdrawal_fee;
         $wallet->balance -= $amount;
-        $wallet->save();
+        // $wallet->save();
 
-        $transaction_amount = $final_amount * $conversion_rate->withdrawal_rate;
-        $transaction_number = RunningNumberService::getID('transaction');
+        // $transaction_amount = $final_amount * $conversion_rate->withdrawal_rate;
+        // $transaction_number = RunningNumberService::getID('transaction');
 
-        Transaction::create([
-            'category' => 'wallet',
-            'user_id' => $user->id,
-            'from_wallet_id' => $wallet->id,
-            'transaction_number' => $transaction_number,
-            'payment_account_id' => $paymentAccount->id,
-            'payment_method' => $paymentAccount->payment_platform,
-            'to_wallet_address' => $paymentAccount->account_no,
-            'transaction_type' => 'Withdrawal',
-            'amount' => $amount,
-            'conversion_rate' => $conversion_rate->withdrawal_rate,
-            'transaction_charges' => $withdrawal_fee,
-            'transaction_amount' => $transaction_amount,
-            'new_wallet_amount' => $wallet->balance,
-            'status' => 'Processing',
-        ]);
+        // Transaction::create([
+        //     'category' => 'wallet',
+        //     'user_id' => $user->id,
+        //     'from_wallet_id' => $wallet->id,
+        //     'transaction_number' => $transaction_number,
+        //     'payment_account_id' => $paymentAccount->id,
+        //     'payment_method' => $paymentAccount->payment_platform,
+        //     'to_wallet_address' => $paymentAccount->account_no,
+        //     'transaction_type' => 'Withdrawal',
+        //     'amount' => $amount,
+        //     'conversion_rate' => $conversion_rate->withdrawal_rate,
+        //     'transaction_charges' => $withdrawal_fee,
+        //     'transaction_amount' => $transaction_amount,
+        //     'new_wallet_amount' => $wallet->balance,
+        //     'status' => 'Processing',
+        // ]);
 
         return redirect()->back()->with('title', trans('public.success_submit_withdrawal_request'))->with('success', trans('public.successfully_submit_withdrawal_request'));
     }

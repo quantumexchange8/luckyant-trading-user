@@ -13,6 +13,7 @@ class VerifyOtp extends Model
         'email',
         'mobile',
         'otp',
+        'created_at',
     ];
 
 

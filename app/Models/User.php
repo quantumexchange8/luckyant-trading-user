@@ -41,6 +41,7 @@ class User extends Authenticatable implements HasMedia
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'security_pin' => 'hashed',
+        'password_changed_at' => 'datetime',
     ];
 
     public function setReferralId(): void

@@ -103,6 +103,17 @@ watchEffect(() => {
         checkCurrentPin.value = true;
     }
 });
+
+const passwordChangedDuration = () => {
+    const currentTime = Date.now();
+    const passwordChangedTime = new Date(user.password_changed_at).getTime();
+    const timeDifference = currentTime - passwordChangedTime;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    return hoursDifference;
+};
+
+const changedDuration = passwordChangedDuration();
+
 </script>
 
 <template>
@@ -128,10 +139,10 @@ watchEffect(() => {
                 <BanIcon class="text-white" />
             </div>
             <div class="flex flex-col items-center">
-                <div class="text-xl text-gray-800 font-semibold">
+                <div class="text-xl text-gray-800 font-semibold dark:text-white">
                     {{ $t('public.account_verification_required') }}
                 </div>
-                <div class="text-gray-500">
+                <div class="text-gray-500 dark:text-gray-400">
                     {{ $t('public.withdrawal_required_verification') }}
                 </div>
             </div>
@@ -145,6 +156,19 @@ watchEffect(() => {
                 >
                     {{ $t('public.verify_account') }}
                 </Button>
+            </div>
+        </div>
+        <div
+            v-else-if="changedDuration < 24 && $page.props.auth.user.kyc_approval == 'Verified'"
+            class="flex flex-col gap-4 items-center justify-center w-full"
+        >
+            <div class="bg-error-400 rounded-full w-20 h-20">
+                <BanIcon class="text-white" />
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="text-gray-500 dark:text-gray-300">
+                    {{ $t('public.password_change_restriction') }}
+                </div>
             </div>
         </div>
         <form

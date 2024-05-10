@@ -82,15 +82,18 @@ class TradingController extends Controller
             });
 
         if ($user->is_public == 0 && $first_leader) {
-            if ($first_leader->masterAccounts->isNotEmpty()) {
-                $masterAccounts->where('is_public', $first_leader->is_public)
-                    ->whereIn('user_id', $first_leader->masterAccounts->pluck('user_id'));
+            $leader = $first_leader;
+            while ($leader && $leader->masterAccounts->isEmpty()) {
+                $leader = $leader->getFirstLeader();
+            }
+
+            if ($leader) {
+                $masterAccounts = $masterAccounts
+                    ->where('is_public', $leader->is_public)
+                    ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
             } else {
-                $upper_leader = $first_leader->getFirstLeader();
-                if ($user->is_public == 0 && $upper_leader) {
-                    $masterAccounts->where('is_public', $upper_leader->is_public)
-                        ->whereIn('user_id', $upper_leader->masterAccounts->pluck('user_id'));
-                }
+                // If leader is null, reset $masterAccounts to an empty query
+                $masterAccounts = $masterAccounts->where('id', null);
             }
         } elseif ($user->is_public == 1 && $first_leader) {
             $masterAccounts->where('is_public', $first_leader->is_public);

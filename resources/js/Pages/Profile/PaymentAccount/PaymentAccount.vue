@@ -99,8 +99,9 @@ const closeSetupModal = () => {
 
 watchEffect(() => {
     if (usePage().props.title !== null) {
-        checkCurrentPin.value = true;
-        accountModal.value = false;
+        if (usePage().props.auth.user.security_pin) {
+            checkCurrentPin.value = true;
+        }
     }
 });
 </script>

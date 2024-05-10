@@ -33,7 +33,9 @@ const inputClasses = ['rounded-lg w-full py-2.5 mt-1 bg-white dark:bg-gray-800 p
 
 watchEffect(() => {
     if (usePage().props.title !== null) {
-        checkCurrentPin.value = true;
+        if (user.security_pin) {
+            checkCurrentPin.value = true;
+        }
     }
 });
 </script>

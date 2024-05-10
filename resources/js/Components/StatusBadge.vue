@@ -22,6 +22,7 @@ const baseClasses = [
 const variantClasses = computed(() => {
     const variantMap = {
         success: 'bg-success-400 dark:bg-success-500',
+        approved: 'bg-success-400 dark:bg-success-500',
         active: 'bg-success-400 dark:bg-success-500',
         subscribing: 'bg-success-400 dark:bg-success-500',
         rejected: 'bg-error-400 dark:bg-error-500',

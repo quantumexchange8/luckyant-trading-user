@@ -26,7 +26,7 @@ return [
     'trade_rebate_report' => "交易返利报告",
     'total_rebate_amount' => "总返利金额",
     'total_trade_volume' => "总交易量",
-    'amount_multiples_of_100' => "请输入能被100整除的金额",
+    'amount_multiples_of_100' => "以百位数为单位",
     'amount_return_cash_wallet' => "退回至现金钱包的金额",
     'amount_to_follow_master' => "跟随交易者的金额",
     'confirm_submit' => "确认提交",

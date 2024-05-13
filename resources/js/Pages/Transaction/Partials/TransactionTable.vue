@@ -223,7 +223,7 @@ const closeModal = () => {
                     {{ transaction.to_wallet ? $t('public.' + transaction.to_wallet.type) : (transaction.to_meta_login ? $t('public.account_no') + ' - ' + transaction.to_meta_login.meta_login : '-') }}
                 </td>
                 <td class="p-3">
-                    {{ transaction.payment_method ? $t('public.' + transaction.payment_method.toLowerCase()) : '-' }}
+                    {{ transaction.payment_method ? $t('public.' + transaction.payment_method.toLowerCase().replace(/\s+/g, '_')) : '-' }}
                 </td>
                 <td class="p-3">
                     {{ transaction.transaction_number }}
@@ -263,7 +263,7 @@ const closeModal = () => {
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.payment_methods') }}</span>
-            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetail.payment_method ? $t('public.' + transactionDetail.payment_method.toLowerCase()) : '-'  }}</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetail.payment_method ? $t('public.' + transactionDetail.payment_method.toLowerCase().replace(/\s+/g, '_')) : '-'  }}</span>
         </div>
         <div v-if="transactionDetail.transaction_type === 'Deposit'" class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.to_account') }}</span>

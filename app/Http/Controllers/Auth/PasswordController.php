@@ -44,12 +44,10 @@ class PasswordController extends Controller
         $currentTime = Carbon::now();
         $differenceInSeconds = $currentTime->diffInSeconds($otpCreatedAt);
 
-        if ($existVerifyOtp->otp == $request->otp) {
-            if ($differenceInSeconds > 60) {
-                throw ValidationException::withMessages(['otp' => trans('public.invalid_otp')]);
-            }
+        if ($existVerifyOtp->otp != $request->otp || $differenceInSeconds > 60) {
+            throw ValidationException::withMessages(['otp' => trans('public.invalid_otp')]);
         }
-        
+                
         $request->user()->update([
             'password' => Hash::make($validated['password']),
             'password_changed_at' => Carbon::now(),

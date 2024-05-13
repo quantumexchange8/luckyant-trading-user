@@ -58,7 +58,7 @@ const toggleInvestorPasswordVisibilityConfirm = () => {
 }
 
 const passwordRules = [
-    { message: 'register_terms_1', regex: /.{6,}/ },
+    { message: 'register_terms_1_8', regex: /.{8,}/ },
     { message: 'register_terms_2', regex: /[A-Z]+/ },
     { message: 'register_terms_3', regex: /[a-z]+/ },
     { message: 'register_terms_4', regex: /[0-9]+/ },

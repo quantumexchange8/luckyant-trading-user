@@ -361,6 +361,7 @@ return [
     'male' => "Male",
     'female' => "Female",
     'register_terms_1' => "Must be at least 6 characters",
+    'register_terms_1_8' => "Must be at least 8 characters",
     'register_terms_2' => "Must contain one uppercase letter",
     'register_terms_3' => "Must contain one lowercase letter",
     'register_terms_4' => "Must contain one number",

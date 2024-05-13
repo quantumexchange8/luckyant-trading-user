@@ -635,10 +635,10 @@ class AccountInfoController extends Controller
         ];
 
         if (!empty($request->master_password)) {
-            $rules['master_password'][] = Password::min(6)->letters()->symbols()->numbers()->mixedCase();
+            $rules['master_password'][] = Password::min(8)->letters()->symbols()->numbers()->mixedCase();
         }
         if (!empty($request->investor_password)) {
-            $rules['investor_password'][] = Password::min(6)->letters()->symbols()->numbers()->mixedCase();
+            $rules['investor_password'][] = Password::min(8)->letters()->symbols()->numbers()->mixedCase();
         }
 
         $attributes = [

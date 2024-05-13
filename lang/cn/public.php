@@ -361,6 +361,7 @@ return [
     'male' => "男性",
     'female' => "女性",
     'register_terms_1' => "必须至少为6个字符",
+    'register_terms_1_8' => "必须至少为8个字符",
     'register_terms_2' => "必须包含一个大写字母",
     'register_terms_3' => "必须包含一个小写字母",
     'register_terms_4' => "必须包含一个数字",

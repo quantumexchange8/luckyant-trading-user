@@ -38,6 +38,11 @@ const currentLocale = ref(usePage().props.locale);
 const localeTextMap = {
     en: 'EN',
     cn: '中文',
+    kr: '한국어',
+    vn: 'tiếng Việt',
+    ja: '日本語',
+    th: 'ไทย',
+    id: 'Bahasa Indonesia',
 };
 
 const currentLocaleText = computed(() => {
@@ -93,6 +98,31 @@ const changeLanguage = async (langVal) => {
                         中文
                     </div>
                 </DropdownLink>
+                <DropdownLink @click="changeLanguage('kr')">
+                    <div class="inline-flex items-center gap-2">
+                        한국어
+                    </div>
+                </DropdownLink>
+                <DropdownLink @click="changeLanguage('vn')">
+                    <div class="inline-flex items-center gap-2">
+                        tiếng Việt
+                    </div>
+                </DropdownLink>
+                <DropdownLink @click="changeLanguage('ja')">
+                    <div class="inline-flex items-center gap-2">
+                        日本語
+                    </div>
+                </DropdownLink>
+                <DropdownLink @click="changeLanguage('th')">
+                    <div class="inline-flex items-center gap-2">
+                        ไทย
+                    </div>
+                </DropdownLink>
+                <DropdownLink @click="changeLanguage('id')">
+                    <div class="inline-flex items-center gap-2">
+                        Bahasa Indonesia
+                    </div>
+                </DropdownLink>
             </template>
         </Dropdown>
         <div class="flex items-center gap-2">
@@ -143,6 +173,31 @@ const changeLanguage = async (langVal) => {
                     <DropdownLink @click="changeLanguage('cn')">
                         <div class="inline-flex items-center gap-2">
                             中文
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('kr')">
+                        <div class="inline-flex items-center gap-2">
+                            한국어
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('vn')">
+                        <div class="inline-flex items-center gap-2">
+                            tiếng Việt
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('ja')">
+                        <div class="inline-flex items-center gap-2">
+                            日本語
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('th')">
+                        <div class="inline-flex items-center gap-2">
+                            ไทย
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('id')">
+                        <div class="inline-flex items-center gap-2">
+                            Bahasa Indonesia
                         </div>
                     </DropdownLink>
                 </template>

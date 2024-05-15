@@ -85,6 +85,31 @@ const changeLanguage = async (langVal) => {
                             中文
                         </div>
                     </DropdownLink>
+                    <DropdownLink @click="changeLanguage('kr')">
+                        <div class="inline-flex items-center gap-2">
+                            한국어
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('vn')">
+                        <div class="inline-flex items-center gap-2">
+                            tiếng Việt
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('ja')">
+                        <div class="inline-flex items-center gap-2">
+                            日本語
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('th')">
+                        <div class="inline-flex items-center gap-2">
+                            ไทย
+                        </div>
+                    </DropdownLink>
+                    <DropdownLink @click="changeLanguage('id')">
+                        <div class="inline-flex items-center gap-2">
+                            Bahasa Indonesia
+                        </div>
+                    </DropdownLink>
                 </template>
             </Dropdown>
             <Button

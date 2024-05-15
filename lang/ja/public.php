@@ -475,4 +475,10 @@ return [
     'invalid_otp' => '無効なOTP',
     'otp' => "OTP",
     'password_change_restriction' => "過去24時間以内にパスワードを変更しました。この間、引き出しは許可されません。",
+    "switch_master" => "マスターの切り替え",
+    "switch_master_description" => "マスターアカウントの切り替えには管理者の承認が必要で、24時間の待機期間後に開始されます。",
+    "success_request_switch" => "切り替え要求成功",
+    "successfully_request_switch" => ":from から :to へのマスター切り替え要求が成功しました",
+    "switched" => "切り替え済み",
+    "performance_incentive" => '業績インセンティブ'
 ];

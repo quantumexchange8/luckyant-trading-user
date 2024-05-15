@@ -30,6 +30,7 @@ const variantClasses = computed(() => {
         unsubscribed: 'bg-error-400 dark:bg-error-500',
         expiring: 'bg-warning-500 dark:bg-warning-400',
         pending: 'bg-blue-400 dark:bg-blue-500',
+        switched: 'bg-gray-400 dark:bg-gray-500',
     };
 
     const variant = props.value.toLowerCase();

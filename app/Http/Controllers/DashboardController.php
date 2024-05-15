@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PerformanceIncentive;
 use App\Models\Subscription;
 use App\Models\TradeHistory;
 use Carbon\Carbon;
@@ -161,12 +162,14 @@ class DashboardController extends Controller
         $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)
             ->where('status', 'Approved');
 
+        $performanceIncentive = PerformanceIncentive::where('user_id', $user->id)->sum('personal_bonus_amt');
+
         return response()->json([
             'totalDeposit' => $totalDeposit,
             'totalWithdrawal' => $totalWithdrawal,
             'totalProfit' => $totalProfit,
             'totalRebateEarn' => $tradeRebateSummary->sum('rebate'),
-            'totalTradeLot' => $tradeRebateSummary->sum('volume')
+            'performanceIncentive' => $performanceIncentive
         ]);
     }
 

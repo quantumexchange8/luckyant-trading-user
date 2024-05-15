@@ -1,22 +1,15 @@
 <script setup>
 import {ref} from "vue";
 import Tooltip from "@/Components/Tooltip.vue";
-import {RefreshCw03Icon, MemberDetailIcon, InfoCircleIcon} from "@/Components/Icons/outline.jsx";
-import {BanIcon} from "@heroicons/vue/outline";
+import {MemberDetailIcon} from "@/Components/Icons/outline.jsx";
 import Button from "@/Components/Button.vue";
 import Modal from "@/Components/Modal.vue";
-import {transactionFormat} from "@/Composables/index.js";
-import {useForm} from "@inertiajs/vue3";
-import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
-import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
-import SwapMaster from "@/Pages/Trading/SubscriptionListing/Partials/SwapMaster.vue";
 import SubscriptionBatchDetail from "@/Pages/Trading/SubscriptionListing/Partials/SubscriptionBatchDetail.vue";
 
 const props = defineProps({
     subscription: Object,
     terms: Object,
     terminateBadgeStatus: Boolean,
-    swapMasterSel: Array
 })
 
 const subscriptionModal = ref(false);

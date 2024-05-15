@@ -52,7 +52,7 @@ const firstTimeLogin = ref(props.firstTimeLogin);
 const totalDeposit = ref('0.00');
 const totalWithdrawal = ref('0.00');
 const totalProfit = ref('0.00');
-const totalTradeLot = ref('0.00');
+const performanceIncentive = ref('0.00');
 const totalRebateEarn = ref('0.00');
 
 const closeModal = () => {
@@ -118,7 +118,7 @@ const getTotalTransactions = async () => {
         totalWithdrawal.value = response.data.totalWithdrawal;
         totalProfit.value = response.data.totalProfit;
         totalRebateEarn.value = response.data.totalRebateEarn;
-        totalTradeLot.value = response.data.totalTradeLot;
+        performanceIncentive.value = response.data.performanceIncentive;
     } catch (error) {
         console.error('Error refreshing transactions data:', error);
     }
@@ -196,10 +196,10 @@ getTotalTransactions();
                                         </div>
                                         <div class="space-y-2 col-span-3 sm:col-span-3 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.total_trade_lots') }}
+                                                {{ $t('public.performance_incentive') }}
                                             </div>
-                                            <div class="py-2 flex justify-center rounded-md border border-gray-500">
-                                                <span class="text-gray-500 font-semibold">{{ formatAmount(totalTradeLot) }}</span>
+                                            <div class="py-2 flex justify-center rounded-md border border-success-500">
+                                                <span class="text-success-500 font-semibold">{{ formatAmount(performanceIncentive) }}</span>
                                             </div>
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 w-full">

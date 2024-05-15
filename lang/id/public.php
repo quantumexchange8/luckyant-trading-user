@@ -474,5 +474,11 @@ return [
     'remaining_time' => "Waktu Tersisa",
     'invalid_otp' => 'OTP Tidak Valid',
     'otp' => "OTP",
-    'password_change_restriction' => "Anda telah mengganti kata sandi dalam 24 jam terakhir. Penarikan tidak diizinkan selama periode ini."
+    'password_change_restriction' => "Anda telah mengganti kata sandi dalam 24 jam terakhir. Penarikan tidak diizinkan selama periode ini.",
+    "switch_master" => "Ganti Master",
+    "switch_master_description" => "Mengganti akun master memerlukan persetujuan dari admin dan dimulai setelah masa tunggu 24 jam.",
+    "success_request_switch" => "Permintaan ganti berhasil",
+    "successfully_request_switch" => "Berhasil meminta ganti master dari :from ke :to",
+    "switched" => "Diganti",
+    "performance_incentive" => 'Insentif Kinerja'
 ];

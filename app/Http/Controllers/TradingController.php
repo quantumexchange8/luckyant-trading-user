@@ -12,6 +12,7 @@ use App\Models\Subscription;
 use App\Models\SubscriptionBatch;
 use App\Models\SubscriptionPenaltyLog;
 use App\Models\SubscriptionRenewalRequest;
+use App\Models\SwitchMaster;
 use App\Models\Term;
 use App\Models\TradeHistory;
 use App\Models\TradingAccount;
@@ -282,7 +283,8 @@ class TradingController extends Controller
         $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
 
         $query = SubscriptionBatch::with(['master', 'master.tradingUser', 'master.masterManagementFee'])
-            ->where('user_id', Auth::id());
+            ->where('user_id', Auth::id())
+            ->where('meta_login', $request->meta_login);
 
         if ($request->filled('search')) {
             $search = '%' . $request->input('search') . '%';
@@ -630,20 +632,8 @@ class TradingController extends Controller
             ->get()
             ->pluck('master_id');
 
-        // TODO: check master status
-        $availableMaster = Master::with('tradingUser')
-            ->whereNotIn('id', $subscribed_master_id)
-            ->get()
-            ->map(function ($master) {
-                return [
-                    'value' => $master->id,
-                    'label' => $master->tradingUser->name,
-                ];
-            });
-
         return Inertia::render('Trading/SubscriptionListing/SubscriptionListing', [
             'terms' => Term::where('type', 'subscribe')->first(),
-            'swapMasterSel' => $availableMaster,
         ]);
     }
 
@@ -707,13 +697,14 @@ class TradingController extends Controller
         CASE
             WHEN status = 'Subscribing' THEN 1
             WHEN status = 'Expiring' THEN 2
-            WHEN status = 'Unsubscribed' THEN 3
-            ELSE 4
+            WHEN status = 'Switched' THEN 3
+            WHEN status = 'Unsubscribed' THEN 4
+            ELSE 5
         END")
             ->latest()
             ->get();
 
-        $subscribers->each(function ($subscriber) {
+        $subscribers->each(function ($subscriber) use ($user) {
             $approvalDate = Carbon::parse($subscriber->approval_date);
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($subscriber->status == 'Unsubscribed' ? $subscriber->unsubscribe_date : $today);
@@ -734,12 +725,53 @@ class TradingController extends Controller
 
             $management_fee = MasterManagementFee::where('master_id', $subscriber->master_id);
 
+            $locale = app()->getLocale();
+            $availableMaster = Master::with('tradingUser:id,name,company')
+                ->where('status', 'Active')
+                ->where('signal_status', 1)
+                ->whereNot('id', $subscriber->master_id);
+
+            $first_leader = $user->getFirstLeader();
+            if ($user->is_public == 0 && $first_leader) {
+                $leader = $first_leader;
+                while ($leader && $leader->masterAccounts->isEmpty()) {
+                    $leader = $leader->getFirstLeader();
+                }
+
+                if ($leader) {
+                    $availableMaster = $availableMaster
+                        ->where('is_public', $leader->is_public)
+                        ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
+                } else {
+                    // If leader is null, reset $availableMaster to an empty query
+                    $availableMaster = $availableMaster->where('id', null);
+                }
+            } elseif ($user->is_public == 1 && $first_leader) {
+                $availableMaster->where('is_public', $first_leader->is_public);
+            } else {
+                if ($user->is_public == 0) {
+                    $availableMaster->where('is_public', $user->is_public)
+                        ->whereIn('id', $user->masterAccounts->pluck('id'));
+                } else {
+                    $availableMaster->where('is_public', $user->is_public);
+                }
+            }
+
+            $masterSel = $availableMaster->get()
+                ->map(function ($master) use ($locale) {
+                    return [
+                        'value' => $master->id,
+                        'label' => ($locale == 'cn' ? $master->tradingUser->company : $master->tradingUser->name) . ' ('. $master->meta_login . ')',
+                    ];
+                });
+
             $subscriber->join_days = $join_days;
             $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
             $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
             $subscriber->management_fee = $management_fee->where('penalty_days', '>', $join_days)->first()->penalty_percentage;
             $subscriber->management_fee_for_stop_renewal = $management_fee->where('penalty_days', '>', $daysDifference)->first()->penalty_percentage;
             $subscriber->penalty_exempt = $penalty_exempt;
+            $subscriber->newMasterSel = $masterSel;
         });
 
         return response()->json([
@@ -790,5 +822,74 @@ class TradingController extends Controller
                 ->with('title', trans('public.success_terminate'))
                 ->with('success', trans('public.successfully_terminate'). ': ' . $subscription->subscription_number);
         }
+    }
+
+    public function getSelectedNewMaster(Request $request)
+    {
+        $masterAccounts = Master::with([
+            'user:id,username,name,email',
+            'tradingAccount:id,meta_login,balance,equity',
+            'tradingUser:id,name,company',
+            'masterManagementFee'
+        ])->find($request->master_id);
+
+        return response()->json($masterAccounts);
+    }
+
+    public function switchMaster(Request $request)
+    {
+        $subscriber = Subscriber::find($request->subscriber_id);
+        $new_master = Master::find($request->new_master_id);
+        $metaService = new MetaFiveService();
+        $connection = $metaService->getConnectionStatus();
+        $userTrade = $metaService->userTrade($subscriber->meta_login);
+
+        if ($connection != 0) {
+            return redirect()->back()
+                ->with('title', trans('public.server_under_maintenance'))
+                ->with('warning', trans('public.try_again_later'));
+        }
+
+        // check open trade
+        if ($userTrade) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.user_got_trade'));
+        }
+
+        if (empty($new_master)) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.terminated_subscription_error'));
+        }
+
+        $switchMaster = SwitchMaster::where('user_id', $subscriber->user_id)
+            ->where('new_master_id', $new_master->id)
+            ->where('status', 'Pending')
+            ->first();
+
+        if ($switchMaster) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.terminated_subscription_error'));
+        }
+
+        SwitchMaster::create([
+            'user_id' => $subscriber->user_id,
+            'meta_login' => $subscriber->meta_login,
+            'old_master_id' => $subscriber->master_id,
+            'old_master_meta_login' => $subscriber->master_meta_login,
+            'new_master_id' => $new_master->id,
+            'new_master_meta_login' => $new_master->meta_login,
+            'old_subscriber_id' => $subscriber->id,
+            'status' => 'Pending',
+        ]);
+
+        return redirect()->back()
+            ->with('title', trans('public.success_request_switch'))
+            ->with('success', trans('public.successfully_request_switch', [
+                'from' => $subscriber->master_meta_login,
+                'to' => $new_master->meta_login
+            ]));
     }
 }

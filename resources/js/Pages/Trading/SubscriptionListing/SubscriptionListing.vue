@@ -20,7 +20,6 @@ import SubscriptionAccount from "@/Pages/Trading/SubscriptionListing/Subscriptio
 const props = defineProps({
     terms: Object,
     masterSel: Array,
-    swapMasterSel: Array,
 })
 
 const formatter = ref({
@@ -41,6 +40,7 @@ const totalAmount = ref(null);
 const date = ref('');
 const search = ref('');
 const master = ref('');
+const meta_login = ref('');
 const subscriptions = ref({data: []});
 const sorting = ref();
 const pageSize = ref(10);
@@ -50,9 +50,9 @@ const {formatDateTime, formatAmount} = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
 const terminateBadgeStatus = ref(false);
 
-const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterDate = date.value, filterMaster = master.value, columnName = sorting.value) => {
+const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterDate = date.value, filterMaster = master.value, filterMetaLogin = meta_login.value, columnName = sorting.value) => {
     try {
-        let url = `/trading/getSubscriptions?page=${page}`;
+        let url = `/trading/getSubscriptions?meta_login=${filterMetaLogin}&page=${page}`;
 
         if (paginate) {
             url += `&paginate=${paginate}`;
@@ -86,8 +86,6 @@ const getResults = async (page = 1, paginate = 10, filterSearch = search.value, 
         console.error(error);
     }
 }
-
-getResults();
 
 const columns = [
     {
@@ -136,7 +134,6 @@ const columns = [
             subscription: row.original,
             terms: props.terms,
             terminateBadgeStatus: terminateBadgeStatus.value,
-            swapMasterSel: props.swapMasterSel
         }),
     },
 ];
@@ -162,9 +159,9 @@ watch(
 );
 
 watch(
-    [search, date, master],
-    debounce(([searchValue, dateValue, masterValue]) => {
-        getResults(1, pageSize.value, searchValue, dateValue, masterValue, sorting.value);
+    [search, date, master, meta_login],
+    debounce(([searchValue, dateValue, masterValue, metaLoginValue]) => {
+        getResults(1, pageSize.value, searchValue, dateValue, masterValue, metaLoginValue, sorting.value);
     }, 300)
 );
 
@@ -226,6 +223,7 @@ watchEffect(() => {
         <SubscriptionAccount
             :terms="terms"
             @update:master="master = $event"
+            @update:meta_login="meta_login = $event"
         />
 
         <div class="p-5 my-8 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">

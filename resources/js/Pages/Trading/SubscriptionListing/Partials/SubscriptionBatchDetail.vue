@@ -179,7 +179,7 @@ const closeTermsModal = () => {
                     </div>
                 </div>
                 <div
-                    v-if="subscription.status !== 'Terminated'"
+                    v-if="subscription.status !== 'Terminated' && subscription.status !== 'Switched'"
                     class="flex items-center justify-between gap-2 self-stretch"
                 >
                     <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">

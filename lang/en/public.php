@@ -474,5 +474,11 @@ return [
     'remaining_time' => "Remaining time",
     'invalid_otp' => 'Invalid OTP',
     'otp' => "OTP",
-    'password_change_restriction' => "You have changed your password within the last 24 hours. Withdrawals are not permitted during this time."
+    'password_change_restriction' => "You have changed your password within the last 24 hours. Withdrawals are not permitted during this time.",
+    "switch_master" => "Switch Master",
+    "switch_master_description" => "Switching master account requires approval from an admin and initiates after a 24-hour waiting period.",
+    "success_request_switch" => "Success request switch",
+    "successfully_request_switch" => "Successfully request switch master from :from to :to",
+    "switched" => "Switched",
+    "performance_incentive" => 'Performance Incentive'
 ];

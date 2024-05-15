@@ -475,4 +475,10 @@ return [
     'invalid_otp' => '无效的OTP',
     'otp' => "OTP",
     'password_change_restriction' => "您在过去的24小时内更改了密码。在此期间不允许提款。",
+    "switch_master" => "切换主账户",
+    "switch_master_description" => "切换主账户需要管理员批准，并在经过24小时等待期后开始。",
+    "success_request_switch" => "请求切换成功",
+    "successively_request_switch" => "成功请求切换从 :from 到 :to",
+    "switched" => "已切换",
+    "performance_incentive" => '绩效奖励'
 ];

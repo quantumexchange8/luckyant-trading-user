@@ -474,5 +474,11 @@ return [
     'remaining_time' => "Thời Gian Còn Lại",
     'invalid_otp' => 'OTP Không Hợp Lệ',
     'otp' => "OTP",
-    'password_change_restriction' => "Bạn đã thay đổi mật khẩu trong vòng 24 giờ qua. Rút tiền không được phép trong thời gian này."
+    'password_change_restriction' => "Bạn đã thay đổi mật khẩu trong vòng 24 giờ qua. Rút tiền không được phép trong thời gian này.",
+    "switch_master" => "Chuyển đổi Master",
+    "switch_master_description" => "Việc chuyển đổi tài khoản master cần sự phê duyệt từ quản trị viên và sẽ bắt đầu sau thời gian chờ 24 giờ.",
+    "success_request_switch" => "Yêu cầu chuyển đổi thành công",
+    "successfully_request_switch" => "Yêu cầu chuyển đổi master từ :from sang :to thành công",
+    "switched" => "Đã chuyển đổi",
+    "performance_incentive" => 'Khuyến khích Hiệu suất'
 ];

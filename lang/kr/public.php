@@ -113,7 +113,7 @@ return [
     'email_verification' => "이메일 확인",
     'email_verification_message' => "가입해 주셔서 감사합니다! 시작하기 전에, 방금 보내 드린 링크를 클릭하여 이메일 주소를 확인하시겠어요? 이메일을 받지 못하셨다면, 새로 보내드릴게요.",
     'verification_link_sent' => "회원가입 시 제공한 이메일 주소로 새로운 확인 링크가 전송되었습니다.",
-    'resend_email_verification' => "이메일 확인 재전송",    
+    'resend_email_verification' => "이메일 확인 재전송",
     'sidebar' => [
         'dashboard' => "대시보드",
         'account_info' => "계정 정보",
@@ -474,5 +474,11 @@ return [
     'remaining_time' => "남은 시간",
     'invalid_otp' => '유효하지 않은 OTP',
     'otp' => "OTP",
-    'password_change_restriction' => "지난 24시간 이내에 비밀번호를 변경했습니다. 이 기간 동안 인출이 허용되지 않습니다."
+    'password_change_restriction' => "지난 24시간 이내에 비밀번호를 변경했습니다. 이 기간 동안 인출이 허용되지 않습니다.",
+    "switch_master" => "마스터 전환",
+    "switch_master_description" => "마스터 계정을 전환하려면 관리자의 승인이 필요하며 24시간 대기 기간 후에 시작됩니다.",
+    "success_request_switch" => "전환 요청 성공",
+    "successfully_request_switch" => ":from에서 :to로 마스터 전환 요청에 성공했습니다",
+    "switched" => "전환됨",
+    "performance_incentive" => '성과 인센티브'
 ];

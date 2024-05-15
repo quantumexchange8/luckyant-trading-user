@@ -6,6 +6,7 @@ import {usePage} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
 import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
 import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
+import SwitchMaster from "@/Pages/Trading/SubscriptionListing/Partials/SwitchMaster.vue";
 
 const props = defineProps({
     terms: Object
@@ -15,7 +16,7 @@ const selectedSubscriberAccount = ref();
 const subscriberAccounts = ref(null);
 const currentLocale = ref(usePage().props.locale);
 const { formatAmount, formatDateTime } = transactionFormat();
-const emit = defineEmits(['update:master'])
+const emit = defineEmits(['update:master', 'update:meta_login'])
 
 const getResults = async (page = 1, search = '', type = '', date = '') => {
     try {
@@ -38,6 +39,7 @@ const getResults = async (page = 1, search = '', type = '', date = '') => {
         selectedSubscriberAccount.value = subscriberAccounts.value[0]
         if (selectedSubscriberAccount.value) {
             emit('update:master', selectedSubscriberAccount.value.master_id)
+            emit('update:meta_login', selectedSubscriberAccount.value.meta_login)
         }
     } catch (error) {
         console.error(error);
@@ -49,6 +51,7 @@ getResults();
 const selectSubscriberAccount = (subscriber) => {
     selectedSubscriberAccount.value = subscriber;
     emit('update:master', subscriber.master_id)
+    emit('update:meta_login', subscriber.meta_login)
 }
 
 watchEffect(() => {
@@ -71,25 +74,22 @@ watchEffect(() => {
             }"
             @click="selectSubscriberAccount(subscriberAccount)"
         >
-            <div class="flex justify-between items-center w-full">
-                <div class="flex gap-2 items-start">
-                    <div class="flex flex-col">
-                        <div v-if="currentLocale === 'en'" class="text-sm">
-                            {{ subscriberAccount.master.trading_user.name }}
-                        </div>
-                        <div v-if="currentLocale === 'cn'" class="text-sm">
-                            {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
-                        </div>
-                        <div class="font-semibold">
-                            {{ subscriberAccount.master.meta_login }}
-                        </div>
+            <div class="flex gap-2 items-start">
+                <div class="flex flex-col">
+                    <div v-if="currentLocale === 'en'" class="text-sm">
+                        {{ subscriberAccount.master.trading_user.name }}
                     </div>
-                    <StatusBadge
-                        :value="subscriberAccount.status"
-                        width="w-20"
-                    />
+                    <div v-if="currentLocale === 'cn'" class="text-sm">
+                        {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
+                    </div>
+                    <div class="font-semibold">
+                        {{ subscriberAccount.master.meta_login }}
+                    </div>
                 </div>
-<!--                Swap-->
+                <StatusBadge
+                    :value="subscriberAccount.status"
+                    width="w-20"
+                />
             </div>
 
             <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
@@ -156,8 +156,13 @@ watchEffect(() => {
                 </div>
             </div>
 
+            <SwitchMaster
+                :subscriberAccount="subscriberAccount"
+                :subscription="subscriberAccount.subscription"
+            />
+
             <div
-                v-if="subscriberAccount.status !== 'Unsubscribed'"
+                v-if="subscriberAccount.status !== 'Unsubscribed' && subscriberAccount.status !== 'Switched'"
                 class="flex w-full gap-2 items-center"
             >
                 <StopRenewSubscription

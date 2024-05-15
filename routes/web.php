@@ -128,11 +128,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/getCopyTradeTransactions', [TradingController::class, 'getCopyTradeTransactions'])->name('trading.getCopyTradeTransactions');
         Route::get('/getSubscriberAccounts', [TradingController::class, 'getSubscriberAccounts'])->name('trading.getSubscriberAccounts');
         Route::get('/getPenaltyDetail', [TradingController::class, 'getPenaltyDetail'])->name('trading.getPenaltyDetail');
+        Route::get('/getSelectedNewMaster', [TradingController::class, 'getSelectedNewMaster'])->name('trading.getSelectedNewMaster');
 
         Route::post('/subscribeMaster', [TradingController::class, 'subscribeMaster'])->name('trading.subscribeMaster');
         Route::post('/renewalSubscription', [TradingController::class, 'renewalSubscription'])->name('trading.renewalSubscription');
         Route::post('/terminateSubscription', [TradingController::class, 'terminateSubscription'])->name('trading.terminateSubscription');
         Route::post('/terminateBatch', [TradingController::class, 'terminateBatch'])->name('trading.terminateBatch');
+        Route::post('/switchMaster', [TradingController::class, 'switchMaster'])->name('trading.switchMaster');
     });
 
     /**

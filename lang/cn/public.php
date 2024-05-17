@@ -480,5 +480,6 @@ return [
     "success_request_switch" => "请求切换成功",
     "successively_request_switch" => "成功请求切换从 :from 到 :to",
     "switched" => "已切换",
-    "performance_incentive" => '绩效奖励'
+    "performance_incentive" => '绩效奖金',
+    "total_performance_incentive" => '总绩效奖金'
 ];

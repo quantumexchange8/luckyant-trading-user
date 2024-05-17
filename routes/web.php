@@ -201,6 +201,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/getWalletLogs', [ReportController::class, 'getWalletLogs'])->name('report.getWalletLogs');
         Route::get('/trade_history', [ReportController::class, 'trade_history'])->name('report.trade_history');
         Route::get('/getTradeHistories', [ReportController::class, 'getTradeHistories'])->name('report.getTradeHistories');
+        Route::get('/performance_incentive', [ReportController::class, 'performance_incentive'])->name('report.performance_incentive');
+        Route::get('/getPerformanceIncentive', [ReportController::class, 'getPerformanceIncentive'])->name('report.getPerformanceIncentive');
     });
 
 });

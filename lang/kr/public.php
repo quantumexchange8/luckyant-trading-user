@@ -480,5 +480,6 @@ return [
     "success_request_switch" => "전환 요청 성공",
     "successfully_request_switch" => ":from에서 :to로 마스터 전환 요청에 성공했습니다",
     "switched" => "전환됨",
-    "performance_incentive" => '성과 인센티브'
+    "performance_incentive" => '성과 인센티브',
+    "total_performance_incentive" => '총 성과 인센티브',
 ];

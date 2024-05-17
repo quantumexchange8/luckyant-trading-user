@@ -480,5 +480,6 @@ return [
     "success_request_switch" => "Yêu cầu chuyển đổi thành công",
     "successfully_request_switch" => "Yêu cầu chuyển đổi master từ :from sang :to thành công",
     "switched" => "Đã chuyển đổi",
-    "performance_incentive" => 'Khuyến khích Hiệu suất'
+    "performance_incentive" => 'Khuyến khích Hiệu suất',
+    "total_performance_incentive" => 'Khuyến khích hiệu suất tổng thể'
 ];

@@ -480,5 +480,6 @@ return [
     "success_request_switch" => "Permintaan ganti berhasil",
     "successfully_request_switch" => "Berhasil meminta ganti master dari :from ke :to",
     "switched" => "Diganti",
-    "performance_incentive" => 'Insentif Kinerja'
+    "performance_incentive" => 'Insentif Kinerja',
+    "total_performance_incentive" => 'Insentif Kinerja Total',
 ];

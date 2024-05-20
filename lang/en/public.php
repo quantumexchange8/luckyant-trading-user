@@ -480,5 +480,6 @@ return [
     "success_request_switch" => "Success request switch",
     "successfully_request_switch" => "Successfully request switch master from :from to :to",
     "switched" => "Switched",
-    "performance_incentive" => 'Performance Incentive'
+    "performance_incentive" => 'Performance Incentive',
+    "total_performance_incentive" => 'Total Performance Incentive'
 ];

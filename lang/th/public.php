@@ -480,5 +480,6 @@ return [
     "success_request_switch" => "คำขอสลับสำเร็จ",
     "successfully_request_switch" => "คำขอสลับมาสเตอร์จาก :from ไปยัง :to สำเร็จ",
     "switched" => "สลับแล้ว",
-    "performance_incentive" => 'แรงจูงใจด้านประสิทธิภาพ'
+    "performance_incentive" => 'แรงจูงใจด้านประสิทธิภาพ',
+    "total_performance_incentive" => 'แรงจูงใจด้านประสิทธิภาพโดยรวม'
 ];

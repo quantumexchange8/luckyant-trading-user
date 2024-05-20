@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PerformanceIncentive;
 use Inertia\Inertia;
 use App\Models\Wallet;
 use App\Models\WalletLog;
@@ -220,5 +221,75 @@ class ReportController extends Controller
                     'totalTradeLot' => $totalTradeLot,
                 ]);
         }
+    }
+
+    public function performance_incentive()
+    {
+        $rebateTypes = [
+            ['value' => 'affiliate', 'label' => trans('public.affiliate')],
+            ['value' => 'personal', 'label' => trans('public.personal')],
+        ];
+
+        return Inertia::render('Report/PerformanceIncentive/PerformanceIncentive', [
+            'rebateTypes' => $rebateTypes
+        ]);
+    }
+
+    public function getPerformanceIncentive(Request $request)
+    {
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
+
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+
+        $query = PerformanceIncentive::with('user')
+            ->where('user_id', \Auth::id());
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->input('search') . '%';
+            $query->where(function ($query) use ($search) {
+                $query->whereHas('user', function ($subQuery) use ($search) {
+                        $subQuery->where('name', 'like', $search)
+                            ->orWhere('email', 'like', $search)
+                            ->orWhere('username', 'like', $search);
+                    });
+            });
+        }
+
+        if ($request->filled('date')) {
+            $date = $request->input('date');
+            $dateRange = explode(' - ', $date);
+            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }
+
+        $totalPerformanceQuery = clone $query;
+        $totalAffiliateQuery = clone $totalPerformanceQuery;
+        $totalPersonalQuery = clone $totalPerformanceQuery;
+        $meta_logins = TradingAccount::query()->where('user_id', \Auth::id())->get()->pluck('meta_login')->toArray();
+
+        if ($request->filled('type')) {
+            if ($request->type == 'affiliate') {
+                $childrenIds = \Auth::user()->getChildrenIds();
+                $query->whereNull('meta_login');
+            } elseif ($request->type == 'personal') {
+                $query->whereIn('meta_login', $meta_logins);
+            }
+        }
+
+        $results = $query
+            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
+            ->paginate($request->input('paginate', 10));
+
+        return response()->json([
+            'performanceIncentives' => $results,
+            'totalPerformanceIncentive' => $totalPerformanceQuery->sum('personal_bonus_amt'),
+            'totalAffiliateAmount' => $totalAffiliateQuery->whereNull('meta_login')->sum('personal_bonus_amt'),
+            'totalPersonalAmount' => $totalPersonalQuery->whereIn('meta_login', $meta_logins)->sum('personal_bonus_amt'),
+        ]);
     }
 }

@@ -157,6 +157,12 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
                 :active="route().current('report.trade_history')"
             />
 
+            <SidebarCollapsibleItem
+                :href="route('report.performance_incentive')"
+                :title="$t('public.performance_incentive')"
+                :active="route().current('report.performance_incentive')"
+            />
+
         </SidebarCollapsible>
 
         <SidebarLink

@@ -156,10 +156,10 @@ watchEffect(() => {
                 </div>
             </div>
 
-            <SwitchMaster
-                :subscriberAccount="subscriberAccount"
-                :subscription="subscriberAccount.subscription"
-            />
+<!--            <SwitchMaster-->
+<!--                :subscriberAccount="subscriberAccount"-->
+<!--                :subscription="subscriberAccount.subscription"-->
+<!--            />-->
 
             <div
                 v-if="subscriberAccount.status !== 'Unsubscribed' && subscriberAccount.status !== 'Switched'"

@@ -480,5 +480,6 @@ return [
     "success_request_switch" => "切り替え要求成功",
     "successfully_request_switch" => ":from から :to へのマスター切り替え要求が成功しました",
     "switched" => "切り替え済み",
-    "performance_incentive" => '業績インセンティブ'
+    "performance_incentive" => '業績インセンティブ',
+    "total_performance_incentive" => 'トータルパフォーマンスインセンティブ',
 ];

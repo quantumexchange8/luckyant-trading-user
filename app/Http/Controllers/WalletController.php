@@ -410,15 +410,18 @@ class WalletController extends Controller
         $wallet = Wallet::find($request->wallet_id);
 
         $currentTime = Carbon::now();
-        $passwordChangedTime = Carbon::parse($user->password_changed_at);
-        $hoursDifference = $passwordChangedTime->diffInHours($currentTime);
 
-        if($hoursDifference < 24) {
-            return back()
-                ->with('title', trans('public.invalid_action'))
-                ->with('warning', trans('public.password_change_restriction'));
+        if ($user->password_changed_at !== null) {
+            $passwordChangedTime = Carbon::parse($user->password_changed_at);
+            $hoursDifference = $passwordChangedTime->diffInHours($currentTime);
+        
+            if ($hoursDifference < 24) {
+                return back()
+                    ->with('title', trans('public.invalid_action'))
+                    ->with('warning', trans('public.password_change_restriction'));
+            }
         }
-
+        
         if ($wallet->balance < $amount) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
         }

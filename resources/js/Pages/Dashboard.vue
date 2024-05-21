@@ -137,9 +137,9 @@ getTotalTransactions();
             </div>
         </template>
 
-        <div class="flex flex-col sm:flex-row gap-5">
+        <div class="flex flex-col lg:flex-row gap-5">
             <div class="flex flex-col items-stretch gap-5 w-full">
-                <div class="flex flex-col sm:flex-row gap-5 w-full">
+                <div class="flex flex-col 2xl:flex-row gap-5 w-full">
                     <div class="p-6 w-full flex flex-col overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                         <div class="flex flex-col sm:flex-row items-center self-stretch gap-4">
                             <div class="flex flex-col gap-4 w-full">
@@ -170,7 +170,7 @@ getTotalTransactions();
                                         {{ $t('public.overview') }}
                                     </div>
                                     <div class="grid grid-cols-6 gap-4 w-full mt-4">
-                                        <div class="space-y-2 col-span-3 sm:col-span-2 w-full">
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_active_balance') }}
                                             </div>
@@ -178,7 +178,7 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalDeposit) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 col-span-3 sm:col-span-2 w-full">
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_profit') }}
                                             </div>
@@ -186,7 +186,7 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalProfit) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 col-span-3 sm:col-span-2 w-full">
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_rebate_earn') }}
                                             </div>
@@ -194,7 +194,7 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalRebateEarn) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 col-span-3 sm:col-span-3 w-full">
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-3 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.performance_incentive') }}
                                             </div>
@@ -202,7 +202,7 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">{{ formatAmount(performanceIncentive) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 col-span-6 sm:col-span-3 w-full">
+                                        <div class="space-y-2 col-span-6 sm:col-span-6 lg:col-span-3 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_withdrawal') }}
                                             </div>
@@ -287,7 +287,7 @@ getTotalTransactions();
 <!--                </div>-->
             </div>
 
-            <div class="flex flex-col gap-5 w-full sm:w-[480px] sm:pl-5 sm:border-l-2 sm:border-gray-300 h-full">
+            <div class="flex flex-col gap-5 w-full sm:w-[480px] lg:pl-5 lg:border-l-2 lg:border-gray-300 h-full">
                 <DashboardWallets
                     :walletSel="walletSel"
                     :eWalletSel="eWalletSel"

@@ -274,7 +274,6 @@ class ReportController extends Controller
 
         if ($request->filled('type')) {
             if ($request->type == 'affiliate') {
-                $childrenIds = \Auth::user()->getChildrenIds();
                 $query->whereNull('meta_login');
             } elseif ($request->type == 'personal') {
                 $query->whereIn('meta_login', $meta_logins);

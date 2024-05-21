@@ -205,6 +205,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/getPerformanceIncentive', [ReportController::class, 'getPerformanceIncentive'])->name('report.getPerformanceIncentive');
     });
 
+    /**
+     * ==============================
+     *           Wallet
+     * ==============================
+     */
+    Route::prefix('wallet')->group(function () {
+        Route::get('/wallet_history', [WalletController::class, 'wallet_history'])->name('wallet.wallet_history');
+        Route::get('/getWalletHistories', [WalletController::class, 'getWalletHistories'])->name('wallet.getWalletHistories');
+    });
+
 });
 
 Route::get('/components/buttons', function () {

@@ -438,8 +438,11 @@ return [
     "invalid_date" => "วันที่ที่ป้อนไม่ถูกต้อง",
     "all" => "ทั้งหมด",
     "wallet" => "กระเป๋าเงิน",
-    "LotSizeRebate" => "ค่าคอมมิชชั่นต่อล็อต",
-    "SameLevelRewards" => "รางวัลเพียร์",
+    "lot_size_rebate" => "ค่าคอมมิชชั่นต่อล็อต",
+    "same_level_rewards" => "รางวัลเพียร์",
+    "profit_sharing" => "การแบ่งปันกำไร",
+    'performance_incentive' => "เครื่องขยายประสิทธิภาพ",
+    "total_performance_incentive" => 'แรงจูงใจด้านประสิทธิภาพโดยรวม',
     "total_rewards" => "รวมรางวัล",
     "loading" => "กำลังโหลด...",
     "total_global_trading_lot_size" => "ขนาดการซื้อขายโลต์รวมทั้งหมด",
@@ -480,6 +483,5 @@ return [
     "success_request_switch" => "คำขอสลับสำเร็จ",
     "successfully_request_switch" => "คำขอสลับมาสเตอร์จาก :from ไปยัง :to สำเร็จ",
     "switched" => "สลับแล้ว",
-    "performance_incentive" => 'แรงจูงใจด้านประสิทธิภาพ',
-    "total_performance_incentive" => 'แรงจูงใจด้านประสิทธิภาพโดยรวม'
+    'settlement' => "การตรวจสอบและจ่ายเงิน",
 ];

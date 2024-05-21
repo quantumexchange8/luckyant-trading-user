@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
-import {ref, watch} from "vue";
+import {h, ref, watch} from "vue";
 import {CurrencyDollarCircleIcon, Wallet01Icon} from "@/Components/Icons/outline.jsx";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import VueTailwindDatepicker from "vue-tailwind-datepicker";
@@ -13,18 +13,19 @@ import Input from "@/Components/Input.vue";
 import NoData from "@/Components/NoData.vue";
 import TanStackTable from "@/Components/TanStackTable.vue";
 import {trans} from "laravel-vue-i18n";
-import Button from "@/Components/Button.vue";
+import Action from "@/Pages/Wallet/Partials/Action.vue"
+import StatusBadge from "@/Components/StatusBadge.vue";
 
 const props = defineProps({
-    walletsSel: Array,
-    bonusTypeSel: Array,
+    transactionTypeSel: Array,
     wallets: Object,
+    walletsSel: Array,
 })
-
-const totalBonus = ref(null);
-const bonusAmount = ref(null);
+const walletIds = props.wallets.map(wallet => wallet.id);
+const cashWalletAmount = ref(null);
+const bonusWalletAmount = ref(null);
 const ewalletAmount = ref(null);
-const walletLogs = ref({data: []});
+const walletHistories = ref({data: []});
 const sorting = ref();
 const search = ref('');
 const type = ref('');
@@ -49,32 +50,10 @@ const pageSizes = [
     {value: 100, label: 100 },
 ]
 
-watch([currentPage, action], ([currentPageValue, newAction]) => {
-    if (newAction === 'goToFirstPage' || newAction === 'goToLastPage') {
-        getResults(currentPageValue, pageSize.value);
-    } else {
-        getResults(currentPageValue, pageSize.value);
-    }
-});
-
-watch(
-    [sorting, pageSize],
-    ([sortingValue, pageSizeValue]) => {
-        getResults(1, pageSizeValue, search.value, type.value, wallet.value, date.value, sortingValue);
-    }
-);
-
-watch(
-    [search, type, wallet, date],
-    debounce(([searchValue, typeValue, walletValue, dateValue]) => {
-        getResults(1, pageSize.value, searchValue, typeValue, walletValue, dateValue, sorting.value);
-    }, 300)
-);
-
 const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterType = type.value, filterWallet = wallet.value, filterDate = date.value, columnName = sorting.value) => {
     // isLoading.value = true
     try {
-        let url = `/report/getWalletLogs?page=${page}`;
+        let url = `/wallet/getWalletHistories?page=${page}`;
 
         if (paginate) {
             url += `&paginate=${paginate}`;
@@ -103,9 +82,9 @@ const getResults = async (page = 1, paginate = 10, filterSearch = search.value, 
         }
 
         const response = await axios.get(url);
-        walletLogs.value = response.data.walletLogs;
-        totalBonus.value = response.data.totalBonus;
-        bonusAmount.value = response.data.bonusAmount;
+        walletHistories.value = response.data.walletHistories;
+        cashWalletAmount.value = response.data.cashWalletAmount;
+        bonusWalletAmount.value = response.data.bonusWalletAmount;
         ewalletAmount.value = response.data.ewalletAmount;
     } catch (error) {
         console.error(error);
@@ -121,30 +100,114 @@ const columns = [
         cell: info => formatDateTime(info.getValue()),
     },
     {
-        accessorKey: 'wallet.type',
-        header: 'wallet',
+        accessorKey: 'transaction_type',
+        header: 'transaction_type',
         enableSorting: false,
-        cell: info => trans('public.' + info.getValue()),
+        cell: info => trans('public.' + info.getValue().replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, ''))
+   },
+   {
+        accessorFn: row => row.from_wallet?.type || row.from_meta_login?.meta_login,
+        header: 'from',
+        enableSorting: false,
+        cell: info => {
+            const fromWallet = info.row.original.from_wallet;
+            const fromMetaLogin = info.row.original.from_meta_login;
+            const isTransfer = info.row.original.transaction_type === 'Transfer';
+            const isPerformanceIncentive = info.row.original.transaction_type === 'PerformanceIncentive';
+
+            if (isPerformanceIncentive) {
+                return '-';
+            } else if (fromWallet) {
+                const username = fromWallet.user?.username || '';
+                return isTransfer ? `${username ? username + ' - ' : ''}${fromWallet.wallet_address}` : trans('public.' + info.getValue());
+            } else {
+                return fromMetaLogin ? `${trans('public.account_no')} - ${info.getValue()}` : '-';
+            }
+        }
     },
     {
-        accessorKey: 'purpose',
-        header: 'type',
+        accessorFn: row => row.to_wallet?.type || row.to_meta_login?.meta_login,
+        header: 'to',
         enableSorting: false,
-        cell: info => trans('public.' + info.getValue().replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase()),
+        cell: info => {
+            const isTransfer = info.row.original.transaction_type === 'Transfer';
+            const toWallet = info.row.original.to_wallet;
+            const toMetaLogin = info.row.original.to_meta_login;
+            const isWalletWithdrawal = info.row.original.category === 'wallet' && info.row.original.transaction_type === 'Withdrawal';
+
+            if (isWalletWithdrawal) {
+                return `${info.row.original.payment_account.payment_account_name} - ${info.row.original.payment_account.account_no}`;
+            } else if (toWallet) {
+                const username = toWallet.user?.username || '';
+                return isTransfer ? `${username ? username + ' - ' : ''}${toWallet.wallet_address}` : trans('public.' + info.getValue());
+            } else {
+                return toMetaLogin ? `${trans('public.account_no')} - ${info.getValue()}` : '-';
+            }
+        }
+    },
+    {
+        accessorKey: 'transaction_number',
+        header: 'transaction_no',
+        enableSorting: false,
+        cell: info => info.getValue(),
     },
     {
         accessorKey: 'amount',
         header: 'amount',
-        cell: info => '$ ' + formatAmount(info.getValue()),
+        cell: info => {
+            const isTransfer = info.row.original.transaction_type === 'Transfer';
+            const isInternalTransferWithSelectedWallet = info.row.original.transaction_type === 'InternalTransfer' && wallet.value === info.row.original.from_wallet_id;
+            const isTradingAccountDeposit = info.row.original.category === 'trading_account' && info.row.original.transaction_type === 'Deposit';
+            const isWalletWithdrawal = info.row.original.category === 'wallet' && info.row.original.transaction_type === 'Withdrawal';
+
+            if (isTransfer || isInternalTransferWithSelectedWallet || isTradingAccountDeposit || isWalletWithdrawal) {
+                const prefix = walletIds.includes(info.row.original.from_wallet_id) ? '$ -' : '$ ';
+                return prefix + formatAmount(info.getValue());
+            } else {
+                return '$ ' + formatAmount(info.getValue());
+            }
+        },
+    },
+    {
+        accessorKey: 'status',
+        header: 'status',
+        enableSorting: false,
+        cell: ({ row }) => {
+            return h(StatusBadge, { value: row.original.status });
+        }
+    },
+    {
+        accessorKey: 'action',
+        header: 'table_action',
+        enableSorting: false,
+        cell: ({ row }) => h(Action, {
+            walletHistory: row.original,
+        }),
     },
 ];
 
-const clearFilter = () => {
-    search.value = '';
-    type.value = '';
-    wallet.value = '';
-    date.value = '';
-}
+watch([currentPage, action], ([currentPageValue, newAction]) => {
+    if (newAction === 'goToFirstPage' || newAction === 'goToLastPage') {
+        getResults(currentPageValue, pageSize.value);
+    } else {
+        getResults(currentPageValue, pageSize.value);
+    }
+});
+
+watch(
+    [sorting, pageSize],
+    ([sortingValue, pageSizeValue]) => {
+        getResults(1, pageSizeValue, search.value, type.value, wallet.value, date.value, sortingValue);
+    }
+);
+
+watch(
+    [search, type, wallet, date],
+    debounce(([searchValue, typeValue, walletValue, dateValue]) => {
+        getResults(1, pageSize.value, searchValue, typeValue, walletValue, dateValue, sorting.value);
+    }, 300)
+);
+
 </script>
 
 <template>
@@ -158,36 +221,21 @@ const clearFilter = () => {
         </template>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 w-full gap-4">
-            <div class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                <div class="flex flex-col gap-4">
-                    <div>
-                        {{ $t('public.total_rewards') }}
-                    </div>
-                    <div class="text-2xl font-bold">
-                        <span v-if="totalBonus !== null">
-                            $ {{ totalBonus }}
-                        </span>
-                        <span v-else>
-                            {{ $t('public.loading') }}
-                        </span>
-                    </div>
-                </div>
-                <div class="rounded-full flex items-center justify-center w-14 h-14 bg-success-200">
-                    <CurrencyDollarCircleIcon class="text-success-500 w-8 h-8" />
-                </div>
-            </div>
-            <div v-for="wallet in wallets" class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
+            <div v-for="wallet in wallets" :key="wallet.id" class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
                 <div class="flex flex-col gap-4">
                     <div>
                         {{ $t('public.' + wallet.type) }}
                     </div>
                     <div class="text-2xl font-bold">
-                        $ {{ formatAmount(wallet.type === 'bonus_wallet' ? bonusAmount : ewalletAmount) }}
+                        $ {{
+                            formatAmount(wallet.type === 'cash_wallet' ? cashWalletAmount : wallet.type === 'bonus_wallet' ? bonusWalletAmount : ewalletAmount)
+                        }}
                     </div>
                 </div>
                 <div
                     class="rounded-full flex items-center justify-center w-14 h-14"
                     :class="{
+                        'bg-primary-200' : wallet.type === 'cash_wallet',
                         'bg-purple-200': wallet.type === 'bonus_wallet',
                         'bg-gray-200': wallet.type === 'e_wallet',
                     }"
@@ -195,6 +243,7 @@ const clearFilter = () => {
                     <Wallet01Icon
                         class="w-8 h-8"
                         :class="{
+                            'text-primary-500' : wallet.type === 'cash_wallet',
                             'text-purple-500': wallet.type === 'bonus_wallet',
                             'text-gray-500': wallet.type === 'e_wallet',
                         }"
@@ -234,7 +283,7 @@ const clearFilter = () => {
                         id="statusID"
                         class="rounded-lg text-base text-black w-full dark:text-white dark:bg-gray-800"
                         v-model="type"
-                        :options="bonusTypeSel"
+                        :options="transactionTypeSel"
                         :placeholder="$t('public.type')"
                     />
                 </div>
@@ -247,15 +296,6 @@ const clearFilter = () => {
                         :placeholder="$t('public.wallet_name')"
                     />
                 </div>
-            </div>
-            <div class="flex justify-end gap-4 items-center w-full">
-                <Button
-                    type="button"
-                    variant="secondary"
-                    @click="clearFilter"
-                >
-                    {{ $t('public.clear') }}
-                </Button>
             </div>
         </div>
 
@@ -272,14 +312,14 @@ const clearFilter = () => {
                 </div>
             </div>
             <div
-                v-if="walletLogs.data.length === 0"
+                v-if="walletHistories.data.length === 0"
                 class="w-full flex items-center justify-center"
             >
                 <NoData />
             </div>
             <div v-else>
                 <TanStackTable
-                    :data="walletLogs"
+                    :data="walletHistories"
                     :columns="columns"
                     @update:sorting="sorting = $event"
                     @update:action="action = $event"

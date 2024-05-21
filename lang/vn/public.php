@@ -438,8 +438,11 @@ return [
     "invalid_date" => "Ngày nhập không hợp lệ",
     "all" => "Tất cả",
     "wallet" => "Ví",
-    "LotSizeRebate" => "Hoàn Trả Lot",
-    "SameLevelRewards" => "Phần Thưởng Cùng Cấp",
+    "lot_size_rebate" => "Hoàn Trả Lot",
+    "same_level_rewards" => "Phần Thưởng Cùng Cấp",
+    "profit_sharing" => "Chia Sẻ Lợi Nhuận",
+    'performance_incentive' => "Kích Thích Hiệu Suất",
+    "total_performance_incentive" => 'Khuyến khích hiệu suất tổng thể',
     "total_rewards" => "Tổng Phần Thưởng",
     "loading" => "Đang tải...",
     "total_global_trading_lot_size" => "Tổng Kích Thước Lot Giao Dịch Toàn Cầu",
@@ -480,6 +483,5 @@ return [
     "success_request_switch" => "Yêu cầu chuyển đổi thành công",
     "successfully_request_switch" => "Yêu cầu chuyển đổi master từ :from sang :to thành công",
     "switched" => "Đã chuyển đổi",
-    "performance_incentive" => 'Khuyến khích Hiệu suất',
-    "total_performance_incentive" => 'Khuyến khích hiệu suất tổng thể'
+    'settlement' => "Thanh Toán",
 ];

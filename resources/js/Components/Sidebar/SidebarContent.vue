@@ -1,7 +1,7 @@
 <script setup>
 import PerfectScrollbar from '@/Components/PerfectScrollbar.vue'
 import SidebarLink from '@/Components/Sidebar/SidebarLink.vue'
-import { DashboardIcon, CoinsHandIcon, ReportIcon } from '@/Components/Icons/outline'
+import { DashboardIcon, CoinsHandIcon, ReportIcon, Wallet01Icon } from '@/Components/Icons/outline'
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
 import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
@@ -172,6 +172,19 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         >
             <template #icon>
                 <UserIcon
+                    class="flex-shrink-0 w-6 h-6"
+                    aria-hidden="true"
+                />
+            </template>
+        </SidebarLink>
+
+        <SidebarLink
+            :title="$t('public.sidebar.wallet')"
+            :href="route('wallet.wallet_history')"
+            :active="route().current('wallet.wallet_history')"
+        >
+            <template #icon>
+                <Wallet01Icon
                     class="flex-shrink-0 w-6 h-6"
                     aria-hidden="true"
                 />

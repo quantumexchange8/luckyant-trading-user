@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Country;
 use App\Models\Wallet;
-use App\Models\PaymentAccount;
-use App\Models\SettingLeverage;
-use App\Models\TradingAccount;
+use App\Models\Country;
 use App\Models\WalletLog;
+use App\Models\Transaction;
+use App\Models\PaymentAccount;
+use App\Models\TradingAccount;
+use App\Models\SettingLeverage;
 
 class SelectOptionService
 {
@@ -113,7 +114,7 @@ class SelectOptionService
         return WalletLog::distinct()->pluck('purpose')->map(function ($transactionType) {
             return [
                 'value' => $transactionType,
-                'label' => trans('public.' . $transactionType),
+                'label' => trans('public.' . strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $transactionType))),
             ];
         })->prepend(['value' => '', 'label' => trans('public.all')]);
     }
@@ -128,4 +129,14 @@ class SelectOptionService
         });
     }
 
+    public function getTransactionType(): \Illuminate\Support\Collection
+    {
+        return Transaction::distinct()->whereNotNull('from_wallet_id')->orWhereNotNull('to_wallet_id')->pluck('transaction_type')->map(function ($transactionType) {
+            return [
+                'value' => $transactionType,
+                'label' => trans('public.' . strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $transactionType))),
+            ];
+        })
+        ->prepend(['value' => '', 'label' => trans('public.all')]);
+    }
 }

@@ -15,6 +15,7 @@ import TanStackTable from "@/Components/TanStackTable.vue";
 import {trans} from "laravel-vue-i18n";
 import Action from "@/Pages/Wallet/Partials/Action.vue"
 import StatusBadge from "@/Components/StatusBadge.vue";
+import WalletHistoryAmount from "@/Pages/Wallet/Partials/WalletHistoryAmount.vue";
 
 const props = defineProps({
     transactionTypeSel: Array,
@@ -104,8 +105,8 @@ const columns = [
         header: 'transaction_type',
         enableSorting: false,
         cell: info => trans('public.' + info.getValue().replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, ''))
-   },
-   {
+    },
+    {
         accessorFn: row => row.from_wallet?.type || row.from_meta_login?.meta_login,
         header: 'from',
         enableSorting: false,
@@ -152,21 +153,14 @@ const columns = [
         cell: info => info.getValue(),
     },
     {
-        accessorKey: 'amount',
+        accessorKey: 'transaction_amount',
         header: 'amount',
-        cell: info => {
-            const isTransfer = info.row.original.transaction_type === 'Transfer';
-            const isInternalTransferWithSelectedWallet = info.row.original.transaction_type === 'InternalTransfer' && wallet.value === info.row.original.from_wallet_id;
-            const isTradingAccountDeposit = info.row.original.category === 'trading_account' && info.row.original.transaction_type === 'Deposit';
-            const isWalletWithdrawal = info.row.original.category === 'wallet' && info.row.original.transaction_type === 'Withdrawal';
-
-            if (isTransfer || isInternalTransferWithSelectedWallet || isTradingAccountDeposit || isWalletWithdrawal) {
-                const prefix = walletIds.includes(info.row.original.from_wallet_id) ? '$ -' : '$ ';
-                return prefix + formatAmount(info.getValue());
-            } else {
-                return '$ ' + formatAmount(info.getValue());
-            }
-        },
+        cell: ({ row }) => {
+            return h(WalletHistoryAmount, {
+                wallet: row.original,
+                walletIds: walletIds
+            });
+        }
     },
     {
         accessorKey: 'status',

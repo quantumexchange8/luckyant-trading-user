@@ -166,12 +166,12 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarCollapsible>
 
         <SidebarLink
-            :title="$t('public.sidebar.profile')"
-            :href="route('profile.edit')"
-            :active="route().current('profile.edit')"
+            :title="$t('public.sidebar.wallet')"
+            :href="route('wallet.wallet_history')"
+            :active="route().current('wallet.wallet_history')"
         >
             <template #icon>
-                <UserIcon
+                <Wallet01Icon
                     class="flex-shrink-0 w-6 h-6"
                     aria-hidden="true"
                 />
@@ -179,12 +179,12 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
         </SidebarLink>
 
         <SidebarLink
-            :title="$t('public.sidebar.wallet')"
-            :href="route('wallet.wallet_history')"
-            :active="route().current('wallet.wallet_history')"
+            :title="$t('public.sidebar.profile')"
+            :href="route('profile.edit')"
+            :active="route().current('profile.edit')"
         >
             <template #icon>
-                <Wallet01Icon
+                <UserIcon
                     class="flex-shrink-0 w-6 h-6"
                     aria-hidden="true"
                 />

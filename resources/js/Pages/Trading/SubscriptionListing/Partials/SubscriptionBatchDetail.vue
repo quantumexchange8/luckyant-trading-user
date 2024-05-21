@@ -214,63 +214,63 @@ const closeTermsModal = () => {
                 </div>
             </div>
         </div>
-<!--        <div v-if="subscription.status !== 'Terminated' && terminateBadgeStatus" class="flex flex-col gap-3">-->
-<!--            <div class="text-gray-600 font-semibold">-->
-<!--                {{ $t('public.terminate_details') }}-->
-<!--            </div>-->
-<!--            <div class="grid gap-1">-->
-<!--                <div class="flex items-start justify-between gap-2 self-stretch">-->
-<!--                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">-->
-<!--                        {{$t('public.management_fee')}} ({{ formatAmount(subscription.management_fee, 0) }}%)-->
-<!--                    </div>-->
-<!--                    <div class="text-sm sm:text-base text-error-500 font-bold">-->
-<!--                        $ {{ formatAmount(managementFeeAmount) }}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="flex items-start justify-between gap-2 self-stretch">-->
-<!--                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">-->
-<!--                        {{$t('public.return_amount')}}-->
-<!--                    </div>-->
-<!--                    <div class="text-sm sm:text-base text-success-500 font-bold">-->
-<!--                        $ {{ formatAmount(subscription.meta_balance - managementFeeAmount) }}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="flex items-center">-->
-<!--                <div class="flex items-center h-5">-->
-<!--                    <Checkbox id="terms" v-model="form.terms"/>-->
-<!--                </div>-->
-<!--                <div class="ml-3">-->
-<!--                    <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">-->
-<!--                        <span>{{ $t('public.agreement') }}</span>-->
-<!--                        <span-->
-<!--                            class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"-->
-<!--                            @click="openTermsModal"-->
-<!--                        >-->
-<!--                            {{ $t('public.terms_and_conditions') }}-->
-<!--                        </span>-->
-<!--                    </label>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <InputError :message="form.errors.terms" />-->
-<!--            <div class="flex justify-end">-->
-<!--                <Button-->
-<!--                    variant="transparent"-->
-<!--                    type="button"-->
-<!--                    class="justify-center"-->
-<!--                    @click.prevent="closeModal"-->
-<!--                >-->
-<!--                    {{$t('public.cancel')}}-->
-<!--                </Button>-->
-<!--                <Button-->
-<!--                    class="justify-center"-->
-<!--                    @click="submit"-->
-<!--                    :disabled="form.processing"-->
-<!--                >-->
-<!--                    {{$t('public.confirm')}}-->
-<!--                </Button>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div v-if="subscription.status !== 'Terminated' && terminateBadgeStatus" class="flex flex-col gap-3">
+            <div class="text-gray-600 font-semibold">
+                {{ $t('public.terminate_details') }}
+            </div>
+            <div class="grid gap-1">
+                <div class="flex items-start justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.management_fee')}} ({{ formatAmount(subscription.management_fee, 0) }}%)
+                    </div>
+                    <div class="text-sm sm:text-base text-error-500 font-bold">
+                        $ {{ formatAmount(managementFeeAmount) }}
+                    </div>
+                </div>
+                <div class="flex items-start justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.return_amount')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-success-500 font-bold">
+                        $ {{ formatAmount(subscription.meta_balance - managementFeeAmount) }}
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <div class="flex items-center h-5">
+                    <Checkbox id="terms" v-model="form.terms"/>
+                </div>
+                <div class="ml-3">
+                    <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">
+                        <span>{{ $t('public.agreement') }}</span>
+                        <span
+                            class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
+                            @click="openTermsModal"
+                        >
+                            {{ $t('public.terms_and_conditions') }}
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <InputError :message="form.errors.terms" />
+            <div class="flex justify-end">
+                <Button
+                    variant="transparent"
+                    type="button"
+                    class="justify-center"
+                    @click.prevent="closeModal"
+                >
+                    {{$t('public.cancel')}}
+                </Button>
+                <Button
+                    class="justify-center"
+                    @click="submit"
+                    :disabled="form.processing"
+                >
+                    {{$t('public.confirm')}}
+                </Button>
+            </div>
+        </div>
     </div>
 
     <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">

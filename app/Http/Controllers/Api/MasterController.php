@@ -546,8 +546,9 @@ class MasterController extends Controller
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
-        $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('time_open', '>','2024-04-15')->latest()->get();
-
+        $userTrade = $metaService->userTrade($request->meta_login);
+        // $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('time_open', '>','2024-04-15')->latest()->get();
+    
         if ($connection != 0) {
             return response()->json([
                 'status' => 'failed',
@@ -556,15 +557,28 @@ class MasterController extends Controller
             ]);
         }
         
-        // Format the timeCreated attribute in $userTrade data
-        foreach ($userTrade as &$trade) {
-            $trade['timeCreated'] = date('d/m H:i', $trade['timeCreated']);
+        // Ensure $userTrade is an array
+        if (!is_array($userTrade)) {
+            $userTrade = []; // Convert to empty array if null or not an array
         }
-
+        
+        if (is_array($userTrade)) {
+            // Format the timeCreated attribute, set the action attribute, and divide the volume in $userTrade data
+            foreach ($userTrade as &$trade) {
+                $trade['timeCreated'] = date('d/m/Y H:i:s', $trade['timeCreated']);
+                $trade['action'] = $trade['action'] == 0 ? 'BUY' : 'SELL';
+                $trade['volume'] = $trade['volume'] / 10000;
+            }
+            unset($trade); // Break the reference with the last element
+        } else {
+            // Handle the case when $userTrade is not an array
+            // This could involve setting $userTrade to an empty array, logging an error, etc.
+            $userTrade = []; // or handle as needed
+        }
+            
         return response()->json([
             'status' => 'success',
             'openTrade' => $userTrade
         ]);
-        
     }
 }

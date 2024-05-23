@@ -135,7 +135,7 @@ const closeTermsModal = () => {
     </Button>
 
     <Modal :show="renewSubscriptionModal" :title="subscriberAccount.auto_renewal === 1 ? $t('public.stop_renewal') : $t('public.request_renewal')" @close="closeModal">
-        <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+        <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold dark:text-white">
                     <div v-if="currentLocale === 'en'">

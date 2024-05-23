@@ -90,7 +90,7 @@ const closeTermsModal = () => {
     </Button>
 
     <Modal :show="terminationModal" :title="$t('public.terminate_subscription')" @close="closeModal">
-        <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+        <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">
             <div class="flex flex-col items-start gap-3 self-stretch">
                 <div class="text-lg font-semibold dark:text-white">
                     <div v-if="currentLocale === 'en'">

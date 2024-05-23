@@ -326,14 +326,17 @@ class TradingController extends Controller
             $approvalDate = Carbon::parse($batch->approval_date);
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($batch->status == 'Terminated' ? $batch->termination_date : $today);
-
             $management_fee = MasterManagementFee::where('master_id', $batch->master_id)
                 ->where('penalty_days', '>', $join_days)
                 ->first();
+            $activeSubscriptions = SubscriptionBatch::where('meta_login', $batch->meta_login)->where('status', 'Active')->count();
+
+            $terminateBadgeStatus = $activeSubscriptions > 1;
 
             $batch->join_days = $join_days;
             $batch->management_period = $batch->master->masterManagementFee->sum('penalty_days');
             $batch->management_fee = $management_fee->penalty_percentage;
+            $batch->terminateBadgeStatus = $terminateBadgeStatus;
         });
 
         return response()->json($results);
@@ -799,6 +802,17 @@ class TradingController extends Controller
             return redirect()->back()
                 ->with('title', trans('public.terminated'))
                 ->with('warning', trans('public.terminated_subscription_error'));
+        }
+
+        $total_batch_amount = SubscriptionBatch::where('meta_login', $subscription_batch->meta_login)
+            ->where('status', 'Active')
+            ->sum('meta_balance');
+        $master = Master::find($subscription_batch->master_id);
+
+        if ($total_batch_amount - $subscription_batch->meta_balance < $master->min_join_equity) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.low_subscription_amount_warning', ['amount' => $master->min_join_equity]));
         }
 
         if ($validator->fails()) {

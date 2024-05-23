@@ -484,4 +484,5 @@ return [
     'successfully_request_switch' => "Successfully request switch master from :from to :to",
     'switched' => "Switched",
     'settlement' => "Settlement",
+    'low_subscription_amount_warning' => "Your subscription amount will lower than the min requirement. Min amount: $:amount",
 ];

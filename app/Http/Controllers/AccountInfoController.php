@@ -278,29 +278,31 @@ class AccountInfoController extends Controller
                             'type' => 'Deposit',
                             'status' => 'Success',
                         ]);
+
+                        SubscriptionBatch::create([
+                            'user_id' => $user->id,
+                            'trading_account_id' => $subscriber->trading_account_id,
+                            'meta_login' => $meta_login,
+                            'meta_balance' => $amount,
+                            'real_fund' => $amount,
+                            'demo_fund' => 0,
+                            'master_id' => $subscriber->master_id,
+                            'master_meta_login' => $subscriber->master_meta_login,
+                            'type' => 'CopyTrade',
+                            'subscriber_id' => $subscriber->id,
+                            'subscription_id' => $subscription->id,
+                            'subscription_number' => $subscription->subscription_number,
+                            'subscription_period' => $subscriber->roi_period,
+                            'transaction_id' => $subscriber->transaction_id,
+                            'subscription_fee' => $subscriber->initial_subscription_fee,
+                            'settlement_start_date' => now(),
+                            'settlement_date' => now()->addDays($subscriber->roi_period)->endOfDay(),
+                            'status' => 'Active',
+                            'approval_date' => now(),
+                        ]);
                     }
                 }
             }
-
-            SubscriptionBatch::create([
-                'user_id' => $user->id,
-                'trading_account_id' => $subscriber->trading_account_id,
-                'meta_login' => $meta_login,
-                'meta_balance' => $amount,
-                'real_fund' => $amount,
-                'demo_fund' => 0,
-                'master_id' => $subscriber->master_id,
-                'master_meta_login' => $subscriber->master_meta_login,
-                'type' => 'CopyTrade',
-                'subscriber_id' => $subscriber->id,
-                'subscription_number' => RunningNumberService::getID('subscription'),
-                'subscription_period' => $subscriber->roi_period,
-                'transaction_id' => $subscriber->transaction_id,
-                'subscription_fee' => $subscriber->initial_subscription_fee,
-                'settlement_date' => now()->addDays($subscriber->roi_period)->endOfDay(),
-                'status' => 'Active',
-                'approval_date' => now(),
-            ]);
         }
 
         return redirect()->back()

@@ -48,7 +48,6 @@ const action = ref('');
 const currentPage = ref(1);
 const {formatDateTime, formatAmount} = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
-const terminateBadgeStatus = ref(false);
 
 const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterDate = date.value, filterMaster = master.value, filterMetaLogin = meta_login.value, columnName = sorting.value) => {
     try {
@@ -80,8 +79,6 @@ const getResults = async (page = 1, paginate = 10, filterSearch = search.value, 
         subscriptions.value = response.data;
         totalAccounts.value = response.data.totalAccounts;
         totalAmount.value = response.data.totalAmount;
-
-        terminateBadgeStatus.value = subscriptions.value.data.length > 1;
     } catch (error) {
         console.error(error);
     }
@@ -133,7 +130,6 @@ const columns = [
         cell: ({ row }) => h(Action, {
             subscription: row.original,
             terms: props.terms,
-            terminateBadgeStatus: terminateBadgeStatus.value,
         }),
     },
 ];

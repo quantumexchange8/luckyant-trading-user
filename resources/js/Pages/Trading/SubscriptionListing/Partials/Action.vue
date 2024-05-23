@@ -9,7 +9,6 @@ import SubscriptionBatchDetail from "@/Pages/Trading/SubscriptionListing/Partial
 const props = defineProps({
     subscription: Object,
     terms: Object,
-    terminateBadgeStatus: Boolean,
 })
 
 const subscriptionModal = ref(false);
@@ -53,7 +52,6 @@ const closeModal = () => {
             <SubscriptionBatchDetail
                 :subscription="subscription"
                 :terms="terms"
-                :terminateBadgeStatus="terminateBadgeStatus"
                 @update:subscriptionModal="subscriptionModal = $event"
             />
         </template>

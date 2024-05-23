@@ -75,7 +75,7 @@ const submit = () => {
 
     <Modal :show="switchModal" :title="$t('public.switch_master')" @close="closeModal" max-width="4xl">
         <div class="grid grid-cols-11">
-            <div class="col-span-11 sm:col-span-5 bg-gray-100 dark:bg-gray-600 rounded-lg p-5">
+            <div class="col-span-11 sm:col-span-5 bg-gray-100 dark:bg-gray-950 rounded-lg p-5">
                 <div class="flex flex-col items-start gap-3 self-stretch">
                     <div class="flex items-center justify-center w-full">
                         <div class="flex flex-col items-start gap-3 self-stretch w-full">
@@ -152,7 +152,7 @@ const submit = () => {
                     <ChevronRightDoubleIcon class="text-gray-400 rotate-90 sm:rotate-0" />
                 </div>
             </div>
-            <div class="col-span-11 sm:col-span-5 bg-gray-100 rounded-lg p-5">
+            <div class="col-span-11 sm:col-span-5 bg-gray-100 dark:bg-gray-950 rounded-lg p-5">
                 <div class="flex flex-col items-start gap-3 self-stretch">
                     <div class="flex items-center justify-center w-full">
                         <div class="flex flex-col items-start gap-3 self-stretch w-full">

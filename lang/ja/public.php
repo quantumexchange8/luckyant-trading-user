@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => ":from から :to へのマスター切り替え要求が成功しました",
     "switched" => "切り替え済み",
     'settlement' => "決済",
+    'low_subscription_amount_warning' => "ご利用のサブスクリプション金額が最低要件を下回ります。最低金額: $:amount",
+    'invalid_subscribe_amount' => "ご利用のサブスクリプション金額が最低要件を下回ります。最低金額: $:amount",
 ];

@@ -254,54 +254,52 @@ class AccountInfoController extends Controller
             $subscriber->subscribe_amount += $amount;
             $subscriber->save();
 
-            $subscriptions = Subscription::with(['master:id,meta_login', 'tradingAccount'])
+            $subscription = Subscription::with(['master:id,meta_login', 'tradingAccount'])
                 ->where('user_id', $user->id)
                 ->where('meta_login', $meta_login)
-                ->whereIn('status', ['Pending', 'Active'])
-                ->get();
+                ->where('master_id', $subscriber->master_id)
+                ->where('status', 'Active')
+                ->first();
 
-            if ($subscriptions) {
-                foreach ($subscriptions as $subscription) {
-                    $subscription->meta_balance += $amount;
-                    $subscription->save();
-                    if ($subscription->status == 'Active') {
-                        CopyTradeTransaction::create([
-                            'user_id' => $user->id,
-                            'trading_account_id' => $subscription->tradingAccount->id,
-                            'meta_login' => $subscription->tradingAccount->meta_login,
-                            'subscription_id' => $subscription->id,
-                            'master_id' => $subscription->master->id,
-                            'master_meta_login' => $subscription->master->meta_login,
-                            'amount' => $amount,
-                            'real_fund' => $amount,
-                            'demo_fund' => 0,
-                            'type' => 'Deposit',
-                            'status' => 'Success',
-                        ]);
+            if ($subscription) {
+                $subscription->meta_balance += $amount;
+                $subscription->save();
 
-                        SubscriptionBatch::create([
-                            'user_id' => $user->id,
-                            'trading_account_id' => $subscriber->trading_account_id,
-                            'meta_login' => $meta_login,
-                            'meta_balance' => $amount,
-                            'real_fund' => $amount,
-                            'demo_fund' => 0,
-                            'master_id' => $subscriber->master_id,
-                            'master_meta_login' => $subscriber->master_meta_login,
-                            'type' => 'CopyTrade',
-                            'subscriber_id' => $subscriber->id,
-                            'subscription_id' => $subscription->id,
-                            'subscription_number' => $subscription->subscription_number,
-                            'subscription_period' => $subscriber->roi_period,
-                            'transaction_id' => $subscriber->transaction_id,
-                            'subscription_fee' => $subscriber->initial_subscription_fee,
-                            'settlement_start_date' => now(),
-                            'settlement_date' => now()->addDays($subscriber->roi_period)->endOfDay(),
-                            'status' => 'Active',
-                            'approval_date' => now(),
-                        ]);
-                    }
-                }
+                CopyTradeTransaction::create([
+                    'user_id' => $user->id,
+                    'trading_account_id' => $subscription->tradingAccount->id,
+                    'meta_login' => $subscription->tradingAccount->meta_login,
+                    'subscription_id' => $subscription->id,
+                    'master_id' => $subscription->master->id,
+                    'master_meta_login' => $subscription->master->meta_login,
+                    'amount' => $amount,
+                    'real_fund' => $amount,
+                    'demo_fund' => 0,
+                    'type' => 'Deposit',
+                    'status' => 'Success',
+                ]);
+
+                SubscriptionBatch::create([
+                    'user_id' => $user->id,
+                    'trading_account_id' => $subscriber->trading_account_id,
+                    'meta_login' => $meta_login,
+                    'meta_balance' => $amount,
+                    'real_fund' => $amount,
+                    'demo_fund' => 0,
+                    'master_id' => $subscriber->master_id,
+                    'master_meta_login' => $subscriber->master_meta_login,
+                    'type' => 'CopyTrade',
+                    'subscriber_id' => $subscriber->id,
+                    'subscription_id' => $subscription->id,
+                    'subscription_number' => $subscription->subscription_number,
+                    'subscription_period' => $subscriber->roi_period,
+                    'transaction_id' => $subscriber->transaction_id,
+                    'subscription_fee' => $subscriber->initial_subscription_fee,
+                    'settlement_start_date' => now(),
+                    'settlement_date' => now()->addDays($subscriber->roi_period)->endOfDay(),
+                    'status' => 'Active',
+                    'approval_date' => now() < $subscription->approval_date ? now()->addDay() : now(),
+                ]);
             }
         }
 

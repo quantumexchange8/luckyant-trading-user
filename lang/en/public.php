@@ -485,4 +485,5 @@ return [
     'switched' => "Switched",
     'settlement' => "Settlement",
     'low_subscription_amount_warning' => "Your subscription amount will lower than the min requirement. Min amount: $:amount",
+    'invalid_subscribe_amount' => "Your subscription amount is lower than the min requirement. Min amount: $:amount",
 ];

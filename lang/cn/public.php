@@ -484,4 +484,6 @@ return [
     'successively_request_switch' => "成功请求切换从 :from 到 :to",
     'switched' => "已切换",
     'settlement' => "结算",
+    'low_subscription_amount_warning' => "您的订阅金额将低于最低要求。最低金额: $:amount",
+    'invalid_subscribe_amount' => "您的订阅金额低于最低要求。最低金额: $:amount",
 ];

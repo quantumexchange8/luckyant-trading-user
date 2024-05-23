@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => ":from에서 :to로 마스터 전환 요청에 성공했습니다",
     "switched" => "전환됨",
     'settlement' => "결제",
+    'low_subscription_amount_warning' => "구독 금액이 최소 요구 금액보다 낮습니다. 최소 금액: $:amount",
+    'invalid_subscribe_amount' => "구독 금액이 최소 요구 금액보다 낮습니다. 최소 금액: $:amount",
 ];

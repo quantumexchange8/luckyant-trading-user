@@ -871,6 +871,12 @@ class TradingController extends Controller
                 ->with('warning', trans('public.user_got_trade'));
         }
 
+        if ($subscriber->subscription->meta_balance < $new_master->min_join_equity) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.invalid_subscribe_amount', ['amount' => $new_master->min_join_equity]));
+        }
+
         if (empty($new_master)) {
             return redirect()->back()
                 ->with('title', trans('public.invalid_action'))

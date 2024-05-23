@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => "Yêu cầu chuyển đổi master từ :from sang :to thành công",
     "switched" => "Đã chuyển đổi",
     'settlement' => "Thanh Toán",
+    'low_subscription_amount_warning' => "Số tiền đăng ký của bạn sẽ thấp hơn yêu cầu tối thiểu. Số tiền tối thiểu: $:amount",
+    'invalid_subscribe_amount' => "Số tiền đăng ký của bạn thấp hơn yêu cầu tối thiểu. Số tiền tối thiểu: $:amount",
 ];

@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => "Berhasil meminta ganti master dari :from ke :to",
     "switched" => "Diganti",
     'settlement' => "Penyelesaian",
+    'low_subscription_amount_warning' => "Jumlah langganan Anda akan lebih rendah dari persyaratan minimum. Jumlah minimum: $:amount",
+    'invalid_subscribe_amount' => "Jumlah langganan Anda lebih rendah dari persyaratan minimum. Jumlah minimum: $:amount",
 ];

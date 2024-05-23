@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => "คำขอสลับมาสเตอร์จาก :from ไปยัง :to สำเร็จ",
     "switched" => "สลับแล้ว",
     'settlement' => "การตรวจสอบและจ่ายเงิน",
+    'low_subscription_amount_warning' => "จำนวนเงินการสมัครของคุณจะต่ำกว่าข้อกำหนดขั้นต่ำ จำนวนเงินขั้นต่ำ: $:amount",
+    'invalid_subscribe_amount' => "จำนวนเงินการสมัครของคุณต่ำกว่าข้อกำหนดขั้นต่ำ จำนวนเงินขั้นต่ำ: $:amount",
 ];

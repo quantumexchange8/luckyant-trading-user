@@ -546,7 +546,8 @@ class MasterController extends Controller
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
-        $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('time_open', '>','2024-04-15')->latest()->get();
+        $userTrade = $metaService->userTrade($request->meta_login);
+        // $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('time_open', '>','2024-04-15')->latest()->get();
 
         if ($connection != 0) {
             return response()->json([
@@ -558,7 +559,9 @@ class MasterController extends Controller
         
         // Format the timeCreated attribute in $userTrade data
         foreach ($userTrade as &$trade) {
-            $trade['timeCreated'] = date('d/m H:i', $trade['timeCreated']);
+            $trade['timeCreated'] = date('d/m/Y H:i:s', $trade['timeCreated']);
+            $trade['action'] = $trade['action'] == 0 ? 'BUY' : 'SELL';
+            $trade['volume'] = $trade['volume'] / 10000;
         }
 
         return response()->json([

@@ -150,10 +150,10 @@ const columns = [
         accessorKey: 'transaction_number',
         header: 'transaction_no',
         enableSorting: false,
-        cell: info => info.getValue(),
+        cell: info => info.getValue() ?? '-',
     },
     {
-        accessorKey: 'transaction_amount',
+        accessorKey: 'amount',
         header: 'amount',
         cell: ({ row }) => {
             return h(WalletHistoryAmount, {

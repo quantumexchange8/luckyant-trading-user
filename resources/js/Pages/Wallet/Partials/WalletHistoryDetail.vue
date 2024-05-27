@@ -67,7 +67,23 @@ const statusVariant = (autoRenewal) => {
                         {{$t('public.transaction_no')}}
                     </div>
                     <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        {{ walletHistory.transaction_number }}
+                        {{ walletHistory.transaction_number ?? '-' }}
+                    </div>
+                </div>
+                <div v-if="walletHistory.transaction_type === 'Withdrawal'" class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.withdrawal_amount')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        $ {{ walletHistory.amount }}
+                    </div>
+                </div>
+                <div v-if="walletHistory.transaction_type === 'Withdrawal'" class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.withdrawal_charges')}}
+                    </div>
+                    <div class="text-sm sm:text-base text-error-500 font-semibold">
+                        - $ {{ walletHistory.transaction_charges }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">

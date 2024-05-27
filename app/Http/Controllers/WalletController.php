@@ -706,29 +706,29 @@ class WalletController extends Controller
         function calculateWalletAmounts($walletId, $amountQuery) {
             // Calculate the amount received by the wallet
             $amountTo = (clone $amountQuery)->where('to_wallet_id', $walletId)
-                ->where('status', 'Success')
+                ->whereNot('status', 'Rejected')
                 ->whereNotIn('transaction_type', ['WalletAdjustment'])
-                ->sum('transaction_amount');
+                ->sum('amount');
 
             // Calculate the positive adjustments received by the wallet
             $amountAdjustmentTo = (clone $amountQuery)->where('from_wallet_id', $walletId)
-                ->where('status', 'Success')
+                ->whereNot('status', 'Rejected')
                 ->where('transaction_type', 'WalletAdjustment')
-                ->where('transaction_amount', '>', 0)
-                ->sum('transaction_amount');
+                ->where('amount', '>', 0)
+                ->sum('amount');
 
             // Calculate the amount sent from the wallet
             $amountFrom = (clone $amountQuery)->where('from_wallet_id', $walletId)
-                ->where('status', 'Success')
+                ->whereNot('status', 'Rejected')
                 ->whereNotIn('transaction_type', ['WalletAdjustment'])
-                ->sum('transaction_amount');
+                ->sum('amount');
 
             // Calculate the positive adjustments sent from the wallet
             $amountAdjustmentFrom = (clone $amountQuery)->where('to_wallet_id', $walletId)
-                ->where('status', 'Success')
+                ->whereNot('status', 'Rejected')
                 ->where('transaction_type', 'WalletAdjustment')
-                ->where('transaction_amount', '>', 0)
-                ->sum('transaction_amount');
+                ->where('amount', '>', 0)
+                ->sum('amount');
 
             // Return both amounts
             return [

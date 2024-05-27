@@ -11,6 +11,6 @@ const props = defineProps({
             'text-primary-500': walletIds.includes(wallet.to_wallet_id) && wallet.status === 'Success'
         }"
     >
-        $ {{ wallet.transaction_amount }}
+        $ {{ wallet.amount }}
     </div>
 </template>

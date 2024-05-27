@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
          $schedule->command('renew:subscription')->daily();
-//         $schedule->command('update:subscription-batches')->daily();
+         $schedule->command('notify:auto-renew')->daily();
     }
 
     /**

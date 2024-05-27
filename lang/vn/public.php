@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => "Yêu cầu chuyển đổi master từ :from sang :to thành công",
     "switched" => "Đã chuyển đổi",
     'settlement' => "Thanh Toán",
+    "forgot_security_pin" => "Quên mã PIN bảo mật",
+    "reset_security_pin" => "Đặt lại mã pin bảo mật",
 ];

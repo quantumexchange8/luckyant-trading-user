@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => ":from에서 :to로 마스터 전환 요청에 성공했습니다",
     "switched" => "전환됨",
     'settlement' => "결제",
+    "forgot_security_pin" => "보안 핀 분실",
+    "reset_security_pin" => "보안 핀 재설정",
 ];

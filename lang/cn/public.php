@@ -484,4 +484,6 @@ return [
     'successively_request_switch' => "成功请求切换从 :from 到 :to",
     'switched' => "已切换",
     'settlement' => "结算",
+    "forgot_security_pin" => "忘记安全密码",
+    "reset_security_pin" => "重置安全密码",
 ];

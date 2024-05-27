@@ -230,21 +230,21 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $email = $user->email;
-    
+
         // Generate a random six-digit OTP
         $otp = random_int(100000, 999999);
-    
+
         // Get or create the OTP record
         $verifyOtp = VerifyOtp::updateOrCreate(
             ['email' => $email],
             ['otp' => $otp, 'created_at' => Carbon::now()]
         );
-    
+
         // Send the OTP notification
         Notification::route('mail', $email)
             ->notify(new OtpNotification($verifyOtp->otp));
-    
-        return back()->with('toast', trans('public.success_sent_otp'));
+
+        return back();
     }
 
     // protected function processImage(Request $request): void

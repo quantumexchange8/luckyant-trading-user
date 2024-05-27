@@ -484,4 +484,6 @@ return [
     "successfully_request_switch" => "Berhasil meminta ganti master dari :from ke :to",
     "switched" => "Diganti",
     'settlement' => "Penyelesaian",
+    "forgot_security_pin" => "Lupa Pin Keamanan",
+    "reset_security_pin" => "Setel Ulang Pin Keamanan",
 ];

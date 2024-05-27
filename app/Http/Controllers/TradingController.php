@@ -397,7 +397,6 @@ class TradingController extends Controller
             ]);
 
             $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
-                ->where('status', 'Active')
                 ->get();
 
             foreach ($subscription_batches as $subscription_batch) {

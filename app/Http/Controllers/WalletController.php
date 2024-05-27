@@ -673,7 +673,8 @@ class WalletController extends Controller
             ->where(function ($query) use ($walletIds) {
                 $query->whereIn('from_wallet_id', $walletIds)
                     ->orWhereIn('to_wallet_id', $walletIds);
-            });
+            })
+            ->whereIn('category', ['wallet', 'trading_account']);
 
         // Apply search filter if provided
         if ($request->filled('search')) {

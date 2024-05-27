@@ -1,10 +1,12 @@
 <script setup>
 import VOtpInput from "vue3-otp-input";
-import {ref, watchEffect} from "vue";
+import {onUnmounted, ref, watch, watchEffect} from "vue";
 import Label from "@/Components/Label.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 import Button from "@/Components/Button.vue";
 import InputError from "@/Components/InputError.vue";
+import Modal from "@/Components/Modal.vue";
+import ResetPin from "@/Pages/Profile/Partials/ResetPin.vue";
 
 const emit = defineEmits(['update:setupSecurityPinModal'])
 const user = usePage().props.auth.user;
@@ -38,6 +40,54 @@ watchEffect(() => {
         }
     }
 });
+
+const resetPinModal = ref(false);
+const otpRequested = ref(false);
+const countdown = ref(60);
+let countdownIntervalId;
+
+const openResetPinModal = () => {
+    resetPinModal.value = true
+}
+
+const startCountdown = () => {
+    clearInterval(countdownIntervalId);
+    countdownIntervalId = setInterval(() => {
+        countdown.value -= 1;
+        if (countdown.value === 0) {
+            clearInterval(countdownIntervalId);
+        }
+    }, 1000);
+};
+
+// Watch to restart countdown if needed
+watch(countdown, (newVal) => {
+    if (newVal > 0 && !countdownIntervalId) {
+        startCountdown();
+    }
+});
+
+// Cleanup interval on unmount
+onUnmounted(() => {
+    clearInterval(countdownIntervalId);
+});
+
+const requestOTP = () => {
+    otpRequested.value = true;
+    axios.post('/profile/sendOtp')
+    startCountdown();
+};
+
+const resendOTP = () => {
+    countdown.value = 60;
+    clearInterval(countdownIntervalId);
+    axios.post('/profile/sendOtp')
+    startCountdown();
+};
+
+const closeModal = () => {
+    resetPinModal.value = false
+}
 </script>
 
 <template>
@@ -107,23 +157,29 @@ watchEffect(() => {
                 </div>
             </div>
         </div>
-        <div class="w-full mt-8">
-            <div class="flex justify-end items-center gap-4">
+        <div class="w-full flex justify-between mt-8">
+            <div
+                v-if="user.security_pin"
+                class="text-primary-600 w-full dark:text-primary-400 text-sm hover:text-primary-400 dark:hover:text-primary-600 hover:cursor-pointer"
+                @click="openResetPinModal"
+            >
+                {{ $t('public.forgot_security_pin') }}
+            </div>
+            <div class="flex w-full justify-end items-center gap-4">
                 <Button :disabled="form.processing" @click.prevent="updatePassword">{{ $t('public.save') }}</Button>
-
-                <Transition
-                    enter-from-class="opacity-0"
-                    leave-to-class="opacity-0"
-                    class="transition ease-in-out"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        {{ $t('public.saved') }}.
-                    </p>
-                </Transition>
             </div>
         </div>
+
+        <Modal :show="resetPinModal" :title="$t('public.reset_security_pin')" @close="closeModal">
+            <ResetPin
+                :otpRequested="otpRequested"
+                :countdown="countdown"
+                @update:resetPinModal="resetPinModal = $event"
+                @update:otpRequested="otpRequested = $event"
+                @update:countdown="countdown = $event"
+                @request-otp="requestOTP"
+                @resend-otp="resendOTP"
+            />
+        </Modal>
     </form>
 </template>

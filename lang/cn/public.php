@@ -486,4 +486,6 @@ return [
     'settlement' => "结算",
     'low_subscription_amount_warning' => "您的订阅金额将低于最低要求。最低金额: $:amount",
     'invalid_subscribe_amount' => "您的订阅金额低于最低要求。最低金额: $:amount",
+    "forgot_security_pin" => "忘记安全密码",
+    "reset_security_pin" => "重置安全密码",
 ];

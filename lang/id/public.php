@@ -486,4 +486,6 @@ return [
     'settlement' => "Penyelesaian",
     'low_subscription_amount_warning' => "Jumlah langganan Anda akan lebih rendah dari persyaratan minimum. Jumlah minimum: $:amount",
     'invalid_subscribe_amount' => "Jumlah langganan Anda lebih rendah dari persyaratan minimum. Jumlah minimum: $:amount",
+    "forgot_security_pin" => "Lupa Pin Keamanan",
+    "reset_security_pin" => "Setel Ulang Pin Keamanan",
 ];

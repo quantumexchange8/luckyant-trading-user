@@ -486,4 +486,6 @@ return [
     'settlement' => "Thanh Toán",
     'low_subscription_amount_warning' => "Số tiền đăng ký của bạn sẽ thấp hơn yêu cầu tối thiểu. Số tiền tối thiểu: $:amount",
     'invalid_subscribe_amount' => "Số tiền đăng ký của bạn thấp hơn yêu cầu tối thiểu. Số tiền tối thiểu: $:amount",
+    "forgot_security_pin" => "Quên mã PIN bảo mật",
+    "reset_security_pin" => "Đặt lại mã pin bảo mật",
 ];

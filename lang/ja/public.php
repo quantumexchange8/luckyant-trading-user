@@ -486,4 +486,6 @@ return [
     'settlement' => "決済",
     'low_subscription_amount_warning' => "ご利用のサブスクリプション金額が最低要件を下回ります。最低金額: $:amount",
     'invalid_subscribe_amount' => "ご利用のサブスクリプション金額が最低要件を下回ります。最低金額: $:amount",
+    "forgot_security_pin" => "セキュリティ PIN を忘れた",
+    "reset_security_pin" => "セキュリティ PIN をリセット",
 ];

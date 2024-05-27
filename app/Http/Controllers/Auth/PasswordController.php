@@ -44,10 +44,10 @@ class PasswordController extends Controller
         $currentTime = Carbon::now();
         $differenceInSeconds = $currentTime->diffInSeconds($otpCreatedAt);
 
-        if ($existVerifyOtp->otp != $request->otp || $differenceInSeconds > 60) {
+        if ($existVerifyOtp->otp != $request->otp || $differenceInSeconds > 300) {
             throw ValidationException::withMessages(['otp' => trans('public.invalid_otp')]);
         }
-                
+
         $request->user()->update([
             'password' => Hash::make($validated['password']),
             'password_changed_at' => Carbon::now(),
@@ -67,17 +67,32 @@ class PasswordController extends Controller
         $validator = Validator::make($request->all(), [
             'current_pin' => ['sometimes', 'required'],
             'pin' => ['required', 'confirmed'],
+            'otp' => ['sometimes', 'required', Password::min(6)->numbers()],
         ])->setAttributeNames([
             'current_pin' => trans('public.current_pin'),
             'pin' => trans('public.new_pin'),
+            'otp' => trans('public.otp'),
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
             $user = $request->user();
+            $current_pin = $request->get('current_pin');
 
-            if (!is_null($user->security_pin) && !Hash::check($request->get('current_pin'), $user->security_pin)) {
+            if ($request->otp) {
+                $existVerifyOtp = VerifyOtp::where('email', $user->email)->first();
+
+                $otpCreatedAt = Carbon::parse($existVerifyOtp->updated_at);
+                $currentTime = Carbon::now();
+                $differenceInSeconds = $currentTime->diffInSeconds($otpCreatedAt);
+
+                if ($existVerifyOtp->otp != $request->otp || $differenceInSeconds > 300) {
+                    throw ValidationException::withMessages(['otp' => trans('public.invalid_otp')]);
+                }
+            }
+
+            if (!is_null($user->security_pin) && !is_null($current_pin) && !Hash::check($current_pin, $user->security_pin)) {
                 throw ValidationException::withMessages(['current_pin' => trans('public.current_pin_invalid')]);
             }
 

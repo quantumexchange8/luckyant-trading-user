@@ -450,6 +450,71 @@ class AccountInfoController extends Controller
             'comment' => $deal_1['conduct_Deal']['comment'],
         ]);
 
+        // check subscriber
+        $subscriber = Subscriber::with(['master:id,meta_login', 'tradingAccount'])
+            ->where('user_id', $user->id)
+            ->where('meta_login', $to_trading_account->meta_login)
+            ->whereIn('status', ['Pending', 'Subscribing'])
+            ->first();
+
+        if ($subscriber && $subscriber->status == 'Pending') {
+            $subscriber->initial_meta_balance += $amount;
+            $subscriber->save();
+        } elseif ($subscriber && $subscriber->status == 'Subscribing') {
+            $subscriber->subscribe_amount += $amount;
+            $subscriber->save();
+
+            $subscriptions = Subscription::with(['master:id,meta_login', 'tradingAccount'])
+                ->where('user_id', $user->id)
+                ->where('meta_login', $to_trading_account->meta_login)
+                ->whereIn('status', ['Pending', 'Active'])
+                ->get();
+
+            if ($subscriptions) {
+                foreach ($subscriptions as $subscription) {
+                    $subscription->meta_balance += $amount;
+                    $subscription->save();
+                    if ($subscription->status == 'Active') {
+                        CopyTradeTransaction::create([
+                            'user_id' => $user->id,
+                            'trading_account_id' => $subscription->tradingAccount->id,
+                            'meta_login' => $subscription->tradingAccount->meta_login,
+                            'subscription_id' => $subscription->id,
+                            'master_id' => $subscription->master->id,
+                            'master_meta_login' => $subscription->master->meta_login,
+                            'amount' => $amount,
+                            'real_fund' => $amount,
+                            'demo_fund' => 0,
+                            'type' => 'Deposit',
+                            'status' => 'Success',
+                        ]);
+
+                        SubscriptionBatch::create([
+                            'user_id' => $user->id,
+                            'trading_account_id' => $subscriber->trading_account_id,
+                            'meta_login' => $to_trading_account->meta_login,
+                            'meta_balance' => $amount,
+                            'real_fund' => $amount,
+                            'demo_fund' => 0,
+                            'master_id' => $subscriber->master_id,
+                            'master_meta_login' => $subscriber->master_meta_login,
+                            'type' => 'CopyTrade',
+                            'subscriber_id' => $subscriber->id,
+                            'subscription_id' => $subscription->id,
+                            'subscription_number' => $subscription->subscription_number,
+                            'subscription_period' => $subscriber->roi_period,
+                            'transaction_id' => $subscriber->transaction_id,
+                            'subscription_fee' => $subscriber->initial_subscription_fee,
+                            'settlement_start_date' => now(),
+                            'settlement_date' => now()->addDays($subscriber->roi_period)->endOfDay(),
+                            'status' => 'Active',
+                            'approval_date' => now(),
+                        ]);
+                    }
+                }
+            }
+        }
+
         return redirect()->back()
             ->with('title', trans('public.success_internal_transaction'))
             ->with('success', trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $request->from_meta_login . ' ' . trans('public.to_login') . ': ' . $request->to_meta_login);

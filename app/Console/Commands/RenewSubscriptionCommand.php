@@ -64,6 +64,7 @@ class RenewSubscriptionCommand extends Command
                 foreach ($subscription_batches as $batch) {
                     $batch->update([
                         'subscription_id' => $newSubscription->id,
+                        'subscription_number' => $newSubscription->subscription_number,
                     ]);
                 }
 

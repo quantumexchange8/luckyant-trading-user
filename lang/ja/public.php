@@ -488,4 +488,5 @@ return [
     'invalid_subscribe_amount' => "ご利用のサブスクリプション金額が最低要件を下回ります。最低金額: $:amount",
     "forgot_security_pin" => "セキュリティ PIN を忘れた",
     "reset_security_pin" => "セキュリティ PIN をリセット",
+    "termination_return" => "解約返還",
 ];

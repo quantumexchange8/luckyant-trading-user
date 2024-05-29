@@ -2,18 +2,18 @@
 import AuthenticatedLayout from '@/Layouts/Authenticated.vue'
 import Button from "@/Components/Button.vue";
 import {PlusCircleIcon} from "@heroicons/vue/solid";
-import {useForm, usePage} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vue";
 import Modal from "@/Components/Modal.vue";
 import {ref} from "vue";
 import Label from "@/Components/Label.vue";
-import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import {transactionFormat} from "@/Composables/index.js";
 import MasterAccount from "@/Pages/AccountInfo/MasterAccount/MasterAccount.vue";
+import {MemberDetailIcon} from "@/Components/Icons/outline.jsx";
 
 const props = defineProps({
     walletSel: Array,
@@ -25,7 +25,6 @@ const props = defineProps({
     totalBalance: Number,
 })
 const { formatAmount } = transactionFormat();
-const user = usePage().props.auth.user;
 const addingTradingAccount = ref(false)
 const totalEquity = ref(null);
 const totalBalance = ref(null);
@@ -71,18 +70,17 @@ setInterval(refreshData, 10000);
                 <h2 class="text-xl font-semibold leading-tight">
                     {{ $t('public.sidebar.account_info') }}
                 </h2>
-
                 <Button
                     type="button"
-                    variant="primary"
-                    size="sm"
-                    class="flex justify-center items-center gap-2 sm:max-w-xs"
+                    variant="gray"
                     v-slot="{ iconSizeClasses }"
-                    @click="addTradingAccount"
-                    v-if="props.accountCounts < props.liveAccountQuota.value"
+                    class="flex gap-2 items-center justify-center"
+                    size="sm"
+                    external
+                    :href="route('account_info.transaction_listing')"
                 >
-                    <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
-                    <span>{{ $t('public.add_real_account') }}</span>
+                    <MemberDetailIcon aria-hidden="true" :class="iconSizeClasses" />
+                    <span>{{ $t('public.transaction_history') }}</span>
                 </Button>
             </div>
         </template>
@@ -121,42 +119,56 @@ setInterval(refreshData, 10000);
         <div v-if="accountCounts > 0">
             <div class="w-full">
                 <TabGroup>
-                    <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 max-w-md">
-                        <Tab
-                            as="template"
-                            v-slot="{ selected }"
-                        >
-                            <button
-                                :class="[
+                    <div class="w-full flex flex-col sm:flex-row gap-4 sm:justify-between items-center">
+
+                        <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 w-full max-w-md">
+                            <Tab
+                                as="template"
+                                v-slot="{ selected }"
+                            >
+                                <button
+                                    :class="[
                                     'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                                      'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
                                      selected
                                      ? 'bg-white text-primary-800 shadow'
                                      : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
                                 ]"
-                            >
-                                {{ $t('public.trading_accounts') }}
-                            </button>
-                        </Tab>
+                                >
+                                    {{ $t('public.trading_accounts') }}
+                                </button>
+                            </Tab>
 
-                        <Tab
-                            as="template"
-                            v-slot="{ selected }"
-                        >
-                            <button
-                                :class="[
+                            <Tab
+                                as="template"
+                                v-slot="{ selected }"
+                            >
+                                <button
+                                    :class="[
                                     'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                                      'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
                                      selected
                                      ? 'bg-white text-primary-800 shadow'
                                      : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
                                 ]"
-                            >
-                                {{ $t('public.master_accounts') }}
-                            </button>
-                        </Tab>
-                    </TabList>
-
+                                >
+                                    {{ $t('public.master_accounts') }}
+                                </button>
+                            </Tab>
+                        </TabList>
+                        <Button
+                            type="button"
+                            variant="primary"
+                            size="sm"
+                            class="flex justify-center items-center gap-2 w-full sm:w-auto"
+                            v-slot="{ iconSizeClasses }"
+                            @click="addTradingAccount"
+                            v-if="props.accountCounts < props.liveAccountQuota.value"
+                        >
+                            <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
+                            <span>{{ $t('public.add_real_account') }}</span>
+                        </Button>
+                    </div>
                     <TabPanels class="mt-2">
                         <TabPanel
                             class="py-3"

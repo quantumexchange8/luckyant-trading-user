@@ -488,4 +488,5 @@ return [
     'invalid_subscribe_amount' => "Jumlah langganan Anda lebih rendah dari persyaratan minimum. Jumlah minimum: $:amount",
     "forgot_security_pin" => "Lupa Pin Keamanan",
     "reset_security_pin" => "Setel Ulang Pin Keamanan",
+    "termination_return" => "Penghentian Pengembalian",
 ];

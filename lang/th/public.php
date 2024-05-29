@@ -488,4 +488,5 @@ return [
     'invalid_subscribe_amount' => "จำนวนเงินการสมัครของคุณต่ำกว่าข้อกำหนดขั้นต่ำ จำนวนเงินขั้นต่ำ: $:amount",
     "forgot_security_pin" => "ลืมรหัสรักษาความปลอดภัย",
     "reset_security_pin" => "รีเซ็ตพินความปลอดภัย",
+    "termination_return" => "การสิ้นสุดการส่งคืน",
 ];

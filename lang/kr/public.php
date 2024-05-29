@@ -488,4 +488,5 @@ return [
     'invalid_subscribe_amount' => "구독 금액이 최소 요구 금액보다 낮습니다. 최소 금액: $:amount",
     "forgot_security_pin" => "보안 핀 분실",
     "reset_security_pin" => "보안 핀 재설정",
+    "termination_return" => "종료 반환",
 ];

@@ -125,7 +125,7 @@ const closeTermsModal = () => {
                         {{$t('public.join_date')}}
                     </div>
                     <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        {{ formatDateTime(subscription.approval_date, false) }}
+                        {{ subscription.approval_date ? formatDateTime(subscription.approval_date, false) : $t('public.pending') }}
                     </div>
                 </div>
                 <div class="flex items-center justify-between gap-2 self-stretch">
@@ -178,7 +178,7 @@ const closeTermsModal = () => {
                     </div>
                 </div>
                 <div
-                    v-if="subscription.status !== 'Terminated' && subscription.status !== 'Switched'"
+                    v-if="subscription.status === 'Active' || subscription.status === 'Expiring'"
                     class="flex items-center justify-between gap-2 self-stretch"
                 >
                     <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -189,31 +189,19 @@ const closeTermsModal = () => {
                     </div>
                 </div>
                 <div
-                    v-if="subscription.status !== 'Terminated'"
-                    class="flex flex-col gap-2 self-stretch"
+                    v-if="subscription.status === 'Rejected'"
+                    class="flex items-center justify-between gap-2 self-stretch"
                 >
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.progress')}}
+                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        {{$t('public.remarks')}}
                     </div>
-                    <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
-                        <div
-                            :style="{ width: `${calculateWidthPercentage(subscription.approval_date, subscription.settlement_date, subscription.subscription_period).widthResult}%` }"
-                            class="rounded-full bg-gradient-to-r from-primary-300 to-success-400 dark:from-primary-400 dark:to-success-500 transition-all duration-500 ease-out"
-                        >
-                        </div>
-                    </div>
-                    <div class="mb-2 flex items-center justify-between text-xs">
-                        <div class="dark:text-gray-400">
-                            {{ formatDateTime(subscription.approval_date, false) }}
-                        </div>
-                        <div class="dark:text-gray-400">
-                            {{ formatDateTime(subscription.settlement_date, false) }}
-                        </div>
+                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
+                        {{ subscription.remarks }}
                     </div>
                 </div>
             </div>
         </div>
-        <div v-if="subscription.status !== 'Terminated' && subscription.terminateBadgeStatus" class="flex flex-col gap-3">
+        <div v-if="(subscription.status === 'Active' || subscription.status === 'Expiring') && subscription.terminateBadgeStatus" class="flex flex-col gap-3">
             <div class="text-gray-600 font-semibold">
                 {{ $t('public.terminate_details') }}
             </div>

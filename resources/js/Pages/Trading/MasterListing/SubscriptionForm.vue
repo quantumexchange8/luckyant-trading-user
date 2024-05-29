@@ -133,7 +133,7 @@ watchEffect(() => {
                 </div>
                 <InputError :message="form.errors.meta_login" />
             </div>
-            <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+            <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">
                 <div class="flex flex-col items-start gap-3 self-stretch">
                     <div>
                         <div v-if="currentLocale === 'en'" class="text-xl dark:text-white">

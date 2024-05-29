@@ -88,7 +88,7 @@ const columns = [
     {
         accessorKey: 'approval_date',
         header: 'date',
-        cell: info => formatDateTime(info.getValue()),
+        cell: info => info.getValue() ? formatDateTime(info.getValue()) : trans('public.pending'),
     },
     {
         accessorKey: 'meta_login',

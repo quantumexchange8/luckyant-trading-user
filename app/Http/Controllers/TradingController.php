@@ -323,7 +323,7 @@ class TradingController extends Controller
             ->paginate($request->input('paginate', 10));
 
         $results->each(function ($batch) {
-            $approvalDate = Carbon::parse($batch->approval_date);
+            $approvalDate = Carbon::parse($batch->approval_date > now() ? now() : $batch->approval_date);
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($batch->status == 'Terminated' ? $batch->termination_date : $today);
             $management_fee = MasterManagementFee::where('master_id', $batch->master_id)
@@ -694,25 +694,26 @@ class TradingController extends Controller
 
         $subscribers = Subscriber::with(['master', 'master.tradingUser', 'tradingUser:id,name,meta_login', 'subscription'])
             ->where('user_id', $user->id)
-            ->whereNot('status', 'Rejected')
             ->orderByRaw("
         CASE
             WHEN status = 'Subscribing' THEN 1
-            WHEN status = 'Expiring' THEN 2
-            WHEN status = 'Switched' THEN 3
-            WHEN status = 'Unsubscribed' THEN 4
-            ELSE 5
+            WHEN status = 'Pending' THEN 2
+            WHEN status = 'Expiring' THEN 3
+            WHEN status = 'Switched' THEN 4
+            WHEN status = 'Unsubscribed' THEN 5
+            WHEN status = 'Rejected' THEN 6
+            ELSE 7
         END")
             ->latest()
             ->get();
 
         $subscribers->each(function ($subscriber) use ($user) {
-            $approvalDate = Carbon::parse($subscriber->approval_date);
+            $approvalDate = Carbon::parse($subscriber->approval_date > now() ? now() : $subscriber->approval_date);
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($subscriber->status == 'Unsubscribed' ? $subscriber->unsubscribe_date : $today);
             $subscription_batches = $subscriber->subscription_batches;
-            $expiredDate = Carbon::parse($subscriber->subscription->expired_date);
-            $daysDifference = $approvalDate->diffInDays($expiredDate);
+            $expiredDate = $subscriber->subscription ? Carbon::parse($subscriber->subscription->expired_date) : null;
+            $daysDifference = $approvalDate->diffInDays($expiredDate) ?? 0;
 
             $penalty_exempt = 0;
 
@@ -891,6 +892,75 @@ class TradingController extends Controller
             return redirect()->back()
                 ->with('title', trans('public.invalid_action'))
                 ->with('warning', trans('public.terminated_subscription_error'));
+        }
+
+        $subscriber->status = 'Switched';
+        $subscriber->auto_renewal = 0;
+        $subscriber->unsubscribe_date = now();
+        $subscriber->save();
+
+        $new_subscriber = $subscriber->replicate();
+        $new_subscriber->master_id = $new_master->id;
+        $new_subscriber->master_meta_login = $new_master->meta_login;
+        $new_subscriber->roi_period = $new_master->roi_period;
+        $new_subscriber->status = 'Pending';
+        $new_subscriber->auto_renewal = 1;
+        $new_subscriber->unsubscribe_date = null;
+        $new_subscriber->approval_date = null;
+        $new_subscriber->save();
+
+        $old_subscription = $subscriber->subscription;
+        if ($old_subscription) {
+            $old_subscription->status = 'Switched';
+            $old_subscription->auto_renewal = 0;
+            $old_subscription->termination_date = now();
+            $old_subscription->save();
+
+            // Create new subscription row
+            $new_subscription = $old_subscription->replicate();
+            $new_subscription->master_id = $new_master->id;
+            $new_subscription->subscription_period = $new_master->roi_period;
+            $new_subscription->status = 'Pending';
+            $new_subscription->auto_renewal = 1;
+            $new_subscription->termination_date = null;
+            $new_subscription->approval_date = null;
+            $new_subscription->next_pay_date = null;
+            $new_subscription->expired_date = null;
+            $new_subscription->subscription_number = RunningNumberService::getID('subscription');
+            $new_subscription->save();
+
+            // Update new subscriber with new subscription id
+            $new_subscriber->subscription_id = $new_subscription->id;
+            $new_subscriber->save();
+
+            $batches = $subscriber->subscription_batches;
+
+            foreach ($batches as $batch) {
+                $batch->status = 'Switched';
+                $batch->auto_renewal = 0;
+                $batch->termination_date = now();
+                $batch->save();
+            }
+
+            // Create a new subscription batch
+            SubscriptionBatch::create([
+                'user_id' => $new_subscription->user_id,
+                'trading_account_id' => $new_subscription->trading_account_id,
+                'meta_login' => $new_subscription->meta_login,
+                'meta_balance' => $new_subscription->meta_balance,
+                'real_fund' => $batches->sum('real_fund'),
+                'demo_fund' => $batches->sum('demo_fund'),
+                'master_id' => $new_subscriber->master_id,
+                'master_meta_login' => $new_subscriber->master_meta_login,
+                'type' => 'CopyTrade',
+                'subscriber_id' => $new_subscriber->id,
+                'subscription_id' => $new_subscription->id,
+                'subscription_number' => $new_subscription->subscription_number,
+                'subscription_period' => $new_subscription->subscription_period,
+                'transaction_id' => $new_subscription->transaction_id,
+                'subscription_fee' => $new_subscription->subscription_fee,
+                'status' => 'Pending',
+            ]);
         }
 
         SwitchMaster::create([

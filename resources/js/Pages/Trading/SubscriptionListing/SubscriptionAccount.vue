@@ -95,7 +95,7 @@ watchEffect(() => {
             <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
                 <div class="flex gap-1">
                     <div class="text-sm">{{ $t('public.join_date') }}:</div>
-                    <div class="text-sm font-semibold">{{ formatDateTime(subscriberAccount.approval_date, false) }}</div>
+                    <div class="text-sm font-semibold">{{ subscriberAccount.approval_date ? formatDateTime(subscriberAccount.approval_date, false) : $t('public.pending') }}</div>
                 </div>
                 <div class="flex gap-1">
                     <div class="text-sm">{{ $t('public.join_day') }}:</div>
@@ -162,7 +162,7 @@ watchEffect(() => {
             />
 
             <div
-                v-if="subscriberAccount.status !== 'Unsubscribed' && subscriberAccount.status !== 'Switched'"
+                v-if="subscriberAccount.status === 'Subscribing' || subscriberAccount.status === 'Expiring'"
                 class="flex w-full gap-2 items-center"
             >
                 <StopRenewSubscription

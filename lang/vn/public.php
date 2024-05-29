@@ -486,4 +486,5 @@ return [
     'settlement' => "Thanh Toán",
     "forgot_security_pin" => "Quên mã PIN bảo mật",
     "reset_security_pin" => "Đặt lại mã pin bảo mật",
+    "termination_return" => "Chấm dứt Trả lại",
 ];

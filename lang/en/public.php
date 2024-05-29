@@ -487,4 +487,5 @@ return [
     'low_subscription_amount_warning' => "Your subscription amount will lower than the min requirement. Min amount: $:amount",
     "forgot_security_pin" => "Forgot Security Pin",
     "reset_security_pin" => "Reset Security Pin",
+    "termination_return" => "Termination Return",
 ];

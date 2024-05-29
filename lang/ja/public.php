@@ -486,4 +486,5 @@ return [
     'settlement' => "決済",
     "forgot_security_pin" => "セキュリティ PIN を忘れた",
     "reset_security_pin" => "セキュリティ PIN をリセット",
+    "termination_return" => "解約返還",
 ];

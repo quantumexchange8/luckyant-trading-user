@@ -486,4 +486,5 @@ return [
     'settlement' => "结算",
     "forgot_security_pin" => "忘记安全密码",
     "reset_security_pin" => "重置安全密码",
+    "termination_return" => "批次提现"
 ];

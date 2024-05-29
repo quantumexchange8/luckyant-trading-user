@@ -486,4 +486,5 @@ return [
     'settlement' => "การตรวจสอบและจ่ายเงิน",
     "forgot_security_pin" => "ลืมรหัสรักษาความปลอดภัย",
     "reset_security_pin" => "รีเซ็ตพินความปลอดภัย",
+    "termination_return" => "การสิ้นสุดการส่งคืน",
 ];

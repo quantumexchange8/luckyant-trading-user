@@ -17,60 +17,67 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Transaction/Transaction');
+        return Inertia::render('Transaction/Transaction', [
+            'transactionTypes' => (new SelectOptionService())->getTradingAccountTransactionTypes(),
+        ]);
     }
 
     public function getTransactionData(Request $request)
     {
-        $transactions = Transaction::query()
-            ->where('user_id', Auth::id())
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->input('search');
-                $query->where(function ($innerQuery) use ($search) {
-                    $innerQuery->where('transaction_number', 'like', "%{$search}%");
-                });
-            })
-            ->when($request->filled('type'), function ($query) use ($request) {
-                $type = $request->input('type');
-                $query->where(function ($innerQuery) use ($type) {
-                    $innerQuery->where('transaction_type', $type);
-                });
-            })
-            ->when($request->filled('category'), function ($query) use ($request) {
-                $category = $request->input('category');
-                $query->where(function ($innerQuery) use ($category) {
-                    $innerQuery->where('category', $category);
-                });
-            })
-            ->when($request->filled('methods'), function ($query) use ($request) {
-                $methods = $request->input('methods');
-                $query->where(function ($innerQuery) use ($methods) {
-                    $innerQuery->where('payment_method', $methods);
-                });
-            })
-            ->when($request->filled('date'), function ($query) use ($request) {
-                $date = $request->input('date');
-                $dateRange = explode(' - ', $date);
-                $start_date = Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
-                $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
-                $query->whereBetween('created_at', [$start_date, $end_date]);
-            })
-            ->when($request->filled('sortType'), function($query) use ($request) {
-                $sortType = $request->input('sortType');
-                $sort = $request->input('sort');
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
 
-                $query->orderBy($sortType, $sort);
-            })
-            ->with(['to_wallet:id,name,type', 'from_wallet:id,name,type', 'to_meta_login:id,meta_login', 'from_meta_login:id,meta_login', 'payment_account'])
-            ->latest();
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
 
-        if ($request->has('exportStatus')) {
-            return Excel::download(new TransactionExport($transactions), Carbon::now() . '-' . $request->type . '-report.xlsx');
+        $query = Transaction::with([
+            'from_meta_login:id,meta_login',
+            'to_meta_login:id,meta_login',
+            'from_wallet',
+            'to_wallet'
+        ])
+            ->where('user_id', \Auth::id())
+            ->where('category', 'trading_account')
+            ->whereNot('transaction_type', 'Settlement');
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->input('search') . '%';
+            $query->where(function ($query) use ($search) {
+                $query->whereHas('from_meta_login', function ($subQuery) use ($search) {
+                    $subQuery->where('meta_login', 'like', $search);
+                })->orWhereHas('to_meta_login', function ($subQuery) use ($search) {
+                    $subQuery->where('meta_login', 'like', $search);
+                });
+            });
         }
 
-        $transactions = $transactions->paginate(10);
+        if ($request->filled('date')) {
+            $date = $request->input('date');
+            $dateRange = explode(' - ', $date);
+            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
 
-        return response()->json($transactions);
+            $query->whereBetween('created_at', [$start_date, $end_date]);
+        }
+
+        $totalBalanceIn = clone $query;
+        $totalBalanceOut = clone $totalBalanceIn;
+
+        if ($request->filled('type')) {
+            $type = $request->input('type');
+            $query->where('transaction_type', $type);
+        }
+
+        $results = $query
+            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
+            ->paginate($request->input('paginate', 10));
+
+        return response()->json([
+            'transactionHistories' => $results,
+            'totalBalanceIn' => $totalBalanceIn->where('transaction_type', 'BalanceIn')->where('status', 'Success')->sum('transaction_amount'),
+            'totalBalanceOut' => $totalBalanceOut->where('transaction_type', 'BalanceOut')->where('status', 'Success')->sum('transaction_amount'),
+        ]);
     }
 
     public function transfer_history()
@@ -103,8 +110,8 @@ class TransactionController extends Controller
                     });
                 })
                 ->where('transaction_type', 'Transfer');
-            
-        
+
+
         if ($request->filled('search')) {
             $search = '%' . $request->input('search') . '%';
             $transfer->where(function ($q) use ($search) {
@@ -112,12 +119,12 @@ class TransactionController extends Controller
                     ->orWhere('transaction_number', 'like', $search);
             });
         }
-                        
+
         if ($request->filled('type')) {
             $type = $request->input('type');
             $transfer->where('to_wallet_id', $type);
         }
-        
+
                 // if ($request->filled('wallet_id')) {
         //     $wallet_id = $request->input('wallet_id');
         //     $transfer->whereHas('wallet', function ($query) use ($wallet_id) {

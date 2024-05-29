@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\PaymentAccount;
 use App\Models\TradingAccount;
 use App\Models\SettingLeverage;
+use Str;
 
 class SelectOptionService
 {
@@ -135,6 +136,21 @@ class SelectOptionService
             return [
                 'value' => $transactionType,
                 'label' => trans('public.' . strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $transactionType))),
+            ];
+        })
+        ->prepend(['value' => '', 'label' => trans('public.all')]);
+    }
+
+    public function getTradingAccountTransactionTypes(): \Illuminate\Support\Collection
+    {
+        return Transaction::distinct()
+            ->where('category', 'trading_account')
+            ->whereNot('transaction_type', 'Settlement')
+            ->pluck('transaction_type')
+            ->map(function ($transactionType) {
+            return [
+                'value' => $transactionType,
+                'label' => trans('public.' . Str::snake($transactionType)),
             ];
         })
         ->prepend(['value' => '', 'label' => trans('public.all')]);

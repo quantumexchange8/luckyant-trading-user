@@ -486,4 +486,5 @@ return [
     'settlement' => "결제",
     "forgot_security_pin" => "보안 핀 분실",
     "reset_security_pin" => "보안 핀 재설정",
+    "termination_return" => "종료 반환",
 ];

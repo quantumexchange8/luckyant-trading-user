@@ -74,7 +74,7 @@ setInterval(refreshData, 10000);
                     type="button"
                     variant="gray"
                     v-slot="{ iconSizeClasses }"
-                    class="flex gap-2"
+                    class="flex gap-2 items-center justify-center"
                     size="sm"
                     external
                     :href="route('account_info.transaction_listing')"

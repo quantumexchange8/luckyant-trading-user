@@ -116,95 +116,94 @@ setInterval(refreshData, 10000);
 
         </div>
 
-        <div v-if="accountCounts > 0">
-            <div class="w-full">
-                <TabGroup>
-                    <div class="w-full flex flex-col sm:flex-row gap-4 sm:justify-between items-center">
+        <div class="w-full">
+            <TabGroup>
+                <div class="w-full flex flex-col sm:flex-row gap-4 sm:justify-between items-center">
 
-                        <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 w-full max-w-md">
-                            <Tab
-                                as="template"
-                                v-slot="{ selected }"
-                            >
-                                <button
-                                    :class="[
-                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                                     'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
-                                     selected
-                                     ? 'bg-white text-primary-800 shadow'
-                                     : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
-                                ]"
-                                >
-                                    {{ $t('public.trading_accounts') }}
-                                </button>
-                            </Tab>
-
-                            <Tab
-                                as="template"
-                                v-slot="{ selected }"
-                            >
-                                <button
-                                    :class="[
-                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                                     'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
-                                     selected
-                                     ? 'bg-white text-primary-800 shadow'
-                                     : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
-                                ]"
-                                >
-                                    {{ $t('public.master_accounts') }}
-                                </button>
-                            </Tab>
-                        </TabList>
-                        <Button
-                            type="button"
-                            variant="primary"
-                            size="sm"
-                            class="flex justify-center items-center gap-2 w-full sm:w-auto"
-                            v-slot="{ iconSizeClasses }"
-                            @click="addTradingAccount"
-                            v-if="props.accountCounts < props.liveAccountQuota.value"
+                    <TabList v-if="accountCounts > 0" class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 w-full max-w-md">
+                        <Tab
+                            as="template"
+                            v-slot="{ selected }"
                         >
-                            <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
-                            <span>{{ $t('public.add_real_account') }}</span>
-                        </Button>
+                            <button
+                                :class="[
+                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                                     'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
+                                     selected
+                                     ? 'bg-white text-primary-800 shadow'
+                                     : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
+                                ]"
+                            >
+                                {{ $t('public.trading_accounts') }}
+                            </button>
+                        </Tab>
+
+                        <Tab
+                            as="template"
+                            v-slot="{ selected }"
+                        >
+                            <button
+                                :class="[
+                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                                     'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
+                                     selected
+                                     ? 'bg-white text-primary-800 shadow'
+                                     : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
+                                ]"
+                            >
+                                {{ $t('public.master_accounts') }}
+                            </button>
+                        </Tab>
+                    </TabList>
+                    <Button
+                        type="button"
+                        variant="primary"
+                        size="sm"
+                        class="flex justify-center items-center gap-2 w-full sm:w-auto"
+                        v-slot="{ iconSizeClasses }"
+                        @click="addTradingAccount"
+                        v-if="props.accountCounts < props.liveAccountQuota.value"
+                    >
+                        <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
+                        <span>{{ $t('public.add_real_account') }}</span>
+                    </Button>
+                </div>
+                <TabPanels v-if="accountCounts > 0" class="mt-2">
+                    <TabPanel
+                        class="py-3"
+                    >
+                        <TradingAccount
+                            :walletSel="walletSel"
+                            :leverageSel="leverageSel"
+                            :accountCounts="accountCounts"
+                            :masterAccountLogin="masterAccountLogin"
+                        />
+                    </TabPanel>
+
+                    <TabPanel
+                        class="py-3"
+                    >
+                        <MasterAccount
+                            :walletSel="walletSel"
+                            :leverageSel="leverageSel"
+                            :accountCounts="accountCounts"
+                            :masterAccountLogin="masterAccountLogin"
+                        />
+                    </TabPanel>
+                </TabPanels>
+
+                <div
+                    v-else
+                    class="flex flex-col items-center w-full"
+                >
+                    <div class="text-2xl text-gray-400 dark:text-gray-200">
+                        {{ $t('public.no_account') }}
                     </div>
-                    <TabPanels class="mt-2">
-                        <TabPanel
-                            class="py-3"
-                        >
-                            <TradingAccount
-                                :walletSel="walletSel"
-                                :leverageSel="leverageSel"
-                                :accountCounts="accountCounts"
-                                :masterAccountLogin="masterAccountLogin"
-                            />
-                        </TabPanel>
-
-                        <TabPanel
-                            class="py-3"
-                        >
-                            <MasterAccount
-                                :walletSel="walletSel"
-                                :leverageSel="leverageSel"
-                                :accountCounts="accountCounts"
-                                :masterAccountLogin="masterAccountLogin"
-                            />
-                        </TabPanel>
-                    </TabPanels>
-                </TabGroup>
-            </div>
-        </div>
-        <div
-            v-else
-            class="flex flex-col items-center w-full"
-        >
-            <div class="text-2xl text-gray-400 dark:text-gray-200">
-                {{ $t('public.no_account') }}
-            </div>
-            <div class="text-lg text-gray-400 dark:text-gray-600">
-                {{ $t('public.no_account_message') }}
-            </div>
+                    <div class="text-lg text-gray-400 dark:text-gray-600">
+                        {{ $t('public.no_account_message') }}
+                    </div>
+                </div>
+            </TabGroup>
         </div>
 
         <Modal :show="addingTradingAccount" :title="$t('public.add_trading_account')" @close="closeModal">

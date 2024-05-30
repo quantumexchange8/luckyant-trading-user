@@ -134,7 +134,7 @@ class AccountInfoController extends Controller
                 $tradingAccount->balance_out = true;
             }
 
-            $tradingAccount->active_subscriber = $activeSubscriber;
+            $tradingAccount->active_subscriber = $activeSubscriber->where('status', 'Subscribing')->latest()->first();
         });
 
         $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login,company'])->where('user_id', \Auth::id())->get();

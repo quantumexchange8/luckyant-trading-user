@@ -126,7 +126,7 @@ class AccountInfoController extends Controller
 
             if ($activeSubscriber->where('status', 'Unsubscribed')->latest()->first() && \Carbon\Carbon::parse($activeSubscriber->where('status', 'Unsubscribed')->latest()->first()->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
                 $tradingAccount->balance_out = false;
-            } elseif (empty($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->get())) {
+            } elseif ($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->get()->isNotEmpty()) {
                 $tradingAccount->balance_out = false;
             } elseif ($tradingAccount->demo_fund > 0) {
                 $tradingAccount->balance_out = false;

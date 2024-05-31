@@ -124,9 +124,14 @@ class AccountInfoController extends Controller
             $activeSubscriber = Subscriber::with(['master', 'master.tradingUser'])
                 ->where('meta_login', $tradingAccount->meta_login);
 
-            if ($activeSubscriber->where('status', 'Unsubscribed')->latest()->first() && \Carbon\Carbon::parse($activeSubscriber->where('status', 'Unsubscribed')->latest()->first()->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
+            // Get the latest unsubscribed and subscribing subscribers
+            $latestUnsubscribed = $activeSubscriber->clone()->where('status', 'Unsubscribed')->latest()->first();
+            $latestSubscribing = $activeSubscriber->clone()->where('status', 'Subscribing')->latest()->first();
+
+// Check if the latest unsubscribed subscriber exists and its unsubscribe date is within the last 24 hours
+            if ($latestUnsubscribed && \Carbon\Carbon::parse($latestUnsubscribed->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
                 $tradingAccount->balance_out = false;
-            } elseif ($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->get()->isNotEmpty()) {
+            } elseif ($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->exists()) {
                 $tradingAccount->balance_out = false;
             } elseif ($tradingAccount->demo_fund > 0) {
                 $tradingAccount->balance_out = false;
@@ -134,7 +139,8 @@ class AccountInfoController extends Controller
                 $tradingAccount->balance_out = true;
             }
 
-            $tradingAccount->active_subscriber = $activeSubscriber->where('status', 'Subscribing')->latest()->first();
+// Set the latest subscribing subscriber
+            $tradingAccount->active_subscriber = $latestSubscribing;
         });
 
         $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login,company'])->where('user_id', \Auth::id())->get();

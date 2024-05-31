@@ -487,4 +487,5 @@ return [
     "forgot_security_pin" => "Quên mã PIN bảo mật",
     "reset_security_pin" => "Đặt lại mã pin bảo mật",
     "termination_return" => "Chấm dứt Trả lại",
+    "not_allowed_to_withdraw" => "Bạn không được phép rút bất cứ thứ gì. Vui lòng liên hệ với quản trị viên",
 ];

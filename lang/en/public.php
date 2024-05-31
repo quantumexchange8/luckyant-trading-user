@@ -488,4 +488,5 @@ return [
     "forgot_security_pin" => "Forgot Security Pin",
     "reset_security_pin" => "Reset Security Pin",
     "termination_return" => "Termination Return",
+    "not_allowed_to_withdraw" => "You are not allowed to withdraw anything. Please contact admin",
 ];

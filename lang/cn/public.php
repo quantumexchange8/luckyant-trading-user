@@ -486,5 +486,6 @@ return [
     'settlement' => "结算",
     "forgot_security_pin" => "忘记安全密码",
     "reset_security_pin" => "重置安全密码",
-    "termination_return" => "批次提现"
+    "termination_return" => "批次提现",
+    "not_allowed_to_withdraw" => "您不得提取任何东西。请联系管理员",
 ];

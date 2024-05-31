@@ -487,4 +487,5 @@ return [
     "forgot_security_pin" => "ลืมรหัสรักษาความปลอดภัย",
     "reset_security_pin" => "รีเซ็ตพินความปลอดภัย",
     "termination_return" => "การสิ้นสุดการส่งคืน",
+    "not_allowed_to_withdraw" => "คุณไม่ได้รับอนุญาตให้ถอนสิ่งใด ๆ กรุณาติดต่อผู้ดูแลระบบ",
 ];

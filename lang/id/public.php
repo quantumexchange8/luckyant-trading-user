@@ -487,4 +487,5 @@ return [
     "forgot_security_pin" => "Lupa Pin Keamanan",
     "reset_security_pin" => "Setel Ulang Pin Keamanan",
     "termination_return" => "Penghentian Pengembalian",
+    "not_allowed_to_withdraw" => "Anda tidak diperbolehkan menarik apa pun. Silakan hubungi admin",
 ];

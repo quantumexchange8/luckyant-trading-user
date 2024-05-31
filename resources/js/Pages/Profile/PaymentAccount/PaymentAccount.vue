@@ -43,10 +43,10 @@ const closeModal = () => {
 }
 
 watch(country, (newValue) => {
-    if (newValue !== 132) {
+    if (newValue !== 132 && accountDetail.value.payment_platform !== 'Crypto') {
         currency.value = 'USD';
     }
-    else if (newValue === 132) {
+    else if (newValue === 132 && accountDetail.value.payment_platform !== 'Crypto') {
         currency.value = 'MYR';
     }
 });

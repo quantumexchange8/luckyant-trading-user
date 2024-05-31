@@ -128,7 +128,7 @@ class AccountInfoController extends Controller
             $latestUnsubscribed = $activeSubscriber->clone()->where('status', 'Unsubscribed')->latest()->first();
             $latestSubscribing = $activeSubscriber->clone()->where('status', 'Subscribing')->latest()->first();
 
-// Check if the latest unsubscribed subscriber exists and its unsubscribe date is within the last 24 hours
+            // Check if the latest unsubscribed subscriber exists and its unsubscribe date is within the last 24 hours
             if ($latestUnsubscribed && \Carbon\Carbon::parse($latestUnsubscribed->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
                 $tradingAccount->balance_out = false;
             } elseif ($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->exists()) {
@@ -139,7 +139,7 @@ class AccountInfoController extends Controller
                 $tradingAccount->balance_out = true;
             }
 
-// Set the latest subscribing subscriber
+            // Set the latest subscribing subscriber
             $tradingAccount->active_subscriber = $latestSubscribing;
         });
 
@@ -328,10 +328,29 @@ class AccountInfoController extends Controller
         $amount = $request->amount;
         $tradingAccount = TradingAccount::where('meta_login', $request->from_meta_login)->first();
 
-        $activeSubscriber = Subscriber::with(['master', 'master.tradingUser'])
+        $subscribers = Subscriber::with(['master', 'master.tradingUser'])
             ->where('meta_login', $tradingAccount->meta_login)
-            ->where('status', 'Subscribing')
-            ->first();
+            ->whereIn('status', ['Subscribing', 'Pending'])
+            ->get();
+
+        // Initialize variables for the checks
+        $activeSubscriber = null;
+        $pendingSubscriber = null;
+        $latestUnsubscribeDate = null;
+
+        // Separate subscribers by status and find the latest unsubscribe date
+        foreach ($subscribers as $subscriber) {
+            if ($subscriber->status == 'Subscribing') {
+                $activeSubscriber = $subscriber;
+            } elseif ($subscriber->status == 'Pending') {
+                $pendingSubscriber = $subscriber;
+            }
+            if ($subscriber->status == 'Unsubscribed' && !empty($subscriber->unsubscribe_date)) {
+                if (is_null($latestUnsubscribeDate) || $subscriber->unsubscribe_date->greaterThan($latestUnsubscribeDate)) {
+                    $latestUnsubscribeDate = $subscriber->unsubscribe_date;
+                }
+            }
+        }
 
         try {
             $metaService->getUserInfo(collect([$tradingAccount]));
@@ -339,17 +358,19 @@ class AccountInfoController extends Controller
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
         }
 
-        // Check if just terminate
-        if (!empty($activeSubscriber) &&
-            !empty($activeSubscriber->unsubscribe_date) &&
-            $activeSubscriber->unsubscribe_date->greaterThan(Carbon::now()->subHours(24))
-        ) {
+        // Check if the latest unsubscribe date is within the last 24 hours
+        if (!empty($latestUnsubscribeDate) && $latestUnsubscribeDate->greaterThan(Carbon::now()->subHours(24))) {
             throw ValidationException::withMessages(['amount' => trans('public.terminatiion_message')]);
         }
 
-        // Check if got subscribing master
+        // Check if there's an active subscriber
         if (!empty($activeSubscriber)) {
             throw ValidationException::withMessages(['amount' => trans('public.subscribing_alert')]);
+        }
+
+        // Check if there's a pending subscriber
+        if (!empty($pendingSubscriber)) {
+            throw ValidationException::withMessages(['amount' => trans('public.invalid_action')]);
         }
 
         // Check if balance is sufficient

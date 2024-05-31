@@ -187,13 +187,6 @@ class ProfileController extends Controller
                 ->with('warning', trans('public.current_pin_invalid'));
         }
 
-        $currency = 'USD';
-        if ($paymentAccount->payment_platform == 'Bank') {
-            $currency = $request->currency;
-        } elseif ($paymentAccount->payment_platform == 'Crypto') {
-            $currency = 'USDT';
-        }
-
         $paymentAccount->update([
             'payment_account_name' => $request->payment_account_name,
             'payment_platform_name' => $request->payment_platform_name,
@@ -203,7 +196,7 @@ class ProfileController extends Controller
             'bank_code' => $request->bank_code,
             'bank_code_type' => $request->bank_code_type,
             'country' => $request->country,
-            'currency' => $currency,
+            'currency' => $request->currency,
         ]);
 
         return back()->with('title', trans('public.success_update'))->with('success', trans('public.successfully_updated_account'));

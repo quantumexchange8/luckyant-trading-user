@@ -29,11 +29,11 @@ const props = defineProps({
 })
 
 const paymentType = [
-    // {
-    //     name: 'bank',
-    //     value: 'Bank',
-    //     imgUrl: BankImg
-    // },
+    {
+         name: 'bank',
+         value: 'Bank',
+         imgUrl: BankImg
+    },
     {
         name: 'payment_service',
         value: 'Crypto',

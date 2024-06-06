@@ -321,7 +321,7 @@ return [
     'success_registration' => "已成功注册",
     'successfully_registration' => "账户创建成功",
     'success_sent_otp' => "验证码已成功发送",
-    'terminatiion_message' => "在24小时内终止",
+    'termination_message' => "在24小时内终止",
     'success_subscribe' => "成功订阅",
     'successfully_subscribe' => "成功订阅主账户",
     'terminated_subscription' => "订阅已终止",

@@ -321,7 +321,7 @@ return [
     'success_registration' => "등록 성공",
     'successfully_registration' => "계정이 성공적으로 생성되었습니다",
     'success_sent_otp' => "OTP 전송 성공",
-    'terminatiion_message' => "24시간 이내에 해지됩니다",
+    'termination_message' => "24시간 이내에 해지됩니다",
     'success_subscribe' => "구독 성공",
     'successfully_subscribe' => "로그인에 성공적으로 구독되었습니다",
     'terminated_subscription' => "구독이 해지되었습니다",

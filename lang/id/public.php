@@ -321,7 +321,7 @@ return [
     'success_registration' => "Registrasi Berhasil",
     'successfully_registration' => "Berhasil Membuat Akun",
     'success_sent_otp' => "OTP Terkirim",
-    'terminatiion_message' => "Pengakhiran dalam 24 jam",
+    'termination_message' => "Pengakhiran dalam 24 jam",
     'success_subscribe' => "Berlangganan Berhasil",
     'successfully_subscribe' => "Berlangganan Berhasil ke LOGIN",
     'terminated_subscription' => "Berlangganan Dihentikan",

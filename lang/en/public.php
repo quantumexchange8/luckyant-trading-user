@@ -321,7 +321,7 @@ return [
     'success_registration' => "Success registration",
     'successfully_registration' => "Successfully Created Account",
     'success_sent_otp' => "Successfully Sent OTP",
-    'terminatiion_message' => "Termination within 24 hours",
+    'termination_message' => "Termination within 24 hours",
     'success_subscribe' => "Success subscribe",
     'successfully_subscribe' => "Successfully subscribe to LOGIN",
     'terminated_subscription' => "Terminated Subscription",

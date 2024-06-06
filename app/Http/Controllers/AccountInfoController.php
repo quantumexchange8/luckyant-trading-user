@@ -213,11 +213,11 @@ class AccountInfoController extends Controller
         }
 
         if ($wallet->type == 'e_wallet') {
-            $this->createTransaction($user->id, $wallet->id, $meta_login, $deal['deal_Id'], 'Deposit', $eWalletAmount, $wallet->balance - $eWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
+            $this->createTransaction($user->id, $wallet->id, $meta_login, $deal['deal_Id'], 'BalanceIn', $eWalletAmount, $wallet->balance - $eWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
             $wallet->balance -= $eWalletAmount;
             $wallet->save();
 
-            $this->createTransaction($user->id, $cash_wallet->id, $meta_login, $deal['deal_Id'], 'Deposit', $cashWalletAmount, $cash_wallet->balance - $cashWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
+            $this->createTransaction($user->id, $cash_wallet->id, $meta_login, $deal['deal_Id'], 'BalanceIn', $cashWalletAmount, $cash_wallet->balance - $cashWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
             $cash_wallet->balance -= $cashWalletAmount;
             $cash_wallet->save();
         } else {
@@ -324,71 +324,164 @@ class AccountInfoController extends Controller
         $user = Auth::user();
         $wallet = Wallet::find($request->to_wallet_id);
         $amount = $request->amount;
-        $tradingAccount = TradingAccount::where('meta_login', $request->from_meta_login)->first();
-
-        $activeSubscriber = Subscriber::with(['master', 'master.tradingUser'])
-            ->where('meta_login', $tradingAccount->meta_login)
-            ->where('status', 'Subscribing')
-            ->first();
+        $meta_login = $request->from_meta_login;
+        $tradingAccount = TradingAccount::where('meta_login', $meta_login)->firstOrFail();
 
         try {
             $metaService->getUserInfo(collect([$tradingAccount]));
         } catch (\Exception $e) {
-            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            \Log::error('Error fetching trading accounts: ' . $e->getMessage());
         }
 
-        // Check if just terminate
-        if (!empty($activeSubscriber) &&
-            !empty($activeSubscriber->unsubscribe_date) &&
-            $activeSubscriber->unsubscribe_date->greaterThan(Carbon::now()->subHours(24))
-        ) {
-            throw ValidationException::withMessages(['amount' => trans('public.terminatiion_message')]);
-        }
-
-        // Check if got subscribing master
-        if (!empty($activeSubscriber)) {
-            throw ValidationException::withMessages(['amount' => trans('public.subscribing_alert')]);
-        }
-
-        // Check if balance is sufficient
-        if ($tradingAccount->equity < $amount || $amount <= 0) {
+        if ($tradingAccount->balance < $amount || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
         }
-        $deal = [];
-        try {
-            $deal = $metaService->createDeal($tradingAccount->meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
-        } catch (\Exception $e) {
-            \Log::error('Error creating deal: '. $e->getMessage());
+
+        $subscriberHistory = Subscriber::where('meta_login', $meta_login)
+            ->whereNotIn('status', ['Pending', 'Rejected'])
+            ->get();
+
+        if ($subscriberHistory->isNotEmpty()) {
+            $lastUnsubscribed = $subscriberHistory->where('status', 'Unsubscribed')
+                ->sortByDesc('unsubscribe_date')
+                ->first();
+
+            if ($lastUnsubscribed && Carbon::parse($lastUnsubscribed->unsubscribe_date)->greaterThan(Carbon::now()->subHours(24))) {
+                throw ValidationException::withMessages(['amount' => trans('public.termination_message')]);
+            }
+
+            if ($subscriberHistory->contains('status', 'Subscribing')) {
+                throw ValidationException::withMessages(['amount' => trans('public.subscribing_alert')]);
+            }
+
+            $deal = [];
+            try {
+                $deal = $metaService->createDeal($meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
+            } catch (\Exception $e) {
+                \Log::error('Error creating deal: ' . $e->getMessage());
+            }
+
+            $new_wallet_balance = $wallet->balance + $amount;
+
+            Transaction::create([
+                'category' => 'trading_account',
+                'user_id' => $user->id,
+                'to_wallet_id' => $wallet->id,
+                'from_meta_login' => $meta_login,
+                'ticket' => $deal['deal_Id'],
+                'transaction_number' => RunningNumberService::getID('transaction'),
+                'transaction_type' => 'BalanceOut',
+                'amount' => $amount,
+                'transaction_charges' => 0,
+                'transaction_amount' => $amount,
+                'status' => 'Success',
+                'comment' => $deal['conduct_Deal']['comment'],
+                'new_wallet_amount' => $new_wallet_balance,
+            ]);
+
+            $wallet->update(['balance' => $new_wallet_balance]);
+
+        } else {
+            $e_wallet = Wallet::where('user_id', $user->id)->where('type', 'e_wallet')->first();
+            $amount_remain = $amount;
+
+            if ($e_wallet) {
+                $eWalletBalanceIn = Transaction::where('from_wallet_id', $e_wallet->id)
+                    ->where('to_meta_login', $meta_login)
+                    ->where('transaction_type', 'BalanceIn')
+                    ->where('status', 'Success')
+                    ->sum('transaction_amount');
+
+                $eWalletBalanceOut = Transaction::where('to_wallet_id', $e_wallet->id)
+                    ->where('from_meta_login', $meta_login)
+                    ->where('transaction_type', 'BalanceOut')
+                    ->where('status', 'Success')
+                    ->sum('transaction_amount');
+
+                $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
+
+                $deal = [];
+                try {
+                    $deal = $metaService->createDeal($meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
+                } catch (\Exception $e) {
+                    \Log::error('Error creating deal: ' . $e->getMessage());
+                }
+
+                if ($remainingBalance > 0) {
+                    if ($remainingBalance >= $amount) {
+                        // Deduct full amount from e_wallet
+                        $e_wallet->balance += $amount;
+                        $e_wallet->save();
+
+                        Transaction::create([
+                            'category' => 'trading_account',
+                            'user_id' => $user->id,
+                            'to_wallet_id' => $e_wallet->id,
+                            'from_meta_login' => $meta_login,
+                            'ticket' => $deal['deal_Id'],
+                            'transaction_number' => RunningNumberService::getID('transaction'),
+                            'transaction_type' => 'BalanceOut',
+                            'amount' => $amount,
+                            'transaction_charges' => 0,
+                            'transaction_amount' => $amount,
+                            'status' => 'Success',
+                            'comment' => $deal['conduct_Deal']['comment'],
+                            'new_wallet_amount' => $e_wallet->balance,
+                        ]);
+
+                        $amount_remain = 0;
+                    } else {
+                        // Deduct partial amount from e_wallet
+                        $e_wallet->balance += $remainingBalance;
+                        $e_wallet->save();
+
+                        Transaction::create([
+                            'category' => 'trading_account',
+                            'user_id' => $user->id,
+                            'to_wallet_id' => $e_wallet->id,
+                            'from_meta_login' => $meta_login,
+                            'ticket' => $deal['deal_Id'],
+                            'transaction_number' => RunningNumberService::getID('transaction'),
+                            'transaction_type' => 'BalanceOut',
+                            'amount' => $remainingBalance,
+                            'transaction_charges' => 0,
+                            'transaction_amount' => $remainingBalance,
+                            'status' => 'Success',
+                            'comment' => $deal['conduct_Deal']['comment'],
+                            'new_wallet_amount' => $e_wallet->balance,
+                        ]);
+
+                        $amount_remain -= $remainingBalance;
+                    }
+                }
+            }
+
+            if ($amount_remain > 0) {
+                $new_wallet_balance = $wallet->balance + $amount_remain;
+
+                Transaction::create([
+                    'category' => 'trading_account',
+                    'user_id' => $user->id,
+                    'to_wallet_id' => $wallet->id,
+                    'from_meta_login' => $meta_login,
+                    'ticket' => $deal['deal_Id'],
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'transaction_type' => 'BalanceOut',
+                    'amount' => $amount_remain,
+                    'transaction_charges' => 0,
+                    'transaction_amount' => $amount_remain,
+                    'status' => 'Success',
+                    'comment' => $deal['conduct_Deal']['comment'],
+                    'new_wallet_amount' => $new_wallet_balance,
+                ]);
+
+                $wallet->update(['balance' => $new_wallet_balance]);
+            }
         }
-
-        // Calculate new wallet amount
-        $new_wallet_amount = $wallet->balance + $amount;
-        $transaction_number = RunningNumberService::getID('transaction');
-
-        // Create transaction
-        Transaction::create([
-            'category' => 'trading_account',
-            'user_id' => $user->id,
-            'to_wallet_id' => $wallet->id,
-            'from_meta_login' => $tradingAccount->meta_login,
-            'ticket' => $deal['deal_Id'],
-            'transaction_number' => $transaction_number,
-            'transaction_type' => 'BalanceOut',
-            'amount' => $amount,
-            'transaction_charges' => 0,
-            'transaction_amount' => $amount,
-            'status' => 'Success',
-            'comment' => $deal['conduct_Deal']['comment'],
-            'new_wallet_amount' => $new_wallet_amount,
-        ]);
-
-        $wallet->update([
-            'balance' => $new_wallet_amount
-        ]);
 
         return redirect()->back()
             ->with('title', trans('public.success_withdraw'))
-            ->with('success', trans('public.successfully_withdraw') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $request->from_meta_login);
+            ->with('success', trans('public.successfully_withdraw') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $meta_login);
     }
 
     public function internalTransferTradingAccount(InternalTransferBalanceRequest $request)

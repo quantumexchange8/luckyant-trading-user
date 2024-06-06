@@ -321,7 +321,7 @@ return [
     'success_registration' => "Đăng ký thành công",
     'successfully_registration' => "Tạo tài khoản thành công",
     'success_sent_otp' => "Gửi OTP thành công",
-    'terminatiion_message' => "Chấm dứt trong vòng 24 giờ",
+    'termination_message' => "Chấm dứt trong vòng 24 giờ",
     'success_subscribe' => "Đăng ký thành công",
     'successfully_subscribe' => "Đăng ký thành công cho ĐĂNG NHẬP",
     'terminated_subscription' => "Đã chấm dứt Đăng Ký",

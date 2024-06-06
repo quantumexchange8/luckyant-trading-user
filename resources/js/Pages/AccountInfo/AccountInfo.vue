@@ -10,7 +10,7 @@ import Label from "@/Components/Label.vue";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import Checkbox from "@/Components/Checkbox.vue";
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import {transactionFormat} from "@/Composables/index.js";
 import MasterAccount from "@/Pages/AccountInfo/MasterAccount/MasterAccount.vue";
 import {MemberDetailIcon} from "@/Components/Icons/outline.jsx";
@@ -24,7 +24,7 @@ const props = defineProps({
     totalEquity: Number,
     totalBalance: Number,
 })
-const { formatAmount } = transactionFormat();
+const {formatAmount} = transactionFormat();
 const addingTradingAccount = ref(false)
 const totalEquity = ref(null);
 const totalBalance = ref(null);
@@ -79,7 +79,7 @@ setInterval(refreshData, 10000);
                     external
                     :href="route('account_info.transaction_listing')"
                 >
-                    <MemberDetailIcon aria-hidden="true" :class="iconSizeClasses" />
+                    <MemberDetailIcon aria-hidden="true" :class="iconSizeClasses"/>
                     <span>{{ $t('public.transaction_history') }}</span>
                 </Button>
             </div>
@@ -94,7 +94,7 @@ setInterval(refreshData, 10000);
                         <span v-if="totalEquity !== null">
                             $ {{ formatAmount(totalEquity) }}
                         </span>
-                        <span v-else>
+                    <span v-else>
                             {{ $t('public.loading') }}
                         </span>
                 </div>
@@ -120,7 +120,8 @@ setInterval(refreshData, 10000);
             <TabGroup>
                 <div class="w-full flex flex-col sm:flex-row gap-4 sm:justify-between items-center">
 
-                    <TabList v-if="accountCounts > 0" class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 w-full max-w-md">
+                    <TabList v-if="accountCounts > 0"
+                             class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 w-full max-w-md">
                         <Tab
                             as="template"
                             v-slot="{ selected }"
@@ -164,7 +165,7 @@ setInterval(refreshData, 10000);
                         @click="addTradingAccount"
                         v-if="props.accountCounts < props.liveAccountQuota.value"
                     >
-                        <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses" />
+                        <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses"/>
                         <span>{{ $t('public.add_real_account') }}</span>
                     </Button>
                 </div>
@@ -217,10 +218,12 @@ setInterval(refreshData, 10000);
                         :options="leverageSel"
                         v-model="form.leverage"
                     />
-                    <InputError :message="form.errors.leverage" />
+                    <InputError :message="form.errors.leverage"/>
                 </div>
                 <div class="mt-6 space-y-4">
-                    <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{ $t('public.terms_and_conditions') }}</h3>
+                    <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{
+                            $t('public.terms_and_conditions')
+                        }}</h3>
                     <ol class="text-gray-500 dark:text-gray-400 text-xs list-decimal text-justify pl-6 mt-2">
                         <li>{{ $t('public.terms_1') }}</li>
                         <li>{{ $t('public.terms_2') }}</li>
@@ -237,7 +240,9 @@ setInterval(refreshData, 10000);
                             <Checkbox id="terms" v-model="form.terms"/>
                         </div>
                         <div class="ml-3">
-                            <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">{{ $t('public.accept_terms') }}</label>
+                            <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">{{
+                                    $t('public.accept_terms')
+                                }}</label>
                         </div>
                     </div>
                     <InputError :message="form.errors.terms"/>

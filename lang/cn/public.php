@@ -321,7 +321,7 @@ return [
     'success_registration' => "已成功注册",
     'successfully_registration' => "账户创建成功",
     'success_sent_otp' => "验证码已成功发送",
-    'terminatiion_message' => "在24小时内终止",
+    'termination_message' => "在24小时内终止",
     'success_subscribe' => "成功订阅",
     'successfully_subscribe' => "成功订阅主账户",
     'terminated_subscription' => "订阅已终止",
@@ -488,5 +488,6 @@ return [
     'invalid_subscribe_amount' => "您的订阅金额低于最低要求。最低金额: $:amount",
     "forgot_security_pin" => "忘记安全密码",
     "reset_security_pin" => "重置安全密码",
-    "termination_return" => "批次提现"
+    "termination_return" => "批次提现",
+    "not_allowed_to_withdraw" => "您不得提取任何东西。请联系管理员",
 ];

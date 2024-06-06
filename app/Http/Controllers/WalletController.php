@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TradingAccount;
 use Auth;
 use Carbon\Carbon;
 use App\Models\User;
@@ -425,6 +426,15 @@ class WalletController extends Controller
         if ($wallet->balance < $amount) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
         }
+
+        $tradingAccountDemoFunds = TradingAccount::where('user_id', $user->id)->sum('demo_fund');
+
+        if ($tradingAccountDemoFunds > 0) {
+            return back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.not_allowed_to_withdraw'));
+        }
+
         $withdrawal_fee = $request->transaction_charges;
         $final_amount = $amount - $withdrawal_fee;
         $wallet->balance -= $amount;

@@ -321,7 +321,7 @@ return [
     'success_registration' => "등록 성공",
     'successfully_registration' => "계정이 성공적으로 생성되었습니다",
     'success_sent_otp' => "OTP 전송 성공",
-    'terminatiion_message' => "24시간 이내에 해지됩니다",
+    'termination_message' => "24시간 이내에 해지됩니다",
     'success_subscribe' => "구독 성공",
     'successfully_subscribe' => "로그인에 성공적으로 구독되었습니다",
     'terminated_subscription' => "구독이 해지되었습니다",
@@ -489,4 +489,5 @@ return [
     "forgot_security_pin" => "보안 핀 분실",
     "reset_security_pin" => "보안 핀 재설정",
     "termination_return" => "종료 반환",
+    "not_allowed_to_withdraw" => "귀하는 아무것도 철회할 수 없습니다. 관리자에게 문의하세요",
 ];

@@ -321,7 +321,7 @@ return [
     'success_registration' => "登録成功",
     'successfully_registration' => "アカウントが正常に作成されました",
     'success_sent_otp' => "OTP送信成功",
-    'terminatiion_message' => "24時間以内に終了",
+    'termination_message' => "24時間以内に終了",
     'success_subscribe' => "購読成功",
     'successfully_subscribe' => "ログインへの購読が成功しました",
     'terminated_subscription' => "購読終了",
@@ -489,4 +489,5 @@ return [
     "forgot_security_pin" => "セキュリティ PIN を忘れた",
     "reset_security_pin" => "セキュリティ PIN をリセット",
     "termination_return" => "解約返還",
+    "not_allowed_to_withdraw" => "何も引き出す​​ことはできません。管理者に連絡してください",
 ];

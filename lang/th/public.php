@@ -321,7 +321,7 @@ return [
     'success_registration' => "การลงทะเบียนสำเร็จ",
     'successfully_registration' => "สร้างบัญชีสำเร็จ",
     'success_sent_otp' => "ส่ง OTP สำเร็จ",
-    'terminatiion_message' => "การสิ้นสุดในระยะเวลา 24 ชั่วโมง",
+    'termination_message' => "การสิ้นสุดในระยะเวลา 24 ชั่วโมง",
     'success_subscribe' => "การสมัครสมาชิกสำเร็จ",
     'successfully_subscribe' => "สมัครสมาชิกสำเร็จกับการเข้าสู่ระบบ",
     'terminated_subscription' => "ยุติการสมัครสมาชิก",
@@ -489,4 +489,5 @@ return [
     "forgot_security_pin" => "ลืมรหัสรักษาความปลอดภัย",
     "reset_security_pin" => "รีเซ็ตพินความปลอดภัย",
     "termination_return" => "การสิ้นสุดการส่งคืน",
+    "not_allowed_to_withdraw" => "คุณไม่ได้รับอนุญาตให้ถอนสิ่งใด ๆ กรุณาติดต่อผู้ดูแลระบบ",
 ];

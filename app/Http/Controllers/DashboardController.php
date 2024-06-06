@@ -157,7 +157,9 @@ class DashboardController extends Controller
 
         $metaLogins = TradingAccount::where('user_id', $user->id)->get()->pluck('meta_login');
 
-        $totalProfit = TradeHistory::whereIn('meta_login', $metaLogins)->where('trade_status', 'Closed')->sum('trade_profit');
+        $totalProfit = Transaction::where('user_id', $user->id)
+            ->where('transaction_type', 'ProfitSharing')
+            ->sum('transaction_amount');
 
         $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)
             ->where('status', 'Approved');

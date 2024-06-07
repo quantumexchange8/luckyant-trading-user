@@ -19,6 +19,9 @@ const joinPammModal = ref(false);
 const tradingAccountsSel = ref(null);
 const { formatAmount } = transactionFormat();
 const currentLocale = ref(usePage().props.locale);
+const confirmModal = ref(false);
+const amount = ref();
+const amountReturned = ref();
 
 const openJoinPammModal = () => {
     joinPammModal.value = true;
@@ -61,6 +64,36 @@ watchEffect(() => {
         getTradingAccounts();
     }
 });
+
+const submit = () => {
+    const selectedTradingAccount = tradingAccountsSel.value.find(account => account.value === form.meta_login);
+    if (selectedTradingAccount) {
+        const label = selectedTradingAccount.label;
+        const amountString = label.split('(')[1].split(')')[0];
+        amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));
+        amountReturned.value = (amount.value % 100).toFixed(2);
+        amount.value = (amount.value - amountReturned.value).toFixed(2);
+    }
+    confirmModal.value = true;
+};
+
+const confirmSubmit = () => {
+    form.post(route('pamm.joinPamm'), {
+        onSuccess: () => {
+            closeModal();
+            form.reset();
+            confirmModal.value = false;
+            joinPammModal.value = false;
+        },
+        onError: () => {
+            confirmModal.value = false;
+        }
+    });
+};
+
+const cancelSubmit = () => {
+    confirmModal.value = false;
+};
 </script>
 
 <template>
@@ -211,6 +244,51 @@ watchEffect(() => {
                 {{$t('public.cancel')}}
             </Button>
             <Button type="button" class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
+        </div>
+    </Modal>
+
+    <Modal :show="confirmModal" :title="$t('public.confirm_submit')" @close="cancelSubmit">
+        <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
+            <div class="flex flex-col items-start gap-3 self-stretch">
+                <div>
+                    <div v-if="currentLocale === 'en'" class="text-xl dark:text-white">
+                        {{ masterAccount.trading_user.name }}
+                    </div>
+                    <div v-if="currentLocale === 'cn'" class="text-xl dark:text-white">
+                        {{ masterAccount.trading_user.company ? masterAccount.trading_user.company : masterAccount.trading_user.name }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ $t('public.account_number') }}
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        {{ masterAccount.meta_login }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ $t('public.amount_return_cash_wallet') }}
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        $ {{ amountReturned }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ $t('public.amount_to_follow_master') }}
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        $ {{ amount }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+            <Button variant="transparent" type="button" class="justify-center" @click.prevent="cancelSubmit">
+                {{$t('public.cancel')}}
+            </Button>
+            <Button class="justify-center" @click="confirmSubmit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
         </div>
     </Modal>
 

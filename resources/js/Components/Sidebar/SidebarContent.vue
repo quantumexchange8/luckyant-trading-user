@@ -5,6 +5,11 @@ import { DashboardIcon, CoinsHandIcon, ReportIcon, Wallet01Icon, CoinsStacked02I
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
 import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
+import {ref} from "vue";
+import {usePage} from "@inertiajs/vue3";
+
+const page = usePage();
+const hasPammMasters = ref(page.props.hasPammMasters);
 </script>
 
 <template>
@@ -98,6 +103,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 <!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
+            v-if="hasPammMasters"
             :title="$t('public.pamm_listing')"
             :active="route().current('pamm.*')"
         >

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\PammController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MasterController;
@@ -29,3 +30,13 @@ Route::get('getMasterGrowth', [MasterController::class, 'getMasterGrowth']);
 Route::get('getMasterLatestTrades', [MasterController::class, 'getMasterLatestTrades']);
 Route::get('getMasterCurrency', [MasterController::class, 'getMasterCurrency']);
 Route::get('getMasterOpenTrade', [MasterController::class, 'getMasterOpenTrade']);
+
+/**
+ * ==============================
+ *             PAMM
+ * ==============================
+ */
+Route::prefix('pamm')->group(function () {
+    Route::get('get_investment_strategy_list', [PammController::class, 'get_investment_strategy_list']);
+    Route::get('subscribe_to_investment_strategy', [PammController::class, 'subscribe_to_investment_strategy']);
+});

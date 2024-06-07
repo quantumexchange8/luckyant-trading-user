@@ -138,6 +138,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/terminateSubscription', [TradingController::class, 'terminateSubscription'])->name('trading.terminateSubscription');
         Route::post('/terminateBatch', [TradingController::class, 'terminateBatch'])->name('trading.terminateBatch');
         Route::post('/switchMaster', [TradingController::class, 'switchMaster'])->name('trading.switchMaster');
+
+        Route::post('/joinPamm', [PammController::class, 'joinPamm'])->name('pamm.joinPamm');
     });
 
     /**

@@ -1,7 +1,7 @@
 <script setup>
 import PerfectScrollbar from '@/Components/PerfectScrollbar.vue'
 import SidebarLink from '@/Components/Sidebar/SidebarLink.vue'
-import { DashboardIcon, CoinsHandIcon, ReportIcon, Wallet01Icon } from '@/Components/Icons/outline'
+import { DashboardIcon, CoinsHandIcon, ReportIcon, Wallet01Icon, CoinsStacked02Icon } from '@/Components/Icons/outline'
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
 import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
@@ -96,6 +96,31 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 <!--                :active="route().current('transaction.trading_account')"-->
 <!--            />-->
 <!--        </SidebarCollapsible>-->
+
+        <SidebarCollapsible
+            :title="$t('public.pamm_listing')"
+            :active="route().current('pamm.*')"
+        >
+            <template #icon>
+                <CoinsStacked02Icon
+                    class="flex-shrink-0 w-6 h-6"
+                    aria-hidden="true"
+                />
+            </template>
+
+            <SidebarCollapsibleItem
+                :href="route('pamm.pamm_listing')"
+                :title="$t('public.pamm_listing')"
+                :active="route().current('pamm.pamm_listing')"
+            />
+
+<!--            <SidebarCollapsibleItem-->
+<!--                :href="route('referral.affiliateListing')"-->
+<!--                :title="$t('public.sidebar.affiliate_listing')"-->
+<!--                :active="route().current('referral.affiliateListing')"-->
+<!--            />-->
+
+        </SidebarCollapsible>
 
         <SidebarCollapsible
             :title="$t('public.sidebar.affiliate_program')"

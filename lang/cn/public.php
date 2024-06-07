@@ -281,7 +281,7 @@ return [
     'view_master_request' => "查看主账户请求",
     'master' => "主账户",
     'sharing' => "共享",
-    'min_join_equity' => "最低加入结余",
+    'min_join_equity' => "最低加入净值",
     'subscribers' => "订阅者",
     'view_details' => "查看详情",
     'subscribe' => "订阅",

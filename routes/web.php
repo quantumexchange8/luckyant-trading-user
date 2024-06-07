@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PammController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
@@ -137,6 +138,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/terminateSubscription', [TradingController::class, 'terminateSubscription'])->name('trading.terminateSubscription');
         Route::post('/terminateBatch', [TradingController::class, 'terminateBatch'])->name('trading.terminateBatch');
         Route::post('/switchMaster', [TradingController::class, 'switchMaster'])->name('trading.switchMaster');
+    });
+
+    /**
+     * ==============================
+     *             PAMM
+     * ==============================
+     */
+    Route::prefix('pamm')->group(function () {
+        Route::get('/pamm_listing', [PammController::class, 'pamm_listing'])->name('pamm.pamm_listing');
+        Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('pamm.getPammMasters');
     });
 
     /**

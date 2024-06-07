@@ -281,7 +281,7 @@ return [
     'view_master_request' => "View Master Request",
     'master' => "Master",
     'sharing' => "Sharing",
-    'min_join_equity' => "Minimum join Equity",
+    'min_join_equity' => "Minimum join Balance",
     'subscribers' => "Subscribers",
     'view_details' => "View Details",
     'subscribe' => "Subscribe",
@@ -490,4 +490,5 @@ return [
     "reset_security_pin" => "Reset Security Pin",
     "termination_return" => "Termination Return",
     "not_allowed_to_withdraw" => "You are not allowed to withdraw anything. Please contact admin",
+    "pamm_listing" => "PAMM Listing"
 ];

@@ -51,6 +51,7 @@ class TradingController extends Controller
         ])
             ->where('status', 'Active')
             ->where('signal_status', 1)
+            ->where('type', 'CopyTrade')
             ->whereNot('user_id', $user->id)
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
@@ -115,7 +116,7 @@ class TradingController extends Controller
                 ->sum('meta_balance');
 
             $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-            $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
+            $master->totalFundWidth = $master->total_fund == 0 ? $totalSubscriptionsFee + $master->extra_fund : (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100 ;
         });
 
         return response()->json($masterAccounts);
@@ -199,7 +200,7 @@ class TradingController extends Controller
                 'from_meta_login' => $tradingAccount->meta_login,
                 'ticket' => $deal['deal_Id'],
                 'transaction_number' => RunningNumberService::getID('transaction'),
-                'transaction_type' => 'Withdrawal',
+                'transaction_type' => 'BalanceOut',
                 'amount' => $amount,
                 'transaction_charges' => 0,
                 'transaction_amount' => $amount,

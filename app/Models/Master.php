@@ -13,6 +13,7 @@ class Master extends Model
         'user_id',
         'trading_account_id',
         'meta_login',
+        'type',
         'min_join_equity',
         'sharing_profit',
         'estimated_monthly_returns',

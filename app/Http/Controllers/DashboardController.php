@@ -162,7 +162,11 @@ class DashboardController extends Controller
             ->where('transaction_type', 'ProfitSharing')
             ->sum('transaction_amount');
 
-        $totalProfitLoss = TradeHistory::where('user_id', $user->id)
+        $meta_logins = TradingAccount::where('user_id', $user->id)
+            ->get()
+            ->pluck('meta_login');
+
+        $totalProfitLoss = TradeHistory::whereIn('meta_login', $meta_logins)
             ->where('trade_status', 'Closed')
             ->sum('trade_profit');
 

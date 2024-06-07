@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Master;
 use App\Models\Subscription;
+use App\Models\Term;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -12,7 +13,9 @@ class PammController extends Controller
 {
     public function pamm_listing()
     {
-        return Inertia::render('Pamm/PammListing/PammListing');
+        return Inertia::render('Pamm/PammListing/PammListing', [
+            'terms' => Term::where('type', 'subscribe')->first()
+        ]);
     }
 
     public function getPammMasters(Request $request)

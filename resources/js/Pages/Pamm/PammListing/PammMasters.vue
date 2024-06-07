@@ -10,6 +10,7 @@ import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
 import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
 import {usePage} from "@inertiajs/vue3";
+import JoinPammForm from "@/Pages/Pamm/PammListing/JoinPammForm.vue";
 
 const props = defineProps({
     terms: Object
@@ -196,18 +197,10 @@ const currentLocale = ref(usePage().props.locale);
             </div>
 
             <div class="flex w-full gap-2 items-center">
-                <SubscriptionForm
+                <JoinPammForm
                     :masterAccount="masterAccount"
                     :terms="terms"
                 />
-                <Button
-                    type="button"
-                    variant="primary-transparent"
-                    class="w-full flex justify-center"
-                    @click.prevent="openDetails(masterAccount.id)"
-                >
-                    {{ $t('public.view_details') }}
-                </Button>
             </div>
 
         </div>

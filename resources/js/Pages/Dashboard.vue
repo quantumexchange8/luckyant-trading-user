@@ -54,6 +54,7 @@ const totalWithdrawal = ref('0.00');
 const totalProfit = ref('0.00');
 const performanceIncentive = ref('0.00');
 const totalRebateEarn = ref('0.00');
+const totalProfitLoss = ref('0.00');
 
 const closeModal = () => {
     announcementModal.value = false;
@@ -119,6 +120,7 @@ const getTotalTransactions = async () => {
         totalProfit.value = response.data.totalProfit;
         totalRebateEarn.value = response.data.totalRebateEarn;
         performanceIncentive.value = response.data.performanceIncentive;
+        totalProfitLoss.value = response.data.totalProfitLoss;
     } catch (error) {
         console.error('Error refreshing transactions data:', error);
     }
@@ -180,10 +182,18 @@ getTotalTransactions();
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
-                                                {{ $t('public.total_profit') }}
+                                                {{ $t('public.total_profit_sharing') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalProfit) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
+                                            <div class="text-sm font-semibold flex justify-center">
+                                                {{ $t('public.total_profit_loss') }}
+                                            </div>
+                                            <div class="py-2 flex justify-center rounded-md border border-success-500">
+                                                <span class="text-success-500 font-semibold">$ {{ formatAmount(totalProfitLoss) }}</span>
                                             </div>
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
@@ -194,7 +204,7 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">$ {{ formatAmount(totalRebateEarn) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-3 w-full">
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.performance_incentive') }}
                                             </div>
@@ -202,7 +212,7 @@ getTotalTransactions();
                                                 <span class="text-success-500 font-semibold">{{ formatAmount(performanceIncentive) }}</span>
                                             </div>
                                         </div>
-                                        <div class="space-y-2 col-span-6 sm:col-span-6 lg:col-span-3 w-full">
+                                        <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
                                             <div class="text-sm font-semibold flex justify-center">
                                                 {{ $t('public.total_withdrawal') }}
                                             </div>

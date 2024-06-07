@@ -162,9 +162,9 @@ class DashboardController extends Controller
             ->where('transaction_type', 'ProfitSharing')
             ->sum('transaction_amount');
 
-        $totalProfitLoss = CopyTradeHistory::where('user_id', $user->id)
-            ->where('status', 'closed')
-            ->sum('closed_profit');
+        $totalProfitLoss = TradeHistory::where('user_id', $user->id)
+            ->where('trade_status', 'Closed')
+            ->sum('trade_profit');
 
         $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)
             ->where('status', 'Approved');

@@ -6,7 +6,7 @@ use App\Models\MasterLeader;
 use App\Models\User;
 
 class SidebarService {
-    public function hasPammMasters()
+    public function hasPammMasters(): bool
     {
         $user = \Auth::user();
 

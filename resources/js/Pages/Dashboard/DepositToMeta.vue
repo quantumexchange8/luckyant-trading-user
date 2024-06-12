@@ -7,8 +7,9 @@ import Label from "@/Components/Label.vue";
 import Input from "@/Components/Input.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import InputError from "@/Components/InputError.vue";
-import {useForm} from "@inertiajs/vue3";
+import {useForm, usePage} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
+import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
 
 const props = defineProps({
     wallet: Object,
@@ -18,9 +19,10 @@ const props = defineProps({
 const internalTransferModal = ref(false);
 const tradingAccountsSel = ref();
 const loading = ref('Loading..');
-const cashWallet = ref('Cash Wallet');
 const selectedAccount = ref();
 const { formatAmount } = transactionFormat();
+const page = usePage();
+const hasPammMasters = ref(page.props.hasPammMasters);
 
 const form = useForm({
     wallet_id: props.wallet.id,
@@ -31,6 +33,29 @@ const form = useForm({
     maxEWalletAmount: '',
     minEWalletAmount: '',
 })
+
+const amountPackages = [
+    {
+        name: '1000',
+        value: '1000',
+    },
+    {
+        name: '3000',
+        value: '3000',
+    },
+    {
+        name: '5000',
+        value: '5000',
+    },
+    {
+        name: '10000',
+        value: '10000',
+    },
+    {
+        name: '30000',
+        value: '30000',
+    },
+]
 
 const openInternalTransferModal = () => {
     internalTransferModal.value = true;
@@ -74,14 +99,25 @@ const depositAmount = ref();
 const eWalletAmount = ref();
 const cashWalletAmount = ref();
 const maxEWalletAmount = ref(0);
-const minEWalletAmount = ref();
+const minEWalletAmount = ref(0);
 
 const selectedPercentage = ref(20); // Default to 20%
 
 watch(depositAmount, (newDepositAmount) => {
+    let numericDepositAmount;
+
+    if (typeof newDepositAmount === 'object' && newDepositAmount !== null) {
+        numericDepositAmount = newDepositAmount.value ?? 0;
+    } else if (typeof newDepositAmount === 'string') {
+        numericDepositAmount = newDepositAmount;
+    } else {
+        numericDepositAmount = 0;
+    }
+
     const percentage = selectedPercentage.value / 100; // Convert percentage to decimal
-    eWalletAmount.value = (newDepositAmount * percentage).toString();
-    cashWalletAmount.value = newDepositAmount - eWalletAmount.value;
+
+    eWalletAmount.value = (numericDepositAmount * percentage).toString();
+    cashWalletAmount.value = numericDepositAmount - eWalletAmount.value;
     maxEWalletAmount.value = eWalletAmount.value;
     minEWalletAmount.value = maxEWalletAmount.value * 0.05;
 });
@@ -90,7 +126,17 @@ watch(eWalletAmount, (newEWalletAmount) => {
     const parseEWalletAmount = parseFloat(newEWalletAmount); // Convert to number
     // Check if newEWalletAmount is within the range
     if (parseEWalletAmount >= minEWalletAmount.value && parseEWalletAmount <= maxEWalletAmount.value) {
-        cashWalletAmount.value = depositAmount.value - parseEWalletAmount;
+        let numericDepositAmount;
+
+        if (typeof depositAmount.value === 'object' && depositAmount.value !== null) {
+            numericDepositAmount = depositAmount.value.value ?? 0;
+        } else if (typeof depositAmount.value === 'string') {
+            numericDepositAmount = depositAmount.value;
+        } else {
+            numericDepositAmount = 0;
+        }
+
+        cashWalletAmount.value = numericDepositAmount - parseEWalletAmount;
     }
 });
 </script>
@@ -133,9 +179,49 @@ watch(eWalletAmount, (newEWalletAmount) => {
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-4 pt-2">
+            <div class="flex flex-col sm:flex-row gap-4 py-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
-                <div class="flex flex-col w-full">
+                <div v-if="hasPammMasters" class="w-full">
+                    <RadioGroup v-model="depositAmount">
+                        <RadioGroupLabel class="sr-only">{{ $t('public.signal_status') }}</RadioGroupLabel>
+                        <div class="grid grid-cols-3 gap-3 items-center self-stretch">
+                            <RadioGroupOption
+                                as="template"
+                                v-for="(amountSel, index) in amountPackages"
+                                :key="index"
+                                :value="amountSel"
+                                v-slot="{ active, checked }"
+                            >
+                                <div
+                                    :class="[
+                                    active
+                                      ? 'ring-0 ring-white ring-offset-0'
+                                      : '',
+                                    checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
+                                ]"
+                                    class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none"
+                                >
+                                    <div class="flex items-center w-full">
+                                        <div class="text-sm flex flex-col gap-3 w-full">
+                                            <RadioGroupLabel
+                                                as="div"
+                                                class="font-medium"
+                                            >
+                                                <div class="flex justify-center items-center gap-3">
+                                                    $ {{ formatAmount(amountSel.name) }}
+                                                </div>
+                                            </RadioGroupLabel>
+                                        </div>
+                                    </div>
+                                </div>
+                            </RadioGroupOption>
+                        </div>
+                        <InputError :message="form.errors.amount" class="mt-2" />
+                    </RadioGroup>
+                </div>
+
+
+                <div v-else class="flex flex-col w-full">
                     <Input
                         id="amount"
                         type="number"

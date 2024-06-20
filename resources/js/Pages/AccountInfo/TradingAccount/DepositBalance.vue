@@ -26,28 +26,34 @@ const form = useForm({
     cashWalletAmount: 0,
     maxEWalletAmount: 0,
     minEWalletAmount: 0,
+    multiplier: 1
 })
 
 const amountPackages = [
     {
         name: '1000',
         value: '1000',
+        multiplier: 2
     },
     {
         name: '3000',
         value: '3000',
+        multiplier: 2.5
     },
     {
         name: '5000',
         value: '5000',
+        multiplier: 3
     },
     {
         name: '10000',
         value: '10000',
+        multiplier: 3.5
     },
     {
         name: '30000',
         value: '30000',
+        multiplier: 4
     },
 ]
 
@@ -102,12 +108,15 @@ watch(eWalletAmount, (newEWalletAmount) => {
 
 const submit = () => {
     let numericDepositAmount;
+    let packageMultiplier;
     if (typeof depositAmount.value === 'object' && depositAmount.value !== null) {
         numericDepositAmount = depositAmount.value.value ?? 0;
+        packageMultiplier = depositAmount.value.multiplier ?? 1;
     } else if (typeof depositAmount.value === 'string') {
         numericDepositAmount = depositAmount.value;
     } else {
         numericDepositAmount = 0;
+        packageMultiplier = 1;
     }
 
     form.amount = parseFloat(numericDepositAmount);
@@ -115,6 +124,7 @@ const submit = () => {
     form.cashWalletAmount = parseFloat(cashWalletAmount.value);
     form.maxEWalletAmount = maxEWalletAmount.value;
     form.minEWalletAmount = parseFloat(minEWalletAmount.value);
+    form.multiplier = packageMultiplier;
     form.post(route('account_info.depositTradingAccount'), {
         onSuccess: () => {
             closeModal();

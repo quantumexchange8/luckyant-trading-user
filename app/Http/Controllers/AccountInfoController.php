@@ -205,8 +205,6 @@ class AccountInfoController extends Controller
         // check pamm group
         $hasPammMasters = (new SidebarService())->hasPammMasters();
 
-        $amount = $hasPammMasters ? $amount/2 : $amount;
-
         // conduct deal and transaction record
         $deal = [];
 
@@ -355,7 +353,8 @@ class AccountInfoController extends Controller
                         'master_meta_login' => $masterAccount->meta_login,
                         'roi_period' => $masterAccount->roi_period,
                         'subscribe_amount' => $tradingAccount->balance,
-                        'status' => 'Pending'
+                        'status' => 'Pending',
+                        'max_out_amount' => $amount * $request->multiplier
                     ]);
 
                 (new MetaFiveService())->disableTrade($meta_login);

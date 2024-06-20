@@ -20,6 +20,7 @@ class Subscriber extends Model
         'master_meta_login',
         'roi_period',
         'subscribe_amount',
+        'max_out_amount',
         'subscription_id',
         'status',
         'auto_renewal',

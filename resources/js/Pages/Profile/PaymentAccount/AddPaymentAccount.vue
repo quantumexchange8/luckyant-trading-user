@@ -21,10 +21,10 @@ const openAddAccountModal = () => {
 }
 
 const paymentTypes = [
-    {
-        name: 'bank',
-        value: 'Bank',
-    },
+    // {
+    //     name: 'bank',
+    //     value: 'Bank',
+    // },
     {
         name: 'crypto',
         value: 'Crypto',

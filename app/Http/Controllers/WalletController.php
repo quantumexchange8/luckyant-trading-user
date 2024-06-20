@@ -224,10 +224,13 @@ class WalletController extends Controller
 
         if ($request->payment_method == 'Payment Merchant') {
             $domain = $_SERVER['HTTP_HOST'];
+            $appUrl = parse_url(config('app.url'), PHP_URL_HOST);
             $paymentGateway = config('payment-gateway');
             $intAmount = intval($amount * 100);
 
-            if ($domain === 'member.luckyantfxasia.com') {
+            if ($domain === 'testmember.luckyantfxasia.com') {
+                $selectedPaymentGateway = $paymentGateway['staging'];
+            } elseif ($domain === $appUrl) {
                 $selectedPaymentGateway = $paymentGateway['live'];
             } else {
                 $selectedPaymentGateway = $paymentGateway['staging'];
@@ -279,8 +282,11 @@ class WalletController extends Controller
 
         $domain = $_SERVER['HTTP_HOST'];
         $paymentGateway = config('payment-gateway');
+        $appUrl = parse_url(config('app.url'), PHP_URL_HOST);
 
-        if ($domain === 'member.luckyantfxasia.com') {
+        if ($domain === 'testmember.luckyantfxasia.com') {
+            $selectedPaymentGateway = $paymentGateway['staging'];
+        } elseif ($domain === $appUrl) {
             $selectedPaymentGateway = $paymentGateway['live'];
         } else {
             $selectedPaymentGateway = $paymentGateway['staging'];
@@ -347,8 +353,11 @@ class WalletController extends Controller
 
         $domain = $_SERVER['HTTP_HOST'];
         $paymentGateway = config('payment-gateway');
+        $appUrl = parse_url(config('app.url'), PHP_URL_HOST);
 
-        if ($domain === 'member.luckyantfxasia.com') {
+        if ($domain === 'testmember.luckyantfxasia.com') {
+            $selectedPaymentGateway = $paymentGateway['staging'];
+        } elseif ($domain === $appUrl) {
             $selectedPaymentGateway = $paymentGateway['live'];
         } else {
             $selectedPaymentGateway = $paymentGateway['staging'];

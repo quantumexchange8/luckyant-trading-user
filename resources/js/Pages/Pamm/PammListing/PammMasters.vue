@@ -1,46 +1,23 @@
 <script setup>
-import Button from "@/Components/Button.vue";
-import BaseListbox from "@/Components/BaseListbox.vue";
-import VueTailwindDatepicker from "vue-tailwind-datepicker";
-import {SearchIcon} from "@heroicons/vue/outline";
-import InputIconWrapper from "@/Components/InputIconWrapper.vue";
-import Input from "@/Components/Input.vue";
-import {ref, watch} from "vue";
+import {ref, watch, watchEffect} from "vue";
+import {usePage} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
-import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
-import {usePage} from "@inertiajs/vue3";
-import JoinPammForm from "@/Pages/Pamm/PammListing/JoinPammForm.vue";
+import StatusBadge from "@/Components/StatusBadge.vue";
 
 const props = defineProps({
-    terms: Object
+    search: String,
+    meta_login: Number,
+    date: String,
 })
 
-const formatter = ref({
-    date: 'YYYY-MM-DD',
-    month: 'MM'
-});
+const selectedSubscriberAccount = ref();
+const subscriberAccount = ref(null);
+const currentLocale = ref(usePage().props.locale);
+const { formatAmount, formatDateTime } = transactionFormat();
+const emit = defineEmits(['update:master', 'update:meta_login'])
 
-const typeFilter = [
-    {value: '', label:"All"},
-    {value: 'max_equity', label:"Highest Equity to follow"},
-    {value: 'min_equity', label:"Lowest Equity to follow"},
-    {value: 'max_sub', label:"Most Subscribers"},
-    {value: 'min_sub', label:"Least Subscribers"},
-];
-
-const categories = ref({});
-const isLoading = ref(false);
-const date = ref('');
-const search = ref('');
-const refresh = ref(false);
-const type = ref('');
-const masterAccounts = ref({data: []})
-const currentPage = ref(1);
-const { formatAmount } = transactionFormat();
-
-const getResults = async (page = 1, search = '', type = '', date = '') => {
-    isLoading.value = true
+const getResults = async (page = 1, search = props.search, filterMetaLogin = props.meta_login, date = props.date) => {
     try {
         let url = `/pamm/getPammMasters?page=${page}`;
 
@@ -48,8 +25,8 @@ const getResults = async (page = 1, search = '', type = '', date = '') => {
             url += `&search=${search}`;
         }
 
-        if (type) {
-            url += `&type=${type}`;
+        if (filterMetaLogin) {
+            url += `&meta_login=${filterMetaLogin}`;
         }
 
         if (date) {
@@ -57,152 +34,153 @@ const getResults = async (page = 1, search = '', type = '', date = '') => {
         }
 
         const response = await axios.get(url);
-        masterAccounts.value = response.data;
+        subscriberAccount.value = response.data.subscriber;
+
+        selectedSubscriberAccount.value = subscriberAccount.value[0]
     } catch (error) {
         console.error(error);
-    } finally {
-        isLoading.value = false
     }
 }
 
 getResults();
 
 watch(
-    [search, type],
-    debounce(([searchValue, typeValue, dateValue]) => {
-        getResults(1, searchValue, typeValue, dateValue);
+    [() => props.search, () => props.meta_login, () => props.date],
+    debounce(([searchValue, metaLoginValue, dateValue]) => {
+        getResults(1, searchValue, metaLoginValue, dateValue);
     }, 300)
 );
 
-const clearFilter = () => {
-    search.value = '';
-    type.value = '';
-}
-
-const openDetails = (masterAccountID) => {
-    const detailUrl = `/trading/master_listing/${masterAccountID}`;
-    window.location.href = detailUrl;
-}
-
-const currentLocale = ref(usePage().props.locale);
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getResults();
+    }
+});
 </script>
 
 <template>
-    <div class="flex justify-end">
-        <div class="flex flex-wrap gap-3 items-center sm:flex-nowrap w-full sm:w-1/2">
-            <div class="w-full">
-                <InputIconWrapper>
-                    <template #icon>
-                        <SearchIcon aria-hidden="true" class="w-5 h-5" />
-                    </template>
-                    <Input
-                        withIcon
-                        id="search"
-                        type="text"
-                        class="w-full block dark:border-transparent"
-                        :placeholder="$t('public.search_name_and_account_no_placeholder')"
-                        v-model="search"
-                    />
-                </InputIconWrapper>
-            </div>
-            <div class="w-full">
-                <BaseListbox
-                    v-model="type"
-                    :options="typeFilter"
-                    :placeholder="$t('public.filters_placeholder')"
-                    class="w-full"
-                />
-            </div>
-
-            <div class="w-full sm:w-auto">
-                <Button
-                    type="button"
-                    variant="primary-transparent"
-                    @click="clearFilter"
-                    class="w-full justify-center"
-                >
-                    {{ $t('public.clear') }}
-                </Button>
-            </div>
-        </div>
-    </div>
-
-    <div
-        class="grid grid-cols-1 sm:grid-cols-3 gap-5 my-5"
-    >
-        <div
-            v-for="masterAccount in masterAccounts.data"
-            class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg hover:bg-gray-50 hover:shadow-primary-300"
-        >
-            <div class="flex justify-between w-full">
-                <img
-                    class="object-cover w-12 h-12 rounded-full"
-                    :src="masterAccount.user.profile_photo_url ? masterAccount.user.profile_photo_url : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
-                    alt="userPic"
-                />
-                <div class="flex flex-col text-right">
+    <div v-if="subscriberAccount !== null" class="grid grid-cols-1 sm:grid-cols-2 gap-5 my-5">
+        <div class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 rounded-lg p-5 w-full">
+            <div class="flex gap-2 items-start">
+                <div class="flex flex-col">
                     <div v-if="currentLocale === 'en'" class="text-sm">
-                        {{ masterAccount.trading_user.name }}
+                        {{ subscriberAccount.master.trading_user.name }}
                     </div>
                     <div v-if="currentLocale === 'cn'" class="text-sm">
-                        {{ masterAccount.trading_user.company ? masterAccount.trading_user.company : masterAccount.trading_user.name }}
+                        {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
                     </div>
                     <div class="font-semibold">
-                        {{ masterAccount.meta_login }}
+                        {{ subscriberAccount.master.meta_login }}
                     </div>
                 </div>
+                <StatusBadge
+                    :value="subscriberAccount.status"
+                    width="w-20"
+                />
             </div>
 
-            <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2">
-                <div class="text-sm">{{ $t('public.min_join_equity') }}:</div>
-                <div class="text-sm font-semibold">$ {{ formatAmount(masterAccount.min_join_equity) }}</div>
+            <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
+                <div class="flex gap-1">
+                    <div class="text-sm">{{ $t('public.join_date') }}:</div>
+                    <div class="text-sm font-semibold">{{ subscriberAccount.approval_date ? formatDateTime(subscriberAccount.approval_date, false) : $t('public.pending') }}</div>
+                </div>
+                <div class="flex gap-1">
+                    <div class="text-sm">{{ $t('public.join_day') }}:</div>
+                    <div class="text-sm font-semibold">{{ subscriberAccount.join_days }}</div>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 w-full">
-                <!--                <div class="col-span-2">-->
-                <!--                    chart-->
-                <!--                </div>-->
-                <div class="flex flex-col gap-1 items-center justify-center">
-                    <div class="text-xs flex justify-center text-center">
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.live_account') }}
+                    </div>
+                    <div class="flex justify-center gap-2">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.trading_user.name }}
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.account_number') }}
+                    </div>
+                    <div class="flex justify-center gap-2">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.meta_login }}
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
                         {{ $t('public.sharing_profit') }}
                     </div>
-                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                        {{ formatAmount(masterAccount.sharing_profit, 0) }} %
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%</span>
                     </div>
                 </div>
-                <div class="flex flex-col gap-1 items-center justify-center">
-                    <div class="text-xs flex justify-center text-center">
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.total_fund') }}
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.master ? subscriberAccount.master.total_fund : 0, 0) }}</span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.estimated_roi') }}
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.estimated_monthly_returns }}</span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-xs flex justify-center">
                         {{ $t('public.roi_period') }}
                     </div>
-                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                        {{ masterAccount.roi_period }} {{ $t('public.days') }}
-                    </div>
-                </div>
-                <div class="flex flex-col gap-1 items-center justify-center">
-                    <div class="text-xs flex justify-center text-center">
-                        {{ $t('public.estimated_monthly_returns') }}
-                    </div>
-                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                        {{ masterAccount.estimated_monthly_returns }}
-                    </div>
-                </div>
-                <div class="flex flex-col gap-1 items-center justify-center">
-                    <div class="text-xs flex justify-center text-center">
-                        {{ $t('public.estimated_lot_size') }}
-                    </div>
-                    <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                        {{ masterAccount.estimated_lot_size }}
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} {{ $t('public.days') }}</span>
                     </div>
                 </div>
             </div>
-
-            <div class="flex w-full gap-2 items-center">
-                <JoinPammForm
-                    :masterAccount="masterAccount"
-                    :terms="terms"
-                />
+        </div>
+        <div class="flex flex-col items-start gap-5 bg-white dark:bg-gray-900 rounded-lg p-5 w-full">
+            Investment Detail
+            <div class="flex gap-3 items-center self-stretch">
+                <div class="flex flex-col w-full">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.amount') }}
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.meta_balance : 0, 0) }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col w-full">
+                    <div class="text-xs flex justify-center">
+                        {{ $t('public.max_out_amount') }}
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.max_out_amount : 0, 0) }}</span>
+                    </div>
+                </div>
             </div>
-
+            <div class="flex flex-col gap-2 self-stretch">
+                <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                    {{ $t('public.progress') }}
+                </div>
+                <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
+                    <div
+                        :style="{ width: `${subscriberAccount.progressWidth}%` }"
+                        class="rounded-full bg-gradient-to-r from-primary-300 to-primary-600 dark:from-primary-500 dark:to-primary-800 transition-all duration-500 ease-out"
+                    >
+                    </div>
+                </div>
+                <div class="mb-2 flex items-center justify-between text-xs">
+                    <div class="dark:text-gray-400">
+                        $ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.meta_balance : 0, 0) }}
+                    </div>
+                    <div class="dark:text-gray-400">$ {{ subscriberAccount.max_out_amount }}</div>
+                </div>
+            </div>
         </div>
     </div>
 </template>

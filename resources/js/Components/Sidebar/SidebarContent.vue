@@ -45,6 +45,7 @@ const hasPammMasters = ref(page.props.hasPammMasters);
         </SidebarLink>
 
         <SidebarCollapsible
+            v-if="!hasPammMasters"
             :title="$t('public.sidebar.copy_trading')"
             :active="route().current('trading.*')"
         >

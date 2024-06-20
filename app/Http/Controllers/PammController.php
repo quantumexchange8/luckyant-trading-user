@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Master;
+use App\Models\MasterManagementFee;
 use App\Models\Subscriber;
 use App\Models\Subscription;
+use App\Models\SubscriptionBatch;
 use App\Models\Term;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
@@ -12,7 +14,9 @@ use App\Models\Wallet;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
+use App\Services\SelectOptionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -22,55 +26,48 @@ class PammController extends Controller
     public function pamm_listing()
     {
         return Inertia::render('Pamm/PammListing/PammListing', [
-            'terms' => Term::where('type', 'subscribe')->first()
+            'terms' => Term::where('type', 'subscribe')->first(),
+            'getTradingAccounts' => (new SelectOptionService())->getTradingAccounts()
         ]);
     }
 
     public function getPammMasters(Request $request)
     {
         $user = Auth::user();
-        $first_leader = $user->getFirstLeader();
 
-        $masterAccounts = Master::with([
-            'user:id,username,name,email',
-            'tradingAccount:id,meta_login,balance,equity',
-            'tradingUser:id,name,company',
-            'masterManagementFee'
-        ])
+        $subscriber = Subscriber::with(['master', 'master.tradingUser', 'tradingUser:id,name,meta_login', 'subscription'])
+            ->where('meta_login', $request->meta_login)
+            ->where('status', 'Subscribing')
+            ->latest()
+            ->first();
+
+        $approvalDate = Carbon::parse($subscriber->approval_date > now() ? now() : $subscriber->approval_date);
+        $today = Carbon::today();
+        $join_days = $approvalDate->diffInDays($subscriber->status == 'Unsubscribed' ? $subscriber->unsubscribe_date : $today);
+        $subscription_batches = $subscriber->subscription_batches;
+        $expiredDate = $subscriber->subscription ? Carbon::parse($subscriber->subscription->expired_date) : null;
+        $daysDifference = $approvalDate->diffInDays($expiredDate) ?? 0;
+
+//            $penalty_exempt = 0;
+//
+//            foreach ($subscription_batches as $batch) {
+//                $penalty_days = $subscriber->master->masterManagementFee->last()->penalty_days;
+//                $penalty_exempt_date = $batch->created_at->addDays($penalty_days);
+//
+//                if ($today > $penalty_exempt_date) {
+//                    $penalty_exempt += $batch->meta_balance;
+//                }
+//            }
+//
+//            $management_fee = MasterManagementFee::where('master_id', $subscriber->master_id);
+
+        $locale = app()->getLocale();
+        $availableMaster = Master::with('tradingUser:id,name,company')
             ->where('status', 'Active')
             ->where('signal_status', 1)
-            ->where('type', 'PAMM')
-            ->whereNot('user_id', $user->id)
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = '%' . $request->input('search') . '%';
-                $query->whereHas('tradingAccount', function ($q) use ($search) {
-                    $q->where('meta_login', 'like', $search);
-                })
-                    ->orWhereHas('user', function ($q2) use ($search) {
-                        $q2->where('name', 'like', $search)
-                            ->orWhere('username', 'like', $search)
-                            ->orWhere('email', 'like', $search);
-                    });
-            })
-            ->when($request->filled('type'), function ($query) use ($request) {
-                $type = $request->input('type');
-                switch ($type) {
-                    case 'max_equity':
-                        $query->orderByDesc('min_join_equity');
-                        break;
-                    case 'min_equity':
-                        $query->orderBy('min_join_equity');
-                        break;
-                    case 'max_sub':
-                        $query->withCount('subscribers')->orderByDesc('subscribers_count');
-                        break;
-                    case 'min_sub':
-                        $query->withCount('subscribers')->orderBy('subscribers_count');
-                        break;
-                    // Add more cases as needed for other 'type' values
-                }
-            });
+            ->whereNot('id', $subscriber->master_id);
 
+        $first_leader = $user->getFirstLeader();
         if ($user->is_public == 0 && $first_leader) {
             $leader = $first_leader;
             while ($leader && $leader->masterAccounts->isEmpty()) {
@@ -78,36 +75,44 @@ class PammController extends Controller
             }
 
             if ($leader) {
-                $masterAccounts = $masterAccounts
+                $availableMaster = $availableMaster
                     ->where('is_public', $leader->is_public)
                     ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
             } else {
-                // If leader is null, reset $masterAccounts to an empty query
-                $masterAccounts = $masterAccounts->where('id', null);
+                // If leader is null, reset $availableMaster to an empty query
+                $availableMaster = $availableMaster->where('id', null);
             }
         } elseif ($user->is_public == 1 && $first_leader) {
-            $masterAccounts->where('is_public', $first_leader->is_public);
+            $availableMaster->where('is_public', $first_leader->is_public);
         } else {
             if ($user->is_public == 0) {
-                $masterAccounts->where('is_public', $user->is_public)
+                $availableMaster->where('is_public', $user->is_public)
                     ->whereIn('id', $user->masterAccounts->pluck('id'));
             } else {
-                $masterAccounts->where('is_public', $user->is_public);
+                $availableMaster->where('is_public', $user->is_public);
             }
         }
 
-        $masterAccounts = $masterAccounts->latest()->paginate(10);
+//            $masterSel = $availableMaster->get()
+//                ->map(function ($master) use ($locale) {
+//                    return [
+//                        'value' => $master->id,
+//                        'label' => ($locale == 'cn' ? $master->tradingUser->company : $master->tradingUser->name) . ' ('. $master->meta_login . ')',
+//                    ];
+//                });
 
-        $masterAccounts->each(function ($master) {
-            $totalSubscriptionsFee = Subscription::where('master_id', $master->id)
-                ->where('status', 'Active')
-                ->sum('meta_balance');
+        $subscriber->join_days = $join_days;
+        $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
+        $subscriber->progressWidth = ($subscriber->subscribe_amount / $subscriber->max_out_amount) * 100;
+//            $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
+//            $subscriber->management_fee = $management_fee->where('penalty_days', '>', $join_days)->first()->penalty_percentage;
+//            $subscriber->management_fee_for_stop_renewal = $management_fee->where('penalty_days', '>', $daysDifference)->first()->penalty_percentage ?? 0;
+//            $subscriber->penalty_exempt = $penalty_exempt;
+//            $subscriber->newMasterSel = $masterSel;
 
-            $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-            $master->totalFundWidth = $master->total_fund == 0 ? $totalSubscriptionsFee + $master->extra_fund : (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100 ;
-        });
-
-        return response()->json($masterAccounts);
+        return response()->json([
+            'subscriber' => $subscriber
+        ]);
     }
 
     public function joinPamm(Request $request)
@@ -260,5 +265,64 @@ class PammController extends Controller
                 ->with('title', trans('public.success_subscribe'))
                 ->with('success', trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
         }
+    }
+
+    public function getPammSubscriptions(Request $request)
+    {
+        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
+        // Decode the JSON
+        $decodedColumnName = json_decode(urldecode($columnName), true);
+
+        $column = $decodedColumnName ? $decodedColumnName['id'] : 'approval_date';
+        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+
+        $query = SubscriptionBatch::with(['master', 'master.tradingUser', 'master.masterManagementFee'])
+            ->where('user_id', Auth::id())
+            ->where('meta_login', $request->meta_login);
+
+        if ($request->filled('search')) {
+            $search = '%' . $request->input('search') . '%';
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('master.tradingUser', function ($user) use ($search) {
+                    $user->where('name', 'like', $search)
+                        ->orWhere('meta_login', 'like', $search)
+                        ->orWhere('company', 'like', $search);
+                });
+            });
+        }
+
+        if ($request->filled('date')) {
+            $date = $request->input('date');
+            $dateRange = explode(' - ', $date);
+            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
+            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+
+            $query->whereBetween('approval_date', [$start_date, $end_date]);
+        }
+
+        if ($request->filled('master')) {
+            $master = $request->input('master');
+            $query->whereHas('master', function ($q) use ($master) {
+                $q->where('id', $master);
+            });
+        } else {
+            $query->whereHas('master', function ($q) use ($query) {
+                $q->where('id', $query->latest()->first()->master_id);
+            });
+        }
+
+        $results = $query
+            ->orderBy($column == null ? 'approval_date' : $column, $sortOrder)
+            ->paginate($request->input('paginate', 10));
+
+        $results->each(function ($batch) {
+            $approvalDate = Carbon::parse($batch->approval_date > now() ? now() : $batch->approval_date);
+            $today = Carbon::today();
+            $join_days = $approvalDate->diffInDays($batch->status == 'Terminated' ? $batch->termination_date : $today);
+
+            $batch->join_days = $join_days;
+        });
+
+        return response()->json($results);
     }
 }

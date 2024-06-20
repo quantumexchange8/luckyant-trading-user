@@ -77,7 +77,16 @@ onMounted(() => {
 
 const submit = () => {
     form.to_meta_login = selectedAccount.value;
-    form.amount = parseFloat(depositAmount.value);
+    let numericDepositAmount;
+
+    if (typeof depositAmount === 'object' && depositAmount !== null) {
+        numericDepositAmount = depositAmount.value.value ?? 0;
+    } else if (typeof depositAmount === 'string') {
+        numericDepositAmount = depositAmount.value;
+    } else {
+        numericDepositAmount = 0;
+    }
+    form.amount = parseFloat(numericDepositAmount);
     form.eWalletAmount = parseFloat(eWalletAmount.value);
     form.cashWalletAmount = parseFloat(cashWalletAmount.value);
     form.maxEWalletAmount = parseFloat(maxEWalletAmount.value);
@@ -194,10 +203,10 @@ watch(eWalletAmount, (newEWalletAmount) => {
                             >
                                 <div
                                     :class="[
-                                    active
-                                      ? 'ring-0 ring-white ring-offset-0'
-                                      : '',
-                                    checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
+                                        active
+                                            ? 'ring-0 ring-white ring-offset-0'
+                                            : '',
+                                        checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white',
                                 ]"
                                     class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none"
                                 >
@@ -219,7 +228,6 @@ watch(eWalletAmount, (newEWalletAmount) => {
                         <InputError :message="form.errors.amount" class="mt-2" />
                     </RadioGroup>
                 </div>
-
 
                 <div v-else class="flex flex-col w-full">
                     <Input

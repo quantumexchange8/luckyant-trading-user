@@ -150,6 +150,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('pamm')->group(function () {
         Route::get('/pamm_listing', [PammController::class, 'pamm_listing'])->name('pamm.pamm_listing');
         Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('pamm.getPammMasters');
+        Route::get('/getPammSubscriptions', [PammController::class, 'getPammSubscriptions'])->name('pamm.getPammSubscriptions');
     });
 
     /**

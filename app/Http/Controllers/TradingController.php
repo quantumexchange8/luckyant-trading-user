@@ -711,7 +711,7 @@ class TradingController extends Controller
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($subscriber->status == 'Unsubscribed' ? $subscriber->unsubscribe_date : $today);
             $subscription_batches = $subscriber->subscription_batches;
-            $expiredDate = Carbon::parse($subscriber->subscription->expired_date);
+            $expiredDate = $subscriber->subscription ? Carbon::parse($subscriber->subscription->expired_date) : null;
             $daysDifference = $approvalDate->diffInDays($expiredDate);
 
             $penalty_exempt = 0;

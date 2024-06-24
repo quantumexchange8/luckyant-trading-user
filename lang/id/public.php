@@ -492,4 +492,8 @@ return [
     "reset_security_pin" => "Setel Ulang Pin Keamanan",
     "termination_return" => "Penghentian Pengembalian",
     "not_allowed_to_withdraw" => "Anda tidak diperbolehkan menarik apa pun. Silakan hubungi admin",
+    "pamm_listing" => "Daftar PAMM",
+    "join_pamm" => "Bergabung dengan PAMM",
+    "package" => "Paket",
+    "max_out_amount" => "Jumlah Penarikan Maksimal",
 ];

@@ -492,4 +492,8 @@ return [
     "reset_security_pin" => "Đặt lại mã pin bảo mật",
     "termination_return" => "Chấm dứt Trả lại",
     "not_allowed_to_withdraw" => "Bạn không được phép rút bất cứ thứ gì. Vui lòng liên hệ với quản trị viên",
+    "pamm_listing" => "Danh sách PAMM",
+    "join_pamm" => "Tham gia PAMM",
+    "package" => "Gói",
+    "max_out_amount" => "Số tiền rút tối đa",
 ];

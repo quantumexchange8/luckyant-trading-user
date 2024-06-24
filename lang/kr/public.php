@@ -492,4 +492,8 @@ return [
     "reset_security_pin" => "보안 핀 재설정",
     "termination_return" => "종료 반환",
     "not_allowed_to_withdraw" => "귀하는 아무것도 철회할 수 없습니다. 관리자에게 문의하세요",
+    "pamm_listing" => "PAMM 목록",
+    "join_pamm" => "PAMM 가입",
+    "package" => "패키지",
+    "max_out_amount" => "최대 출금액",
 ];

@@ -492,4 +492,8 @@ return [
     "reset_security_pin" => "セキュリティ PIN をリセット",
     "termination_return" => "解約返還",
     "not_allowed_to_withdraw" => "何も引き出す​​ことはできません。管理者に連絡してください",
+    "pamm_listing" => "PAMMリスト",
+    "join_pamm" => "PAMMに参加する",
+    "package" => "パッケージ",
+    "max_out_amount" => "最大出金額",
 ];

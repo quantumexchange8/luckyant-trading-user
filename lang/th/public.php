@@ -492,4 +492,8 @@ return [
     "reset_security_pin" => "รีเซ็ตพินความปลอดภัย",
     "termination_return" => "การสิ้นสุดการส่งคืน",
     "not_allowed_to_withdraw" => "คุณไม่ได้รับอนุญาตให้ถอนสิ่งใด ๆ กรุณาติดต่อผู้ดูแลระบบ",
+    "pamm_listing" => "รายการ PAMM",
+    "join_pamm" => "เข้าร่วม PAMM",
+    "package" => "แพ็คเกจ",
+    "max_out_amount" => "จำนวนเงินถอนสูงสุด",
 ];

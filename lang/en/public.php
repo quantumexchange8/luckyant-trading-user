@@ -494,5 +494,6 @@ return [
     "not_allowed_to_withdraw" => "You are not allowed to withdraw anything. Please contact admin",
     "pamm_listing" => "PAMM Listing",
     "join_pamm" => "Join PAMM",
+    "package" => "Package",
     "max_out_amount" => "Max Out Amount",
 ];

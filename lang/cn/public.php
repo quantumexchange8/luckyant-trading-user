@@ -492,4 +492,8 @@ return [
     "reset_security_pin" => "重置安全密码",
     "termination_return" => "批次提现",
     "not_allowed_to_withdraw" => "您不得提取任何东西。请联系管理员",
+    "pamm_listing" => "PAMM 列表",
+    "join_pamm" => "加入 PAMM",
+    "package" => "配套",
+    "max_out_amount" => "最大出金额",
 ];

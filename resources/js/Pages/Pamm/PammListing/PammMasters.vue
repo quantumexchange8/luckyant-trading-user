@@ -148,7 +148,7 @@ watchEffect(() => {
             <div class="flex gap-3 items-center self-stretch">
                 <div class="flex flex-col w-full">
                     <div class="text-xs flex justify-center">
-                        {{ $t('public.amount') }}
+                        {{ $t('public.package') }}
                     </div>
                     <div class="flex justify-center">
                         <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.meta_balance : 0, 0) }}</span>
@@ -176,7 +176,7 @@ watchEffect(() => {
                 </div>
                 <div class="mb-2 flex items-center justify-between text-xs">
                     <div class="dark:text-gray-400">
-                        $ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.meta_balance : 0, 0) }}
+                        $ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.cumulative_amount : 0, 0) }}
                     </div>
                     <div class="dark:text-gray-400">$ {{ subscriberAccount.max_out_amount }}</div>
                 </div>

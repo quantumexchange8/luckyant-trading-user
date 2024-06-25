@@ -770,7 +770,7 @@ class TradingController extends Controller
             $subscriber->join_days = $join_days;
             $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
             $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
-            $subscriber->management_fee = $management_fee->where('penalty_days', '>', $join_days)->first()->penalty_percentage;
+            $subscriber->management_fee = $management_fee->where('penalty_days', '>', $join_days)->first()->penalty_percentage ?? 0;
             $subscriber->management_fee_for_stop_renewal = $management_fee->where('penalty_days', '>', $daysDifference)->first()->penalty_percentage ?? 0;
             $subscriber->penalty_exempt = $penalty_exempt;
             $subscriber->newMasterSel = $masterSel;

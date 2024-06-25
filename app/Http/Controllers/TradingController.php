@@ -336,7 +336,7 @@ class TradingController extends Controller
 
             $batch->join_days = $join_days;
             $batch->management_period = $batch->master->masterManagementFee->sum('penalty_days');
-            $batch->management_fee = $management_fee->penalty_percentage;
+            $batch->management_fee = $management_fee->penalty_percentage ?? 0;
             $batch->terminateBadgeStatus = $terminateBadgeStatus;
         });
 

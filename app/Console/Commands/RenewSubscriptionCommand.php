@@ -47,6 +47,7 @@ class RenewSubscriptionCommand extends Command
                     'meta_balance' => $subscription->meta_balance,
                     'transaction_id' => $subscription->transaction_id,
                     'master_id' => $subscription->master_id,
+                    'type' => $subscription->type,
                     'subscription_number' => RunningNumberService::getID('subscription'),
                     'subscription_period' => $subscription->subscription_period,
                     'subscription_fee' => $subscription->subscription_fee,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Master;
 use App\Models\Subscription;
+use Illuminate\Http\Request;
 
 class PammController extends Controller
 {
@@ -24,5 +25,17 @@ class PammController extends Controller
         return response()->json([
             'subscriptions' => $subscriptions
         ]);
+    }
+
+    public function join_investment_strategy(Request $request)
+    {
+        $data = $request->all();
+
+        $result = [
+            'follower_id' => $data['follower_id'],
+            'master_id' => $data['master_id'],
+            'master_login' => $data['master_login'],
+            'amount' => $data['amount'],
+        ];
     }
 }

@@ -154,7 +154,7 @@ class DashboardController extends Controller
             ->where('status', 'Active')
             ->sum('meta_balance');
 
-        $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('transaction_amount');
+        $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('amount');
 
         $metaLogins = TradingAccount::where('user_id', $user->id)->get()->pluck('meta_login');
 

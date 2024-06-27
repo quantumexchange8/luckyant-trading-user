@@ -34,8 +34,40 @@ class PammController extends Controller
         $result = [
             'follower_id' => $data['follower_id'],
             'master_id' => $data['master_id'],
-            'master_login' => $data['master_login'],
             'amount' => $data['amount'],
         ];
+
+        $checkSubscription = Subscription::find($result['follower_id']);
+
+        if ($checkSubscription) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Follower id must be unique'
+            ]);
+        }
+
+        $subscription = Subscription::create([
+            'meta_login' => $result['follower_id'],
+            'master_id' => $result['master_id'],
+            'meta_balance' => $result['amount'],
+            'type' => 'PAMM',
+            'remarks' => 'China Mall PAMM'
+        ]);
+
+        $subscription_response = \Http::post('http://103.21.90.87:8080/serverapi/pamm/subscription/join', $subscription);
+        \Log::debug($subscription_response);
+
+        $subscription->delete();
+
+        $master = Master::find($result['master_id']);
+
+        $master->total_fund += $result['amount'];
+        $master->save();
+        $master_response = \Http::post('http://103.21.90.87:8080/serverapi/pamm/strategy', $master);
+        \Log::debug($master_response);
+
+        return response()->json([
+            'status' => 'success',
+        ]);
     }
 }

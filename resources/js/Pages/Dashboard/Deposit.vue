@@ -46,6 +46,15 @@ const paymentType = [
     }
 ]
 
+const windowOrigin = window.location.origin;
+
+const filteredPaymentTypes = computed(() => {
+    if (windowOrigin === 'https://member.luckyantmallvn.com') {
+        return paymentType.filter(type => type.name !== 'payment_merchant');
+    }
+    return paymentType;
+});
+
 const { formatAmount } = transactionFormat();
 const depositModal = ref(false);
 const selected = ref(null);
@@ -223,7 +232,7 @@ const copyWalletAddress = () => {
                         <div class="flex sm:flex-row flex-col gap-3 items-center self-stretch w-full">
                             <RadioGroupOption
                                 as="template"
-                                v-for="(type, index) in paymentType"
+                                v-for="(type, index) in filteredPaymentTypes"
                                 :key="index"
                                 :value="type"
                                 v-slot="{ active, checked }"

@@ -123,7 +123,7 @@ class AccountInfoController extends Controller
         $tradingAccounts->each(function ($tradingAccount) {
             $activeSubscriber = Subscriber::with(['master', 'master.tradingUser'])
                 ->where('meta_login', $tradingAccount->meta_login)
-                ->where('status', 'Subscribing')
+                ->whereIn('status', ['Subscribing', 'Expiring'])
                 ->first();
 
             if ($activeSubscriber && \Carbon\Carbon::parse($activeSubscriber->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {

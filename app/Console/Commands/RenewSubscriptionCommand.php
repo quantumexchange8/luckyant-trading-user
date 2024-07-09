@@ -23,6 +23,7 @@ class RenewSubscriptionCommand extends Command
     public function handle(): void
     {
         $subscriptions = Subscription::where('status', 'Active')
+            ->where('auto_renewal', 1)
             ->whereDate('expired_date', '<', now())
             ->get();
 

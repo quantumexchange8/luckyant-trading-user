@@ -496,4 +496,11 @@ return [
     "join_pamm" => "加入 PAMM",
     "package" => "配套",
     "max_out_amount" => "最大出金额",
+    "pamm_master_listing" => "PAMM 主列表",
+    "standard" => "标准 PAMM",
+    "esg" => "ESG 投资",
+    "subscription_package" => "订阅套餐",
+    "pamm_subscriptions" => "PAMM 订阅",
+    "pamm_return" => "PAMM 回报",
+    "valid_until" => "有效期至"
 ];

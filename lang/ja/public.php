@@ -496,4 +496,11 @@ return [
     "join_pamm" => "PAMMに参加する",
     "package" => "パッケージ",
     "max_out_amount" => "最大出金額",
+    "pamm_master_listing" => "PAMM マスターリスト",
+    "standard" => "標準 PAMM",
+    "esg" => "ESG 投資",
+    "subscription_package" => "サブスクリプションパッケージ",
+    "pamm_subscriptions" => "PAMM サブスクリプション",
+    "pamm_return" => "PAMM リターン",
+    "valid_until" => "有効期限"
 ];

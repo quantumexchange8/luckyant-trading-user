@@ -496,4 +496,11 @@ return [
     "join_pamm" => "Bergabung dengan PAMM",
     "package" => "Paket",
     "max_out_amount" => "Jumlah Penarikan Maksimal",
+    "pamm_master_listing" => "Daftar PAMM Master",
+    "standard" => "PAMM Standar",
+    "esg" => "Investasi ESG",
+    "subscription_package" => "Paket Langganan",
+    "pamm_subscriptions" => "Langganan PAMM",
+    "pamm_return" => "Pengembalian PAMM",
+    "valid_until" => "Berlaku hingga"
 ];

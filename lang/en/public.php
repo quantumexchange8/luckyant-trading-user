@@ -496,4 +496,11 @@ return [
     "join_pamm" => "Join PAMM",
     "package" => "Package",
     "max_out_amount" => "Max Out Amount",
+    "pamm_master_listing" => "PAMM Master Listing",
+    "standard" => "Standard PAMM",
+    "esg" => "ESG Investment",
+    "subscription_package" => "Subscription Package",
+    "pamm_subscriptions" => "PAMM Subscription",
+    "pamm_return" => "PAMM Return",
+    "valid_until" => "Valid Until",
 ];

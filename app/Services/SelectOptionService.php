@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\MasterSubscriptionPackage;
 use App\Models\Wallet;
 use App\Models\Country;
 use App\Models\WalletLog;

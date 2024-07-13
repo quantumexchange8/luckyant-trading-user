@@ -148,9 +148,16 @@ Route::middleware('auth')->group(function () {
      * ==============================
      */
     Route::prefix('pamm')->group(function () {
-        Route::get('/pamm_listing', [PammController::class, 'pamm_listing'])->name('pamm.pamm_listing');
+        // pamm master listing
+        Route::get('/pamm_master_listing', [PammController::class, 'pamm_master_listing'])->name('pamm.pamm_master_listing');
         Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('pamm.getPammMasters');
-        Route::get('/getPammSubscriptions', [PammController::class, 'getPammSubscriptions'])->name('pamm.getPammSubscriptions');
+        Route::get('/getMasterSubscriptionPackages', [PammController::class, 'getMasterSubscriptionPackages'])->name('pamm.getMasterSubscriptionPackages');
+
+        Route::post('/followPammMaster', [PammController::class, 'followPammMaster'])->name('pamm.followPammMaster');
+
+        // pamm subscriptions
+        Route::get('/pamm_subscriptions', [PammController::class, 'pamm_subscriptions'])->name('pamm.pamm_subscriptions');
+        Route::get('/getPammSubscriptionData', [PammController::class, 'getPammSubscriptionData'])->name('pamm.getPammSubscriptionData');
     });
 
     /**

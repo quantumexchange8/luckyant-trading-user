@@ -496,4 +496,11 @@ return [
     "join_pamm" => "Tham gia PAMM",
     "package" => "Gói",
     "max_out_amount" => "Số tiền rút tối đa",
+    "pamm_master_listing" => "Danh sách PAMM Master",
+    "standard" => "PAMM tiêu chuẩn",
+    "esg" => "Đầu tư ESG",
+    "subscription_package" => "Gói đăng ký",
+    "pamm_subscriptions" => "Đăng ký PAMM",
+    "pamm_return" => "Lợi nhuận PAMM",
+    "valid_until" => "Có hiệu lực đến"
 ];

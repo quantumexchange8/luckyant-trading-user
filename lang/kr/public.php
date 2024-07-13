@@ -496,4 +496,11 @@ return [
     "join_pamm" => "PAMM 가입",
     "package" => "패키지",
     "max_out_amount" => "최대 출금액",
+    "pamm_master_listing" => "PAMM 마스터 목록",
+    "standard" => "표준 PAMM",
+    "esg" => "ESG 투자",
+    "subscription_package" => "구독 패키지",
+    "pamm_subscriptions" => "PAMM 구독",
+    "pamm_return" => "PAMM 수익",
+    "valid_until" => "유효 기간"
 ];

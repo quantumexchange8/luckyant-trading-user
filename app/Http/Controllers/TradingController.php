@@ -51,7 +51,7 @@ class TradingController extends Controller
         ])
             ->where('status', 'Active')
             ->where('signal_status', 1)
-            ->where('type', 'CopyTrade')
+            ->where('category', 'copy_trade')
             ->whereNot('user_id', $user->id)
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';

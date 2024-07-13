@@ -13,8 +13,6 @@ import {usePage} from "@inertiajs/vue3";
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import JoinPammForm from "@/Pages/Pamm/PammMaster/JoinPammForm.vue";
 import NoData from "@/Components/NoData.vue";
-import StatusBadge from "@/Components/StatusBadge.vue";
-import PammReturn from "@/Pages/Pamm/PammListing/PammReturn.vue";
 
 const props = defineProps({
     terms: Object
@@ -37,14 +35,14 @@ const isLoading = ref(false);
 const search = ref('');
 const type = ref('');
 const sort = ref('');
-const pamm_subscriptions = ref({data: []})
+const masterAccounts = ref({data: []})
 
-const { formatAmount, formatDateTime } = transactionFormat();
+const { formatAmount } = transactionFormat();
 
 const getResults = async (page = 1, search = '', type = '', date = '') => {
     isLoading.value = true
     try {
-        let url = `/pamm/getPammSubscriptionData?page=${page}`;
+        let url = `/pamm/getPammMasters?page=${page}`;
 
         if (search) {
             url += `&search=${search}`;
@@ -55,7 +53,7 @@ const getResults = async (page = 1, search = '', type = '', date = '') => {
         }
 
         const response = await axios.get(url);
-        pamm_subscriptions.value = response.data.pamm_subscriptions;
+        masterAccounts.value = response.data;
     } catch (error) {
         console.error(error);
     } finally {
@@ -86,11 +84,11 @@ const handleType = (pammType) => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.pamm_subscriptions')">
+    <AuthenticatedLayout :title="$t('public.pamm_master_listing')">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    {{ $t('public.pamm_subscriptions') }}
+                    {{ $t('public.pamm_master_listing') }}
                 </h2>
             </div>
         </template>
@@ -163,44 +161,35 @@ const handleType = (pammType) => {
                         class="py-3"
                     >
                         <div
-                            v-if="pamm_subscriptions.data.length > 0"
+                            v-if="masterAccounts.data.length > 0"
                             class="grid grid-cols-1 sm:grid-cols-3 gap-5 my-5"
                         >
                             <div
-                                v-for="pamm in pamm_subscriptions.data"
+                                v-for="masterAccount in masterAccounts.data"
                                 class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg hover:bg-gray-50 hover:shadow-primary-300"
                             >
-                                <div class="flex justify-between items-center self-stretch">
-                                    <div class="flex gap-2 w-full">
-                                        <img
-                                            class="object-cover w-12 h-12 rounded-full"
-                                            :src="pamm.master.profile_pic ? pamm.master.profile_pic : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
-                                            alt="userPic"
-                                        />
-                                        <div class="flex flex-col">
-                                            <div v-if="currentLocale === 'en'" class="text-sm">
-                                                {{ pamm.trading_user.name }}
-                                            </div>
-                                            <div v-if="currentLocale === 'cn'" class="text-sm">
-                                                {{ pamm.trading_user.company ? pamm.trading_user.company : pamm.trading_user.name }}
-                                            </div>
-                                            <div class="font-semibold">
-                                                {{ pamm.master_meta_login }}
-                                            </div>
+                                <div class="flex justify-between w-full">
+                                    <img
+                                        class="object-cover w-12 h-12 rounded-full"
+                                        :src="masterAccount.user.profile_photo_url ? masterAccount.user.profile_photo_url : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                        alt="userPic"
+                                    />
+                                    <div class="flex flex-col text-right">
+                                        <div v-if="currentLocale === 'en'" class="text-sm">
+                                            {{ masterAccount.trading_user.name }}
+                                        </div>
+                                        <div v-if="currentLocale === 'cn'" class="text-sm">
+                                            {{ masterAccount.trading_user.company ? masterAccount.trading_user.company : masterAccount.trading_user.name }}
+                                        </div>
+                                        <div class="font-semibold">
+                                            {{ masterAccount.meta_login }}
                                         </div>
                                     </div>
-                                    <StatusBadge :value="pamm.status" width="w-20"/>
                                 </div>
 
-                                <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 justify-between">
-                                    <div class="flex gap-1">
-                                        <div class="text-sm">{{ $t('public.join_date') }}:</div>
-                                        <div class="text-sm font-semibold">{{ pamm.approval_date ? formatDateTime(pamm.approval_date, false) : $t('public.pending') }}</div>
-                                    </div>
-                                    <div class="flex gap-1">
-                                        <div class="text-sm">{{ $t('public.join_day') }}:</div>
-                                        <div class="text-sm font-semibold">{{ pamm.join_days }}</div>
-                                    </div>
+                                <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2">
+                                    <div class="text-sm">{{ $t('public.min_join_equity') }}:</div>
+                                    <div class="text-sm font-semibold">$ {{ formatAmount(masterAccount.min_join_equity) }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4 w-full">
@@ -212,7 +201,7 @@ const handleType = (pammType) => {
                                             {{ $t('public.sharing_profit') }}
                                         </div>
                                         <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                            {{ formatAmount(pamm.master.sharing_profit, 0) }} %
+                                            {{ formatAmount(masterAccount.sharing_profit, 0) }} %
                                         </div>
                                     </div>
                                     <div class="flex flex-col gap-1 items-center justify-center">
@@ -220,33 +209,56 @@ const handleType = (pammType) => {
                                             {{ $t('public.roi_period') }}
                                         </div>
                                         <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                            {{ pamm.settlement_period }} {{ $t('public.days') }}
+                                            {{ masterAccount.roi_period }} {{ $t('public.days') }}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-center justify-center">
+                                        <div class="text-xs flex justify-center text-center">
+                                            {{ $t('public.estimated_monthly_returns') }}
+                                        </div>
+                                        <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                                            {{ masterAccount.estimated_monthly_returns }}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-center justify-center">
+                                        <div class="text-xs flex justify-center text-center">
+                                            {{ $t('public.estimated_lot_size') }}
+                                        </div>
+                                        <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                                            {{ masterAccount.estimated_lot_size }}
                                         </div>
                                     </div>
                                     <div class="flex flex-col gap-1 items-center justify-center">
                                         <div class="text-xs flex justify-center">
-                                            {{ $t('public.amount') }}
+                                            {{ $t('public.total_fund') }}
                                         </div>
                                         <div class="flex justify-center">
-                                            <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(pamm.subscription_amount, 0) }}</span>
+                                            <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(masterAccount.total_subscription_amount, 0) }}</span>
                                         </div>
                                     </div>
-                                    <div v-if="pamm.max_out_amount" class="flex flex-col gap-1 items-center justify-center">
+                                    <div v-if="masterAccount.max_out_amount" class="flex flex-col gap-1 items-center justify-center">
                                         <div class="text-xs flex justify-center text-center">
                                             {{ $t('public.max_out_amount') }}
                                         </div>
                                         <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                            $ {{ formatAmount(pamm.max_out_amount, 0) }}
+                                            $ {{ formatAmount(masterAccount.max_out_amount, 0) }}
                                         </div>
                                     </div>
                                     <div v-else class="flex flex-col gap-1 items-center justify-center">
                                         <div class="text-xs flex justify-center text-center">
-                                            {{ $t('public.valid_until') }}
+                                            {{ $t('public.join_day') }}
                                         </div>
                                         <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                            {{ formatDateTime(pamm.expired_date, false) }}
+                                            {{ masterAccount.join_period }} {{ $t('public.days') }}
                                         </div>
                                     </div>
+                                </div>
+
+                                <div v-if="masterAccount.allow_subscribe" class="flex w-full gap-2 items-center">
+                                    <JoinPammForm
+                                        :masterAccount="masterAccount"
+                                        :terms="terms"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -257,6 +269,5 @@ const handleType = (pammType) => {
                 </TabPanels>
             </TabGroup>
         </div>
-        <PammReturn />
     </AuthenticatedLayout>
 </template>

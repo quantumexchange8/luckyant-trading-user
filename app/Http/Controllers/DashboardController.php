@@ -156,8 +156,6 @@ class DashboardController extends Controller
 
         $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('amount');
 
-        $metaLogins = TradingAccount::where('user_id', $user->id)->get()->pluck('meta_login');
-
         $totalProfit = Transaction::where('user_id', $user->id)
             ->where('transaction_type', 'ProfitSharing')
             ->sum('transaction_amount');

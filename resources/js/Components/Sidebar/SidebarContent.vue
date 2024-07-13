@@ -45,7 +45,6 @@ const hasPammMasters = ref(page.props.hasPammMasters);
         </SidebarLink>
 
         <SidebarCollapsible
-            v-if="!hasPammMasters"
             :title="$t('public.sidebar.copy_trading')"
             :active="route().current('trading.*')"
         >
@@ -104,8 +103,7 @@ const hasPammMasters = ref(page.props.hasPammMasters);
 <!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
-            v-if="hasPammMasters"
-            :title="$t('public.pamm_listing')"
+            title="PAMM"
             :active="route().current('pamm.*')"
         >
             <template #icon>
@@ -114,19 +112,16 @@ const hasPammMasters = ref(page.props.hasPammMasters);
                     aria-hidden="true"
                 />
             </template>
-
             <SidebarCollapsibleItem
-                :href="route('pamm.pamm_listing')"
-                :title="$t('public.pamm_listing')"
-                :active="route().current('pamm.pamm_listing')"
+                :href="route('pamm.pamm_master_listing')"
+                :title="$t('public.pamm_master_listing')"
+                :active="route().current('pamm.pamm_master_listing')"
             />
-
-<!--            <SidebarCollapsibleItem-->
-<!--                :href="route('referral.affiliateListing')"-->
-<!--                :title="$t('public.sidebar.affiliate_listing')"-->
-<!--                :active="route().current('referral.affiliateListing')"-->
-<!--            />-->
-
+            <SidebarCollapsibleItem
+                :href="route('pamm.pamm_subscriptions')"
+                :title="$t('public.pamm_subscriptions')"
+                :active="route().current('pamm.pamm_subscriptions')"
+            />
         </SidebarCollapsible>
 
         <SidebarCollapsible

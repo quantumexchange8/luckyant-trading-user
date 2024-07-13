@@ -496,4 +496,11 @@ return [
     "join_pamm" => "เข้าร่วม PAMM",
     "package" => "แพ็คเกจ",
     "max_out_amount" => "จำนวนเงินถอนสูงสุด",
+    "pamm_master_listing" => "รายการ PAMM Master",
+    "standard" => "PAMM มาตรฐาน",
+    "esg" => "การลงทุน ESG",
+    "subscription_package" => "แพ็คเกจการสมัครสมาชิก",
+    "pamm_subscriptions" => "การสมัครสมาชิก PAMM",
+    "pamm_return" => "ผลตอบแทน PAMM",
+    "valid_until" => "ใช้ได้จนถึง"
 ];

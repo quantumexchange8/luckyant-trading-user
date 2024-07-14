@@ -39,7 +39,7 @@ const masterAccounts = ref({data: []})
 
 const { formatAmount } = transactionFormat();
 
-const getResults = async (page = 1, search = '', type = '', date = '') => {
+const getResults = async (page = 1, search = '', type = 'ESG', date = '') => {
     isLoading.value = true
     try {
         let url = `/pamm/getPammMasters?page=${page}`;

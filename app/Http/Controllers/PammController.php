@@ -118,7 +118,7 @@ class PammController extends Controller
                 ->whereIn('status', ['Pending', 'Active'])
                 ->get();
 
-            if (empty($activePammSubscriptions)) {
+            if ($activePammSubscriptions->isEmpty()) {
                 $master->allow_subscribe = true;
             } else {
                 $master->allow_subscribe = false;

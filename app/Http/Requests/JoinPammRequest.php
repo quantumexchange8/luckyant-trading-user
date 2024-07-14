@@ -17,9 +17,7 @@ class JoinPammRequest extends FormRequest
         ];
 
         if ($master->type == 'Standard') {
-            $rules[] = [
-                'meta_login' => ['required'],
-            ];
+            $rules['meta_login'] = ['required'];
         }
 
         return $rules;

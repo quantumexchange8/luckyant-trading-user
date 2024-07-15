@@ -137,7 +137,8 @@ class PammController extends Controller
         return MasterSubscriptionPackage::where('master_id', $request->master_id)->get()->map(function ($package) {
             return [
                 'value' => $package->id,
-                'label' => $package->amount,
+                'label' => $package->label,
+                'amount' => $package->amount,
             ];
         });
     }

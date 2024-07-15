@@ -66,7 +66,7 @@ const getMasterSubscriptionPackages = async () => {
 getMasterSubscriptionPackages();
 
 watch(depositAmount, (newAmount) => {
-    amount.value = newAmount.label
+    amount.value = newAmount.amount
 })
 
 const submit = () => {
@@ -77,7 +77,7 @@ const submit = () => {
         amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));
         amountReturned.value = (amount.value % 100).toFixed(2);
         amount.value = (amount.value - amountReturned.value).toFixed(2);
-        amount.value = depositAmount.value.label
+        amount.value = depositAmount.value.amount
     };
     confirmModal.value = true;
 };
@@ -167,7 +167,7 @@ watchEffect(() => {
                 />
                 <RadioGroup v-model="depositAmount">
                     <RadioGroupLabel class="sr-only">{{ $t('public.subscription_package') }}</RadioGroupLabel>
-                    <div class="grid grid-cols-3 gap-3 items-center self-stretch">
+                    <div class="grid grid-cols-3 gap-3 items-start">
                         <RadioGroupOption
                             as="template"
                             v-for="(amountSel, index) in subscriptionPackages"
@@ -182,16 +182,21 @@ watchEffect(() => {
                                             : '',
                                         checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white',
                                 ]"
-                                class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none"
+                                class="relative flex self-stretch cursor-pointer rounded-xl border p-3 focus:outline-none"
                             >
-                                <div class="flex items-center w-full">
+                                <div class="flex items-start w-full">
                                     <div class="text-sm flex flex-col gap-3 w-full">
                                         <RadioGroupLabel
                                             as="div"
                                             class="font-medium"
                                         >
-                                            <div class="flex justify-center items-center gap-3">
-                                                $ {{ formatAmount(amountSel.label) }}
+                                            <div class="flex flex-col items-center self-stretch gap-1">
+                                                <div class="text-center text-gray-600 dark:text-gray-400">
+                                                    {{ amountSel.label }}
+                                                </div>
+                                                <div class="text-lg font-semibold text-primary-500 dark:text-primary-400">
+                                                    $ {{ formatAmount(amountSel.amount) }}
+                                                </div>
                                             </div>
                                         </RadioGroupLabel>
                                     </div>

@@ -167,7 +167,7 @@ watchEffect(() => {
                 />
                 <RadioGroup v-model="depositAmount">
                     <RadioGroupLabel class="sr-only">{{ $t('public.subscription_package') }}</RadioGroupLabel>
-                    <div class="grid grid-cols-3 gap-3 items-start">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
                         <RadioGroupOption
                             as="template"
                             v-for="(amountSel, index) in subscriptionPackages"

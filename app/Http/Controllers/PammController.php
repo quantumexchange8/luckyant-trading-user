@@ -111,7 +111,7 @@ class PammController extends Controller
         $masterAccounts->each(function ($master) {
             $totalSubscriptionsFee = PammSubscription::where('master_id', $master->id)
                 ->where('status', 'Active')
-                ->sum('subscription_amount');
+                ->sum('subscription_fee');
 
             $activePammSubscriptions = PammSubscription::where('user_id', Auth::id())
                 ->where('master_id', $master->id)
@@ -147,8 +147,15 @@ class PammController extends Controller
         $user = Auth::user();
         $meta_login = $request->meta_login;
         $amount = $request->amount;
-        $wallet = Wallet::where('user_id', $user->id)->first();
+        $wallet = Wallet::where('user_id', $user->id)->where('type', 'cash_wallet')->first();
         $masterAccount = Master::with('tradingAccount:id,meta_login,margin_leverage')->find($request->master_id);
+
+        $max_out_amount = null;
+
+        if ($request->amount_package_id) {
+            $package = MasterSubscriptionPackage::find($request->amount_package_id);
+            $max_out_amount = $package->max_out_amount;
+        }
 
         if ($masterAccount->type == 'ESG' && empty($meta_login)) {
             //check wallet balance
@@ -185,7 +192,170 @@ class PammController extends Controller
                 'settlement_period' => $masterAccount->roi_period,
                 'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
                 'expired_date' => now()->addDays($masterAccount->join_period)->endOfDay(),
-                'max_out_amount' => $masterAccount->max_out_amount,
+                'max_out_amount' => $max_out_amount,
+                'status' => 'Pending'
+            ]);
+        } else {
+            $metaService = new MetaFiveService();
+
+            $connection = $metaService->getConnectionStatus();
+            $userTrade = $metaService->userTrade($meta_login);
+            $pamm_subscription = PammSubscription::where('meta_login', $meta_login)
+                ->whereIn('status', ['Pending', 'Active'])
+                ->first();
+
+            // check MT connection
+            if ($connection != 0) {
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+
+            // check open trade
+            if ($userTrade) {
+                return redirect()->back()
+                    ->with('title', trans('public.invalid_action'))
+                    ->with('warning', trans('public.user_got_trade'));
+            }
+
+            // check meta subscriber status
+            if ($pamm_subscription) {
+                return redirect()->back()
+                    ->with('title', trans('public.invalid_action'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+
+            try {
+                $metaService->getUserInfo($user->tradingAccounts);
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+
+            $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
+
+            if ($tradingAccount->margin_leverage != $masterAccount->tradingAccount->margin_leverage) {
+                throw ValidationException::withMessages(['meta_login' => 'Leverage not same']);
+            }
+
+            if ($tradingAccount->balance < $masterAccount->min_join_equity || $tradingAccount->balance < ($amount + $masterAccount->subscription_fee) || $tradingAccount->balance < $amount) {
+                throw ValidationException::withMessages(['meta_login' => trans('public.insufficient_balance')]);
+            }
+
+            // Calculate the balance from package amount and trading acc balance
+            $amount_balance = $tradingAccount->balance - $amount;
+
+            $e_wallet = Wallet::where('user_id', $user->id)->where('type', 'e_wallet')->first();
+            $amount_remain = $amount_balance;
+
+            if ($e_wallet) {
+                $eWalletBalanceIn = Transaction::where('from_wallet_id', $e_wallet->id)
+                    ->where('to_meta_login', $meta_login)
+                    ->where('transaction_type', 'BalanceIn')
+                    ->where('status', 'Success')
+                    ->sum('transaction_amount');
+
+                $eWalletBalanceOut = Transaction::where('to_wallet_id', $e_wallet->id)
+                    ->where('from_meta_login', $meta_login)
+                    ->where('transaction_type', 'BalanceOut')
+                    ->where('status', 'Success')
+                    ->sum('transaction_amount');
+
+                $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
+
+                $deal = [];
+                try {
+                    $deal = $metaService->createDeal($meta_login, $amount_balance, 'Withdraw balance from trading account for pamm subscription', dealAction::WITHDRAW);
+                } catch (\Exception $e) {
+                    \Log::error('Error creating deal: ' . $e->getMessage());
+                }
+
+                if ($remainingBalance > 0) {
+                    if ($remainingBalance >= $amount_balance) {
+                        // Deduct full amount from e_wallet
+                        $e_wallet->balance += $amount_balance;
+                        $e_wallet->save();
+
+                        Transaction::create([
+                            'category' => 'trading_account',
+                            'user_id' => $user->id,
+                            'to_wallet_id' => $e_wallet->id,
+                            'from_meta_login' => $meta_login,
+                            'ticket' => $deal['deal_Id'],
+                            'transaction_number' => RunningNumberService::getID('transaction'),
+                            'transaction_type' => 'BalanceOut',
+                            'amount' => $amount,
+                            'transaction_charges' => 0,
+                            'transaction_amount' => $amount,
+                            'status' => 'Success',
+                            'comment' => $deal['conduct_Deal']['comment'],
+                            'new_wallet_amount' => $e_wallet->balance,
+                        ]);
+
+                        $amount_remain = 0;
+                    } else {
+                        // Deduct partial amount from e_wallet
+                        $e_wallet->balance += $remainingBalance;
+                        $e_wallet->save();
+
+                        Transaction::create([
+                            'category' => 'trading_account',
+                            'user_id' => $user->id,
+                            'to_wallet_id' => $e_wallet->id,
+                            'from_meta_login' => $meta_login,
+                            'ticket' => $deal['deal_Id'],
+                            'transaction_number' => RunningNumberService::getID('transaction'),
+                            'transaction_type' => 'BalanceOut',
+                            'amount' => $remainingBalance,
+                            'transaction_charges' => 0,
+                            'transaction_amount' => $remainingBalance,
+                            'status' => 'Success',
+                            'comment' => $deal['conduct_Deal']['comment'],
+                            'new_wallet_amount' => $e_wallet->balance,
+                        ]);
+
+                        $amount_remain -= $remainingBalance;
+                    }
+                }
+            }
+
+            if ($amount_remain > 0) {
+                $new_wallet_balance = $wallet->balance + $amount_remain;
+
+                Transaction::create([
+                    'category' => 'trading_account',
+                    'user_id' => $user->id,
+                    'to_wallet_id' => $wallet->id,
+                    'from_meta_login' => $meta_login,
+                    'ticket' => $deal['deal_Id'],
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'transaction_type' => 'BalanceOut',
+                    'amount' => $amount_remain,
+                    'transaction_charges' => 0,
+                    'transaction_amount' => $amount_remain,
+                    'status' => 'Success',
+                    'comment' => $deal['conduct_Deal']['comment'],
+                    'new_wallet_amount' => $new_wallet_balance,
+                ]);
+
+                $wallet->update(['balance' => $new_wallet_balance]);
+            }
+
+            PammSubscription::create([
+                'user_id' => $user->id,
+                'meta_login' => $meta_login,
+                'master_id' => $masterAccount->id,
+                'master_meta_login' => $masterAccount->meta_login,
+                'subscription_amount' => $amount/2,
+                'type' => $masterAccount->type,
+                'subscription_number' => RunningNumberService::getID('subscription'),
+                'subscription_period' => $masterAccount->join_period,
+                'settlement_period' => $masterAccount->roi_period,
+                'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
+                'expired_date' => $masterAccount->join_period > 0 ? now()->addDays($masterAccount->join_period)->endOfDay() : null,
+                'max_out_amount' => $max_out_amount,
                 'status' => 'Pending'
             ]);
         }

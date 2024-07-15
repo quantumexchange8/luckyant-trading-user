@@ -38,6 +38,7 @@ const form = useForm({
     master_id: props.masterAccount.id,
     meta_login: '',
     amount: null,
+    amount_package_id: '',
     terms: '',
 })
 
@@ -76,6 +77,7 @@ const submit = () => {
         amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));
         amountReturned.value = (amount.value % 100).toFixed(2);
         amount.value = (amount.value - amountReturned.value).toFixed(2);
+        amount.value = depositAmount.value.label
     };
     confirmModal.value = true;
 };
@@ -83,6 +85,7 @@ const submit = () => {
 
 const confirmSubmit = () => {
     form.amount = amount.value;
+    form.amount_package_id = depositAmount.value.value;
 
     form.post(route('pamm.followPammMaster'), {
         onSuccess: () => {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 use Inertia\Inertia;
 use App\Mail\SendOtp;
 use Inertia\Response;
@@ -245,8 +246,10 @@ class RegisteredUserController extends Controller
         ]);
         event(new Registered($user));
 
-        Notification::route('mail', $user->email)
-            ->notify(new NewUserWelcomeNotification($user));
+        if (App::environment('production')) {
+            Notification::route('mail', $user->email)
+                ->notify(new NewUserWelcomeNotification($user));
+        }
 
         return redirect()->route('login')
             ->with('title', trans('public.success_registration'))

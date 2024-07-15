@@ -41,7 +41,7 @@ const pamm_subscriptions = ref({data: []})
 
 const { formatAmount, formatDateTime } = transactionFormat();
 
-const getResults = async (page = 1, search = '', type = '', date = '') => {
+const getResults = async (page = 1, search = '', type = 'ESG', date = '') => {
     isLoading.value = true
     try {
         let url = `/pamm/getPammSubscriptionData?page=${page}`;

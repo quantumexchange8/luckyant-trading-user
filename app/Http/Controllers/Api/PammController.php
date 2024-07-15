@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master;
+use App\Models\PammSubscription;
 use App\Models\Subscription;
+use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class PammController extends Controller
 {
@@ -37,7 +40,8 @@ class PammController extends Controller
             'amount' => $data['amount'],
         ];
 
-        $checkSubscription = Subscription::find($result['follower_id']);
+        $checkSubscription = PammSubscription::find($result['follower_id']);
+        $masterAccount = Master::find($result['master_id']);
 
         if ($checkSubscription) {
             return response()->json([
@@ -46,24 +50,29 @@ class PammController extends Controller
             ]);
         }
 
-        $subscription = Subscription::create([
-            'meta_login' => $result['follower_id'],
-            'master_id' => $result['master_id'],
-            'meta_balance' => $result['amount'],
-            'type' => 'PAMM',
-            'remarks' => 'China Mall PAMM'
+        $pamm_subscription = PammSubscription::create([
+            'master_id' => $masterAccount->id,
+            'master_meta_login' => $masterAccount->meta_login,
+            'subscription_amount' => $result['amount'],
+            'type' => $masterAccount->type,
+            'subscription_number' => RunningNumberService::getID('subscription'),
+            'subscription_period' => $masterAccount->join_period,
+            'settlement_period' => $masterAccount->roi_period,
+            'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
+            'expired_date' => now()->addDays($masterAccount->join_period)->endOfDay(),
+            'max_out_amount' => $masterAccount->max_out_amount,
+            'status' => 'Pending',
+            'remarks' => 'China PAMM'
         ]);
 
-        $subscription_response = \Http::post('http://103.21.90.87:8080/serverapi/pamm/subscription/join', $subscription);
-        \Log::debug($subscription_response);
+        $response = Http::post('https://api.luckyantmallvn.com/serverapi/pamm/subscription/join', $pamm_subscription);
+        \Log::debug($response);
 
-        $subscription->delete();
+        $pamm_subscription->delete();
 
-        $master = Master::find($result['master_id']);
-
-        $master->total_fund += $result['amount'];
-        $master->save();
-        $master_response = \Http::post('http://103.21.90.87:8080/serverapi/pamm/strategy', $master);
+        $masterAccount->total_fund += $result['amount'];
+        $masterAccount->save();
+        $master_response = \Http::post('https://api.luckyantmallvn.com/serverapi/pamm/strategy', $masterAccount);
         \Log::debug($master_response);
 
         return response()->json([

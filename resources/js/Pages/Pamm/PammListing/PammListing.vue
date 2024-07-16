@@ -4,7 +4,7 @@ import {SearchIcon} from "@heroicons/vue/outline";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import Input from "@/Components/Input.vue";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import Button from "@/Components/Button.vue";
 import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
 import {transactionFormat} from "@/Composables/index.js";
@@ -32,6 +32,19 @@ const pammTypes = [
     {value: 'ESG', label:"esg"},
     {value: 'Standard', label:"standard"},
 ]
+
+const currentDomain = window.location.hostname;
+
+const filteredPammTypes = computed(() => {
+    if (currentDomain === 'member.luckyantmallvn.com') {
+        type.value = 'Standard'
+        return pammTypes.filter(type => type.value === 'Standard');
+    } else if (currentDomain === 'member.luckyantfxgroup.com') {
+        type.value = 'ESG'
+        return pammTypes.filter(type => type.value === 'ESG');
+    }
+    return pammTypes;
+});
 
 const isLoading = ref(false);
 const search = ref('');
@@ -62,8 +75,6 @@ const getResults = async (page = 1, search = '', type = 'ESG', date = '') => {
         isLoading.value = false
     }
 }
-
-getResults();
 
 watch(
     [search, type],
@@ -138,7 +149,7 @@ const handleType = (pammType) => {
                     <TabList
                         class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 w-full max-w-md">
                         <Tab
-                            v-for="type in pammTypes"
+                            v-for="type in filteredPammTypes"
                             as="template"
                             v-slot="{ selected }"
                         >

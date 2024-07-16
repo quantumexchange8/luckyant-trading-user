@@ -35,8 +35,10 @@ const currentDomain = window.location.hostname;
 
 const filteredPammTypes = computed(() => {
     if (currentDomain === 'member.luckyantmallvn.com') {
+        type.value = 'Standard'
         return pammTypes.filter(type => type.value === 'Standard');
-    } else if (currentDomain === 'domain2') {
+    } else if (currentDomain === 'member.luckyantfxgroup.com') {
+        type.value = 'ESG'
         return pammTypes.filter(type => type.value === 'ESG');
     }
     return pammTypes;
@@ -50,7 +52,7 @@ const masterAccounts = ref({data: []})
 
 const { formatAmount } = transactionFormat();
 
-const getResults = async (page = 1, search = '', type = 'ESG', date = '') => {
+const getResults = async (page = 1, search = '', filterType = type.value, date = '') => {
     isLoading.value = true
     try {
         let url = `/pamm/getPammMasters?page=${page}`;
@@ -59,8 +61,8 @@ const getResults = async (page = 1, search = '', type = 'ESG', date = '') => {
             url += `&search=${search}`;
         }
 
-        if (type) {
-            url += `&type=${type}`;
+        if (filterType) {
+            url += `&type=${filterType}`;
         }
 
         const response = await axios.get(url);
@@ -71,8 +73,6 @@ const getResults = async (page = 1, search = '', type = 'ESG', date = '') => {
         isLoading.value = false
     }
 }
-
-getResults();
 
 watch(
     [search, type],
@@ -90,7 +90,6 @@ const currentLocale = ref(usePage().props.locale);
 
 const handleType = (pammType) => {
     type.value = pammType
-    console.log(type.value)
 }
 </script>
 

@@ -5,11 +5,19 @@ import { DashboardIcon, CoinsHandIcon, ReportIcon, Wallet01Icon, CoinsStacked02I
 import SidebarCollapsible from '@/Components/Sidebar/SidebarCollapsible.vue'
 import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.vue'
 import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 
 const page = usePage();
 const currentDomain = window.location.hostname;
+
+// Access the user object from the page props
+const user = page.props.auth.user;
+
+// Compute whether to show the sidebar based on the domain and user properties
+const shouldShowSidebar = computed(() => {
+    return currentDomain !== 'member.luckyantfxgroup.com' || (currentDomain === 'member.luckyantfxgroup.com' && user.is_public);
+});
 </script>
 
 <template>
@@ -104,6 +112,7 @@ const currentDomain = window.location.hostname;
 <!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
+            v-if="shouldShowSidebar"
             title="PAMM"
             :active="route().current('pamm.*')"
         >

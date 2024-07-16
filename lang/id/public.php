@@ -503,5 +503,7 @@ return [
     "pamm_subscriptions" => "Langganan PAMM",
     "pamm_return" => "Pengembalian PAMM",
     "valid_until" => "Berlaku hingga",
-    "select_product" => "Pilih Produk"
+    "select_product" => "Pilih Produk",
+    "product" => "Produk",
+    "fund" => "Dana",
 ];

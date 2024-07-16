@@ -315,7 +315,7 @@ watchEffect(() => {
                                         active
                                             ? 'ring-0 ring-white ring-offset-0'
                                             : '',
-                                        checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white',
+                                        checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 text-gray-600 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white',
                                 ]"
                                 class="relative flex self-stretch cursor-pointer rounded-xl border p-3 focus:outline-none"
                             >

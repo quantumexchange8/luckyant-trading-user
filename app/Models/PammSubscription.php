@@ -69,4 +69,9 @@ class PammSubscription extends Model
     {
         return $this->belongsTo(TradingUser::class, 'master_meta_login', 'meta_login');
     }
+
+    public function package(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(MasterSubscriptionPackage::class, 'subscription_package_id', 'id');
+    }
 }

@@ -503,5 +503,7 @@ return [
     "pamm_subscriptions" => "Đăng ký PAMM",
     "pamm_return" => "Lợi nhuận PAMM",
     "valid_until" => "Có hiệu lực đến",
-    "select_product" => "Chọn sản phẩm"
+    "select_product" => "Chọn sản phẩm",
+    "product" => "Sản phẩm",
+    "fund" => "Quỹ",
 ];

@@ -503,5 +503,7 @@ return [
     "pamm_subscriptions" => "PAMM 구독",
     "pamm_return" => "PAMM 수익",
     "valid_until" => "유효 기간",
-    "select_product" => "제품 선택"
+    "select_product" => "제품 선택",
+    "product" => "제품",
+    "fund" => "펀드",
 ];

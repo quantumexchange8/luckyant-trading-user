@@ -503,5 +503,7 @@ return [
     "pamm_subscriptions" => "การสมัครสมาชิก PAMM",
     "pamm_return" => "ผลตอบแทน PAMM",
     "valid_until" => "ใช้ได้จนถึง",
-    "select_product" => "เลือกผลิตภัณฑ์"
+    "select_product" => "เลือกผลิตภัณฑ์",
+    "product" => "ผลิตภัณฑ์",
+    "fund" => "กองทุน",
 ];

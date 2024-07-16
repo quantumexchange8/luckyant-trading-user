@@ -504,4 +504,6 @@ return [
     "pamm_return" => "PAMM 回报",
     "valid_until" => "有效期至",
     "select_product" => "选择产品",
+    "product" => "产品",
+    "fund" => "基金",
 ];

@@ -235,8 +235,24 @@ const handleType = (pammType) => {
                                         </div>
                                     </div>
                                     <div class="flex flex-col gap-1 items-center justify-center">
+                                        <div class="text-xs flex justify-center text-center">
+                                            {{ $t('public.subscription_number') }}
+                                        </div>
+                                        <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                                            {{ pamm.subscription_number }}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-center justify-center">
+                                        <div class="text-xs flex justify-center text-center">
+                                            {{ $t('public.product') }}
+                                        </div>
+                                        <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                                            $ {{ formatAmount(pamm.package.amount, 2) }} - {{ pamm.subscription_package_product }}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-center justify-center">
                                         <div class="text-xs flex justify-center">
-                                            {{ $t('public.amount') }}
+                                            {{ $t('public.fund') }}
                                         </div>
                                         <div class="flex justify-center">
                                             <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(pamm.subscription_amount, 0) }}</span>

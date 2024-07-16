@@ -503,5 +503,7 @@ return [
     "pamm_subscriptions" => "PAMM サブスクリプション",
     "pamm_return" => "PAMM リターン",
     "valid_until" => "有効期限",
-    "select_product" => "製品を選択"
+    "select_product" => "製品を選択",
+    "product" => "製品",
+    "fund" => "ファンド",
 ];

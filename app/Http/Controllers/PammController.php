@@ -419,7 +419,7 @@ class PammController extends Controller
     {
         $user = Auth::user();
 
-        $pamm_subscriptions = PammSubscription::with(['master', 'master.user','master.tradingUser', 'tradingUser:id,name,meta_login'])
+        $pamm_subscriptions = PammSubscription::with(['master', 'master.user','master.tradingUser', 'tradingUser:id,name,meta_login', 'package'])
             ->where('user_id', $user->id)
             ->when($request->filled('type'), function ($query) use ($request) {
                 $query->where('type', $request->type);

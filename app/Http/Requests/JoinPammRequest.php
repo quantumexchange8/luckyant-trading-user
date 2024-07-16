@@ -13,6 +13,7 @@ class JoinPammRequest extends FormRequest
 
         $rules = [
             'amount' => ['required'],
+            'package_product' => ['required'],
             'terms' => ['accepted'],
         ];
 
@@ -33,6 +34,7 @@ class JoinPammRequest extends FormRequest
         return [
             'amount' => trans('public.amount'),
             'meta_login' => trans('public.account_no'),
+            'package_product' => trans('public.select_product'),
             'terms' => trans('public.terms_and_conditions'),
         ];
     }

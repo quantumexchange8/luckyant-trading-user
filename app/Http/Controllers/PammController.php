@@ -135,15 +135,16 @@ class PammController extends Controller
     public function getMasterSubscriptionPackages(Request $request)
     {
         return MasterSubscriptionPackage::where('master_id', $request->master_id)->get()->map(function ($package) {
+            $labelParts = explode('/', $package->label);
             return [
                 'value' => $package->id,
-                'label' => $package->label,
+                'label' => $labelParts,
                 'amount' => $package->amount,
             ];
         });
     }
 
-    public function followPammMaster(JoinPammRequest $request)
+    public function followPammMaster(Request $request)
     {
         $user = Auth::user();
         $meta_login = $request->meta_login;
@@ -186,6 +187,8 @@ class PammController extends Controller
                 'master_id' => $masterAccount->id,
                 'master_meta_login' => $masterAccount->meta_login,
                 'subscription_amount' => $amount/2,
+                'subscription_package_id' => $request->subscription_package_id,
+                'subscription_package_product' => $request->package_product,
                 'type' => $masterAccount->type,
                 'transaction_id' => $transaction->id,
                 'subscription_number' => RunningNumberService::getID('subscription'),

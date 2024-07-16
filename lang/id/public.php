@@ -502,5 +502,6 @@ return [
     "subscription_package" => "Paket Langganan",
     "pamm_subscriptions" => "Langganan PAMM",
     "pamm_return" => "Pengembalian PAMM",
-    "valid_until" => "Berlaku hingga"
+    "valid_until" => "Berlaku hingga",
+    "select_product" => "Pilih Produk"
 ];

@@ -39,6 +39,7 @@ const form = useForm({
     meta_login: '',
     amount: null,
     amount_package_id: '',
+    package_product: '',
     terms: '',
 })
 
@@ -133,80 +134,6 @@ watchEffect(() => {
 
     <Modal :show="subscribeAccountModal" :title="$t('public.subscribe_master')" @close="closeModal">
         <form class="space-y-2">
-            <div
-                v-if="masterAccount.type === 'Standard'"
-                class="space-y-2 mb-4"
-            >
-                <Label
-                    for="leverage"
-                    :value="$t('public.account_number')"
-                />
-                <div v-if="tradingAccountsSel">
-                    <BaseListbox
-                        :options="tradingAccountsSel"
-                        v-model="form.meta_login"
-                        :error="!!form.errors.meta_login"
-                        :placeholder="$t('public.placeholder')"
-                    />
-                </div>
-                <div v-else>
-                    <Input
-                        id="loading"
-                        type="text"
-                        class="block w-full"
-                        v-model="loading"
-                        readonly
-                    />
-                </div>
-                <InputError :message="form.errors.meta_login" />
-            </div>
-            <div class="w-full space-y-2">
-                <Label
-                    for="amount"
-                    :value="$t('public.subscription_package')"
-                />
-                <RadioGroup v-model="depositAmount">
-                    <RadioGroupLabel class="sr-only">{{ $t('public.subscription_package') }}</RadioGroupLabel>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
-                        <RadioGroupOption
-                            as="template"
-                            v-for="(amountSel, index) in subscriptionPackages"
-                            :key="index"
-                            :value="amountSel"
-                            v-slot="{ active, checked }"
-                        >
-                            <div
-                                :class="[
-                                        active
-                                            ? 'ring-0 ring-white ring-offset-0'
-                                            : '',
-                                        checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white',
-                                ]"
-                                class="relative flex self-stretch cursor-pointer rounded-xl border p-3 focus:outline-none"
-                            >
-                                <div class="flex items-start w-full">
-                                    <div class="text-sm flex flex-col gap-3 w-full">
-                                        <RadioGroupLabel
-                                            as="div"
-                                            class="font-medium"
-                                        >
-                                            <div class="flex flex-col items-center self-stretch gap-1">
-                                                <div class="text-center text-gray-600 dark:text-gray-400">
-                                                    {{ amountSel.label }}
-                                                </div>
-                                                <div class="text-lg font-semibold text-primary-500 dark:text-primary-400">
-                                                    $ {{ formatAmount(amountSel.amount) }}
-                                                </div>
-                                            </div>
-                                        </RadioGroupLabel>
-                                    </div>
-                                </div>
-                            </div>
-                        </RadioGroupOption>
-                    </div>
-                    <InputError :message="form.errors.amount" class="mt-2" />
-                </RadioGroup>
-            </div>
             <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">
                 <div class="flex flex-col items-start gap-3 self-stretch">
                     <div>
@@ -295,6 +222,120 @@ watchEffect(() => {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div
+                v-if="masterAccount.type === 'Standard'"
+                class="space-y-2 mb-4"
+            >
+                <Label
+                    for="leverage"
+                    :value="$t('public.account_number')"
+                />
+                <div v-if="tradingAccountsSel">
+                    <BaseListbox
+                        :options="tradingAccountsSel"
+                        v-model="form.meta_login"
+                        :error="!!form.errors.meta_login"
+                        :placeholder="$t('public.placeholder')"
+                    />
+                </div>
+                <div v-else>
+                    <Input
+                        id="loading"
+                        type="text"
+                        class="block w-full"
+                        v-model="loading"
+                        readonly
+                    />
+                </div>
+                <InputError :message="form.errors.meta_login" />
+            </div>
+            <div class="w-full space-y-2">
+                <Label
+                    for="amount"
+                    :value="$t('public.subscription_package')"
+                />
+                <RadioGroup v-model="depositAmount">
+                    <RadioGroupLabel class="sr-only">{{ $t('public.subscription_package') }}</RadioGroupLabel>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
+                        <RadioGroupOption
+                            as="template"
+                            v-for="(amountSel, index) in subscriptionPackages"
+                            :key="index"
+                            :value="amountSel"
+                            v-slot="{ active, checked }"
+                        >
+                            <div
+                                :class="[
+                                        active
+                                            ? 'ring-0 ring-white ring-offset-0'
+                                            : '',
+                                        checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-primary-800 dark:text-white',
+                                ]"
+                                class="relative flex self-stretch cursor-pointer rounded-xl border p-3 focus:outline-none"
+                            >
+                                <div class="flex items-start w-full">
+                                    <div class="text-sm flex flex-col gap-3 w-full">
+                                        <RadioGroupLabel
+                                            as="div"
+                                            class="font-medium"
+                                        >
+                                            <div class="text-lg font-semibold text-center">
+                                                $ {{ formatAmount(amountSel.amount) }}
+                                            </div>
+                                        </RadioGroupLabel>
+                                    </div>
+                                </div>
+                            </div>
+                        </RadioGroupOption>
+                    </div>
+                    <InputError :message="form.errors.amount" class="mt-2" />
+                </RadioGroup>
+            </div>
+            <div
+                v-if="depositAmount"
+                class="w-full space-y-2"
+            >
+                <Label
+                    for="amount"
+                    :value="$t('public.select_product')"
+                />
+                <RadioGroup v-model="form.package_product">
+                    <RadioGroupLabel class="sr-only">{{ $t('public.subscription_package') }}</RadioGroupLabel>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
+                        <RadioGroupOption
+                            as="template"
+                            v-for="(product, index) in depositAmount.label"
+                            :key="index"
+                            :value="product"
+                            v-slot="{ active, checked }"
+                        >
+                            <div
+                                :class="[
+                                        active
+                                            ? 'ring-0 ring-white ring-offset-0'
+                                            : '',
+                                        checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white',
+                                ]"
+                                class="relative flex self-stretch cursor-pointer rounded-xl border p-3 focus:outline-none"
+                            >
+                                <div class="flex items-start w-full">
+                                    <div class="text-sm flex flex-col gap-3 w-full">
+                                        <RadioGroupLabel
+                                            as="div"
+                                            class="font-medium"
+                                        >
+                                            <div class="text-center">
+                                                {{ product }}
+                                            </div>
+                                        </RadioGroupLabel>
+                                    </div>
+                                </div>
+                            </div>
+                        </RadioGroupOption>
+                    </div>
+                    <InputError :message="form.errors.package_product" class="mt-2" />
+                </RadioGroup>
             </div>
 
             <Modal :show="confirmModal" :title="$t('public.confirm_submit')" @close="cancelSubmit">

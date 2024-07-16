@@ -502,5 +502,6 @@ return [
     "subscription_package" => "แพ็คเกจการสมัครสมาชิก",
     "pamm_subscriptions" => "การสมัครสมาชิก PAMM",
     "pamm_return" => "ผลตอบแทน PAMM",
-    "valid_until" => "ใช้ได้จนถึง"
+    "valid_until" => "ใช้ได้จนถึง",
+    "select_product" => "เลือกผลิตภัณฑ์"
 ];

@@ -503,4 +503,5 @@ return [
     "pamm_subscriptions" => "PAMM Subscription",
     "pamm_return" => "PAMM Return",
     "valid_until" => "Valid Until",
+    "select_product" => "Select Product",
 ];

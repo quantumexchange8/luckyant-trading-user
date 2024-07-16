@@ -502,5 +502,6 @@ return [
     "subscription_package" => "订阅套餐",
     "pamm_subscriptions" => "PAMM 订阅",
     "pamm_return" => "PAMM 回报",
-    "valid_until" => "有效期至"
+    "valid_until" => "有效期至",
+    "select_product" => "选择产品",
 ];

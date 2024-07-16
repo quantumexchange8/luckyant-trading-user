@@ -15,6 +15,8 @@ class PammSubscription extends Model
         'master_id',
         'master_meta_login',
         'subscription_amount',
+        'subscription_package_id',
+        'subscription_package_product',
         'type',
         'transaction_id',
         'subscription_number',

@@ -9,7 +9,7 @@ import {ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 
 const page = usePage();
-const hasPammMasters = ref(page.props.hasPammMasters);
+const currentDomain = window.location.hostname;
 </script>
 
 <template>
@@ -45,6 +45,7 @@ const hasPammMasters = ref(page.props.hasPammMasters);
         </SidebarLink>
 
         <SidebarCollapsible
+            v-if="currentDomain !== 'member.luckyantmallvn.com'"
             :title="$t('public.sidebar.copy_trading')"
             :active="route().current('trading.*')"
         >

@@ -502,5 +502,6 @@ return [
     "subscription_package" => "구독 패키지",
     "pamm_subscriptions" => "PAMM 구독",
     "pamm_return" => "PAMM 수익",
-    "valid_until" => "유효 기간"
+    "valid_until" => "유효 기간",
+    "select_product" => "제품 선택"
 ];

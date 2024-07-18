@@ -202,9 +202,6 @@ class AccountInfoController extends Controller
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $wallet->type)])]);
         }
 
-        // check pamm group
-        $hasPammMasters = (new SidebarService())->hasPammMasters();
-
         // conduct deal and transaction record
         $deal = [];
 
@@ -309,55 +306,6 @@ class AccountInfoController extends Controller
                     'status' => 'Active',
                     'approval_date' => now() < $subscription->approval_date ? now()->addDay() : now(),
                 ]);
-            }
-        } elseif ($hasPammMasters) {
-            if ($subscriber) {
-                return redirect()->back()
-                    ->with('title', trans('public.server_under_maintenance'))
-                    ->with('warning', trans('public.try_again_later'));
-            } else {
-                $first_leader = $user->getFirstLeader();
-                $masterLeader = MasterLeader::where('leader_id', $first_leader->id)->first();
-                $masterAccount = Master::find($masterLeader->master_id);
-
-                $subscriberData = [];
-                if ($masterAccount->subscription_fee > 0) {
-                    $transaction_number = RunningNumberService::getID('transaction');
-
-                    $transaction = Transaction::create([
-                        'category' => 'wallet',
-                        'user_id' => $user->id,
-                        'from_wallet_id' => $wallet->id,
-                        'transaction_number' => $transaction_number,
-                        'transaction_type' => 'SubscriptionFee',
-                        'amount' => $masterAccount->subscription_fee,
-                        'transaction_charges' => 0,
-                        'transaction_amount' => $masterAccount->subscription_fee,
-                        'status' => 'Processing',
-                    ]);
-
-                    // Create diff subscriptions data
-                    $subscriberData = [
-                        'initial_subscription_fee' => $masterAccount->subscription_fee,
-                        'transaction_id' => $transaction->id,
-                    ];
-                }
-                $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
-
-                Subscriber::create($subscriberData + [
-                        'user_id' => $user->id,
-                        'trading_account_id' => $tradingAccount->id,
-                        'meta_login' => $meta_login,
-                        'initial_meta_balance' => $tradingAccount->balance,
-                        'master_id' => $masterAccount->id,
-                        'master_meta_login' => $masterAccount->meta_login,
-                        'roi_period' => $masterAccount->roi_period,
-                        'subscribe_amount' => $tradingAccount->balance,
-                        'status' => 'Pending',
-                        'max_out_amount' => $amount * $request->multiplier
-                    ]);
-
-                (new MetaFiveService())->disableTrade($meta_login);
             }
         }
 

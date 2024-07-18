@@ -40,6 +40,7 @@ const form = useForm({
     amount: null,
     amount_package_id: '',
     package_product: '',
+    delivery_address: '',
     terms: '',
 })
 

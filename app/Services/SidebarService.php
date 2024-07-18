@@ -2,28 +2,31 @@
 
 namespace App\Services;
 
-use App\Models\MasterLeader;
+use App\Models\Master;
 use App\Models\User;
 
 class SidebarService {
-    public function hasPammMasters(): bool
+    public function getMasterVisibility(): bool
     {
         $user = \Auth::user();
 
-        $pammMasters = MasterLeader::all();
+        $pammMasters = Master::where('category', 'pamm')
+            ->get();
 
         foreach ($pammMasters as $master) {
-            $leader = User::find($master->leader_id);
+            $leaderIds = json_decode($master->not_visible_to, true);
 
-            if ($leader) {
+            foreach ($leaderIds as $leaderId) {
+                $leader = User::find($leaderId);
+
                 $childrenIds = $leader->getChildrenIds();
+                $childrenIds[] = $leaderId;
 
                 if ($user && in_array($user->id, $childrenIds)) {
-                    return true;
+                    return false;
                 }
             }
         }
-
-        return false;
+        return true;
     }
 }

@@ -18,6 +18,7 @@ use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
 use App\Services\SelectOptionService;
+use App\Services\SidebarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,12 @@ class PammController extends Controller
 {
     public function pamm_master_listing()
     {
+        $getMasterVisibility = (new SidebarService())->getMasterVisibility();
+
+        if (!$getMasterVisibility) {
+            return redirect()->route('dashboard');
+        }
+
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
             'terms' => Term::where('type', 'subscribe')->first(),
         ]);

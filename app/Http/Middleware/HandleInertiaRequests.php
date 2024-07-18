@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
             'warning' => session('warning'),
             'auth.user.wallets' => fn() => $request->user() ? $request->user()->wallets : null,
             'locale' => session('locale') ? session('locale') : app()->getLocale(),
-            'hasPammMasters' => $sidebarService->hasPammMasters(),
+            'getMasterVisibility' => $sidebarService->getMasterVisibility(),
         ];
     }
 }

@@ -18,6 +18,8 @@ const user = page.props.auth.user;
 const shouldShowSidebar = computed(() => {
     return currentDomain !== 'member.luckyantfxgroup.com' || (currentDomain === 'member.luckyantfxgroup.com' && user.is_public);
 });
+
+const getMasterVisibility = ref(page.props.getMasterVisibility);
 </script>
 
 <template>
@@ -112,7 +114,7 @@ const shouldShowSidebar = computed(() => {
 <!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
-            v-if="shouldShowSidebar"
+            v-if="shouldShowSidebar && getMasterVisibility"
             title="PAMM"
             :active="route().current('pamm.*')"
         >

@@ -507,4 +507,5 @@ return [
     "product" => "Sản phẩm",
     "fund" => "Quỹ",
     "delivery_address" => "Địa chỉ giao hàng",
+    "pamm_esg" => "Đầu tư PAMM ESG",
 ];

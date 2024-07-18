@@ -507,4 +507,5 @@ return [
     "product" => "Product",
     "fund" => "Fund",
     "delivery_address" => "Delivery Address",
+    "pamm_esg" => "PAMM ESG Investment",
 ];

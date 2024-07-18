@@ -507,4 +507,5 @@ return [
     "product" => "ผลิตภัณฑ์",
     "fund" => "กองทุน",
     "delivery_address" => "ที่อยู่ในการจัดส่ง",
+    "pamm_esg" => "การลงทุน PAMM ESG",
 ];

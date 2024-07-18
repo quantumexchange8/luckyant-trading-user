@@ -337,6 +337,23 @@ watchEffect(() => {
                     <InputError :message="form.errors.package_product" class="mt-2" />
                 </RadioGroup>
             </div>
+            <div
+                v-if="masterAccount.delivery_requirement && depositAmount"
+                class="w-full space-y-2"
+            >
+                <Label
+                    for="delivery_address"
+                    :value="$t('public.delivery_address')"
+                />
+                <Input
+                    id="delivery_address"
+                    type="text"
+                    class="block w-full"
+                    v-model="form.delivery_address"
+                    :invalid="form.errors.delivery_address"
+                />
+                <InputError :message="form.errors.delivery_address" />
+            </div>
 
             <Modal :show="confirmModal" :title="$t('public.confirm_submit')" @close="cancelSubmit">
                 <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">

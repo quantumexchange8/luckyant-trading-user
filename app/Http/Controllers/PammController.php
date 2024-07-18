@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FollowPammRequest;
 use App\Http\Requests\JoinPammRequest;
 use App\Models\Master;
 use App\Models\MasterManagementFee;
@@ -151,7 +152,7 @@ class PammController extends Controller
         });
     }
 
-    public function followPammMaster(Request $request)
+    public function followPammMaster(JoinPammRequest $request)
     {
         $user = Auth::user();
         $meta_login = $request->meta_login;
@@ -204,6 +205,7 @@ class PammController extends Controller
                 'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
                 'expired_date' => now()->addDays($masterAccount->join_period)->endOfDay(),
                 'max_out_amount' => $max_out_amount,
+                'delivery_address' => $request->delivery_address,
                 'status' => 'Pending'
             ]);
         } else {

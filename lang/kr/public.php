@@ -506,4 +506,5 @@ return [
     "select_product" => "제품 선택",
     "product" => "제품",
     "fund" => "펀드",
+    "delivery_address" => "배송 주소",
 ];

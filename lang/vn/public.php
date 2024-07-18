@@ -506,4 +506,5 @@ return [
     "select_product" => "Chọn sản phẩm",
     "product" => "Sản phẩm",
     "fund" => "Quỹ",
+    "delivery_address" => "Địa chỉ giao hàng",
 ];

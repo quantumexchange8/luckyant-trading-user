@@ -118,6 +118,11 @@ const columns = [
         cell: info => info.getValue() + ' ' + trans('public.days'),
     },
     {
+        accessorKey: 'join_days',
+        header: 'join_day',
+        cell: info => info.getValue() + ' ' + trans('public.days'),
+    },
+    {
         accessorKey: 'status',
         header: 'status',
         enableSorting: false,

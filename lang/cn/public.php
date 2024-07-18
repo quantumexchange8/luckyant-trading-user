@@ -506,4 +506,5 @@ return [
     "select_product" => "选择产品",
     "product" => "产品",
     "fund" => "基金",
+    "delivery_address" => "送货地址",
 ];

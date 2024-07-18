@@ -506,4 +506,5 @@ return [
     "select_product" => "Pilih Produk",
     "product" => "Produk",
     "fund" => "Dana",
+    "delivery_address" => "Alamat Pengiriman",
 ];

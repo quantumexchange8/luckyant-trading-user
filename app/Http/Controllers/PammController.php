@@ -362,6 +362,8 @@ class PammController extends Controller
                 'master_id' => $masterAccount->id,
                 'master_meta_login' => $masterAccount->meta_login,
                 'subscription_amount' => $amount/2,
+                'subscription_package_id' => $request->amount_package_id,
+                'subscription_package_product' => $request->package_product,
                 'type' => $masterAccount->type,
                 'subscription_number' => RunningNumberService::getID('subscription'),
                 'subscription_period' => $masterAccount->join_period,
@@ -369,7 +371,8 @@ class PammController extends Controller
                 'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
                 'expired_date' => $masterAccount->join_period > 0 ? now()->addDays($masterAccount->join_period)->endOfDay() : null,
                 'max_out_amount' => $max_out_amount,
-                'status' => 'Pending'
+                'status' => 'Pending',
+                'delivery_address' => $request->delivery_address,
             ]);
         }
 

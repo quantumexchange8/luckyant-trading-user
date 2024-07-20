@@ -80,7 +80,7 @@ const submit = () => {
     let numericDepositAmount;
 
     if (typeof depositAmount === 'object' && depositAmount !== null) {
-        numericDepositAmount = depositAmount.value.value ?? 0;
+        numericDepositAmount = depositAmount.value ?? 0;
     } else if (typeof depositAmount === 'string') {
         numericDepositAmount = depositAmount.value;
     } else {

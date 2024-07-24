@@ -8,6 +8,7 @@ import GuestLayout from '@/Layouts/Guest.vue'
 import Input from '@/Components/Input.vue'
 import Label from '@/Components/Label.vue'
 import ValidationErrors from '@/Components/ValidationErrors.vue'
+import {onMounted, ref} from "vue";
 
 defineProps({
     canResetPassword: Boolean,
@@ -25,6 +26,15 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     })
 }
+
+const currentDomain = window.location.hostname;
+const canRegister = ref(true);
+
+onMounted(() => {
+    if (currentDomain === 'member.luckyantmallvn.com') {
+        canRegister.value = false
+    }
+})
 </script>
 
 <template>
@@ -75,7 +85,7 @@ const submit = () => {
                     </Button>
                 </div>
 
-                <p class="text-sm text-gray-600 dark:text-gray-400">
+                <p v-if="canRegister" class="text-sm text-gray-600 dark:text-gray-400">
                     {{ $t('public.not_have_account') }}
                     <Link :href="route('register')" class="text-primary-600 hover:underline">
                         {{ $t('public.register') }}

@@ -50,7 +50,7 @@ const windowOrigin = window.location.origin;
 
 const filteredPaymentTypes = computed(() => {
     if (windowOrigin === 'https://member.luckyantmallvn.com') {
-        return paymentType.filter(type => type.name !== 'payment_merchant');
+        return paymentType.filter(type => type.name === 'payment_service');
     }
     return paymentType;
 });

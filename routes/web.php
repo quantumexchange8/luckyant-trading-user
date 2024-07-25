@@ -154,6 +154,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/getMasterSubscriptionPackages', [PammController::class, 'getMasterSubscriptionPackages'])->name('pamm.getMasterSubscriptionPackages');
 
         Route::post('/followPammMaster', [PammController::class, 'followPammMaster'])->name('pamm.followPammMaster');
+        Route::post('/topUpPamm', [PammController::class, 'topUpPamm'])->name('pamm.topUpPamm');
 
         // pamm subscriptions
         Route::get('/pamm_subscriptions', [PammController::class, 'pamm_subscriptions'])->name('pamm.pamm_subscriptions');

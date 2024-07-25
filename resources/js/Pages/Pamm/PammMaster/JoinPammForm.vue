@@ -21,10 +21,10 @@ const tradingAccountsSel = ref();
 const loading = ref('Loading..');
 const { formatAmount } = transactionFormat();
 const confirmModal = ref(false);
-const amount = ref(null);
+const amount = ref();
 const amountReturned = ref(0);
 const subscriptionPackages = ref(null);
-const depositAmount = ref(null);
+const depositAmount = ref();
 
 const openSubscribeAccountModal = () => {
     subscribeAccountModal.value = true;
@@ -46,7 +46,7 @@ const form = useForm({
 
 const getTradingAccounts = async () => {
     try {
-        const response = await axios.get('/account_info/getTradingAccounts?type=subscribe&meta_login=' + props.masterAccount.meta_login);
+        const response = await axios.get('/account_info/getTradingAccounts?type=pamm&meta_login=' + props.masterAccount.meta_login);
         tradingAccountsSel.value = response.data;
         form.meta_login = tradingAccountsSel.value.length > 0 ? tradingAccountsSel.value[0].value : null;
     } catch (error) {
@@ -73,21 +73,24 @@ watch(depositAmount, (newAmount) => {
 
 const submit = () => {
     const selectedTradingAccount = tradingAccountsSel.value.find(account => account.value === form.meta_login);
-    if (selectedTradingAccount){
+    if (selectedTradingAccount) {
         const label = selectedTradingAccount.label;
         const amountString = label.split('(')[1].split(')')[0];
-        amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));
-        amountReturned.value = (amount.value % 100).toFixed(2);
-        amount.value = (amount.value - amountReturned.value).toFixed(2);
-        amount.value = depositAmount.value.amount
-    };
+
+        if (amount > 0) {
+            amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));
+            amountReturned.value = (amount.value % 100).toFixed(2);
+            amount.value = (amount.value - amountReturned.value).toFixed(2);
+            amount.value = depositAmount.value.amount
+        }
+    }
     confirmModal.value = true;
 };
 
 
 const confirmSubmit = () => {
     form.amount = amount.value;
-    form.amount_package_id = depositAmount.value.value;
+    form.amount_package_id = depositAmount.value ? depositAmount.value.value : null;
 
     form.post(route('pamm.followPammMaster'), {
         onSuccess: () => {
@@ -225,7 +228,6 @@ watchEffect(() => {
                 </div>
             </div>
             <div
-                v-if="masterAccount.type === 'Standard'"
                 class="space-y-2 mb-4"
             >
                 <Label

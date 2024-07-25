@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MasterLeader;
+use App\Models\PammSubscription;
 use App\Models\Subscriber;
 use App\Models\SubscriptionBatch;
 use App\Models\User;
@@ -126,6 +127,8 @@ class AccountInfoController extends Controller
             $activeSubscriber = Subscriber::with(['master', 'master.tradingUser'])
                 ->where('meta_login', $tradingAccount->meta_login);
 
+            $pammSubscription = PammSubscription::where('meta_login', $tradingAccount->meta_login);
+
             // Get the latest unsubscribed and subscribing subscribers
             $latestUnsubscribed = $activeSubscriber->clone()->where('status', 'Unsubscribed')->latest()->first();
             $latestSubscribing = $activeSubscriber->clone()->where('status', 'Subscribing')->latest()->first();
@@ -135,10 +138,14 @@ class AccountInfoController extends Controller
                 $tradingAccount->balance_out = false;
             } elseif ($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->exists()) {
                 $tradingAccount->balance_out = false;
+            } elseif ($pammSubscription->whereIn('status', ['Pending', 'Active'])->exists()) {
+                $tradingAccount->balance_out = false;
+                $tradingAccount->balance_in = false;
             } elseif ($tradingAccount->demo_fund > 0) {
                 $tradingAccount->balance_out = false;
             } else {
                 $tradingAccount->balance_out = true;
+                $tradingAccount->balance_in = true;
             }
 
             // Set the latest subscribing subscriber
@@ -624,6 +631,13 @@ class AccountInfoController extends Controller
         } elseif ($request->type == 'subscribe') {
             $tradingAccount = TradingAccount::where('user_id', Auth::id())
                 ->whereDoesntHave('subscription', function ($subQuery) {
+                    $subQuery->whereIn('status', ['Pending', 'Active']);
+                })
+                ->whereNot('meta_login', $request->meta_login)
+                ->get();
+        } elseif ($request->type == 'pamm') {
+            $tradingAccount = TradingAccount::where('user_id', Auth::id())
+                ->whereDoesntHave('pamm_subscription', function ($subQuery) {
                     $subQuery->whereIn('status', ['Pending', 'Active']);
                 })
                 ->whereNot('meta_login', $request->meta_login)

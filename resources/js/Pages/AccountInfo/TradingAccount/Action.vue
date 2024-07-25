@@ -68,7 +68,7 @@ const closeModal = () => {
         class="flex justify-center gap-2 w-full"
         v-slot="{ iconSizeClasses }"
         @click="openAccountActionModal('deposit')"
-        v-if="!props.type && !(account.active_subscriber && account.active_subscriber.status === 'Subscribing' && account.active_subscriber.master.type === 'PAMM')"
+        v-if="!props.type && !(account.active_subscriber && account.active_subscriber.status === 'Subscribing' && account.active_subscriber.master.type === 'PAMM') && account.balance_in"
     >
         <CreditCardAddIcon />
         {{ $t('public.balance_in') }}

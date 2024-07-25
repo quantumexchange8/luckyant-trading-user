@@ -1,14 +1,16 @@
 import './bootstrap'
 import '../css/app.css'
+import Aura from '../css/presets/aura'
 
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'
 import { i18nVue } from 'laravel-vue-i18n'
+import PrimeVue from 'primevue/config';
 
 const appName =
-    window.document.getElementsByTagName('title')[0]?.innerText || 'K UI'
+    window.document.getElementsByTagName('title')[0]?.innerText || 'Luckyant Trading'
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -27,6 +29,10 @@ createInertiaApp({
                     if (typeof langs[`../../lang/${lang}.json`] == "undefined") return; //Temporary workaround
                     return await langs[`../../lang/${lang}.json`]();
                 }
+            })
+            .use(PrimeVue, {
+                unstyled: true,
+                pt: Aura                            //apply preset
             })
             .mount(el)
     },

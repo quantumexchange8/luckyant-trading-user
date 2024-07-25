@@ -12,14 +12,11 @@ class JoinPammRequest extends FormRequest
         $master = Master::find($this->master_id);
 
         $rules = [
+            'meta_login' => ['required'],
             'amount' => ['required'],
             'package_product' => ['required'],
             'terms' => ['accepted'],
         ];
-
-        if ($master->type == 'Standard') {
-            $rules['meta_login'] = ['required'];
-        }
 
         if ($master->delivery_requirement) {
             $rules['delivery_address'] = ['required'];
@@ -36,7 +33,7 @@ class JoinPammRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'amount' => trans('public.amount'),
+            'amount' => trans('public.package'),
             'meta_login' => trans('public.account_no'),
             'package_product' => trans('public.select_product'),
             'delivery_address' => trans('public.delivery_address'),

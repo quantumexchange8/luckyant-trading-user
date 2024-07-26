@@ -156,6 +156,8 @@ class PammController extends Controller
         if ($request->amount_package_id) {
             $package = MasterSubscriptionPackage::find($request->amount_package_id);
             $max_out_amount = $package->max_out_amount;
+        } else {
+            $package = MasterSubscriptionPackage::where('master_id', $masterAccount->id)->first();
         }
 
         $metaService = new MetaFiveService();
@@ -204,6 +206,10 @@ class PammController extends Controller
 
         if ($tradingAccount->balance < $masterAccount->min_join_equity || $tradingAccount->balance < ($amount + $masterAccount->subscription_fee) || $tradingAccount->balance < $amount) {
             throw ValidationException::withMessages(['meta_login' => trans('public.insufficient_balance')]);
+        }
+
+        if ($masterAccount->type == 'ESG' && $tradingAccount->balance < $package->amount) {
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
         }
 
         // Calculate the balance from package amount and trading acc balance

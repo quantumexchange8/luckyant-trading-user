@@ -389,6 +389,7 @@ watchEffect(() => {
                     mode="currency"
                     currency="USD"
                     fluid
+                    :invalid="!!form.errors.amount"
                 >
                     <template #incrementbuttonicon>
                         <PlusIcon class="w-5 h-5"/>

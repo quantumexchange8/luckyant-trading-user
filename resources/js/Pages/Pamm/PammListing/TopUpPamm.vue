@@ -8,7 +8,8 @@ import Label from "@/Components/Label.vue";
 import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
-import Slider from 'primevue/slider';
+import {MinusIcon, PlusIcon} from "@heroicons/vue/outline";
+import InputNumber from "primevue/inputnumber";
 
 const props = defineProps({
     pamm: Object,
@@ -159,26 +160,30 @@ const submit = () => {
                 <Label
                     class="w-full text-gray-600 dark:text-white"
                     for="top_up_amount"
-                    :value="$t('public.top_up_amount') + ' ($ 1,000 = 1 ' + $t('public.product') + ')'"
+                    :value="$t('public.top_up_amount')"
                 />
-                <Input
-                    id="eWalletAmount"
-                    type="number"
-                    class="block w-full"
-                    :placeholder="$t('public.top_up_amount')"
-                    v-model="top_up_amount"
-                    readonly
-                />
-                <div class="my-2 text-xs text-gray-500">
-                    {{ (productQuantity ?? 0) + ' ' + $t('public.product') }}
-                </div>
-                <Slider
+                <InputNumber
                     v-model="top_up_amount"
                     class="w-full"
-                    :max="10000"
+                    inputId="horizontal-buttons"
+                    showButtons
+                    buttonLayout="horizontal"
                     :min="1000"
                     :step="1000"
-                />
+                    mode="currency"
+                    currency="USD"
+                    fluid
+                >
+                    <template #incrementbuttonicon>
+                        <PlusIcon class="w-5 h-5"/>
+                    </template>
+                    <template #decrementbuttonicon>
+                        <MinusIcon class="w-5 h-5" />
+                    </template>
+                </InputNumber>
+                <div class="text-sm text-gray-500">
+                    {{ (productQuantity ?? 0) + ' ' + $t('public.product') }}
+                </div>
                 <InputError :message="form.errors.top_up_amount" />
             </div>
 

@@ -10,6 +10,8 @@ import {useForm, usePage} from "@inertiajs/vue3";
 import Input from "@/Components/Input.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
+import InputNumber from 'primevue/inputnumber';
+import {PlusIcon, MinusIcon} from "@heroicons/vue/outline";
 
 const props = defineProps({
     masterAccount: Object,
@@ -25,6 +27,7 @@ const amount = ref();
 const amountReturned = ref(0);
 const subscriptionPackages = ref(null);
 const depositAmount = ref();
+const productQuantity = ref();
 
 const openSubscribeAccountModal = () => {
     subscribeAccountModal.value = true;
@@ -68,7 +71,12 @@ const getMasterSubscriptionPackages = async () => {
 getMasterSubscriptionPackages();
 
 watch(depositAmount, (newAmount) => {
-    amount.value = newAmount.amount
+    if (typeof newAmount === 'number') {
+        amount.value = newAmount
+        productQuantity.value = newAmount / 1000;
+    } else {
+        amount.value = newAmount.amount
+    }
 })
 
 const submit = () => {
@@ -77,9 +85,12 @@ const submit = () => {
         const label = selectedTradingAccount.label;
         const amountString = label.split('(')[1].split(')')[0];
 
-        if (amount > 0) {
+        if (typeof amount.value === 'number') {
+            amountReturned.value = (amount.value % 1000).toFixed(2);
+            amount.value = (amount.value - amountReturned.value).toFixed(2);
+        } else if (amount > 0) {
             amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));
-            amountReturned.value = (amount.value % 100).toFixed(2);
+            amountReturned.value = (amount.value % 1000).toFixed(2);
             amount.value = (amount.value - amountReturned.value).toFixed(2);
             amount.value = depositAmount.value.amount
         }
@@ -253,7 +264,7 @@ watchEffect(() => {
                 </div>
                 <InputError :message="form.errors.meta_login" />
             </div>
-            <div class="w-full space-y-2">
+            <div v-if="masterAccount.type !== 'ESG'" class="w-full space-y-2">
                 <Label
                     for="amount"
                     :value="$t('public.subscription_package')"
@@ -296,7 +307,7 @@ watchEffect(() => {
                 </RadioGroup>
             </div>
             <div
-                v-if="depositAmount"
+                v-if="masterAccount.type !== 'ESG' && depositAmount"
                 class="w-full space-y-2"
             >
                 <Label
@@ -356,6 +367,40 @@ watchEffect(() => {
                     :invalid="form.errors.delivery_address"
                 />
                 <InputError :message="form.errors.delivery_address" />
+            </div>
+
+            <!-- ESG -->
+            <div
+                v-if="masterAccount.type === 'ESG'"
+                class="w-full space-y-2"
+            >
+                <Label
+                    for="subscribe_amount"
+                    :value="$t('public.amount')"
+                />
+                <InputNumber
+                    v-model="depositAmount"
+                    class="w-full"
+                    inputId="horizontal-buttons"
+                    showButtons
+                    buttonLayout="horizontal"
+                    :min="1000"
+                    :step="1000"
+                    mode="currency"
+                    currency="USD"
+                    fluid
+                >
+                    <template #incrementbuttonicon>
+                        <PlusIcon class="w-5 h-5"/>
+                    </template>
+                    <template #decrementbuttonicon>
+                        <MinusIcon class="w-5 h-5" />
+                    </template>
+                </InputNumber>
+                <div class="text-sm text-gray-500">
+                    {{ (productQuantity ?? 0) + ' ' + $t('public.product') }}
+                </div>
+                <InputError :message="form.errors.amount" />
             </div>
 
             <Modal :show="confirmModal" :title="$t('public.confirm_submit')" @close="cancelSubmit">

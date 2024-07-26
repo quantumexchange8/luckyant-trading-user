@@ -6,11 +6,9 @@ import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import Input from "@/Components/Input.vue";
 import {computed, ref, watch} from "vue";
 import Button from "@/Components/Button.vue";
-import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
 import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
 import {usePage} from "@inertiajs/vue3";
-import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
 import JoinPammForm from "@/Pages/Pamm/PammMaster/JoinPammForm.vue";
 import NoData from "@/Components/NoData.vue";
 
@@ -89,7 +87,10 @@ const clearFilter = () => {
 }
 
 const currentLocale = ref(usePage().props.locale);
-
+const openDetails = (masterAccountID) => {
+    const detailUrl = `/trading/master_listing/${masterAccountID}`;
+    window.location.href = detailUrl;
+}
 </script>
 
 <template>
@@ -234,10 +235,20 @@ const currentLocale = ref(usePage().props.locale);
                         </div>
                     </div>
 
-                    <JoinPammForm
-                        :masterAccount="masterAccount"
-                        :terms="terms"
-                    />
+                    <div class="flex w-full gap-2 items-center">
+                        <JoinPammForm
+                            :masterAccount="masterAccount"
+                            :terms="terms"
+                        />
+                        <Button
+                            type="button"
+                            variant="primary-transparent"
+                            class="w-full flex justify-center"
+                            @click.prevent="openDetails(masterAccount.id)"
+                        >
+                            {{ $t('public.view_details') }}
+                        </Button>
+                    </div>
                 </div>
             </div>
             <div v-else class="text-2xl flex w-full items-center justify-center">

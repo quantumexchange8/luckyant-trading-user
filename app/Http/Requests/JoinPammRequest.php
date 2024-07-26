@@ -14,11 +14,11 @@ class JoinPammRequest extends FormRequest
         $rules = [
             'meta_login' => ['required'],
             'amount' => ['required'],
-            'package_product' => ['required'],
             'terms' => ['accepted'],
         ];
 
         if ($master->delivery_requirement) {
+            $rules['package_product'] = ['required'];
             $rules['delivery_address'] = ['required'];
         }
 

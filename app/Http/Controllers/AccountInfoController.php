@@ -138,9 +138,10 @@ class AccountInfoController extends Controller
                 $tradingAccount->balance_out = false;
             } elseif ($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->exists()) {
                 $tradingAccount->balance_out = false;
-            } elseif ($pammSubscription->whereIn('status', ['Pending', 'Active'])->exists()) {
+            } elseif ((clone $pammSubscription)->whereIn('status', ['Pending', 'Active'])->exists()) {
                 $tradingAccount->balance_out = false;
                 $tradingAccount->balance_in = false;
+                $tradingAccount->pamm_subscription = $pammSubscription->where('status', 'Active')->with(['master', 'master.tradingUser'])->latest()->first();
             } elseif ($tradingAccount->demo_fund > 0) {
                 $tradingAccount->balance_out = false;
             } else {
@@ -633,11 +634,17 @@ class AccountInfoController extends Controller
                 ->whereDoesntHave('subscription', function ($subQuery) {
                     $subQuery->whereIn('status', ['Pending', 'Active']);
                 })
+                ->whereDoesntHave('pamm_subscription', function ($subQuery) {
+                    $subQuery->whereIn('status', ['Pending', 'Active']);
+                })
                 ->whereNot('meta_login', $request->meta_login)
                 ->get();
         } elseif ($request->type == 'pamm') {
             $tradingAccount = TradingAccount::where('user_id', Auth::id())
                 ->whereDoesntHave('pamm_subscription', function ($subQuery) {
+                    $subQuery->whereIn('status', ['Pending', 'Active']);
+                })
+                ->whereDoesntHave('subscription', function ($subQuery) {
                     $subQuery->whereIn('status', ['Pending', 'Active']);
                 })
                 ->whereNot('meta_login', $request->meta_login)

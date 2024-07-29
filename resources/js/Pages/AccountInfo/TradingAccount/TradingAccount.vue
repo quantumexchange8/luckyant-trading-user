@@ -160,12 +160,22 @@ const currentLocale = ref(usePage().props.locale);
                     <div class="text-xs font-normal">
                         {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
                     </div>
-                    <div class="border-l pl-3 border-gray-400 dark:border-gray-600 text-xs font-normal" v-if="account.active_subscriber && account.active_subscriber.status === 'Subscribing'">
-                        <div v-if="currentLocale === 'en'">
-                            {{ $t('public.master') }}: {{ account.active_subscriber?.master?.trading_user?.name }}
+                    <div class="border-l pl-3 border-gray-400 dark:border-gray-600 text-xs font-normal" v-if="account.active_subscriber && account.active_subscriber.status === 'Subscribing' || account.pamm_subscription">
+                        <div v-if="account.active_subscriber">
+                            <div v-if="currentLocale === 'en'">
+                                {{ $t('public.master') }}: {{ account.active_subscriber?.master?.trading_user?.name }}
+                            </div>
+                            <div v-if="currentLocale === 'cn'">
+                                {{ $t('public.master') }}: {{ account.active_subscriber?.master?.trading_user?.company ? account.active_subscriber?.master?.trading_user?.company : account.active_subscriber?.master?.trading_user?.name}}
+                            </div>
                         </div>
-                        <div v-if="currentLocale === 'cn'">
-                            {{ $t('public.master') }}: {{ account.active_subscriber?.master?.trading_user?.company ? account.active_subscriber?.master?.trading_user?.company : account.active_subscriber?.master?.trading_user?.name}}
+                        <div v-if="account.pamm_subscription">
+                            <div v-if="currentLocale === 'cn'">
+                                {{ $t('public.master') }}: {{ account.pamm_subscription?.master?.trading_user?.company ? account.pamm_subscription?.master?.trading_user?.company : account.pamm_subscription?.master?.trading_user?.name}}
+                            </div>
+                            <div v-else>
+                                {{ $t('public.master') }}: {{ account.pamm_subscription?.master?.trading_user?.name }}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CopyTradeHistory;
+use App\Models\PammSubscription;
 use App\Models\PerformanceIncentive;
 use App\Models\Subscription;
 use App\Models\TradeHistory;
@@ -154,6 +155,10 @@ class DashboardController extends Controller
             ->where('status', 'Active')
             ->sum('meta_balance');
 
+        $totalPamm = PammSubscription::where('user_id',$user->id)
+            ->where('status', 'Active')
+            ->sum('subscription_amount');
+
         $totalWithdrawal = $transaction->where('transaction_type', 'Withdrawal')->sum('amount');
 
         $totalProfit = Transaction::where('user_id', $user->id)
@@ -174,7 +179,7 @@ class DashboardController extends Controller
         $performanceIncentive = PerformanceIncentive::where('user_id', $user->id)->sum('personal_bonus_amt');
 
         return response()->json([
-            'totalDeposit' => $totalDeposit,
+            'totalDeposit' => $totalDeposit + $totalPamm,
             'totalWithdrawal' => $totalWithdrawal,
             'totalProfit' => $totalProfit,
             'totalRebateEarn' => $tradeRebateSummary->sum('rebate'),

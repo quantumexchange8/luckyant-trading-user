@@ -39,7 +39,7 @@ class PammController extends Controller
         }
 
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
-            'terms' => Term::where('type', 'subscribe')->first(),
+            'terms' => Term::where('type', 'pamm_esg')->first(),
         ]);
     }
 
@@ -340,7 +340,7 @@ class PammController extends Controller
     public function pamm_subscriptions()
     {
         return Inertia::render('Pamm/PammListing/PammListing', [
-            'terms' => Term::where('type', 'subscribe')->first(),
+            'terms' => Term::where('type', 'pamm_esg')->first(),
             'getTradingAccounts' => (new SelectOptionService())->getTradingAccounts(),
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
         ]);
@@ -588,8 +588,10 @@ class PammController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'top_up_amount' => ['required', 'numeric'],
+            'terms' => ['accepted'],
         ])->setAttributeNames([
             'top_up_amount' => trans('public.top_up_amount'),
+            'terms' => trans('public.terms_and_conditions'),
         ]);
         $validator->validate();
 

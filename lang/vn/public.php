@@ -508,4 +508,6 @@ return [
     "fund" => "Quỹ",
     "delivery_address" => "Địa chỉ giao hàng",
     "pamm_esg" => "Đầu tư PAMM ESG",
+    "top_up" => "Nạp tiền",
+    "top_up_amount" => "Số tiền nạp",
 ];

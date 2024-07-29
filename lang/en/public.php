@@ -508,4 +508,6 @@ return [
     "fund" => "Fund",
     "delivery_address" => "Delivery Address",
     "pamm_esg" => "PAMM ESG Investment",
+    "top_up" => "Top Up",
+    "top_up_amount" => "Top Up Amount",
 ];

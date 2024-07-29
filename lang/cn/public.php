@@ -507,5 +507,7 @@ return [
     "product" => "产品",
     "fund" => "基金",
     "delivery_address" => "送货地址",
-    "pamm_esg" => "PAMM ESG 投资"
+    "pamm_esg" => "PAMM ESG 投资",
+    "top_up" => "充值",
+    "top_up_amount" => "充值金额",
 ];

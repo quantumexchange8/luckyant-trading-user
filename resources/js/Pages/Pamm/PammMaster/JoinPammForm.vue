@@ -478,16 +478,5 @@ watchEffect(() => {
 
     <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
         <div v-html="terms.contents" class="prose dark:text-white"></div>
-        <div class="pt-4">
-            <div class="text-gray-600 dark:text-gray-400">
-                {{ $t('public.management_fee') }}
-            </div>
-            <div
-                v-for="management_fee in masterAccount.master_management_fee"
-                class="text-sm font-semibold dark:text-white"
-            >
-                {{ management_fee.penalty_days }} {{ $t('public.days') }} - {{ formatAmount(management_fee.penalty_percentage, 0) }} %
-            </div>
-        </div>
     </Modal>
 </template>

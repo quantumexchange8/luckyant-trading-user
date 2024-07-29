@@ -508,4 +508,6 @@ return [
     "fund" => "펀드",
     "delivery_address" => "배송 주소",
     "pamm_esg" => "PAMM ESG 투자",
+    "top_up" => "충전",
+    "top_up_amount" => "충전 금액",
 ];

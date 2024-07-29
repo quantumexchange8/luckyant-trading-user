@@ -508,4 +508,6 @@ return [
     "fund" => "ファンド",
     "delivery_address" => "配送先住所",
     "pamm_esg" => "PAMM ESG 投資",
+    "top_up" => "トップアップ",
+    "top_up_amount" => "トップアップ金額",
 ];

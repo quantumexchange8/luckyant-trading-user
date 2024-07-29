@@ -508,4 +508,6 @@ return [
     "fund" => "Dana",
     "delivery_address" => "Alamat Pengiriman",
     "pamm_esg" => "Investasi PAMM ESG",
+    "top_up" => "Isi Ulang",
+    "top_up_amount" => "Jumlah Isi Ulang",
 ];

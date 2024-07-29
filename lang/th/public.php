@@ -508,4 +508,6 @@ return [
     "fund" => "กองทุน",
     "delivery_address" => "ที่อยู่ในการจัดส่ง",
     "pamm_esg" => "การลงทุน PAMM ESG",
+    "top_up" => "เติมเงิน",
+    "top_up_amount" => "จำนวนเงินที่เติม",
 ];

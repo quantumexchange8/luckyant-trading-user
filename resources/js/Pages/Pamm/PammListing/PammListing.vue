@@ -243,6 +243,7 @@ const currentLocale = ref(usePage().props.locale);
                     <TopUpPamm
                         v-if="canTopUp"
                         :pamm="pamm"
+                        :terms="terms"
                         :walletSel="walletSel"
                     />
                 </div>

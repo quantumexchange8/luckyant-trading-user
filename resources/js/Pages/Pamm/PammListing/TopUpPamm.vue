@@ -10,9 +10,11 @@ import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import {MinusIcon, PlusIcon} from "@heroicons/vue/outline";
 import InputNumber from "primevue/inputnumber";
+import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps({
     pamm: Object,
+    terms: Object,
     walletSel: Array
 })
 
@@ -37,6 +39,7 @@ const form = useForm({
     cashWalletAmount: 0,
     maxEWalletAmount: 0,
     minEWalletAmount: 0,
+    terms: ''
 })
 
 const top_up_amount = ref(null);
@@ -78,6 +81,16 @@ const submit = () => {
         },
     });
 }
+
+const termsModal = ref(false);
+
+const openTermsModal = () => {
+    termsModal.value = true
+}
+
+const closeTermsModal = () => {
+    termsModal.value = false
+}
 </script>
 
 <template>
@@ -87,7 +100,7 @@ const submit = () => {
         class="w-full flex justify-center"
         @click="openTopUpModal"
     >
-        Top Up
+        {{ $t('public.top_up') }}
     </Button>
 
     <Modal :show="topUpModal" :title="$t('public.top_up')" @close="closeModal">
@@ -217,6 +230,24 @@ const submit = () => {
                     </div>
                 </div>
             </div>
+
+            <div class="flex items-center">
+                <div class="flex items-center h-5">
+                    <Checkbox id="terms" v-model="form.terms"/>
+                </div>
+                <div class="ml-3">
+                    <label for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
+                        {{ $t('public.agreement') }}
+                        <div
+                            class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
+                            @click="openTermsModal"
+                        >
+                            {{ $t('public.terms_and_conditions') }}
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <InputError :message="form.errors.terms" />
             <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
                 <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
                     {{$t('public.cancel')}}
@@ -224,5 +255,9 @@ const submit = () => {
                 <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
             </div>
         </form>
+    </Modal>
+
+    <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
+        <div v-html="terms.contents" class="prose dark:text-white"></div>
     </Modal>
 </template>

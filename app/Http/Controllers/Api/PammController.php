@@ -65,15 +65,15 @@ class PammController extends Controller
             'remarks' => 'China PAMM'
         ]);
 
-        $response = Http::post('https://api.luckyantmallvn.com/serverapi/pamm/subscription/join', $pamm_subscription);
-        \Log::debug($response);
+//        $response = Http::post('https://api.luckyantmallvn.com/serverapi/pamm/subscription/join', $pamm_subscription);
+//        \Log::debug($response);
 
         $pamm_subscription->delete();
 
         $masterAccount->total_fund += $result['amount'];
         $masterAccount->save();
-        $master_response = \Http::post('https://api.luckyantmallvn.com/serverapi/pamm/strategy', $masterAccount);
-        \Log::debug($master_response);
+//        $master_response = \Http::post('https://api.luckyantmallvn.com/serverapi/pamm/strategy', $masterAccount);
+//        \Log::debug($master_response);
 
         return response()->json([
             'status' => 'success',

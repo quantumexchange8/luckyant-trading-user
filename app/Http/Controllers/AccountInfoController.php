@@ -136,14 +136,17 @@ class AccountInfoController extends Controller
             // Check if the latest unsubscribed subscriber exists and its unsubscribe date is within the last 24 hours
             if ($latestUnsubscribed && \Carbon\Carbon::parse($latestUnsubscribed->unsubscribe_date)->greaterThan(\Carbon\Carbon::now()->subHours(24))) {
                 $tradingAccount->balance_out = false;
+                $tradingAccount->balance_in = true;
             } elseif ($activeSubscriber->whereIn('status', ['Subscribing', 'Expiring', 'Pending'])->exists()) {
                 $tradingAccount->balance_out = false;
+                $tradingAccount->balance_in = true;
             } elseif ((clone $pammSubscription)->whereIn('status', ['Pending', 'Active'])->exists()) {
                 $tradingAccount->balance_out = false;
                 $tradingAccount->balance_in = false;
                 $tradingAccount->pamm_subscription = $pammSubscription->where('status', 'Active')->with(['master', 'master.tradingUser'])->latest()->first();
             } elseif ($tradingAccount->demo_fund > 0) {
                 $tradingAccount->balance_out = false;
+                $tradingAccount->balance_in = true;
             } else {
                 $tradingAccount->balance_out = true;
                 $tradingAccount->balance_in = true;

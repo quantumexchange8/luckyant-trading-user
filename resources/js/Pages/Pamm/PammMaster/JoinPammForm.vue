@@ -264,7 +264,7 @@ watchEffect(() => {
                 </div>
                 <InputError :message="form.errors.meta_login" />
             </div>
-            <div v-if="masterAccount.type !== 'ESG'" class="w-full space-y-2">
+            <div v-if="masterAccount.type === 'Standard'" class="w-full space-y-2">
                 <Label
                     for="amount"
                     :value="$t('public.subscription_package')"
@@ -371,7 +371,7 @@ watchEffect(() => {
 
             <!-- ESG -->
             <div
-                v-if="masterAccount.type === 'ESG'"
+                v-if="masterAccount.type !== 'Standard'"
                 class="w-full space-y-2"
             >
                 <Label
@@ -398,8 +398,8 @@ watchEffect(() => {
                         <MinusIcon class="w-5 h-5" />
                     </template>
                 </InputNumber>
-                <div class="text-sm text-gray-500">
-                    {{ (productQuantity ?? 0) + ' ' + $t('public.product') }}
+                <div v-if="masterAccount.type === 'ESG'" class="text-sm text-gray-500">
+                    {{ $t('public.purchase_product_desc', { number: productQuantity ?? 0 }) }}
                 </div>
                 <InputError :message="form.errors.amount" />
             </div>

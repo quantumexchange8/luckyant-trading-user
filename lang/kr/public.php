@@ -510,4 +510,6 @@ return [
     "pamm_esg" => "PAMM ESG 투자",
     "top_up" => "충전",
     "top_up_amount" => "충전 금액",
+    "purchase_product_desc" => ":number 그루의 침향나무를 구매하기",
+    "join_amount" => "가입 금액",
 ];

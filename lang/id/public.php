@@ -510,4 +510,6 @@ return [
     "pamm_esg" => "Investasi PAMM ESG",
     "top_up" => "Isi Ulang",
     "top_up_amount" => "Jumlah Isi Ulang",
+    "purchase_product_desc" => "Untuk membeli :number pohon gaharu",
+    "join_amount" => "Jumlah Bergabung",
 ];

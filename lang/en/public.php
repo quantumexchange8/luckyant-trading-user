@@ -504,10 +504,12 @@ return [
     "pamm_return" => "PAMM Return",
     "valid_until" => "Valid Until",
     "select_product" => "Select Product",
-    "product" => "Product",
+    "product" => "Investment Portfolio",
     "fund" => "Fund",
     "delivery_address" => "Delivery Address",
     "pamm_esg" => "PAMM ESG Investment",
     "top_up" => "Top Up",
     "top_up_amount" => "Top Up Amount",
+    "purchase_product_desc" => "To purchase :number agarwood trees",
+    "join_amount" => "Join Amount",
 ];

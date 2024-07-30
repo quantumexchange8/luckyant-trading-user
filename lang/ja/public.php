@@ -510,4 +510,6 @@ return [
     "pamm_esg" => "PAMM ESG 投資",
     "top_up" => "トップアップ",
     "top_up_amount" => "トップアップ金額",
+    "purchase_product_desc" => ":number 個の沈香の木を購入するには",
+    "join_amount" => "参加金額",
 ];

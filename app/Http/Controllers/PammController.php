@@ -233,15 +233,15 @@ class PammController extends Controller
 
             $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
 
-            $deal = [];
-            try {
-                $deal = $metaService->createDeal($meta_login, $amount_balance, 'Package balance', dealAction::WITHDRAW);
-            } catch (\Exception $e) {
-                \Log::error('Error creating deal: ' . $e->getMessage());
-            }
-
             if ($remainingBalance > 0) {
                 if ($remainingBalance >= $amount_balance) {
+                    $deal = [];
+                    try {
+                        $deal = $metaService->createDeal($meta_login, $amount_balance, 'Package balance', dealAction::WITHDRAW);
+                    } catch (\Exception $e) {
+                        \Log::error('Error creating deal: ' . $e->getMessage());
+                    }
+
                     // Deduct full amount from e_wallet
                     $e_wallet->balance += $amount_balance;
                     $e_wallet->save();

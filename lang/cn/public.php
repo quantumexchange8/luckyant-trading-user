@@ -504,10 +504,12 @@ return [
     "pamm_return" => "PAMM 回报",
     "valid_until" => "有效期至",
     "select_product" => "选择产品",
-    "product" => "产品",
+    "product" => "投资组合",
     "fund" => "基金",
     "delivery_address" => "送货地址",
     "pamm_esg" => "PAMM ESG 投资",
     "top_up" => "充值",
     "top_up_amount" => "充值金额",
+    "purchase_product_desc" => "购买 :number 沉香树",
+    "join_amount" => "加入金额",
 ];

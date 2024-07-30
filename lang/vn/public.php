@@ -510,4 +510,6 @@ return [
     "pamm_esg" => "Đầu tư PAMM ESG",
     "top_up" => "Nạp tiền",
     "top_up_amount" => "Số tiền nạp",
+    "purchase_product_desc" => "Mua :number cây trầm hương",
+    "join_amount" => "Số tiền tham gia",
 ];

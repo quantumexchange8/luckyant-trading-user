@@ -11,14 +11,6 @@ import {usePage} from "@inertiajs/vue3";
 const page = usePage();
 const currentDomain = window.location.hostname;
 
-// Access the user object from the page props
-const user = page.props.auth.user;
-
-// Compute whether to show the sidebar based on the domain and user properties
-const shouldShowSidebar = computed(() => {
-    return currentDomain !== 'member.luckyantfxgroup.com' || (currentDomain === 'member.luckyantfxgroup.com' && user.is_public);
-});
-
 const getMasterVisibility = ref(page.props.getMasterVisibility);
 </script>
 
@@ -114,7 +106,7 @@ const getMasterVisibility = ref(page.props.getMasterVisibility);
 <!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
-            v-if="shouldShowSidebar && getMasterVisibility"
+            v-if="getMasterVisibility"
             title="PAMM"
             :active="route().current('pamm.*')"
         >

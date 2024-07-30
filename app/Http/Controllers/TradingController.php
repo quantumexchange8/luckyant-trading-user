@@ -358,7 +358,7 @@ class TradingController extends Controller
 
         $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
 //        $master->subscribersCount = $master->subscribers->count();
-        $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100;
+        $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100 ?? 0;
 
         return Inertia::render('Trading/MasterListing/MasterListingDetail', [
             'masterListingDetail' => $master,

@@ -510,4 +510,6 @@ return [
     "pamm_esg" => "การลงทุน PAMM ESG",
     "top_up" => "เติมเงิน",
     "top_up_amount" => "จำนวนเงินที่เติม",
+    "purchase_product_desc" => "ซื้อต้นกฤษณาจำนวน :number ต้น",
+    "join_amount" => "จำนวนเงินเข้าร่วม",
 ];

@@ -7,6 +7,7 @@ use App\Models\CopyTradeHistory;
 use App\Models\CopyTradeTransaction;
 use App\Models\Master;
 use App\Models\MasterManagementFee;
+use App\Models\PammSubscription;
 use App\Models\Subscriber;
 use App\Models\Subscription;
 use App\Models\SubscriptionBatch;
@@ -355,10 +356,18 @@ class TradingController extends Controller
 
         $totalSubscriptionsFee = Subscription::where('master_id', $master->id)
             ->sum('meta_balance');
+        $totalPammFund = PammSubscription::where('master_id', $master->id)
+            ->where('status', 'Active')
+            ->sum('subscription_amount');
 
         $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
 //        $master->subscribersCount = $master->subscribers->count();
-        $master->totalFundWidth = (($totalSubscriptionsFee + $master->extra_fund) / $master->total_fund) * 100 ?? 0;
+
+        if ($master->total_fund > 0) {
+            $master->totalFundWidth = (($totalSubscriptionsFee + $totalPammFund + $master->extra_fund) / $master->total_fund) * 100;
+        } else {
+            $master->totalFundWidth = 0;
+        }
 
         return Inertia::render('Trading/MasterListing/MasterListingDetail', [
             'masterListingDetail' => $master,

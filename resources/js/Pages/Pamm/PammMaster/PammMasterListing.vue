@@ -89,7 +89,7 @@ const clearFilter = () => {
 
 const currentLocale = ref(usePage().props.locale);
 const openDetails = (masterAccountID) => {
-    window.location.href = `/trading/master_listing/${masterAccountID}`;
+    window.location.href = `/pamm/master_listing/${masterAccountID}`;
 }
 </script>
 

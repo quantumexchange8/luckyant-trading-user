@@ -152,6 +152,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/pamm_master_listing', [PammController::class, 'pamm_master_listing'])->name('pamm.pamm_master_listing');
         Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('pamm.getPammMasters');
         Route::get('/getMasterSubscriptionPackages', [PammController::class, 'getMasterSubscriptionPackages'])->name('pamm.getMasterSubscriptionPackages');
+        Route::get('/master_listing/{masterAccountID}', [TradingController::class, 'masterListingDetail'])->name('pamm.masterListingDetail');
 
 
         // esg investment portfolio

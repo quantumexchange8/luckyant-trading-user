@@ -512,4 +512,10 @@ return [
     "top_up_amount" => "Jumlah Isi Ulang",
     "purchase_product_desc" => "Untuk membeli :number pohon gaharu",
     "join_amount" => "Jumlah Bergabung",
+    "esg_investment_portfolio" => "Portofolio Investasi ESG",
+    "agarwood_tree" => "Pohon Gaharu",
+    "pamm_read_agreement" => "Dengan melanjutkan, saya mengonfirmasi bahwa saya telah membaca dan menyetujui syarat dan ketentuan",
+    "pamm_agreement" => "Perjanjian PAMM",
+    "planting_agreement" => "Perjanjian Penanaman",
+    "balance" => "Saldo"
 ];

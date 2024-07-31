@@ -512,4 +512,10 @@ return [
     "top_up_amount" => "トップアップ金額",
     "purchase_product_desc" => ":number 個の沈香の木を購入するには",
     "join_amount" => "参加金額",
+    "esg_investment_portfolio" => "ESG投資ポートフォリオ",
+    "agarwood_tree" => "沈香木",
+    "pamm_read_agreement" => "続行することで、利用規約に同意したことを確認します。",
+    "pamm_agreement" => "PAMM契約",
+    "planting_agreement" => "植栽契約",
+    "balance" => "残高"
 ];

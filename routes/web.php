@@ -153,6 +153,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('pamm.getPammMasters');
         Route::get('/getMasterSubscriptionPackages', [PammController::class, 'getMasterSubscriptionPackages'])->name('pamm.getMasterSubscriptionPackages');
 
+
+        // esg investment portfolio
+        Route::get('/esg_investment_portfolio', [PammController::class, 'esg_investment_portfolio'])->name('pamm.esg_investment_portfolio');
+
         Route::post('/followPammMaster', [PammController::class, 'followPammMaster'])->name('pamm.followPammMaster');
         Route::post('/topUpPamm', [PammController::class, 'topUpPamm'])->name('pamm.topUpPamm');
 

@@ -32,8 +32,10 @@ class JoinPammRequest extends FormRequest
 
     public function attributes(): array
     {
+        $master = Master::find($this->master_id);
+
         return [
-            'amount' => trans('public.package'),
+            'amount' => $master->delivery_requirement ? trans('public.package') : trans('public.amount'),
             'meta_login' => trans('public.account_no'),
             'package_product' => trans('public.select_product'),
             'delivery_address' => trans('public.delivery_address'),

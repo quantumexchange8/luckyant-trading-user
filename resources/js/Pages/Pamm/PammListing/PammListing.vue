@@ -217,10 +217,10 @@ const currentLocale = ref(usePage().props.locale);
                         </div>
                         <div class="flex flex-col gap-1 items-center justify-center">
                             <div class="text-xs flex justify-center">
-                                {{ $t('public.fund') }}
+                                {{ $t('public.account_no') }}
                             </div>
                             <div class="flex justify-center">
-                                <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(pamm.subscription_amount, 0) }}</span>
+                                <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ pamm.meta_login }} - $ {{ formatAmount(pamm.subscription_amount, 0) }}</span>
                             </div>
                         </div>
                         <div v-if="pamm.max_out_amount" class="flex flex-col gap-1 items-center justify-center">

@@ -13,7 +13,8 @@ import JoinPammForm from "@/Pages/Pamm/PammMaster/JoinPammForm.vue";
 import NoData from "@/Components/NoData.vue";
 
 const props = defineProps({
-    terms: Object
+    title: String,
+    pammType: String,
 })
 
 const typeFilter = [
@@ -50,7 +51,7 @@ const masterAccounts = ref({data: []})
 
 const { formatAmount } = transactionFormat();
 
-const getResults = async (page = 1, search = '', filterType = '', date = '') => {
+const getResults = async (page = 1, search = '', filterType = props.pammType, date = '') => {
     isLoading.value = true
     try {
         let url = `/pamm/getPammMasters?page=${page}`;
@@ -88,17 +89,16 @@ const clearFilter = () => {
 
 const currentLocale = ref(usePage().props.locale);
 const openDetails = (masterAccountID) => {
-    const detailUrl = `/trading/master_listing/${masterAccountID}`;
-    window.location.href = detailUrl;
+    window.location.href = `/trading/master_listing/${masterAccountID}`;
 }
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.pamm_master_listing')">
+    <AuthenticatedLayout :title="title">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    {{ $t('public.pamm_master_listing') }}
+                    {{ title }}
                 </h2>
             </div>
         </template>
@@ -143,7 +143,7 @@ const openDetails = (masterAccountID) => {
         <div class="py-5 w-full">
             <div
                 v-if="masterAccounts.data.length > 0"
-                class="grid grid-cols-1 sm:grid-cols-3 gap-5 my-5"
+                class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 my-5"
             >
                 <div
                     v-for="masterAccount in masterAccounts.data"
@@ -178,59 +178,59 @@ const openDetails = (masterAccountID) => {
                         <!--                    chart-->
                         <!--                </div>-->
                         <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
+                            <div class="text-xs flex justify-center text-center text-gray-600 dark:text-gray-400">
                                 {{ $t('public.sharing_profit') }}
                             </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                            <div class="flex justify-center items-center text-gray-800 dark:text-white font-semibold">
                                 {{ formatAmount(masterAccount.sharing_profit, 0) }} %
                             </div>
                         </div>
                         <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
+                            <div class="text-xs flex justify-center text-center text-gray-600 dark:text-gray-400">
                                 {{ $t('public.roi_period') }}
                             </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                            <div class="flex justify-center items-center text-gray-800 dark:text-white font-semibold">
                                 {{ masterAccount.roi_period }} {{ $t('public.days') }}
                             </div>
                         </div>
                         <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
+                            <div class="text-xs flex justify-center text-center text-gray-600 dark:text-gray-400">
                                 {{ $t('public.estimated_monthly_returns') }}
                             </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                            <div class="flex justify-center items-center text-gray-800 dark:text-white font-semibold">
                                 {{ masterAccount.estimated_monthly_returns }}
                             </div>
                         </div>
                         <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
+                            <div class="text-xs flex justify-center text-center text-gray-600 dark:text-gray-400">
                                 {{ $t('public.estimated_lot_size') }}
                             </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                            <div class="flex justify-center items-center text-gray-800 dark:text-white font-semibold">
                                 {{ masterAccount.estimated_lot_size }}
                             </div>
                         </div>
                         <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center">
+                            <div class="text-xs flex justify-center text-gray-600 dark:text-gray-400">
                                 {{ $t('public.total_fund') }}
                             </div>
                             <div class="flex justify-center">
-                                <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(masterAccount.total_subscription_amount, 0) }}</span>
+                                <span class="text-gray-800 dark:text-white font-semibold">$ {{ formatAmount(masterAccount.total_subscription_amount, 0) }}</span>
                             </div>
                         </div>
                         <div v-if="masterAccount.max_out_amount" class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
+                            <div class="text-xs flex justify-center text-cente text-gray-600 dark:text-gray-400">
                                 {{ $t('public.max_out_amount') }}
                             </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
+                            <div class="flex justify-center items-center text-gray-800 dark:text-white font-semibold">
                                 $ {{ formatAmount(masterAccount.max_out_amount, 0) }}
                             </div>
                         </div>
                         <div v-else class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
-                                {{ $t('public.join_day') }}
+                            <div class="text-xs flex justify-center text-center text-gray-600 dark:text-gray-400">
+                                {{ masterAccount.type === 'ESG' ? $t('public.product') : $t('public.total_subscribers') }}
                             </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ masterAccount.join_period }} {{ $t('public.days') }}
+                            <div class="flex justify-center items-center text-gray-800 dark:text-white font-semibold">
+                                {{ masterAccount.type === 'ESG' ? $t('public.agarwood_tree') : masterAccount.total_subscribers }}
                             </div>
                         </div>
                     </div>
@@ -238,7 +238,6 @@ const openDetails = (masterAccountID) => {
                     <div class="flex w-full gap-2 items-center">
                         <JoinPammForm
                             :masterAccount="masterAccount"
-                            :terms="terms"
                         />
                         <Button
                             type="button"

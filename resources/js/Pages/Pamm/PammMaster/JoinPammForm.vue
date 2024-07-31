@@ -6,7 +6,7 @@ import {transactionFormat} from "@/Composables/index.js";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import InputError from "@/Components/InputError.vue";
 import Label from "@/Components/Label.vue";
-import {useForm, usePage} from "@inertiajs/vue3";
+import {Link, useForm, usePage} from "@inertiajs/vue3";
 import Input from "@/Components/Input.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
@@ -15,7 +15,6 @@ import {PlusIcon, MinusIcon} from "@heroicons/vue/outline";
 
 const props = defineProps({
     masterAccount: Object,
-    terms: Object,
 })
 
 const subscribeAccountModal = ref(false);
@@ -98,7 +97,6 @@ const submit = () => {
     confirmModal.value = true;
 };
 
-
 const confirmSubmit = () => {
     form.amount = amount.value;
     form.amount_package_id = depositAmount.value ? depositAmount.value.value : null;
@@ -121,14 +119,9 @@ const cancelSubmit = () => {
 };
 
 const currentLocale = ref(usePage().props.locale);
-const termsModal = ref(false);
 
-const openTermsModal = () => {
-    termsModal.value = true
-}
-
-const closeTermsModal = () => {
-    termsModal.value = false
+const redirectToNewPage = (url) => {
+    window.open(url, '_blank');
 }
 
 watchEffect(() => {
@@ -307,7 +300,7 @@ watchEffect(() => {
                 </RadioGroup>
             </div>
             <div
-                v-if="masterAccount.type !== 'ESG' && depositAmount"
+                v-if="masterAccount.type === 'Standard' && depositAmount"
                 class="w-full space-y-2"
             >
                 <Label
@@ -384,8 +377,8 @@ watchEffect(() => {
                     inputId="horizontal-buttons"
                     showButtons
                     buttonLayout="horizontal"
-                    :min="1000"
-                    :step="1000"
+                    :min="Number(masterAccount.min_join_equity)"
+                    :step="masterAccount.type === 'ESG' ? 1000 : 100"
                     mode="currency"
                     currency="USD"
                     fluid
@@ -449,19 +442,32 @@ watchEffect(() => {
                 </div>
             </Modal>
 
-            <div class="flex items-center">
+            <div class="flex items-start self-stretch">
                 <div class="flex items-center h-5">
                     <Checkbox id="terms" v-model="form.terms"/>
                 </div>
-                <div class="ml-3">
+                <div class="ml-3 flex flex-col self-stretch">
                     <label for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
-                        {{ $t('public.agreement') }}
+                        {{ $t('public.pamm_read_agreement') }} -
                         <div
+                            v-if="masterAccount.tnc_url"
                             class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
-                            @click="openTermsModal"
+                            @click="redirectToNewPage(masterAccount.tnc_url)"
                         >
-                            {{ $t('public.terms_and_conditions') }}
+                            {{ $t('public.pamm_agreement') }}
                         </div>
+                        <div v-else>{{ $t('public.pamm_agreement') }}</div>
+                    </label>
+                    <label v-if="masterAccount.type === 'ESG'" for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
+                        {{ $t('public.pamm_read_agreement') }} -
+                        <div
+                            v-if="masterAccount.tree_tnc_url"
+                            class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
+                            @click="redirectToNewPage(masterAccount.tree_tnc_url)"
+                        >
+                            {{ $t('public.planting_agreement') }}
+                        </div>
+                        <div v-else>{{ $t('public.planting_agreement') }}</div>
                     </label>
                 </div>
             </div>
@@ -474,9 +480,5 @@ watchEffect(() => {
                 <Button type="button" class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
             </div>
         </form>
-    </Modal>
-
-    <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
-        <div v-html="terms.contents" class="prose dark:text-white"></div>
     </Modal>
 </template>

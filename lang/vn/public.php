@@ -512,4 +512,10 @@ return [
     "top_up_amount" => "Số tiền nạp",
     "purchase_product_desc" => "Mua :number cây trầm hương",
     "join_amount" => "Số tiền tham gia",
+    "esg_investment_portfolio" => "Danh mục đầu tư ESG",
+    "agarwood_tree" => "Cây Dó Bầu",
+    "pamm_read_agreement" => "Bằng cách tiếp tục, tôi xác nhận rằng tôi đã đọc và đồng ý với các điều khoản và điều kiện",
+    "pamm_agreement" => "Hợp đồng PAMM",
+    "planting_agreement" => "Hợp đồng trồng cây",
+    "balance" => "Số dư"
 ];

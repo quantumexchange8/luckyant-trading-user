@@ -22,6 +22,7 @@ use App\Services\SelectOptionService;
 use App\Services\SidebarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -39,7 +40,23 @@ class PammController extends Controller
         }
 
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
+            'title' => trans('public.pamm_master_listing'),
+            'pammType' => 'StandardGroup'
+        ]);
+    }
+
+    public function esg_investment_portfolio()
+    {
+        $getMasterVisibility = (new SidebarService())->getMasterVisibility();
+
+        if (!$getMasterVisibility) {
+            return redirect()->route('dashboard');
+        }
+
+        return Inertia::render('Pamm/PammMaster/PammMasterListing', [
             'terms' => Term::where('type', 'pamm_esg')->first(),
+            'title' => trans('public.esg_investment_portfolio'),
+            'pammType' => 'ESG'
         ]);
     }
 
@@ -125,6 +142,9 @@ class PammController extends Controller
 
             $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
             $master->total_subscription_amount = $totalSubscriptionsFee + $master->total_fund ?? 0;
+            $master->total_subscribers = PammSubscription::where('master_id', $master->id)->where('status', 'Active')->count();
+            $master->tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tnc_pdf') : $master->getFirstMediaUrl('en_tnc_pdf');
+            $master->tree_tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tree_pdf') : $master->getFirstMediaUrl('en_tree_pdf');
             $master->totalFundWidth = $master->total_fund == 0 ? $totalSubscriptionsFee + $master->extra_fund : (($totalSubscriptionsFee + $master->extra_fund) ?? 0 / $master->total_fund) * 100 ;
         });
 
@@ -214,79 +234,13 @@ class PammController extends Controller
 
         // Calculate the balance from package amount and trading acc balance
         $amount_balance = $tradingAccount->balance - $amount;
-
-        $e_wallet = Wallet::where('user_id', $user->id)->where('type', 'e_wallet')->first();
         $amount_remain = $amount_balance;
 
-        if ($e_wallet) {
-            $eWalletBalanceIn = Transaction::where('from_wallet_id', $e_wallet->id)
-                ->where('to_meta_login', $meta_login)
-                ->where('transaction_type', 'BalanceIn')
-                ->where('status', 'Success')
-                ->sum('transaction_amount');
-
-            $eWalletBalanceOut = Transaction::where('to_wallet_id', $e_wallet->id)
-                ->where('from_meta_login', $meta_login)
-                ->where('transaction_type', 'BalanceOut')
-                ->where('status', 'Success')
-                ->sum('transaction_amount');
-
-            $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
-
-            if ($remainingBalance > 0) {
-                if ($remainingBalance >= $amount_balance) {
-                    $deal = [];
-                    try {
-                        $deal = $metaService->createDeal($meta_login, $amount_balance, 'Package balance', dealAction::WITHDRAW);
-                    } catch (\Exception $e) {
-                        \Log::error('Error creating deal: ' . $e->getMessage());
-                    }
-
-                    // Deduct full amount from e_wallet
-                    $e_wallet->balance += $amount_balance;
-                    $e_wallet->save();
-
-                    Transaction::create([
-                        'category' => 'trading_account',
-                        'user_id' => $user->id,
-                        'to_wallet_id' => $e_wallet->id,
-                        'from_meta_login' => $meta_login,
-                        'ticket' => $deal['deal_Id'],
-                        'transaction_number' => RunningNumberService::getID('transaction'),
-                        'transaction_type' => 'BalanceOut',
-                        'amount' => $amount,
-                        'transaction_charges' => 0,
-                        'transaction_amount' => $amount,
-                        'status' => 'Success',
-                        'comment' => $deal['conduct_Deal']['comment'],
-                        'new_wallet_amount' => $e_wallet->balance,
-                    ]);
-
-                    $amount_remain = 0;
-                } else {
-                    // Deduct partial amount from e_wallet
-                    $e_wallet->balance += $remainingBalance;
-                    $e_wallet->save();
-
-                    Transaction::create([
-                        'category' => 'trading_account',
-                        'user_id' => $user->id,
-                        'to_wallet_id' => $e_wallet->id,
-                        'from_meta_login' => $meta_login,
-                        'ticket' => $deal['deal_Id'],
-                        'transaction_number' => RunningNumberService::getID('transaction'),
-                        'transaction_type' => 'BalanceOut',
-                        'amount' => $remainingBalance,
-                        'transaction_charges' => 0,
-                        'transaction_amount' => $remainingBalance,
-                        'status' => 'Success',
-                        'comment' => $deal['conduct_Deal']['comment'],
-                        'new_wallet_amount' => $e_wallet->balance,
-                    ]);
-
-                    $amount_remain -= $remainingBalance;
-                }
-            }
+        $deal = [];
+        try {
+            $deal = $metaService->createDeal($meta_login, $amount_balance, 'Package balance', dealAction::WITHDRAW);
+        } catch (\Exception $e) {
+            \Log::error('Error creating deal: ' . $e->getMessage());
         }
 
         if ($amount_remain > 0) {

@@ -122,6 +122,11 @@ const getMasterVisibility = ref(page.props.getMasterVisibility);
                 :active="route().current('pamm.pamm_master_listing')"
             />
             <SidebarCollapsibleItem
+                :href="route('pamm.esg_investment_portfolio')"
+                :title="$t('public.esg_investment_portfolio')"
+                :active="route().current('pamm.esg_investment_portfolio')"
+            />
+            <SidebarCollapsibleItem
                 :href="route('pamm.pamm_subscriptions')"
                 :title="$t('public.pamm_subscriptions')"
                 :active="route().current('pamm.pamm_subscriptions')"

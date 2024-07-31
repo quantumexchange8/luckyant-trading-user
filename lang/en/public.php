@@ -512,4 +512,10 @@ return [
     "top_up_amount" => "Top Up Amount",
     "purchase_product_desc" => "To purchase :number agarwood trees",
     "join_amount" => "Join Amount",
+    "esg_investment_portfolio" => "ESG Investment Portfolio",
+    "agarwood_tree" => "Agarwood Tree",
+    "pamm_read_agreement" => "By continuing, I confirm that I have read and agree to the terms and conditions ",
+    "pamm_agreement" => "PAMM Agreement",
+    "planting_agreement" => "Planting Agreement",
+    "balance" => "Balance",
 ];

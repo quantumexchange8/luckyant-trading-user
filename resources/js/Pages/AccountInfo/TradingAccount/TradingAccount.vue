@@ -117,16 +117,19 @@ const currentLocale = ref(usePage().props.locale);
     </div>
     <div
         v-else
-        class="grid grid-cols-1 sm:grid-cols-2 gap-5"
+        class="grid grid-cols-1 xl:grid-cols-2 gap-5"
     >
         <div
             v-for="account in tradingAccounts"
             class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg"
         >
             <div class="flex justify-between items-center self-stretch">
-                <div class="flex items-center gap-3">
+                <div class="flex items-start gap-3">
                     <div class="flex flex-col items-start">
-                        <div class="font-semibold">
+                        <div class="text-xl font-bold">
+                            #{{ account.meta_login }}
+                        </div>
+                        <div class="text-xs">
                             <div v-if="currentLocale === 'en'">
                                 {{ $t('public.name') }}: {{ account.trading_user.name }}
                             </div>
@@ -134,12 +137,9 @@ const currentLocale = ref(usePage().props.locale);
                                 {{ $t('public.name') }}: {{ account.trading_user.company ? account.trading_user.company : account.trading_user.name}}
                             </div>
                         </div>
-                        <div class="text-xs">
-                            {{ $t('public.account_no') }}: {{ account.meta_login }}
-                        </div>
                     </div>
                     <div class="flex justify-end">
-                        <Badge variant="success">{{ $t('public.active') }}</Badge>
+                        <Badge variant="success" class="text-sm">{{ $t('public.active') }}</Badge>
                     </div>
                 </div>
                 <div class="flex justify-end">
@@ -153,34 +153,47 @@ const currentLocale = ref(usePage().props.locale);
                 </div>
             </div>
             <div class="flex justify-between items-center self-stretch">
-                <div class="flex items-center gap-3">
-                    <div class="border-r pr-3 border-gray-400 dark:border-gray-600 text-xs font-normal">
-                        {{ $t('public.leverage') }}: 1 : {{ account.margin_leverage }}
-                    </div>
-                    <div class="text-xs font-normal">
-                        {{ $t('public.equity') }}: $ {{ formatAmount(account.equity ? account.equity : 0) }}
-                    </div>
-                    <div class="border-l pl-3 border-gray-400 dark:border-gray-600 text-xs font-normal" v-if="account.active_subscriber && account.active_subscriber.status === 'Subscribing' || account.pamm_subscription">
-                        <div v-if="account.active_subscriber">
-                            <div v-if="currentLocale === 'en'">
-                                {{ $t('public.master') }}: {{ account.active_subscriber?.master?.trading_user?.name }}
+                <div class="flex items-center gap-3 w-full">
+                    <div class="grid grid-cols-2 gap-2 w-full text-xs">
+                        <div class="flex items-center gap-1 self-stretch">
+                            <span class="text-gray-600 dark:text-gray-400">{{ $t('public.balance') }}: </span>
+                            <span class="font-semibold"> $ {{ formatAmount(account.balance ? account.balance : 0) }}</span>
+                        </div>
+                        <div class="flex items-center gap-1 self-stretch">
+                            <span class="text-gray-600 dark:text-gray-400">{{ $t('public.equity') }}: </span>
+                            <span class="font-semibold"> $ {{ formatAmount(account.equity ? account.equity : 0) }}</span>
+                        </div>
+                        <div class="flex items-center gap-1 self-stretch">
+                            <span class="text-gray-600 dark:text-gray-400">{{ $t('public.credit') }}: </span>
+                            <span class="font-semibold"> $ {{ formatAmount(account.credit ? account.credit : 0) }}</span>
+                        </div>
+                        <div class="flex items-center gap-1 self-stretch">
+                            <span class="text-gray-600 dark:text-gray-400">{{ $t('public.leverage') }}: </span>
+                            <span class="font-semibold">1 : {{ account.margin_leverage }}</span>
+                        </div>
+                        <div class="col-span-2" v-if="account.active_subscriber && account.active_subscriber.status === 'Subscribing' || account.pamm_subscription">
+                            <div v-if="account.active_subscriber">
+                                <div v-if="currentLocale === 'en'" class="flex items-center gap-1 self-stretch">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ $t('public.master') }}: </span>
+                                    <span class="font-semibold">{{ account.active_subscriber?.master?.trading_user?.name }}</span>
+                                </div>
+                                <div v-if="currentLocale === 'cn'" class="flex items-center gap-1 self-stretch">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ $t('public.master') }}: </span>
+                                    <span class="font-semibold">{{ account.active_subscriber?.master?.trading_user?.company ? account.active_subscriber?.master?.trading_user?.company : account.active_subscriber?.master?.trading_user?.name}}</span>
+                                </div>
                             </div>
-                            <div v-if="currentLocale === 'cn'">
-                                {{ $t('public.master') }}: {{ account.active_subscriber?.master?.trading_user?.company ? account.active_subscriber?.master?.trading_user?.company : account.active_subscriber?.master?.trading_user?.name}}
+                            <div v-if="account.pamm_subscription">
+                                <div v-if="currentLocale === 'en'" class="flex items-center gap-1 self-stretch">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ $t('public.master') }}: </span>
+                                    <span class="font-semibold">{{ account.pamm_subscription?.master?.trading_user?.name }}</span>
+                                </div>
+                                <div v-if="currentLocale === 'cn'" class="flex items-center gap-1 self-stretch">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ $t('public.master') }}: </span>
+                                    <span class="font-semibold">{{ account.pamm_subscription?.master?.trading_user?.company ? account.pamm_subscription?.master?.trading_user?.company : account.pamm_subscription?.master?.trading_user?.name}}</span>
+                                </div>
                             </div>
                         </div>
-                        <div v-if="account.pamm_subscription">
-                            <div v-if="currentLocale === 'cn'">
-                                {{ $t('public.master') }}: {{ account.pamm_subscription?.master?.trading_user?.company ? account.pamm_subscription?.master?.trading_user?.company : account.pamm_subscription?.master?.trading_user?.name}}
-                            </div>
-                            <div v-else>
-                                {{ $t('public.master') }}: {{ account.pamm_subscription?.master?.trading_user?.name }}
-                            </div>
-                        </div>
                     </div>
-                </div>
-                <div class="text-xl">
-                    $ {{ formatAmount(account.balance ? account.balance : 0) }}
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 w-full">

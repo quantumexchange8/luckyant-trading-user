@@ -512,4 +512,10 @@ return [
     "top_up_amount" => "จำนวนเงินที่เติม",
     "purchase_product_desc" => "ซื้อต้นกฤษณาจำนวน :number ต้น",
     "join_amount" => "จำนวนเงินเข้าร่วม",
+    "esg_investment_portfolio" => "พอร์ตการลงทุน ESG",
+    "agarwood_tree" => "ต้นกฤษณา",
+    "pamm_read_agreement" => "โดยการดำเนินการต่อ ฉันยืนยันว่าฉันได้อ่านและยอมรับข้อกำหนดและเงื่อนไข",
+    "pamm_agreement" => "ข้อตกลง PAMM",
+    "planting_agreement" => "ข้อตกลงการปลูก",
+    "balance" => "ยอดคงเหลือ"
 ];

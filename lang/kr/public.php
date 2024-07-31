@@ -512,4 +512,10 @@ return [
     "top_up_amount" => "충전 금액",
     "purchase_product_desc" => ":number 그루의 침향나무를 구매하기",
     "join_amount" => "가입 금액",
+    "esg_investment_portfolio" => "ESG 투자 포트폴리오",
+    "agarwood_tree" => "아가우드 나무",
+    "pamm_read_agreement" => "계속 진행함으로써 약관에 동의함을 확인합니다.",
+    "pamm_agreement" => "PAMM 계약",
+    "planting_agreement" => "심기 계약",
+    "balance" => "잔액"
 ];

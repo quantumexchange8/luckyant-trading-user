@@ -270,7 +270,7 @@ class PammController extends Controller
             'meta_login' => $meta_login,
             'master_id' => $masterAccount->id,
             'master_meta_login' => $masterAccount->meta_login,
-            'subscription_amount' => $amount/2,
+            'subscription_amount' => $masterAccount->type == 'StandardGroup' ? $amount : $amount/2,
             'subscription_package_id' => $request->amount_package_id,
             'subscription_package_product' => $masterAccount->type == 'ESG' ? $amount / 1000 . '棵沉香树' : $request->package_product,
             'type' => $masterAccount->type,

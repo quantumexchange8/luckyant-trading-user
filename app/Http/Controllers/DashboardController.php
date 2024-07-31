@@ -69,6 +69,7 @@ class DashboardController extends Controller
             'registerLink' => $registerLink,
             'rank' => $translations[$locale] ?? $rank->name,
             'total_global_trading_lot_size' => Setting::where('slug', 'total-global-trading-lot-size')->first(),
+            'settingCryptoPayment' => SettingPaymentMethod::where('payment_method', 'Crypto')->where('status', 'Active')->first(),
         ]);
     }
 

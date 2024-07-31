@@ -13,6 +13,7 @@ const props = defineProps({
     withdrawalFee: Object,
     withdrawalFeePercentage: Object,
     countries: Array,
+    settingCryptoPayment: Object,
 })
 
 const wallets = ref([]);
@@ -77,6 +78,7 @@ watchEffect(() => {
             :withdrawalFee="withdrawalFee"
             :withdrawalFeePercentage="withdrawalFeePercentage"
             :countries="countries"
+            :settingCryptoPayment="settingCryptoPayment"
         />
     </div>
 </template>

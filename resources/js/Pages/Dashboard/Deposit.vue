@@ -26,6 +26,7 @@ import paymentMerchantImg from "/public/assets/payment_merchant.svg"
 const props = defineProps({
     wallet: Object,
     countries: Array,
+    settingCryptoPayment: Object,
 })
 
 const paymentType = [
@@ -51,8 +52,13 @@ const windowOrigin = window.location.origin;
 const filteredPaymentTypes = computed(() => {
     if (windowOrigin === 'https://member.luckyantmallvn.com') {
         return paymentType.filter(type => type.name === 'payment_service');
+    } else {
+        if (!props.settingCryptoPayment) {
+            return paymentType.filter(type => type.name !== 'payment_service');
+        } else {
+            return paymentType
+        }
     }
-    return paymentType;
 });
 
 const { formatAmount } = transactionFormat();

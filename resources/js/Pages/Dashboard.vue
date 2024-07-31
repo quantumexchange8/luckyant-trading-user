@@ -30,6 +30,7 @@ const props = defineProps({
     registerLink: String,
     countries: Array,
     rank: String,
+    settingCryptoPayment: Object,
 })
 
 const copyReferralCode = () => {
@@ -306,6 +307,7 @@ getTotalTransactions();
                     :withdrawalFee="withdrawalFee"
                     :withdrawalFeePercentage="withdrawalFeePercentage"
                     :countries="countries"
+                    :settingCryptoPayment="settingCryptoPayment"
                 />
             </div>
 

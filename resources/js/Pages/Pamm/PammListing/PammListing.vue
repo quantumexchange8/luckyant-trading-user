@@ -207,7 +207,7 @@ const currentLocale = ref(usePage().props.locale);
                                 {{ pamm.subscription_number }}
                             </div>
                         </div>
-                        <div class="flex flex-col gap-1 items-center justify-center">
+                        <div v-if="pamm.master.type !== 'StandardGroup'" class="flex flex-col gap-1 items-center justify-center">
                             <div class="text-xs flex justify-center text-center">
                                 {{ $t('public.product') }}
                             </div>
@@ -223,7 +223,7 @@ const currentLocale = ref(usePage().props.locale);
                                 <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ pamm.meta_login }} - $ {{ formatAmount(pamm.subscription_amount, 0) }}</span>
                             </div>
                         </div>
-                        <div v-if="pamm.max_out_amount" class="flex flex-col gap-1 items-center justify-center">
+                        <div v-if="pamm.master.type !== 'StandardGroup' && pamm.max_out_amount" class="flex flex-col gap-1 items-center justify-center">
                             <div class="text-xs flex justify-center text-center">
                                 {{ $t('public.max_out_amount') }}
                             </div>
@@ -231,7 +231,7 @@ const currentLocale = ref(usePage().props.locale);
                                 $ {{ formatAmount(pamm.max_out_amount, 0) }}
                             </div>
                         </div>
-                        <div v-else class="flex flex-col gap-1 items-center justify-center">
+                        <div v-if="pamm.master.type !== 'StandardGroup'" class="flex flex-col gap-1 items-center justify-center">
                             <div class="text-xs flex justify-center text-center">
                                 {{ $t('public.valid_until') }}
                             </div>

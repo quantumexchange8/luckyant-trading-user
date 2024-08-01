@@ -70,7 +70,7 @@ class PammController extends Controller
         ]);
 
         // fund to master
-        $description = 'CN #' . $pamm_subscription->meta_login;
+        $description = '#' . $pamm_subscription->meta_login;
         $master_deal = [];
 
         try {

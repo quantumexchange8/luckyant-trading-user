@@ -672,7 +672,7 @@ class PammController extends Controller
         $client_deal = [];
 
         try {
-            $client_deal = (new MetaFiveService())->createDeal($pamm_subscription->master_meta_login, $pamm_subscription->subscription_amount, '#' . $pamm_subscription->master_meta_login, dealAction::WITHDRAW);
+            $client_deal = (new MetaFiveService())->createDeal($pamm_subscription->meta_login, $pamm_subscription->subscription_amount, '#' . $pamm_subscription->meta_login, dealAction::WITHDRAW);
         } catch (\Exception $e) {
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
         }
@@ -680,7 +680,7 @@ class PammController extends Controller
         Transaction::create([
             'category' => 'trading_account',
             'user_id' => $pamm_subscription->master->user_id,
-            'to_meta_login' => $pamm_subscription->master_meta_login,
+            'from_meta_login' => $pamm_subscription->meta_login,
             'ticket' => $client_deal['deal_Id'],
             'transaction_number' => RunningNumberService::getID('transaction'),
             'transaction_type' => 'PurchaseProduct',

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Master;
 use App\Models\PammSubscription;
 use App\Models\Subscription;
+use App\Services\dealAction;
+use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -40,7 +42,7 @@ class PammController extends Controller
             'amount' => $data['amount'],
         ];
 
-        $checkSubscription = PammSubscription::find($result['follower_id']);
+        $checkSubscription = PammSubscription::withTrashed()->where('meta_login', $result['follower_id'])->get();
         $masterAccount = Master::find($result['master_id']);
 
         if ($checkSubscription) {
@@ -51,6 +53,7 @@ class PammController extends Controller
         }
 
         $pamm_subscription = PammSubscription::create([
+            'meta_login' => $result['follower_id'],
             'master_id' => $masterAccount->id,
             'master_meta_login' => $masterAccount->meta_login,
             'subscription_amount' => $result['amount'],
@@ -61,9 +64,19 @@ class PammController extends Controller
             'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
             'expired_date' => now()->addDays($masterAccount->join_period)->endOfDay(),
             'max_out_amount' => $masterAccount->max_out_amount,
-            'status' => 'Pending',
+            'status' => 'Active',
             'remarks' => 'China PAMM'
         ]);
+
+        // fund to master
+        $description = 'CN #' . $pamm_subscription->meta_login;
+        $master_deal = [];
+
+        try {
+            $master_deal = (new MetaFiveService())->createDeal($pamm_subscription->master_meta_login, $pamm_subscription->subscription_amount, $description, dealAction::DEPOSIT);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        }
 
 //        $response = Http::post('https://api.luckyantmallvn.com/serverapi/pamm/subscription/join', $pamm_subscription);
 //        \Log::debug($response);

@@ -11,6 +11,7 @@ use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PammController extends Controller
 {
@@ -36,13 +37,15 @@ class PammController extends Controller
     {
         $data = $request->all();
 
+        Log::debug($data);
+
         $result = [
             'follower_id' => $data['follower_id'],
             'master_id' => $data['master_id'],
             'amount' => $data['amount'],
         ];
 
-        $checkSubscription = PammSubscription::withTrashed()->where('meta_login', $result['follower_id'])->get();
+        $checkSubscription = PammSubscription::withTrashed()->whereIn('meta_login', $result['follower_id'])->get();
         $masterAccount = Master::find($result['master_id']);
 
         if ($checkSubscription) {

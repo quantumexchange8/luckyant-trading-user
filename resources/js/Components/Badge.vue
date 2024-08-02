@@ -17,15 +17,15 @@ const props = defineProps({
 const { variant } = props
 
 const baseClasses = [
-    'flex px-2 py-1 justify-center font-semibold text-white rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out',
+    'flex px-2 py-1 justify-center font-semibold rounded-lg hover:-translate-y-1 transition-all duration-300 ease-in-out',
 ]
 
 const variantClasses = (variant) => ({
-    'bg-primary-600': variant === 'primary',
+    'text-white bg-primary-600': variant === 'primary',
     'bg-success-100 text-success-600 dark:bg-success-300 dark:text-success-800': variant === 'success',
-    'bg-error-400 dark:bg-error-500': variant === 'danger',
-    'bg-blue-400 dark:bg-blue-500': variant === 'processing',
-    'bg-warning-400 dark:bg-warning-500': variant === 'warning',
+    'text-white bg-error-400 dark:bg-error-500': variant === 'danger',
+    'text-white bg-blue-400 dark:bg-blue-500': variant === 'processing',
+    'text-white bg-warning-400 dark:bg-warning-500': variant === 'warning',
 })
 
 const widthClass = computed(() => {

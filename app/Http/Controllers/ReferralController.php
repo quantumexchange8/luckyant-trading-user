@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CopyTradeTransaction;
 use App\Models\Country;
+use App\Models\PammSubscription;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Subscriber;
@@ -116,18 +117,30 @@ class ReferralController extends Controller
 
     protected function getSelfDeposit($user)
     {
-        return Subscription::where('user_id',$user->id)
+        $subscriptions = Subscription::where('user_id', $user->id)
             ->where('status', 'Active')
             ->sum('meta_balance');
+
+        $pamm = PammSubscription::where('user_id', $user->id)
+            ->where('status', 'Active')
+            ->sum('subscription_amount');
+
+        return $subscriptions + $pamm;
     }
 
     protected function getTotalGroupDeposit($user)
     {
         $ids = $user->getChildrenIds();
 
-        return Subscription::whereIn('user_id', $ids)
+        $subscriptions = Subscription::whereIn('user_id', $ids)
             ->where('status', 'Active')
             ->sum('meta_balance');
+
+        $pamm = PammSubscription::whereIn('user_id', $ids)
+            ->where('status', 'Active')
+            ->sum('subscription_amount');
+
+        return $subscriptions + $pamm;
     }
 
     public function affiliateSubscription()

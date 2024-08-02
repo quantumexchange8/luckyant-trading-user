@@ -127,7 +127,7 @@ const currentLocale = ref(usePage().props.locale);
                 <div class="flex items-start gap-3">
                     <div class="flex flex-col items-start">
                         <div class="text-xl font-bold">
-                            #{{ account.meta_login }}
+                            {{ $t('public.account_no') }}: {{ account.meta_login }}
                         </div>
                         <div class="text-xs">
                             <div v-if="currentLocale === 'en'">

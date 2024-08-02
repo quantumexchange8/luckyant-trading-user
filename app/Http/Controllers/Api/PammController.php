@@ -70,7 +70,7 @@ class PammController extends Controller
         ]);
 
         // fund to master
-        $description = '#' . $pamm_subscription->meta_login;
+        $description = 'deposit #' . $pamm_subscription->meta_login;
         $master_deal = [];
 
         try {
@@ -91,6 +91,45 @@ class PammController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'message' => 'Joined pamm master'
+        ]);
+    }
+
+    public function revoke_investment_strategy(Request $request)
+    {
+        $data = $request->all();
+
+        $result = [
+            'follower_id' => $data['follower_id'],
+            'master_id' => $data['master_id'],
+            'amount' => $data['amount'],
+        ];
+
+        $pamm_subscription = PammSubscription::withTrashed()->where('meta_login', $result['follower_id'])->first();
+
+        $pamm_subscription->update([
+            'termination_date' => now(),
+            'status' => 'Revoked',
+        ]);
+
+        $masterAccount = Master::find($result['master_id']);
+
+        // fund to master
+        $description = 'withdraw #' . $pamm_subscription->meta_login;
+        $master_deal = [];
+
+        try {
+            $master_deal = (new MetaFiveService())->createDeal($pamm_subscription->master_meta_login, $pamm_subscription->subscription_amount, $description, dealAction::WITHDRAW);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        }
+
+        $masterAccount->total_fund -= $result['amount'];
+        $masterAccount->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Revoked pamm master'
         ]);
     }
 }

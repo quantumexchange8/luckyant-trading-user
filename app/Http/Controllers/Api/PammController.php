@@ -105,7 +105,23 @@ class PammController extends Controller
             'amount' => $data['amount'],
         ];
 
-        $pamm_subscription = PammSubscription::withTrashed()->where('meta_login', $result['follower_id'])->first();
+        $pamm_subscription = PammSubscription::withTrashed()
+            ->where('meta_login', $result['follower_id'])
+            ->first();
+
+        if (!$pamm_subscription) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Strategy not found'
+            ]);
+        }
+
+        if ($pamm_subscription->status == 'Active') {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Strategy revoked'
+            ]);
+        }
 
         $pamm_subscription->update([
             'termination_date' => now(),

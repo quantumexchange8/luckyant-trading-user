@@ -176,29 +176,32 @@ class PammController extends Controller
             })
             ->get()
             ->groupBy(function ($data) {
-                // Convert time_close to Carbon instance, then format as 'Y-m-d'
-                $date = Carbon::parse($data->time_close)->format('Y-m-d');
-                // Use date, master_id, and meta_login for grouping
-                return $date . '|' . $data->master_id . '|' . $data->master_lot . '|' . $data->master_pnl;
+                // Group by date, master_id, and master_meta_login
+                return Carbon::parse($data->time_close)->format('Y-m-d') . '|' . $data->master_id . '|' . $data->master_meta_login;
             })
             ->map(function ($groupedData, $key) {
-                list($date, $masterId, $masterLot, $masterPnl) = explode('|', $key);
+                list($date, $masterId, $masterMetaLogin) = explode('|', $key);
 
-                // Calculate the sum of trade_profit for each group
+                // Aggregate total lot and profit_and_loss
+                $totalLot = $groupedData->sum('volume');
                 $totalProfitLoss = $groupedData->sum('trade_profit');
+
+                // Aggregate followers' data
+                $followers = $groupedData->groupBy('meta_login')->map(function ($groupedFollowers) {
+                    return [
+                        'meta_login' => $groupedFollowers->first()->meta_login,
+                        'lot' => $groupedFollowers->sum('volume'),
+                        'profit_and_loss' => $groupedFollowers->sum('trade_profit'),
+                    ];
+                })->values();
 
                 return [
                     'date' => $date,
                     'master_id' => $masterId,
-                    'master_lot' => $masterLot,
-                    'master_profit_and_loss' => $masterPnl,
-                    'followers' => $groupedData->map(function ($data) {
-                        return [
-                            'meta_login' => $data->meta_login,
-                            'lot' => $data->volume,
-                            'profit_and_loss' => $data->trade_profit,
-                        ];
-                    }),
+                    'master_meta_login' => $masterMetaLogin,
+                    'master_total_lot' => $totalLot,
+                    'master_total_profit_and_loss' => $totalProfitLoss,
+                    'followers' => $followers,
                 ];
             })
             ->values();

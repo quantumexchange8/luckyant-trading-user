@@ -224,7 +224,7 @@ class PammController extends Controller
             throw ValidationException::withMessages(['meta_login' => 'Leverage not same']);
         }
 
-        if ($tradingAccount->balance < $masterAccount->min_join_equity || $tradingAccount->balance < ($amount + $masterAccount->subscription_fee) || $tradingAccount->balance < $amount) {
+        if ($tradingAccount->balance + $tradingAccount->credit < $masterAccount->min_join_equity || $tradingAccount->balance + $tradingAccount->credit < ($amount + $masterAccount->subscription_fee) || $tradingAccount->balance + $tradingAccount->credit < $amount) {
             throw ValidationException::withMessages(['meta_login' => trans('public.insufficient_balance')]);
         }
 

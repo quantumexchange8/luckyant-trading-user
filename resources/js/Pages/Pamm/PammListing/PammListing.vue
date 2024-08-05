@@ -37,16 +37,9 @@ const pammTypes = [
 
 const currentDomain = window.location.hostname;
 
-onMounted(() => {
-    if (currentDomain === 'member.luckyantfxgroup.com' || currentDomain === 'testmember.luckyantfxasia.com') {
-        canTopUp.value = true
-    }
-})
-
 const isLoading = ref(false);
 const search = ref('');
 const type = ref('');
-const canTopUp = ref(false);
 const pamm_subscriptions = ref({data: []})
 
 const { formatAmount, formatDateTime } = transactionFormat();
@@ -241,7 +234,7 @@ const currentLocale = ref(usePage().props.locale);
                         </div>
                     </div>
                     <TopUpPamm
-                        v-if="canTopUp"
+                        v-if="pamm.canTopUp"
                         :pamm="pamm"
                         :terms="terms"
                         :walletSel="walletSel"

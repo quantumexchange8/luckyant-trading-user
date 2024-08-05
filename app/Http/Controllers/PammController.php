@@ -318,7 +318,15 @@ class PammController extends Controller
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($pamm->status == 'Terminated' ? $pamm->termination_date : $today);
 
+            $domain = $_SERVER['HTTP_HOST'];
+            $canTopUp = false;
+
+            if ($domain != 'member.luckyantmallvn.com' && $pamm->master->can_top_up) {
+                $canTopUp = true;
+            }
+
             $pamm->join_days = $join_days;
+            $pamm->canTopUp = $canTopUp;
             $pamm->master->profile_pic = $pamm->master->user->getFirstMediaUrl('profile_photo');
         });
 

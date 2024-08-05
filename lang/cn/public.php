@@ -512,7 +512,7 @@ return [
     "top_up_amount" => "充值金额",
     "purchase_product_desc" => "购买 :number 沉香树",
     "join_amount" => "加入金额",
-    "esg_investment_portfolio" => "ESG 投资组合",
+    "esg_investment_portfolio" => "ESG & 绿色金融",
     "agarwood_tree" => "沉香树",
     "pamm_read_agreement" => "通过继续操作，我确认我已阅读并同意支持文件中的内容（条款和条列）",
     "pamm_agreement" => "PAMM 协议",

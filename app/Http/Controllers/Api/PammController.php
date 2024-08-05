@@ -94,7 +94,8 @@ class PammController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Joined pamm master'
+            'message' => 'Joined pamm master',
+            'strategy_number' => $pamm_subscription->subscription_number,
         ]);
     }
 
@@ -104,12 +105,14 @@ class PammController extends Controller
 
         $result = [
             'follower_id' => $data['follower_id'],
+            'strategy_number' => $data['strategy_number'],
             'master_id' => $data['master_id'],
             'amount' => $data['amount'],
         ];
 
         $pamm_subscription = PammSubscription::withTrashed()
             ->where('meta_login', $result['follower_id'])
+            ->where('subscription_number', $result['strategy_number'])
             ->first();
 
         if (!$pamm_subscription) {
@@ -119,7 +122,7 @@ class PammController extends Controller
             ]);
         }
 
-        if ($pamm_subscription->status == 'Active') {
+        if ($pamm_subscription->status == 'Revoked') {
             return response()->json([
                 'status' => 'failed',
                 'message' => 'Strategy revoked'
@@ -133,7 +136,7 @@ class PammController extends Controller
 
         $masterAccount = Master::find($result['master_id']);
 
-        // fund to master
+        // deduct from master
         $description = 'withdraw #' . $pamm_subscription->meta_login;
         $master_deal = [];
 
@@ -148,7 +151,8 @@ class PammController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Revoked pamm master'
+            'message' => 'Revoked pamm master',
+            'strategy_number' => $pamm_subscription->subscription_number,
         ]);
     }
 
@@ -210,6 +214,37 @@ class PammController extends Controller
         return response()->json([
            'status' => 'success',
             'data' => $pammSummaries
+        ]);
+    }
+
+    public function withdrawStrategyProfit(Request $request)
+    {
+        $data = $request->all();
+
+        $result = [
+            'follower_id' => $data['follower_id'],
+            'master_id' => $data['master_id'],
+            'amount' => $data['amount'],
+        ];
+
+        $masterAccount = Master::find($result['master_id']);
+
+        // deduct from master
+        $description = 'withdrawal #' . $result['follower_id'];
+        $master_deal = [];
+
+        try {
+            $master_deal = (new MetaFiveService())->createDeal($masterAccount->meta_login, $result['amount'], $description, dealAction::WITHDRAW);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        }
+
+        $masterAccount->total_fund -= $result['amount'];
+        $masterAccount->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Withdraw amount $ ' . $result['amount'] . ' from #' . $result['follower_id'],
         ]);
     }
 }

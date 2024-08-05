@@ -41,4 +41,5 @@ Route::prefix('pamm')->group(function () {
 
     Route::post('join_investment_strategy', [PammController::class, 'join_investment_strategy']);
     Route::post('revoke_investment_strategy', [PammController::class, 'revoke_investment_strategy']);
+    Route::post('withdrawStrategyProfit', [PammController::class, 'withdrawStrategyProfit']);
 });

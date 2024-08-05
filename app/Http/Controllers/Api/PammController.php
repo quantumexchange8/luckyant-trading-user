@@ -66,6 +66,7 @@ class PammController extends Controller
             'settlement_period' => $masterAccount->roi_period,
             'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
             'expired_date' => now()->addDays($masterAccount->join_period)->endOfDay(),
+            'approval_date' => now(),
             'max_out_amount' => $masterAccount->max_out_amount,
             'status' => 'Active',
             'remarks' => 'China PAMM'

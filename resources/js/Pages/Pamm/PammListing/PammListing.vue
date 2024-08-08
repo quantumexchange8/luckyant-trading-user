@@ -4,18 +4,17 @@ import {SearchIcon} from "@heroicons/vue/outline";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import Input from "@/Components/Input.vue";
-import {computed, onMounted, ref, watch} from "vue";
+import {h, ref, watch, watchEffect} from "vue";
 import Button from "@/Components/Button.vue";
-import SubscriptionForm from "@/Pages/Trading/MasterListing/SubscriptionForm.vue";
 import {transactionFormat} from "@/Composables/index.js";
 import debounce from "lodash/debounce.js";
 import {usePage} from "@inertiajs/vue3";
-import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
-import JoinPammForm from "@/Pages/Pamm/PammMaster/JoinPammForm.vue";
+import TanStackTable from "@/Components/TanStackTable.vue";
 import NoData from "@/Components/NoData.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
-import PammReturn from "@/Pages/Pamm/PammListing/PammReturn.vue";
-import TopUpPamm from "@/Pages/Pamm/PammListing/TopUpPamm.vue";
+import {trans} from "laravel-vue-i18n";
+import Action from "@/Pages/Pamm/PammListing/Partials/Action.vue";
+import PammSubscription from "@/Pages/Pamm/PammListing/PammSubscription.vue";
 
 const props = defineProps({
     terms: Object,
@@ -24,56 +23,14 @@ const props = defineProps({
 
 const typeFilter = [
     {value: '', label:"All"},
-    {value: 'max_equity', label:"Highest Equity to follow"},
-    {value: 'min_equity', label:"Lowest Equity to follow"},
-    {value: 'max_sub', label:"Most Subscribers"},
-    {value: 'min_sub', label:"Least Subscribers"},
+    {value: 'ESG', label:"ESG"},
+    {value: 'StandardGroup', label:"Standard"},
 ];
 
-const pammTypes = [
-    {value: 'ESG', label:"esg"},
-    {value: 'Standard', label:"standard"},
-]
-
-const currentDomain = window.location.hostname;
-
-const isLoading = ref(false);
 const search = ref('');
 const type = ref('');
-const pamm_subscriptions = ref({data: []})
 
 const { formatAmount, formatDateTime } = transactionFormat();
-
-const getResults = async (page = 1, search = '', type = '', date = '') => {
-    isLoading.value = true
-    try {
-        let url = `/pamm/getPammSubscriptionData?page=${page}`;
-
-        if (search) {
-            url += `&search=${search}`;
-        }
-
-        if (type) {
-            url += `&type=${type}`;
-        }
-
-        const response = await axios.get(url);
-        pamm_subscriptions.value = response.data.pamm_subscriptions;
-    } catch (error) {
-        console.error(error);
-    } finally {
-        isLoading.value = false
-    }
-}
-
-getResults();
-
-watch(
-    [search, type],
-    debounce(([searchValue, typeValue, dateValue]) => {
-        getResults(1, searchValue, typeValue, dateValue);
-    }, 300)
-);
 
 const clearFilter = () => {
     search.value = '';
@@ -81,6 +38,138 @@ const clearFilter = () => {
 }
 
 const currentLocale = ref(usePage().props.locale);
+
+const formatter = ref({
+    date: 'YYYY-MM-DD',
+    month: 'MM'
+});
+
+const pageSizes = [
+    {value: 5, label: 5},
+    {value: 10, label: 10},
+    {value: 20, label: 20},
+    {value: 50, label: 50},
+    {value: 100, label: 100},
+]
+
+const master = ref('');
+const meta_login = ref('');
+const subscriptions = ref({data: []});
+const sorting = ref();
+const pageSize = ref(10);
+const action = ref('');
+const currentPage = ref(1);
+// const isLoading = ref(false);
+// const refresh = ref(false);
+
+// function refreshTable() {
+//     isLoading.value = !isLoading.value;
+//     refresh.value = true;
+// }
+
+const getResults = async (page = 1, paginate = 10, filterMetaLogin = meta_login.value, columnName = sorting.value) => {
+    try {
+        let url = `/pamm/getPammSubscriptions?meta_login=${filterMetaLogin}&page=${page}`;
+
+        if (paginate) {
+            url += `&paginate=${paginate}`;
+        }
+
+        if (columnName) {
+            // Convert the object to JSON and encode it to send as a query parameter
+            const encodedColumnName = encodeURIComponent(JSON.stringify(columnName));
+            url += `&columnName=${encodedColumnName}`;
+        }
+
+        const response = await axios.get(url);
+        subscriptions.value = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const columns = [
+    {
+        accessorKey: 'approval_date',
+        header: 'date',
+        cell: info => info.getValue() ? formatDateTime(info.getValue()) : trans('public.pending'),
+    },
+    {
+        accessorKey: 'meta_login',
+        header: 'live_account',
+    },
+    {
+        accessorKey: currentLocale.value === 'cn' ? ('master.trading_user.company' !== null ? 'master.trading_user.company' : 'master.trading_user.name') : 'master.trading_user.name',
+        header: 'master',
+        enableSorting: false,
+    },
+    {
+        accessorKey: 'master_meta_login',
+        header: 'account_no',
+    },
+    {
+        accessorKey: 'subscription_number',
+        header: 'subscription_number',
+    },
+    {
+        accessorKey: 'subscription_amount',
+        header: 'amount',
+        cell: info => '$ ' + formatAmount(info.getValue()),
+    },
+    {
+        accessorKey: 'settlement_period',
+        header: 'roi_period',
+        cell: info => info.getValue() + ' ' + trans('public.days'),
+    },
+    {
+        accessorKey: 'join_days',
+        header: 'join_day',
+        cell: info => info.getValue() + ' ' + trans('public.days'),
+    },
+    {
+        accessorKey: 'status',
+        header: 'status',
+        enableSorting: false,
+        cell: ({ row }) => h(StatusBadge, {value: row.original.status}),
+    },
+    {
+        accessorKey: 'action',
+        header: 'table_action',
+        enableSorting: false,
+        cell: ({ row }) => h(Action, {
+            subscription: row.original,
+            terms: props.terms,
+        }),
+    },
+];
+
+watch([currentPage, action], ([currentPageValue, newAction]) => {
+    if (newAction === 'goToFirstPage' || newAction === 'goToLastPage') {
+        getResults(currentPageValue, pageSize.value);
+    } else {
+        getResults(currentPageValue, pageSize.value);
+    }
+});
+
+watch(
+    [sorting, pageSize],
+    ([sortingValue, pageSizeValue]) => {
+        getResults(1, pageSizeValue, sortingValue);
+    }
+);
+
+watch(
+    [meta_login],
+    debounce(([metaLoginValue]) => {
+        getResults(1, pageSize.value, metaLoginValue, sorting.value);
+    }, 300)
+);
+
+watchEffect(() => {
+    if (usePage().props.title !== null) {
+        getResults();
+    }
+});
 </script>
 
 <template>
@@ -130,121 +219,33 @@ const currentLocale = ref(usePage().props.locale);
             </div>
         </div>
 
-        <div class="py-5 w-full">
-            <div
-                v-if="pamm_subscriptions.data.length > 0"
-                class="grid grid-cols-1 sm:grid-cols-3 gap-5 my-5"
-            >
-                <div
-                    v-for="pamm in pamm_subscriptions.data"
-                    class="flex flex-col items-start gap-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg hover:bg-gray-50 hover:shadow-primary-300"
-                >
-                    <div class="flex justify-between items-center self-stretch">
-                        <div class="flex gap-2 w-full">
-                            <img
-                                class="object-cover w-12 h-12 rounded-full"
-                                :src="pamm.master.profile_pic ? pamm.master.profile_pic : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
-                                alt="userPic"
-                            />
-                            <div class="flex flex-col">
-                                <div v-if="currentLocale === 'en'" class="text-sm">
-                                    {{ pamm.trading_user.name }}
-                                </div>
-                                <div v-if="currentLocale === 'cn'" class="text-sm">
-                                    {{ pamm.trading_user.company ? pamm.trading_user.company : pamm.trading_user.name }}
-                                </div>
-                                <div class="font-semibold">
-                                    {{ pamm.master_meta_login }}
-                                </div>
-                            </div>
-                        </div>
-                        <StatusBadge :value="pamm.status" width="w-20"/>
-                    </div>
+        <PammSubscription
+            :terms="terms"
+            :search="search"
+            :type="type"
+            @update:master="master = $event"
+            @update:meta_login="meta_login = $event"
+        />
 
-                    <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 justify-between">
-                        <div class="flex gap-1">
-                            <div class="text-sm">{{ $t('public.join_date') }}:</div>
-                            <div class="text-sm font-semibold">{{ pamm.approval_date ? formatDateTime(pamm.approval_date, false) : $t('public.pending') }}</div>
-                        </div>
-                        <div class="flex gap-1">
-                            <div class="text-sm">{{ $t('public.join_day') }}:</div>
-                            <div class="text-sm font-semibold">{{ pamm.join_days }}</div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 w-full">
-                        <!--                <div class="col-span-2">-->
-                        <!--                    chart-->
-                        <!--                </div>-->
-                        <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
-                                {{ $t('public.sharing_profit') }}
-                            </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ formatAmount(pamm.master.sharing_profit, 0) }} %
-                            </div>
-                        </div>
-                        <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
-                                {{ $t('public.roi_period') }}
-                            </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ pamm.settlement_period }} {{ $t('public.days') }}
-                            </div>
-                        </div>
-                        <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
-                                {{ $t('public.subscription_number') }}
-                            </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ pamm.subscription_number }}
-                            </div>
-                        </div>
-                        <div v-if="pamm.master.type !== 'StandardGroup'" class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
-                                {{ $t('public.product') }}
-                            </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ pamm.package ? '$ ' + formatAmount(pamm.package.amount, 2) + ' - ' : null }} {{ pamm.subscription_package_product }}
-                            </div>
-                        </div>
-                        <div class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center">
-                                {{ $t('public.account_no') }}
-                            </div>
-                            <div class="flex justify-center">
-                                <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ pamm.meta_login }} - $ {{ formatAmount(pamm.subscription_amount, 0) }}</span>
-                            </div>
-                        </div>
-                        <div v-if="pamm.master.type !== 'StandardGroup' && pamm.max_out_amount" class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
-                                {{ $t('public.max_out_amount') }}
-                            </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                $ {{ formatAmount(pamm.max_out_amount, 0) }}
-                            </div>
-                        </div>
-                        <div v-if="pamm.master.type !== 'StandardGroup'" class="flex flex-col gap-1 items-center justify-center">
-                            <div class="text-xs flex justify-center text-center">
-                                {{ $t('public.valid_until') }}
-                            </div>
-                            <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                                {{ formatDateTime(pamm.expired_date, false) }}
-                            </div>
-                        </div>
-                    </div>
-                    <TopUpPamm
-                        v-if="pamm.canTopUp"
-                        :pamm="pamm"
-                        :terms="terms"
-                        :walletSel="walletSel"
-                    />
-                </div>
+        <div class="p-5 my-8 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
+            <div class="text-lg font-semibold">
+                {{ $t('public.pamm_return') }}
             </div>
-            <div v-else class="text-2xl flex w-full items-center justify-center">
-                <NoData />
+            <div
+                v-if="subscriptions.data.length === 0"
+                class="w-full flex items-center justify-center"
+                >
+                <NoData/>
+            </div>
+            <div v-else>
+                <TanStackTable
+                    :data="subscriptions"
+                    :columns="columns"
+                    @update:sorting="sorting = $event"
+                    @update:action="action = $event"
+                    @update:currentPage="currentPage = $event"
+                />
             </div>
         </div>
-        <PammReturn />
     </AuthenticatedLayout>
 </template>

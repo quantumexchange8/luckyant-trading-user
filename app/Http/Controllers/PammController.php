@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -304,14 +305,33 @@ class PammController extends Controller
     {
         $user = Auth::user();
 
-        $pamm_subscriptions = PammSubscription::with(['master', 'master.user','master.tradingUser', 'tradingUser:id,name,meta_login', 'package'])
+        $subQuery = PammSubscription::select(DB::RAW('COALESCE(MIN(CASE WHEN status = "Active" THEN id END),MAX(id)) AS first_id'), 
+        DB::RAW('SUM(CASE WHEN status = "Active" THEN subscription_amount ELSE 0 END) AS total_amount'), 
+        DB::RAW('SUM(CASE WHEN status = "Active" THEN CAST(SUBSTRING_INDEX(subscription_package_product, "棵沉香树", 1) AS UNSIGNED) ELSE 0 END) AS package_amount'))
             ->where('user_id', $user->id)
-            ->when($request->filled('type'), function ($query) use ($request) {
-                $query->where('type', $request->type);
-            })
             ->whereNot('status', 'Pending')
-            ->latest()
-            ->paginate(10);
+            ->groupBy('meta_login', 'master_id');
+        
+        $pamm_subscriptions = PammSubscription::with(['master', 'master.user','master.tradingUser', 'tradingUser:id,name,meta_login', 'package'])
+            ->joinSub($subQuery, 'grouped', function($join) {
+                $join->on('pamm_subscriptions.id', '=', 'grouped.first_id');
+            })
+            ->where('pamm_subscriptions.user_id', $user->id)
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = '%' . $request->input('search') . '%';
+                $query->whereHas('master.tradingUser', function ($user) use ($search) {
+                    $user->where('name', 'like', $search)
+                        ->orWhere('meta_login', 'like', $search)
+                        ->orWhere('company', 'like', $search);
+                })
+                ->orWhere('pamm_subscriptions.meta_login', 'like', $search);
+            })
+            ->when($request->filled('type'), function ($query) use ($request) {
+                $query->where('pamm_subscriptions.type', $request->type);
+            })
+            ->whereNot('pamm_subscriptions.status', 'Pending')
+            ->get();
+
 
         $pamm_subscriptions->each(function ($pamm) use ($user) {
             $approvalDate = Carbon::parse($pamm->approval_date > now() ? now() : $pamm->approval_date);
@@ -325,7 +345,7 @@ class PammController extends Controller
                 $canTopUp = true;
             }
 
-            $pamm->join_days = $join_days;
+            $pamm->join_days = $pamm->status != 'Rejected' ? $join_days : 0;
             $pamm->canTopUp = $canTopUp;
             $pamm->master->profile_pic = $pamm->master->user->getFirstMediaUrl('profile_photo');
         });
@@ -496,7 +516,7 @@ class PammController extends Controller
         $column = $decodedColumnName ? $decodedColumnName['id'] : 'approval_date';
         $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
 
-        $query = SubscriptionBatch::with(['master', 'master.tradingUser', 'master.masterManagementFee'])
+        $query = PammSubscription::with(['master', 'master.tradingUser', 'tradingUser:id,name,meta_login', 'package'])
             ->where('user_id', Auth::id())
             ->where('meta_login', $request->meta_login);
 
@@ -508,16 +528,8 @@ class PammController extends Controller
                         ->orWhere('meta_login', 'like', $search)
                         ->orWhere('company', 'like', $search);
                 });
-            });
-        }
-
-        if ($request->filled('date')) {
-            $date = $request->input('date');
-            $dateRange = explode(' - ', $date);
-            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
-            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
-
-            $query->whereBetween('approval_date', [$start_date, $end_date]);
+            })
+            ->orWhere('meta_login', 'like', $search);
         }
 
         if ($request->filled('master')) {
@@ -535,15 +547,23 @@ class PammController extends Controller
             ->orderBy($column == null ? 'approval_date' : $column, $sortOrder)
             ->paginate($request->input('paginate', 10));
 
-        $results->each(function ($batch) {
-            $approvalDate = Carbon::parse($batch->approval_date > now() ? now() : $batch->approval_date);
+        $results->each(function ($pamm) {
+            $approvalDate = Carbon::parse($pamm->approval_date > now() ? now() : $pamm->approval_date);
             $today = Carbon::today();
-            $join_days = $approvalDate->diffInDays($batch->status == 'Terminated' ? $batch->termination_date : $today);
+            $join_days = $approvalDate->diffInDays($pamm->status == 'Terminated' ? $pamm->termination_date : $today);
 
-            $batch->join_days = $join_days;
+
+            $pamm->join_days = $pamm->status != 'Rejected' ? $join_days : 0;
+
         });
 
         return response()->json($results);
+    }
+
+    public function getPammSubscriptionDetail(Request $request)
+    {
+        $pamm = PammSubscription::where('id', $request->subscription_id)->first();
+        return response()->json($pamm);
     }
 
     public function topUpPamm(Request $request)

@@ -38,6 +38,7 @@ Route::get('getMasterOpenTrade', [MasterController::class, 'getMasterOpenTrade']
  */
 Route::prefix('pamm')->group(function () {
     Route::get('getStrategySummary', [PammController::class, 'getStrategySummary']);
+    Route::get('getStrategyDetails', [PammController::class, 'getStrategyDetails']);
 
     Route::post('join_investment_strategy', [PammController::class, 'join_investment_strategy']);
     Route::post('revoke_investment_strategy', [PammController::class, 'revoke_investment_strategy']);

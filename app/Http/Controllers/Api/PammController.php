@@ -218,6 +218,65 @@ class PammController extends Controller
         ]);
     }
 
+    public function getStrategyDetails(Request $request)
+    {
+        $data = $request->all();
+
+        if (!isset($data['master_id'])) {
+            return response()->json([
+               'status' => 'failed',
+               'message' => 'Missing master_id'
+            ]);
+        }
+
+        $result = [
+            'master_id' => $data['master_id'],
+            'from' => $data['from'] ?? today()->toDateString(),
+            'to' => $data['to'] ?? today()->toDateString(),
+        ];
+
+
+        $pammSummaries = TradePammInvestorAllocate::where('master_id', $result['master_id'])
+            ->when($request->filled('from') || $request->filled('to'), function ($query) use ($result) {
+                $start_date = Carbon::createFromFormat('Y-m-d', $result['from'])->startOfDay();
+                $end_date = Carbon::createFromFormat('Y-m-d', $result['to'])->endOfDay();
+                $query->whereBetween('time_close', [$start_date, $end_date]);
+            })
+            ->get()
+            ->groupBy(function ($data) {
+                // Convert time_close to Carbon instance, then format as 'Y-m-d'
+                $date = Carbon::parse($data->time_close)->format('Y-m-d');
+                // Use date, master_id, and meta_login for grouping
+                return $date . '|' . $data->master_id . '|' . $data->master_lot . '|' . $data->master_profit;
+            })
+            ->map(function ($groupedData, $key) {
+                list($date, $masterId, $masterLot, $masterPnl) = explode('|', $key);
+
+                // Calculate the sum of trade_profit for each group
+                $totalProfitLoss = $groupedData->sum('trade_profit');
+
+                return [
+                    'date' => $date,
+                    'master_id' => $masterId,
+                    'master_lot' => $masterLot,
+                    'master_profit_and_loss' => $masterPnl,
+                    'followers' => $groupedData->map(function ($data) {
+                        return [
+                            'meta_login' => $data->meta_login,
+                            'lot' => $data->volume,
+                            'profit_and_loss' => $data->trade_profit,
+                        ];
+                    }),
+                ];
+            })
+            ->values();
+
+        return response()->json([
+           'status' => 'success',
+            'data' => $pammSummaries
+        ]);
+    }
+
     public function withdrawStrategyProfit(Request $request)
     {
         $data = $request->all();

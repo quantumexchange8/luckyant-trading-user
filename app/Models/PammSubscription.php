@@ -30,6 +30,7 @@ class PammSubscription extends Model
         'approval_date',
         'status',
         'remarks',
+        'extra_conditions',
         'delivery_address',
         'handle_by',
     ];

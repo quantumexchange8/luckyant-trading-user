@@ -69,7 +69,8 @@ class PammController extends Controller
             'approval_date' => now(),
             'max_out_amount' => $masterAccount->max_out_amount,
             'status' => 'Active',
-            'remarks' => 'China PAMM'
+            'remarks' => 'China PAMM',
+            'extra_conditions' => 'NOLOT_NOPAMM',
         ]);
 
         // fund to master

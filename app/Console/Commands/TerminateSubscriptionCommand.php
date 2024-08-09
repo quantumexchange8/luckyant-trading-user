@@ -23,11 +23,13 @@ class TerminateSubscriptionCommand extends Command
 
         foreach ($subscriptions as $subscription) {
             Subscriber::where('subscription_id', $subscription->id)->first()->update([
+                'unsubscribe_date' => now(),
                 'status' => 'Unsubscribed',
                 'auto_renewal' => false
             ]);
 
             $subscription->update([
+                'termination_date' => now(),
                 'status' => 'Terminated',
             ]);
 

@@ -85,8 +85,7 @@ const submit = () => {
         const amountString = label.split('(')[1].split(')')[0];
 
         if (typeof amount.value === 'number') {
-            // amountReturned.value = (amount.value % (props.masterAccount.type === 'StandardGroup' ? 100 : 1000)).toFixed(2);
-            amountReturned.value = (amount.value % (props.masterAccount.type === 'StandardGroup' ? 1 : 1000)).toFixed(2);
+            amountReturned.value = (amount.value % (props.masterAccount.type === 'StandardGroup' ? 100 : 1000)).toFixed(2);
             amount.value = (amount.value - amountReturned.value).toFixed(2);
         } else if (amount > 0) {
             amount.value = parseFloat(amountString.replace(/[^0-9.]/g, ''));

@@ -45,7 +45,9 @@ class PammController extends Controller
             'amount' => $data['amount'],
         ];
 
-        $checkSubscription = PammSubscription::where('meta_login', $result['follower_id'])->get();
+        $checkSubscription = PammSubscription::withTrashed()
+            ->where('meta_login', $result['follower_id'])
+            ->first();
 
         if (!empty($checkSubscription)) {
             return response()->json([

@@ -305,13 +305,13 @@ class PammController extends Controller
     {
         $user = Auth::user();
 
-        $subQuery = PammSubscription::select(DB::RAW('COALESCE(MIN(CASE WHEN status = "Active" THEN id END),MAX(id)) AS first_id'), 
-        DB::RAW('SUM(CASE WHEN status = "Active" THEN subscription_amount ELSE 0 END) AS total_amount'), 
+        $subQuery = PammSubscription::select(DB::RAW('COALESCE(MIN(CASE WHEN status = "Active" THEN id END),MAX(id)) AS first_id'),
+        DB::RAW('SUM(CASE WHEN status = "Active" THEN subscription_amount ELSE 0 END) AS total_amount'),
         DB::RAW('SUM(CASE WHEN status = "Active" THEN CAST(SUBSTRING_INDEX(subscription_package_product, "棵沉香树", 1) AS UNSIGNED) ELSE 0 END) AS package_amount'))
             ->where('user_id', $user->id)
             ->whereNot('status', 'Pending')
             ->groupBy('meta_login', 'master_id');
-        
+
         $pamm_subscriptions = PammSubscription::with(['master', 'master.user','master.tradingUser', 'tradingUser:id,name,meta_login', 'package'])
             ->joinSub($subQuery, 'grouped', function($join) {
                 $join->on('pamm_subscriptions.id', '=', 'grouped.first_id');

@@ -15,7 +15,7 @@ import Checkbox from "@/Components/Checkbox.vue";
 const props = defineProps({
     pamm: Object,
     terms: Object,
-    walletSel: Array
+    walletSel: Object
 })
 
 const topUpModal = ref(false);

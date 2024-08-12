@@ -10,7 +10,8 @@ import TopUpPamm from "@/Pages/Pamm/PammListing/TopUpPamm.vue";;
 const props = defineProps({
     terms: Object,
     search: String,
-    type: String
+    type: String,
+    walletSel: Object
 })
 
 const selectedPammSubscription = ref();

@@ -223,6 +223,7 @@ watchEffect(() => {
             :terms="terms"
             :search="search"
             :type="type"
+            :walletSel="walletSel"
             @update:master="master = $event"
             @update:meta_login="meta_login = $event"
         />

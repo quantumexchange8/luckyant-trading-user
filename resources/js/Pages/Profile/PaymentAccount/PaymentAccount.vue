@@ -17,6 +17,7 @@ const props = defineProps({
     paymentAccounts: Object,
     countries: Array,
     currencies: Array,
+    bank_withdraw: Number,
 })
 
 const statusVariant = (transactionStatus) => {
@@ -43,11 +44,14 @@ const closeModal = () => {
 }
 
 watch(country, (newValue) => {
-    if (newValue !== 132 && accountDetail.value.payment_platform !== 'Crypto') {
-        currency.value = 'USD';
-    }
-    else if (newValue === 132 && accountDetail.value.payment_platform !== 'Crypto') {
+    if (newValue === 132 && accountDetail.value.payment_platform !== 'Crypto') {
         currency.value = 'MYR';
+    }
+    else if (newValue === 45 && accountDetail.value.payment_platform !== 'Crypto') {
+        currency.value = 'CNY';
+    }
+    else if ((newValue !== 132 && newValue !== 45) && accountDetail.value.payment_platform !== 'Crypto') {
+        currency.value = 'USD';
     }
 });
 
@@ -140,6 +144,7 @@ watchEffect(() => {
         <AddPaymentAccount
             :countries="countries"
             :currencies="currencies"
+            :bank_withdraw="bank_withdraw"
         />
     </div>
 

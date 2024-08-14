@@ -20,8 +20,8 @@ Account Number : {{ $personal['meta_login'] }}<br>
 Investment Amount : ${{ $personal['subscription_amount'] }}<br>
 Join Date : {{ $personal['join_date'] }}<br>
 
-**Trade results transactions**
 @component('mail::table')
+**Trade results transactions**
 | **Closing Time**    | **Ticket** | **Symbol** | **Type** | **Lot** | **Profit ($)** |
 |:--------------------|:-----------|:-----------|:---------|:--------|:---------------|
 @foreach($personal['details'] as $detail)
@@ -35,7 +35,6 @@ Join Date : {{ $personal['join_date'] }}<br>
 @endforeach
 
 @endforeach
-
 
 Important note: Please report to us within 24 hours if this statement is incorrect. Otherwise this statement will be considered to be confirmed by you.
 
@@ -51,6 +50,8 @@ Important note: Please report to us within 24 hours if this statement is incorre
 | Copyright © Lucky Ant Trading. All rights reserved. |
 @endcomponent
 
+<br>
+<br>
 # PAMM订阅每日报告
 
 尊敬的**{{ $user->name }}**,
@@ -72,8 +73,8 @@ Important note: Please report to us within 24 hours if this statement is incorre
 投资金额 : ${{ $personal['subscription_amount'] }}<br>
 加入日期 : {{ $personal['join_date'] }}<br>
 
-**交易结果**
 @component('mail::table')
+**交易结果**
 | **收盘时间**         | **票号** | **产品** | **类型** | **手数** | **盈利 ($)** |
 |:--------------------|:-----------|:-----------|:---------|:--------|:---------------|
 @foreach($personal['details'] as $detail)

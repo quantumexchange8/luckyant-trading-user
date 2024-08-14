@@ -1,5 +1,5 @@
 <script setup>
-import {ref, watch} from "vue";
+import {ref, watch, computed} from "vue";
 import Modal from "@/Components/Modal.vue";
 import {useForm} from "@inertiajs/vue3";
 import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
@@ -12,6 +12,7 @@ import Button from "@/Components/Button.vue";
 const props = defineProps({
     countries: Array,
     currencies: Array,
+    bank_withdraw: Number,
 })
 
 const addAccountModal = ref(false);
@@ -20,18 +21,29 @@ const openAddAccountModal = () => {
     addAccountModal.value = true;
 }
 
-const paymentTypes = [
-    // {
-    //     name: 'bank',
-    //     value: 'Bank',
-    // },
-    {
+const paymentTypes = computed(() => {
+  if (props.bank_withdraw == 1) {
+    return [
+      {
+        name: 'bank',
+        value: 'Bank',
+      },
+      {
         name: 'crypto',
         value: 'Crypto',
-    },
-]
+      },
+    ];
+  } else {
+    return [
+        {
+        name: 'crypto',
+        value: 'Crypto',
+      },
+    ];
+  }
+});
 
-const selected = ref(paymentTypes[0]);
+const selected = ref(paymentTypes.value[0]);
 const cryptoWallet = ref('USDT (TRC20)');
 const country = ref(132);
 const currency = ref('MYR');
@@ -58,13 +70,15 @@ watch((selected), (newSelect) => {
 });
 
 watch(country, (newValue) => {
-    if (newValue !== 132) {
-        currency.value = 'USD';
-    }
-    else if (newValue == 132) {
+    if (newValue === 132) {
         currency.value = 'MYR';
     }
-
+    else if (newValue === 45) {
+        currency.value = 'CNY';
+    }
+    else {
+        currency.value = 'USD';
+    }
 });
 
 const submit = () => {

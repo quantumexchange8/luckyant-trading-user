@@ -181,6 +181,9 @@ img {
 }
 
 /* Tables */
+.table p {
+    margin: 0;
+}
 
 .table table {
     -premailer-cellpadding: 0;

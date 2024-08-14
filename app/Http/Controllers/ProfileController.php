@@ -48,6 +48,7 @@ class ProfileController extends Controller
             'paymentAccounts' => PaymentAccount::where('user_id', Auth::id())->latest()->get(),
             'countries' => (new SelectOptionService())->getCountries(),
             'currencies' => (new SelectOptionService())->getCurrencies(),
+            'bank_withdraw' => Auth::user()->enable_bank_withdrawal,
             'rank' => $translations[$locale] ?? $rank->name,
         ]);
     }

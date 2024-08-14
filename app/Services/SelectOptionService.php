@@ -92,7 +92,7 @@ class SelectOptionService
 
     public function getCurrencies(): \Illuminate\Support\Collection
     {
-        return Country::whereIn('id', [132, 233])->get()->map(function ($country) {
+        return Country::whereIn('id', [132, 233, 45])->get()->map(function ($country) {
             return [
                 'value' => $country->currency,
                 'label' => $country->currency_name . ' (' . $country->currency . ')',

@@ -20,6 +20,7 @@ defineProps({
     countries: Array,
     currencies: Array,
     rank: String,
+    bank_withdraw: Number,
 })
 
 const selectedTab = ref(0);
@@ -127,6 +128,7 @@ onMounted(() => {
                             :paymentAccounts="paymentAccounts"
                             :countries="countries"
                             :currencies="currencies"
+                            :bank_withdraw="bank_withdraw"
                         />
                     </TabPanel>
                 </TabPanels>

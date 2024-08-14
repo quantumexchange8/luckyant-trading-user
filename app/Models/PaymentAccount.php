@@ -15,6 +15,7 @@ class PaymentAccount extends Model
         'payment_platform',
         'payment_platform_name',
         'account_no',
+        'bank_sub_branch',
         'bank_branch_address',
         'bank_swift_code',
         'bank_code',

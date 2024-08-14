@@ -517,5 +517,6 @@ return [
     "pamm_read_agreement" => "Dengan melanjutkan, saya mengonfirmasi bahwa saya telah membaca dan menyetujui syarat dan ketentuan",
     "pamm_agreement" => "Perjanjian PAMM",
     "planting_agreement" => "Perjanjian Penanaman",
-    "balance" => "Saldo"
+    "balance" => "Saldo",
+    "bank_sub_branch" => "Cabang Pembantu",
 ];

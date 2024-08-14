@@ -518,4 +518,5 @@ return [
     "pamm_agreement" => "PAMM 协议",
     "planting_agreement" => "沉香树种植协议",
     "balance" => "净值",
+    "bank_sub_branch" => "支行",
 ];

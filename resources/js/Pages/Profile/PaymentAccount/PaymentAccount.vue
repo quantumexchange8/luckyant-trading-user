@@ -61,6 +61,7 @@ const form = useForm({
     payment_account_name: '',
     payment_platform_name: '',
     account_no: '',
+    bank_sub_branch: '',
     country: null,
     currency: '',
     bank_swift_code: '',
@@ -75,6 +76,7 @@ const submit = () => {
     form.payment_account_name = accountDetail.value.payment_account_name;
     form.payment_platform_name = accountDetail.value.payment_platform_name;
     form.account_no = accountDetail.value.account_no;
+    form.bank_sub_branch = accountDetail.value.bank_sub_branch;
     form.country = country.value;
     form.currency = currency.value;
     form.bank_swift_code = accountDetail.value.bank_swift_code;
@@ -159,7 +161,7 @@ watchEffect(() => {
             <div v-if="accountDetail.payment_platform === 'Bank'" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <!-- <BankSetting/> -->
 
-                <div class="space-y-2">
+                <div class="space-y-2 md:col-span-2">
                     <Label
                         for="bank_name"
                         :value="$t('public.bank_name')"
@@ -172,6 +174,20 @@ watchEffect(() => {
                         :invalid="form.errors.payment_platform_name"
                     />
                     <InputError :message="form.errors.payment_platform_name" />
+                </div>
+                <div class="space-y-2">
+                    <Label
+                        for="bank_sub_branch"
+                        :value="$t('public.bank_sub_branch')"
+                    />
+                    <Input
+                        id="bank_sub_branch"
+                        type="text"
+                        class="block w-full"
+                        v-model="accountDetail.bank_sub_branch"
+                        :invalid="form.errors.bank_sub_branch"
+                    />
+                    <InputError :message="form.errors.bank_sub_branch" />
                 </div>
                 <div class="space-y-2">
                     <Label

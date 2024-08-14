@@ -53,8 +53,9 @@ const form = useForm({
     payment_account_name: '',
     payment_platform_name: '',
     account_no: '',
-    country: 132,
-    currency: 'MYR',
+    country: null,
+    currency: '',
+    bank_sub_branch: '',
     bank_swift_code: '',
     bank_code: '',
     bank_code_type: '',
@@ -79,6 +80,9 @@ watch(country, (newValue) => {
     else {
         currency.value = 'USD';
     }
+
+    form.country = newValue
+    form.currency = currency.value
 });
 
 const submit = () => {
@@ -170,7 +174,7 @@ const closeModal = () => {
             <div v-if="selected.name === 'bank'" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <!-- <BankSetting/> -->
 
-                <div class="space-y-2">
+                <div class="space-y-2 md:col-span-2">
                     <Label
                         for="bank_name"
                         :value="$t('public.bank_name')"
@@ -186,8 +190,22 @@ const closeModal = () => {
                 </div>
                 <div class="space-y-2">
                     <Label
+                        for="bank_sub_branch"
+                        :value="$t('public.bank_sub_branch')"
+                    />
+                    <Input
+                        id="bank_sub_branch"
+                        type="text"
+                        class="block w-full"
+                        v-model="form.bank_sub_branch"
+                        :invalid="form.errors.bank_sub_branch"
+                    />
+                    <InputError :message="form.errors.bank_sub_branch" />
+                </div>
+                <div class="space-y-2">
+                    <Label
                         for="bank_account_name"
-                        :value="$t('public.bank_account_name')"
+                        :value="$t('public.account_name')"
                     />
                     <Input
                         id="bank_account_name"

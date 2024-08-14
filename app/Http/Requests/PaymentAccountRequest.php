@@ -17,6 +17,7 @@ class PaymentAccountRequest extends FormRequest
 
         if ($this->payment_method == 'Bank') {
             $rules['bank_swift_code'] = ['required'];
+            $rules['bank_sub_branch'] = ['required'];
         }
 
         return $rules;
@@ -46,6 +47,7 @@ class PaymentAccountRequest extends FormRequest
             'payment_platform_name' => trans($this->payment_method == 'Bank' ? 'public.bank_name' : 'public.payment_service'),
             'account_no' => trans($this->payment_method == 'Bank' ? 'public.account_number' : 'public.wallet_address'),
             'bank_swift_code' => trans('public.bank_swift_code'),
+            'bank_sub_branch' => trans('public.bank_sub_branch'),
             'security_pin' => trans('public.security_pin'),
         ];
     }

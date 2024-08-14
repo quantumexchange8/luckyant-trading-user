@@ -517,5 +517,6 @@ return [
     "pamm_read_agreement" => "계속 진행함으로써 약관에 동의함을 확인합니다.",
     "pamm_agreement" => "PAMM 계약",
     "planting_agreement" => "심기 계약",
-    "balance" => "잔액"
+    "balance" => "잔액",
+    "bank_sub_branch" => "하위 지점",
 ];

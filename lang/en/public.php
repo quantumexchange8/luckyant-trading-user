@@ -518,4 +518,5 @@ return [
     "pamm_agreement" => "PAMM Agreement",
     "planting_agreement" => "Planting Agreement",
     "balance" => "Balance",
+    "bank_sub_branch" => "Sub Branch",
 ];

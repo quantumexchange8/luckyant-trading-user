@@ -517,5 +517,6 @@ return [
     "pamm_read_agreement" => "続行することで、利用規約に同意したことを確認します。",
     "pamm_agreement" => "PAMM契約",
     "planting_agreement" => "植栽契約",
-    "balance" => "残高"
+    "balance" => "残高",
+    "bank_sub_branch" => "出張所",
 ];

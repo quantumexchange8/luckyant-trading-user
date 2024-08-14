@@ -517,5 +517,6 @@ return [
     "pamm_read_agreement" => "โดยการดำเนินการต่อ ฉันยืนยันว่าฉันได้อ่านและยอมรับข้อกำหนดและเงื่อนไข",
     "pamm_agreement" => "ข้อตกลง PAMM",
     "planting_agreement" => "ข้อตกลงการปลูก",
-    "balance" => "ยอดคงเหลือ"
+    "balance" => "ยอดคงเหลือ",
+    "bank_sub_branch" => "สาขาย่อย",
 ];

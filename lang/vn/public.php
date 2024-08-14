@@ -517,5 +517,6 @@ return [
     "pamm_read_agreement" => "Bằng cách tiếp tục, tôi xác nhận rằng tôi đã đọc và đồng ý với các điều khoản và điều kiện",
     "pamm_agreement" => "Hợp đồng PAMM",
     "planting_agreement" => "Hợp đồng trồng cây",
-    "balance" => "Số dư"
+    "balance" => "Số dư",
+    "bank_sub_branch" => "Chi nhánh phụ",
 ];

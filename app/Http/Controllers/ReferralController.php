@@ -54,7 +54,7 @@ class ReferralController extends Controller
             $query->where('id', $user->id);
         })->whereIn('id', $childrenIds)->get();
 
-        $rank = SettingRank::where('id', $user->setting_rank_id)->first();
+        $rank = SettingRank::where('id', $user->display_rank_id)->first();
 
         // Parse the JSON data in the name column to get translations
         $translations = json_decode($rank->name, true);
@@ -88,7 +88,7 @@ class ReferralController extends Controller
         });
         $locale = app()->getLocale();
 
-        $rank = SettingRank::where('id', $user->setting_rank_id)->first();
+        $rank = SettingRank::where('id', $user->display_rank_id)->first();
 
         // Parse the JSON data in the name column to get translations
         $translations = json_decode($rank->name, true);
@@ -272,7 +272,7 @@ class ReferralController extends Controller
             ->when($request->filled('rank'), function ($query) use ($request) {
                 $rank_id = $request->input('rank');
                 $query->where(function ($innerQuery) use ($rank_id) {
-                    $innerQuery->where('setting_rank_id', $rank_id);
+                    $innerQuery->where('display_rank_id', $rank_id);
                 });
             })
             ->when($request->filled('country'), function ($query) use ($request) {

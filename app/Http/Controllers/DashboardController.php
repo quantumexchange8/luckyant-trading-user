@@ -50,7 +50,7 @@ class DashboardController extends Controller
 
         $locale = app()->getLocale();
 
-        $rank = SettingRank::where('id', \Auth::user()->setting_rank_id)->first();
+        $rank = SettingRank::where('id', \Auth::user()->display_rank_id)->first();
 
         // Parse the JSON data in the name column to get translations
         $translations = json_decode($rank->name, true);

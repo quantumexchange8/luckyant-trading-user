@@ -40,6 +40,7 @@ return new class extends Migration
             $table->string('referral_code')->nullable();
             $table->string('role')->default('member');
             $table->unsignedBigInteger('setting_rank_id')->default(1);
+            $table->unsignedBigInteger('display_rank_id')->default(1);
             $table->string('rank_up_status')->default('auto');
             $table->string('status')->default('Active');
             $table->string('remark')->nullable();

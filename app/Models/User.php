@@ -114,7 +114,7 @@ class User extends Authenticatable implements HasMedia
 
     public function rank(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(SettingRank::class, 'id', 'setting_rank_id');
+        return $this->hasOne(SettingRank::class, 'id', 'display_rank_id');
     }
 
     public function userCountry(): \Illuminate\Database\Eloquent\Relations\HasOne

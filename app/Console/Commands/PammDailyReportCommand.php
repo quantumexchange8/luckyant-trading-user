@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\TradingUser;
 use App\Models\Master;
 use App\Models\PammSubscription;
 use App\Models\PammReportLog;
@@ -32,14 +33,15 @@ class PammDailyReportCommand extends Command
                 ->first();
 
                 $masterGroups = $userGroups->groupBy('master_id')->map(function ($masterGroup, $masterId) {   
-                    $masterData = Master::with(['user' => function ($query) {
+                    $masterData = Master::with(['tradingUser' => function ($query) {
                         $query->select('id', 'name');
                     }])
-                    ->select('meta_login', 'user_id')
+                    ->select('meta_login', 'trading_account_id')
                     ->where('id', $masterId)
                     ->first();
 
-                    $masterName = $masterData->user->name;
+                    $masterName = $masterData->tradingUser->name;
+                    $masterCompany = $masterData->tradingUser->company ? $masterData->tradingUser->company : $masterName;
 
                     $personals = $masterGroup->groupBy('meta_login')->map(function ($personalGroup) {
                         $subData = PammSubscription::selectRaw('MIN(approval_date) as join_date')
@@ -68,6 +70,7 @@ class PammDailyReportCommand extends Command
                     return [
                         'master_meta_login' => $masterData->meta_login,
                         'master_name' => $masterName,
+                        'master_company' => $masterCompany,
                         'total_master_lot' => round($masterGroup->sum('master_lot'), 2),
                         'total_master_profit_and_loss' => round($masterGroup->sum('master_profit'), 2),
                         'personal' => $personals,

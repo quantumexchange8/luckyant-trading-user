@@ -63,7 +63,7 @@ Important note: Please report to us within 24 hours if this statement is incorre
 @foreach($pamm['master_group'] as $pammData)
 **交易者信息**<br>
 账户编号 : {{ $pammData['master_meta_login'] }}<br>
-名字 : {{ $pammData['master_name'] }}<br>
+名字 : {{ $pammData['master_company'] }}<br>
 总手数 : {{ $pammData['total_master_lot'] }}<br>
 损益总额 : ${{ $pammData['total_master_profit_and_loss'] }}<br>
 

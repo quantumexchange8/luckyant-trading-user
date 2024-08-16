@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Master;
 use App\Models\PammSubscription;
+use App\Models\PammReportLog;
 use App\Models\TradePammInvestorAllocate;
 use App\Notifications\PammDailyReportNotification;
 use Illuminate\Support\Carbon;
@@ -85,6 +86,12 @@ class PammDailyReportCommand extends Command
             $user = $pamm['user'];
             Notification::route('mail', $user['email'])
             ->notify(new PammDailyReportNotification($user, $pamm));
+
+            PammReportLog::create([
+                'user_id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+            ]);
         }
     }
 }

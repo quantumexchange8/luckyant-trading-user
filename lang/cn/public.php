@@ -50,7 +50,7 @@ return [
     'payment merchant' => "USDT  Sprit Pay (TRC)",
     'payment_merchant' => "泰达币 (USDT)",
     'internaltransfer' => "内部转账",
-    'walletadjustment' => "钱包调整",
+    'walletadjustment' => "内部转账",
     'rejected' => "已拒绝",
     'success' => "成功",
     'terminated' => "已终止",

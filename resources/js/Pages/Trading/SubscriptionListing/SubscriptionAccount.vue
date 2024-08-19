@@ -83,7 +83,7 @@ watchEffect(() => {
                         {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
                     </div>
                     <div class="font-semibold">
-                        {{ subscriberAccount.master.meta_login }}
+                        {{ subscriberAccount.master_meta_login }}
                     </div>
                 </div>
                 <StatusBadge

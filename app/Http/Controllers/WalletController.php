@@ -369,7 +369,8 @@ class WalletController extends Controller
 
         if($result['status'] == 'EXPIRED') {
             $transaction->update([
-                'status' => 'Rejected'
+                'status' => 'Rejected',
+                'approval_at' => now()
             ]);
         }
 
@@ -384,6 +385,7 @@ class WalletController extends Controller
                         'transaction_amount' => $result['receivedAmount'] / 100,
                         'txn_hash' => $result['transactionHash'],
                         'status' => 'Success',
+                        'approval_at' => now(),
                         'new_wallet_amount' => $wallet->balance + $result['receivedAmount'] / 100
                     ]);
 

@@ -32,6 +32,7 @@ class Transaction extends Model implements HasMedia
         'transaction_amount',
         'new_wallet_amount',
         'status',
+        'approval_at',
         'comment',
         'remarks',
         'handle_by',

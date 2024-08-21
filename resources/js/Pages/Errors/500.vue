@@ -18,7 +18,7 @@ import Button from '@/Components/Button.vue'
                     <div
                         class="text-lg font-bold text-gray-800 dark:text-white"
                     >
-                        LuckyAnt Trading
+                        Lucky Ant Trading Ltd
                     </div>
                 </div>
             </Link>
@@ -33,7 +33,7 @@ import Button from '@/Components/Button.vue'
                     <div class="flex flex-col items-center mt-3 gap-5">
                         <div class="flex flex-col dark:text-gray-400 text-center gap-2">
                             <h2 class="dark:text-white font-semibold text-3xl">{{$t('public.internal_server_error')}}</h2>
-                            {{$t('public.server_error_message')}} 
+                            {{$t('public.server_error_message')}}
                         </div>
                         <Button
                             :href="route('dashboard')"

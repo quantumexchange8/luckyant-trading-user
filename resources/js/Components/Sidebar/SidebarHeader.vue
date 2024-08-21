@@ -15,9 +15,9 @@ import { sidebarState } from '@/Composables'
                 <ApplicationLogo aria-hidden="true" class="w-10 h-10" />
                 <div
                     v-show="sidebarState.isOpen || sidebarState.isHovered"
-                    class="text-lg font-bold text-gray-800 dark:text-white"
+                    class="font-bold text-gray-800 dark:text-white"
                 >
-                    LuckyAnt Trading
+                    Lucky Ant Trading Ltd
                 </div>
             </div>
         </Link>

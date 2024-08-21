@@ -29,9 +29,9 @@ class AddTradingAccountNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         // return (new MailMessage)
-            // ->subject('LuckyAnt Trading - New MT5 Live Account Added')
+            // ->subject('Lucky Ant Trading Ltd - New MT5 Live Account Added')
             // ->greeting('Dear ' . $this->user->name)
-            // ->line('Welcome aboard LuckyAnt Trading! We are excited to have you as a member of our trading community.')
+            // ->line('Welcome aboard Lucky Ant Trading Ltd! We are excited to have you as a member of our trading community.')
             // ->line('Please find the credentials below if you need to login on MetaTrader 5.')
             // ->line('Login: ' . $this->metaAccount['login'])
             // ->line('Main Password: ' . $this->metaAccount['mainPassword'])

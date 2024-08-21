@@ -25,7 +25,7 @@ class NewUserWelcomeNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Welcome to LuckyAnt Trading')
+            ->subject('Welcome to Lucky Ant Trading Ltd')
             ->greeting('Dear ' . $this->user->name)
             ->line("We're excited to accompany you on your trading journey.")
             ->action('Dashboard', url('/'))

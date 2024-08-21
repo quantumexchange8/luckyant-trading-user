@@ -18,7 +18,7 @@ import Button from '@/Components/Button.vue'
                     <div
                         class="text-lg font-bold text-gray-800 dark:text-white"
                     >
-                        LuckyAnt Trading
+                        Lucky Ant Trading Ltd
                     </div>
                 </div>
             </Link>

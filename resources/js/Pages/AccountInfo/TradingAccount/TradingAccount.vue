@@ -138,11 +138,11 @@ const currentLocale = ref(usePage().props.locale);
                             </div>
                         </div>
                     </div>
-                    <div class="flex justify-end">
+                    <div class="flex justify-end" v-if="account.trading_user.acc_status === 'Active'">
                         <Badge variant="success" class="text-sm">{{ $t('public.active') }}</Badge>
                     </div>
                 </div>
-                <div class="flex justify-end">
+                <div class="flex justify-end" v-if="account.trading_user.acc_status === 'Active'">
                     <Action
                         :account="account"
                         :walletSel="walletSel"
@@ -196,7 +196,7 @@ const currentLocale = ref(usePage().props.locale);
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 w-full">
+            <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 w-full" v-if="account.trading_user.acc_status === 'Active'">
                 <div class="flex items-center gap-3 w-full">
                     <Action
                         :account="account"

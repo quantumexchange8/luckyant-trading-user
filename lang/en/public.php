@@ -520,4 +520,5 @@ return [
     "planting_agreement" => "Planting Agreement",
     "balance" => "Balance",
     "bank_sub_branch" => "Sub Branch",
+    "deleted" => "Deleted",
 ];

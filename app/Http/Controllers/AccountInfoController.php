@@ -105,17 +105,23 @@ class AccountInfoController extends Controller
     protected function getTradingAccountsData()
     {
         $user = Auth::user();
+        $tradingAccounts = $user->tradingAccounts;
+
+        $activeTradingAccounts = $tradingAccounts->filter(function ($account) {
+            return $account->tradingUser['acc_status'] === 'Active';
+        });
+
         $connection = (new MetaFiveService())->getConnectionStatus();
 
         if ($connection == 0) {
             try {
-                (new MetaFiveService())->getUserInfo($user->tradingAccounts);
+                (new MetaFiveService())->getUserInfo($activeTradingAccounts);
             } catch (\Exception $e) {
                 \Log::error('Error fetching trading accounts: '. $e->getMessage());
             }
         }
 
-        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login,company', 'masterRequest:id,trading_account_id,status'])
+        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login,company,acc_status', 'masterRequest:id,trading_account_id,status'])
             ->where('user_id', \Auth::id())
             ->whereDoesntHave('masterAccount', function ($query) {
                 $query->whereNotNull('trading_account_id');
@@ -156,7 +162,7 @@ class AccountInfoController extends Controller
             $tradingAccount->active_subscriber = $latestSubscribing;
         });
 
-        $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login,company'])->where('user_id', \Auth::id())->get();
+        $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login,company,acc_status'])->where('user_id', \Auth::id())->get();
 
         $masterAccounts->each(function ($masterAccount) {
             if ($masterAccount->tradingAccount->demo_fund > 0) {

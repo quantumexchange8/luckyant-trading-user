@@ -233,6 +233,7 @@ setInterval(refreshData, 10000);
                         <li>{{ $t('public.terms_6') }}</li>
                         <li>{{ $t('public.terms_7') }}</li>
                         <li>{{ $t('public.terms_8') }}</li>
+                        <li>{{ $t('public.terms_9') }}</li>
                     </ol>
 
                     <div class="flex items-center">

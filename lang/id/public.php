@@ -194,6 +194,7 @@ return [
     'terms_6' => "Saya mengkonfirmasi bahwa informasi yang disediakan oleh saya dan dimasukkan dalam formulir ini benar dan bahwa saya mengakui bahwa saya wajib memberi tahu Lucky Ant Trading Ltd segera dalam hal ada perubahan pada informasi ini.",
     'terms_7' => "Saya mengkonfirmasi bahwa saya telah bertindak atas nama saya sendiri sebagaimana ditentukan dalam aplikasi ini dan bukan atas nama pihak ketiga dalam hal semua hal terkait dengan hubungan klien ini. Oleh karena itu, semua dana yang akan orkan dan diperdagangkan di akun dengan Lucky Ant Trading Ltd adalah dana saya sendiri.",
     'terms_8' => "Saya mengakui bahwa saya telah membaca, masa aktivasi akun MT5 adalah 2 minggu. Jika akun tidak diaktifkan dalam periode ini, sistem akan secara otomatis menandai akun tersebut sebagai tidak valid dan melanjutkan penghapusan, untuk memastikan integritas dan keamanan sistem.",
+    'terms_9' => "Saya telah membaca, memahami, dan setuju untuk terikat oleh Kebijakan Deposit Dan Penarikan Lucky Ant Trading Ltd.",
     'accept_terms' => "Saya mengakui bahwa saya telah membaca, dan dengan ini menerima syarat dan ketentuan yang dinyatakan di atas.",
     'credit' => "Kredit",
     'refreshing_in' => "Refreshing in ",

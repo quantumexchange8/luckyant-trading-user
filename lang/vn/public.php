@@ -194,6 +194,7 @@ return [
     'terms_6' => "Tôi xác nhận rằng thông tin được cung cấp bởi tôi và được nhập vào biểu mẫu này là chính xác và tôi xác nhận rằng tôi sẽ phải thông báo ngay cho Giao dịch Kiến May Mắn nếu có bất kỳ thay đổi nào đối với thông tin này.",
     'terms_7' => "Tôi xác nhận rằng tôi đã hành động dưới tên của mình như đã được chỉ định trong ứng dụng này và không phải thay mặt cho một bên thứ ba đối với tất cả các vấn đề liên quan đến mối quan hệ với khách hàng này. Do đó, tất cả các khoản tiền được gửi và giao dịch trên tài khoản với Giao dịch Kiến May Mắn là tiền của tôi.",
     'terms_8' => "Tôi xác nhận rằng tôi đã đọc, thời gian kích hoạt tài khoản MT5 là 2 tuần. Nếu tài khoản không được kích hoạt trong khoảng thời gian này, hệ thống sẽ tự động đánh dấu tài khoản là không hợp lệ và tiến hành xóa, đảm bảo tính toàn vẹn và bảo mật của hệ thống.",
+    'terms_9' => "Tôi đã đọc, hiểu và đồng ý tuân thủ Chính sách Nạp tiền và Rút tiền của Giao dịch Kiến May Mắn.",
     'accept_terms' => "Tôi nhận thức rằng tôi đã đọc và đồng ý với các điều khoản và điều kiện được nêu trên.",
     'credit' => "Tín dụng",
     'refreshing_in' => "Làm mới trong ",

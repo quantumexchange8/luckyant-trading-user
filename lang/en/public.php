@@ -194,6 +194,7 @@ return [
     'terms_6' => "I confirm that the information provided by me and inserted in this form is correct and that I acknowledge that I shall be obliged to inform Lucky Ant Trading Ltd immediately in case of any changes to this information.",
     'terms_7' => "I confirm that I have acted in my own name as specified in this application and not on behalf of a third party in respect of all matters related to this client relationship. Accordingly, all funds to be deposited and traded in on the account with Lucky Ant Trading Ltd are my own funds.",
     'terms_8' => "I acknowledge that I have read, the activation period for an MT5 account is 2 week. If the account is not activated within this period, the system will automatically mark the account as invalid and proceed with deletion, ensuring the integrity and security of the system.",
+    'terms_9' => "I have read, understood and agreed to be bound by Lucky Ant Trading Ltd's Deposit And Withdrawals Policy.",
     'accept_terms' => "I acknowledge that I have read, and do hereby accept the terms and conditions stated as above.",
     'credit' => "Credit",
     'refreshing_in' => "Refreshing in ",

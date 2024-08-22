@@ -106,7 +106,6 @@ const getMasterVisibility = ref(page.props.getMasterVisibility);
 <!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
-            v-if="getMasterVisibility"
             title="PAMM"
             :active="route().current('pamm.*')"
         >
@@ -122,6 +121,7 @@ const getMasterVisibility = ref(page.props.getMasterVisibility);
                 :active="route().current('pamm.pamm_master_listing')"
             />
             <SidebarCollapsibleItem
+                v-if="getMasterVisibility"
                 :href="route('pamm.esg_investment_portfolio')"
                 :title="$t('public.esg_investment_portfolio')"
                 :active="route().current('pamm.esg_investment_portfolio')"

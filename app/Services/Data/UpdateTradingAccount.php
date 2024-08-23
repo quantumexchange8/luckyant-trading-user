@@ -4,6 +4,7 @@ namespace App\Services\Data;
 
 use App\Models\AccountType;
 use App\Models\TradingAccount;
+use App\Models\TradingUser;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -18,15 +19,19 @@ class UpdateTradingAccount
     {
         $tradingAccount = TradingAccount::query()->where('meta_login', $meta_login)->first();
 
-        $tradingAccount->currency_digits = $data['currencyDigits'];
-        $tradingAccount->balance = $data['balance'];
-        $tradingAccount->credit = $data['credit'];
-        $tradingAccount->margin_leverage = $data['marginLeverage'];
-        $tradingAccount->equity = $data['equity'];
-        $tradingAccount->floating = $data['floating'];
-        DB::transaction(function () use ($tradingAccount) {
-            $tradingAccount->save();
-        });
+        $tradingUser = $tradingAccount->tradingUser;
+
+        if ($tradingUser && $tradingUser->acc_status === "Active"){
+            $tradingAccount->currency_digits = $data['currencyDigits'];
+            $tradingAccount->balance = $data['balance'];
+            $tradingAccount->credit = $data['credit'];
+            $tradingAccount->margin_leverage = $data['marginLeverage'];
+            $tradingAccount->equity = $data['equity'];
+            $tradingAccount->floating = $data['floating'];
+            DB::transaction(function () use ($tradingAccount) {
+                $tradingAccount->save();
+            });
+        }
 
         return $tradingAccount;
     }

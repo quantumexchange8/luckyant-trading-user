@@ -34,12 +34,6 @@ class PammController extends Controller
 {
     public function pamm_master_listing()
     {
-        $getMasterVisibility = (new SidebarService())->getMasterVisibility();
-
-        if (!$getMasterVisibility) {
-            return redirect()->route('dashboard');
-        }
-
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
             'title' => trans('public.pamm_master_listing'),
             'pammType' => 'StandardGroup'
@@ -48,12 +42,6 @@ class PammController extends Controller
 
     public function esg_investment_portfolio()
     {
-        $getMasterVisibility = (new SidebarService())->getMasterVisibility();
-
-        if (!$getMasterVisibility) {
-            return redirect()->route('dashboard');
-        }
-
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
             'terms' => Term::where('type', 'pamm_esg')->first(),
             'title' => trans('public.esg_investment_portfolio'),
@@ -76,6 +64,10 @@ class PammController extends Controller
             ->where('signal_status', 1)
             ->where('category', 'pamm')
             ->whereNot('user_id', $user->id)
+            ->whereJsonDoesntContain('not_visible_to', $user->id)
+            ->when($first_leader, function ($query) use ($first_leader) {
+                $query->whereJsonDoesntContain('not_visible_to', $first_leader->id);
+            })
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = '%' . $request->input('search') . '%';
                 $query->whereHas('tradingAccount', function ($q) use ($search) {
@@ -108,31 +100,6 @@ class PammController extends Controller
                     // Add more cases as needed for other 'type' values
                 }
             });
-
-        if ($user->is_public == 0 && $first_leader) {
-            $leader = $first_leader;
-            while ($leader && $leader->masterAccounts->isEmpty()) {
-                $leader = $leader->getFirstLeader();
-            }
-
-            if ($leader) {
-                $masterAccounts = $masterAccounts
-                    ->where('is_public', $leader->is_public)
-                    ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
-            } else {
-                // If leader is null, reset $masterAccounts to an empty query
-                $masterAccounts = $masterAccounts->where('id', null);
-            }
-        } elseif ($user->is_public == 1 && $first_leader) {
-            $masterAccounts->where('is_public', $first_leader->is_public);
-        } else {
-            if ($user->is_public == 0) {
-                $masterAccounts->where('is_public', $user->is_public)
-                    ->whereIn('id', $user->masterAccounts->pluck('id'));
-            } else {
-                $masterAccounts->where('is_public', $user->is_public);
-            }
-        }
 
         $masterAccounts = $masterAccounts->latest()->paginate(10);
 

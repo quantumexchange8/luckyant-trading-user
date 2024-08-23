@@ -11,10 +11,9 @@ class SidebarService {
         $user = \Auth::user();
 
         $pammMasters = Master::where('category', 'pamm')
-            ->where('type', 'ESG')
             ->get();
 
-        if (!empty($pammMasters)) {
+        if (!empty($pammMasters) || !empty($pammMasters->not_visible_to)) {
             foreach ($pammMasters as $master) {
                 $leaderIds = json_decode($master->not_visible_to, true);
 

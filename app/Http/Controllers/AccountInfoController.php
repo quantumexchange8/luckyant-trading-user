@@ -126,6 +126,9 @@ class AccountInfoController extends Controller
             ->whereDoesntHave('masterAccount', function ($query) {
                 $query->whereNotNull('trading_account_id');
             })
+            ->whereHas('tradingUser', function ($query) {
+                $query->where('acc_status','Active');
+            })
             ->latest()
             ->get();
 
@@ -177,6 +180,26 @@ class AccountInfoController extends Controller
             'totalEquity' => $tradingAccounts->sum('equity'),
             'totalBalance' => $tradingAccounts->sum('balance'),
             'masterAccounts' => $masterAccounts
+        ]);
+    }
+
+    protected function getInactiveAccountsData()
+    {
+        $user = Auth::user();
+
+        $tradingAccounts = TradingAccount::with(['tradingUser:id,user_id,name,meta_login,company,acc_status', 'masterRequest:id,trading_account_id,status'])
+            ->where('user_id', \Auth::id())
+            ->whereDoesntHave('masterAccount', function ($query) {
+                $query->whereNotNull('trading_account_id');
+            })
+            ->whereHas('tradingUser', function ($query) {
+                $query->where('acc_status','Deleted');
+            })
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'tradingAccounts' => $tradingAccounts,
         ]);
     }
 

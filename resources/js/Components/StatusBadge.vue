@@ -28,6 +28,7 @@ const variantClasses = computed(() => {
         rejected: 'bg-error-400 dark:bg-error-500',
         terminated: 'bg-error-400 dark:bg-error-500',
         unsubscribed: 'bg-error-400 dark:bg-error-500',
+        inactive: 'bg-warning-500 dark:bg-warning-400',
         expiring: 'bg-warning-500 dark:bg-warning-400',
         pending: 'bg-blue-400 dark:bg-blue-500',
         switched: 'bg-gray-400 dark:bg-gray-500',

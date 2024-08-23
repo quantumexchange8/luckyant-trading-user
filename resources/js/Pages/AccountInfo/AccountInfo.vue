@@ -4,6 +4,7 @@ import Button from "@/Components/Button.vue";
 import {PlusCircleIcon} from "@heroicons/vue/solid";
 import {useForm} from "@inertiajs/vue3";
 import TradingAccount from "@/Pages/AccountInfo/TradingAccount/TradingAccount.vue";
+import InactiveAccount from "@/Pages/AccountInfo/TradingAccount/InactiveAccount.vue";
 import Modal from "@/Components/Modal.vue";
 import {ref} from "vue";
 import Label from "@/Components/Label.vue";
@@ -155,6 +156,23 @@ setInterval(refreshData, 10000);
                                 {{ $t('public.master_accounts') }}
                             </button>
                         </Tab>
+
+                        <Tab
+                            as="template"
+                            v-slot="{ selected }"
+                        >
+                            <button
+                                :class="[
+                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                                     'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
+                                     selected
+                                     ? 'bg-white text-primary-800 shadow'
+                                     : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
+                                ]"
+                            >
+                                {{ $t('public.inactive_accounts') }}
+                            </button>
+                        </Tab>
                     </TabList>
                     <Button
                         type="button"
@@ -185,6 +203,17 @@ setInterval(refreshData, 10000);
                         class="py-3"
                     >
                         <MasterAccount
+                            :walletSel="walletSel"
+                            :leverageSel="leverageSel"
+                            :accountCounts="accountCounts"
+                            :masterAccountLogin="masterAccountLogin"
+                        />
+                    </TabPanel>
+
+                    <TabPanel
+                        class="py-3"
+                    >
+                        <InactiveAccount
                             :walletSel="walletSel"
                             :leverageSel="leverageSel"
                             :accountCounts="accountCounts"

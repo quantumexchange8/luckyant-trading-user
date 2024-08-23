@@ -521,4 +521,5 @@ return [
     "balance" => "净值",
     "bank_sub_branch" => "支行",
     "deleted" => "已删除",
+    'inactive_accounts' => "未激活账户",
 ];

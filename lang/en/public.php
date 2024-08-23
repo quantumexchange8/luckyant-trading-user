@@ -521,4 +521,5 @@ return [
     "balance" => "Balance",
     "bank_sub_branch" => "Sub Branch",
     "deleted" => "Deleted",
+    'inactive_accounts' => "Inactive Accounts",
 ];

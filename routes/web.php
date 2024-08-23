@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/getRequestHistory', [AccountInfoController::class, 'getRequestHistory'])->name('account_info.getRequestHistory');
         Route::get('/transaction_history', [TransactionController::class, 'index'])->name('account_info.transaction_listing');
         Route::get('/getTransactionData', [TransactionController::class, 'getTransactionData'])->name('account_info.getTransactionData');
+        Route::get('/getInactiveAccountsData', [AccountInfoController::class, 'getInactiveAccountsData'])->name('account_info.getInactiveAccountsData');
 
         Route::post('/add-trading-account', [AccountInfoController::class, 'add_trading_account'])->name('account_info.add_trading_account');
         Route::post('/depositTradingAccount', [AccountInfoController::class, 'depositTradingAccount'])->name('account_info.depositTradingAccount');

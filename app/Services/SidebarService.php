@@ -17,14 +17,16 @@ class SidebarService {
             foreach ($pammMasters as $master) {
                 $leaderIds = json_decode($master->not_visible_to, true);
 
-                foreach ($leaderIds as $leaderId) {
-                    $leader = User::find($leaderId);
+                if ($leaderIds) {
+                    foreach ($leaderIds as $leaderId) {
+                        $leader = User::find($leaderId);
 
-                    $childrenIds = $leader->getChildrenIds();
-                    $childrenIds[] = $leaderId;
+                        $childrenIds = $leader->getChildrenIds();
+                        $childrenIds[] = $leaderId;
 
-                    if ($user && in_array($user->id, $childrenIds)) {
-                        return false;
+                        if ($user && in_array($user->id, $childrenIds)) {
+                            return false;
+                        }
                     }
                 }
             }

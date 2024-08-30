@@ -12,6 +12,7 @@ class WithdrawBalanceRequest extends FormRequest
             'to_wallet_id' => ['required'],
             'from_meta_login' => ['required'],
             'amount' => ['required', 'numeric', 'min:1'],
+            'type' => ['numeric'],
         ];
     }
 
@@ -26,6 +27,7 @@ class WithdrawBalanceRequest extends FormRequest
             'to_wallet_id' => trans('public.sidebar.wallet'),
             'from_meta_login' => trans('public.account_number'),
             'amount' => trans('public.amount'),
+            'type' => trans('public.type'),
         ];
     }
 }

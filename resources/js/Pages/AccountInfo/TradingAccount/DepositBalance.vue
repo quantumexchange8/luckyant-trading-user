@@ -22,6 +22,7 @@ const form = useForm({
     wallet_id: props.walletSel[0].value,
     amount: 0,
     to_meta_login: props.account.meta_login,
+    type: props.account.account_type,
     eWalletAmount: 0,
     cashWalletAmount: 0,
     maxEWalletAmount: 0,

@@ -76,25 +76,49 @@ class AccountInfoController extends Controller
                 ->with('warning', trans('public.live_account_quota_warning'));
         }
 
-        $group = AccountType::with('metaGroup')->where('id', 1)->get()->value('metaGroup.meta_group_name');
+        $type = $request->type;
+        $group = AccountType::with('metaGroup')->where('id', $type)->get()->value('metaGroup.meta_group_name');
         $leverage = $request->leverage;
 
-        $metaService = new MetaFiveService();
-        $connection = $metaService->getConnectionStatus();
+        if ($type == 1){
+            $metaService = new MetaFiveService();
+            $connection = $metaService->getConnectionStatus();
 
-        if ($connection != 0) {
-            return redirect()->back()
-                ->with('title', trans('public.server_under_maintenance'))
-                ->with('warning', trans('public.try_again_later'));
+            if ($connection != 0) {
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+
+            $metaAccount = $metaService->createUser($user, $group, $leverage);
+            $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance');
+
+            Notification::route('mail', $user->email)
+                ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
+
+                return back()->with('toast', trans('public.created_trading_account'));
+        } 
+        else{
+            $virtual_account = RunningNumberService::getID('virtual_account');
+
+            TradingAccount::create([
+                'user_id' => $user->id,
+                'meta_login' => $virtual_account,
+                'account_type' => $type,
+                'margin_leverage' => $leverage,
+            ]);
+
+            TradingUser::create([
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'meta_login' => $virtual_account,
+                'meta_group' => $group,
+                'account_type' => $type,
+                'leverage' => $leverage,
+            ]);
+
+            return back()->with('toast', trans('public.created_virtual_account'));
         }
-
-        $metaAccount = $metaService->createUser($user, $group, $leverage);
-        $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance');
-
-        Notification::route('mail', $user->email)
-            ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
-
-        return back()->with('toast', trans('public.created_trading_account'));
     }
 
     public function refreshTradingAccountsData()
@@ -105,10 +129,10 @@ class AccountInfoController extends Controller
     protected function getTradingAccountsData()
     {
         $user = Auth::user();
-        $tradingAccounts = $user->tradingAccounts;
+        $userTradingAccounts = $user->tradingAccounts;
 
-        $activeTradingAccounts = $tradingAccounts->filter(function ($account) {
-            return $account->tradingUser['acc_status'] === 'Active';
+        $activeTradingAccounts = $userTradingAccounts->filter(function ($account) {
+            return $account->tradingUser['acc_status'] === 'Active' && $account->tradingUser['account_type'] === 1;
         });
 
         $connection = (new MetaFiveService())->getConnectionStatus();
@@ -209,6 +233,8 @@ class AccountInfoController extends Controller
         $wallet = Wallet::find($request->wallet_id);
         $amount = $request->amount;
         $meta_login = $request->to_meta_login;
+        $type = $request->type;
+        $trading_account = TradingAccount::where('meta_login', $meta_login)->first();
         $cash_wallet = Wallet::where('type', 'cash_wallet')->where('user_id', $user->id)->first();
 
         $minEWalletAmount = $request->minEWalletAmount;
@@ -245,25 +271,34 @@ class AccountInfoController extends Controller
         // conduct deal and transaction record
         $deal = [];
 
-        $connection = (new MetaFiveService())->getConnectionStatus();
-        if ($connection == 0) {
-            try {
-                $deal = (new MetaFiveService())->createDeal($meta_login, $amount, 'Deposit to trading account', dealAction::DEPOSIT);
-            } catch (\Exception $e) {
-                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        // Remember to check on equity
+        if ($type == 1){
+            $connection = (new MetaFiveService())->getConnectionStatus();
+            if ($connection == 0) {
+                try {
+                    $deal = (new MetaFiveService())->createDeal($meta_login, $amount, 'Deposit to trading account', dealAction::DEPOSIT);
+                } catch (\Exception $e) {
+                    \Log::error('Error fetching trading accounts: '. $e->getMessage());
+                }
+            } else {
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
             }
-        } else {
-            return redirect()->back()
-                ->with('title', trans('public.server_under_maintenance'))
-                ->with('warning', trans('public.try_again_later'));
+        }
+        else{
+            $trading_account->update(['balance' => $trading_account->balance + $amount]);
         }
 
+        $dealId = $deal['deal_Id'] ?? null;
+        $comment = $deal['conduct_Deal']['comment'] ?? 'Deposit to trading account';
+        
         if ($wallet->type == 'e_wallet') {
-            $this->createTransaction($user->id, $wallet->id, $meta_login, $deal['deal_Id'], 'BalanceIn', $eWalletAmount, $wallet->balance - $eWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
+            $this->createTransaction($user->id, $wallet->id, $meta_login, $dealId, 'BalanceIn', $eWalletAmount, $wallet->balance - $eWalletAmount, $comment, 0, 'trading_account');
             $wallet->balance -= $eWalletAmount;
             $wallet->save();
-
-            $this->createTransaction($user->id, $cash_wallet->id, $meta_login, $deal['deal_Id'], 'BalanceIn', $cashWalletAmount, $cash_wallet->balance - $cashWalletAmount, $deal['conduct_Deal']['comment'], 0, 'trading_account');
+    
+            $this->createTransaction($user->id, $cash_wallet->id, $meta_login, $dealId, 'BalanceIn', $cashWalletAmount, $cash_wallet->balance - $cashWalletAmount, $comment, 0, 'trading_account');
             $cash_wallet->balance -= $cashWalletAmount;
             $cash_wallet->save();
         } else {
@@ -272,17 +307,17 @@ class AccountInfoController extends Controller
                 'user_id' => $user->id,
                 'from_wallet_id' => $wallet->id,
                 'to_meta_login' => $meta_login,
-                'ticket' => $deal['deal_Id'],
+                'ticket' => $dealId,
                 'transaction_number' => RunningNumberService::getID('transaction'),
                 'transaction_type' => 'BalanceIn',
                 'amount' => $amount,
                 'transaction_charges' => 0,
                 'transaction_amount' => $amount,
                 'status' => 'Success',
-                'comment' => $deal['conduct_Deal']['comment'],
+                'comment' => $comment,
                 'new_wallet_amount' => $wallet->balance - $amount,
             ]);
-
+            
             $wallet->update(['balance' => $wallet->balance - $amount]);
         }
 
@@ -356,6 +391,8 @@ class AccountInfoController extends Controller
 
     public function withdrawTradingAccount(WithdrawBalanceRequest $request)
     {
+        $type = $request->type;
+
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
 
@@ -371,10 +408,12 @@ class AccountInfoController extends Controller
         $meta_login = $request->from_meta_login;
         $tradingAccount = TradingAccount::where('meta_login', $meta_login)->firstOrFail();
 
-        try {
-            $metaService->getUserInfo(collect([$tradingAccount]));
-        } catch (\Exception $e) {
-            \Log::error('Error fetching trading accounts: ' . $e->getMessage());
+        if($type == 1){
+            try {
+                $metaService->getUserInfo(collect([$tradingAccount]));
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: ' . $e->getMessage());
+            }
         }
 
         if ($tradingAccount->balance < $amount || $amount <= 0) {
@@ -399,27 +438,35 @@ class AccountInfoController extends Controller
             }
 
             $deal = [];
-            try {
-                $deal = $metaService->createDeal($meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
-            } catch (\Exception $e) {
-                \Log::error('Error creating deal: ' . $e->getMessage());
+            if($type == 1){
+                try {
+                    $deal = $metaService->createDeal($meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
+                } catch (\Exception $e) {
+                    \Log::error('Error creating deal: ' . $e->getMessage());
+                }
+            }
+            else{
+                $tradingAccount->update(['balance' => $tradingAccount->balance - $amount]);
             }
 
             $new_wallet_balance = $wallet->balance + $amount;
+
+            $dealId = $deal['deal_Id'] ?? null;
+            $comment = $deal['conduct_Deal']['comment'] ?? 'Withdraw from trading account';
 
             Transaction::create([
                 'category' => 'trading_account',
                 'user_id' => $user->id,
                 'to_wallet_id' => $wallet->id,
                 'from_meta_login' => $meta_login,
-                'ticket' => $deal['deal_Id'],
+                'ticket' => $dealId,
                 'transaction_number' => RunningNumberService::getID('transaction'),
                 'transaction_type' => 'BalanceOut',
                 'amount' => $amount,
                 'transaction_charges' => 0,
                 'transaction_amount' => $amount,
                 'status' => 'Success',
-                'comment' => $deal['conduct_Deal']['comment'],
+                'comment' => $comment,
                 'new_wallet_amount' => $new_wallet_balance,
             ]);
 
@@ -445,11 +492,19 @@ class AccountInfoController extends Controller
                 $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
 
                 $deal = [];
-                try {
-                    $deal = $metaService->createDeal($meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
-                } catch (\Exception $e) {
-                    \Log::error('Error creating deal: ' . $e->getMessage());
+                if($type == 1){
+                    try {
+                        $deal = $metaService->createDeal($meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
+                    } catch (\Exception $e) {
+                        \Log::error('Error creating deal: ' . $e->getMessage());
+                    }
                 }
+                else{
+                    $tradingAccount->update(['balance' => $tradingAccount->balance - $amount]);
+                }
+
+                $dealId = $deal['deal_Id'] ?? null;
+                $comment = $deal['conduct_Deal']['comment'] ?? 'Withdraw from trading account';
 
                 if ($remainingBalance > 0) {
                     if ($remainingBalance >= $amount) {
@@ -462,14 +517,14 @@ class AccountInfoController extends Controller
                             'user_id' => $user->id,
                             'to_wallet_id' => $e_wallet->id,
                             'from_meta_login' => $meta_login,
-                            'ticket' => $deal['deal_Id'],
+                            'ticket' => $dealId,
                             'transaction_number' => RunningNumberService::getID('transaction'),
                             'transaction_type' => 'BalanceOut',
                             'amount' => $amount,
                             'transaction_charges' => 0,
                             'transaction_amount' => $amount,
                             'status' => 'Success',
-                            'comment' => $deal['conduct_Deal']['comment'],
+                            'comment' => $comment,
                             'new_wallet_amount' => $e_wallet->balance,
                         ]);
 
@@ -484,14 +539,14 @@ class AccountInfoController extends Controller
                             'user_id' => $user->id,
                             'to_wallet_id' => $e_wallet->id,
                             'from_meta_login' => $meta_login,
-                            'ticket' => $deal['deal_Id'],
+                            'ticket' => $dealId,
                             'transaction_number' => RunningNumberService::getID('transaction'),
                             'transaction_type' => 'BalanceOut',
                             'amount' => $remainingBalance,
                             'transaction_charges' => 0,
                             'transaction_amount' => $remainingBalance,
                             'status' => 'Success',
-                            'comment' => $deal['conduct_Deal']['comment'],
+                            'comment' => $comment,
                             'new_wallet_amount' => $e_wallet->balance,
                         ]);
 
@@ -508,14 +563,14 @@ class AccountInfoController extends Controller
                     'user_id' => $user->id,
                     'to_wallet_id' => $wallet->id,
                     'from_meta_login' => $meta_login,
-                    'ticket' => $deal['deal_Id'],
+                    'ticket' => $dealId,
                     'transaction_number' => RunningNumberService::getID('transaction'),
                     'transaction_type' => 'BalanceOut',
                     'amount' => $amount_remain,
                     'transaction_charges' => 0,
                     'transaction_amount' => $amount_remain,
                     'status' => 'Success',
-                    'comment' => $deal['conduct_Deal']['comment'],
+                    'comment' => $comment,
                     'new_wallet_amount' => $new_wallet_balance,
                 ]);
 
@@ -530,6 +585,13 @@ class AccountInfoController extends Controller
 
     public function internalTransferTradingAccount(InternalTransferBalanceRequest $request)
     {
+        $user = Auth::user();
+        $from_trading_account = TradingAccount::where('meta_login', $request->from_meta_login)->first();
+        $to_trading_account = TradingAccount::where('meta_login', $request->to_meta_login)->first();
+        $amount = $request->amount;
+        $type = $request->type;
+        $to_type = $request->to_type;
+
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
 
@@ -539,15 +601,12 @@ class AccountInfoController extends Controller
                 ->with('warning', trans('public.try_again_later'));
         }
 
-        $user = Auth::user();
-        $from_trading_account = TradingAccount::where('meta_login', $request->from_meta_login)->first();
-        $to_trading_account = TradingAccount::where('meta_login', $request->to_meta_login)->first();
-        $amount = $request->amount;
-
-        try {
-            $metaService->getUserInfo(collect([$from_trading_account]));
-        } catch (\Exception $e) {
-            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        if ($type == 1){
+            try {
+                $metaService->getUserInfo(collect([$from_trading_account]));
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
         }
 
         // Check if balance is sufficient
@@ -557,17 +616,35 @@ class AccountInfoController extends Controller
 
         $deal_1 = [];
         $deal_2 = [];
-        try {
-            $deal_1 = $metaService->createDeal($from_trading_account->meta_login, $amount, "Trading Account To Trading Account", dealAction::WITHDRAW);
-        } catch (\Throwable $e) {
-            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        if ($type == 1){
+            try {
+                $deal_1 = $metaService->createDeal($from_trading_account->meta_login, $amount, "Trading Account To Trading Account", dealAction::WITHDRAW);
+            } catch (\Throwable $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
         }
-        try {
-            $deal_2 = $metaService->createDeal($to_trading_account->meta_login, $amount, "Trading Account To Trading Account", dealAction::DEPOSIT);
-        } catch (\Throwable $e) {
-            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        else{
+            $from_trading_account->update(['balance' => $from_trading_account->balance - $amount]);
         }
-        $ticket = $deal_1['deal_Id'] . ', ' . $deal_2['deal_Id'];
+
+        $dealId_1 = $deal_1['deal_Id'] ?? '0';
+        $comment_1 = $deal_1['conduct_Deal']['comment'] ?? 'Trading Account To Trading Account';
+
+        if ($to_type == 1){
+            try {
+                $deal_2 = $metaService->createDeal($to_trading_account->meta_login, $amount, "Trading Account To Trading Account", dealAction::DEPOSIT);
+            } catch (\Throwable $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
+        }
+        else{
+            $to_trading_account->update(['balance' => $to_trading_account->balance + $amount]);
+        }
+
+        $dealId_2 = $deal_2['deal_Id'] ?? '0';
+        $comment_2 = $deal_2['conduct_Deal']['comment'] ?? 'Trading Account To Trading Account';
+
+        $ticket = $dealId_1 . ', ' . $dealId_2;
 
         $transaction_number = RunningNumberService::getID('transaction');
 
@@ -584,7 +661,7 @@ class AccountInfoController extends Controller
             'transaction_charges' => 0,
             'transaction_amount' => $amount,
             'status' => 'Success',
-            'comment' => $deal_1['conduct_Deal']['comment'],
+            'comment' => $comment_1,
         ]);
 
         // check subscriber
@@ -698,6 +775,7 @@ class AccountInfoController extends Controller
             return [
                 'value' => $tradingAccount->meta_login,
                 'label' => $tradingAccount->meta_login . ' ($' . number_format($tradingAccount->balance, 2) . ')',
+                'account_type' => $tradingAccount->account_type,
             ];
         });
     }
@@ -824,16 +902,28 @@ class AccountInfoController extends Controller
     {
         $meta_login = $request->meta_login;
         $leverage = $request->leverage;
-        $metaService = new MetaFiveService();
-        $connection = $metaService->getConnectionStatus();
+        $type = $request->type;
 
-        if ($connection != 0) {
-            return redirect()->back()
-                ->with('title', trans('public.server_under_maintenance'))
-                ->with('warning', trans('public.try_again_later'));
+        if ($type == 1) {
+            $metaService = new MetaFiveService();
+            $connection = $metaService->getConnectionStatus();
+
+            if ($connection != 0) {
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
+
+            $metaService->updateLeverage($meta_login, $leverage);
+        }
+        else{
+            $trading_account = TradingAccount::where('meta_login', $meta_login)->first();
+            $trading_user = TradingUser::where('meta_login', $meta_login)->first();
+
+            $trading_account->update(['margin_leverage' => $leverage]);
+            $trading_user->update(['leverage' => $leverage]);
         }
 
-        $metaService->updateLeverage($meta_login, $leverage);
 
         return redirect()->back()
             ->with('title', trans('public.success_edit_leverage'))

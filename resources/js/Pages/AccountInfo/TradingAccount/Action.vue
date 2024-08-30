@@ -110,7 +110,7 @@ const closeModal = () => {
                 </div>
             </DropdownLink>
             <DropdownLink
-                v-if="!masterAccountLogin.includes(account.meta_login) && (!account.master_request || account.master_request.status === 'Pending') && account.balance_out"
+                v-if="!masterAccountLogin.includes(account.meta_login) && (!account.master_request || account.master_request.status === 'Pending') && account.balance_out && account.account_type === 1"
                 @click="openAccountActionModal('become_master')"
             >
                 <div class="flex items-center gap-2">
@@ -146,7 +146,7 @@ const closeModal = () => {
         </Button>
     </Tooltip>
 
-    <Tooltip :content="$t('public.change_password')" placement="bottom" v-if="props.type">
+    <Tooltip :content="$t('public.change_password')" placement="bottom" v-if="props.type && account.account_type === 1">
         <Button
             type="button"
             class="justify-center px-4 pt-2 mx-1 w-8 h-8 focus:outline-none"

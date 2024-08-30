@@ -17,7 +17,7 @@ class UpdateTradingUser
     {
         $tradingUser = TradingUser::query()->where('meta_login', $meta_login)->first();
 
-        if ($tradingUser->acc_status === "Active"){
+        if ($tradingUser->acc_status === "Active" && $tradingUser->account_type === 1){
             $tradingUser->name = $data['name'];
             $tradingUser->company = $data['company'];
             $tradingUser->leverage = $data['leverage'];

@@ -17,6 +17,7 @@ const form = useForm({
     to_wallet_id: props.walletSel[0].value,
     amount: '',
     from_meta_login: props.account.meta_login,
+    type: props.account.account_type,
 })
 
 const closeModal = () => {

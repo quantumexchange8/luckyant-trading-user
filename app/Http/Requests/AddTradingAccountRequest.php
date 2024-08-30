@@ -9,6 +9,7 @@ class AddTradingAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => ['numeric'],
             'leverage' => ['required'],
             'terms' => ['accepted']
         ];
@@ -22,6 +23,7 @@ class AddTradingAccountRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'type' => trans('public.type'),
             'leverage' => trans('public.leverage'),
             'terms' => trans('public.terms_and_conditions'),
         ];

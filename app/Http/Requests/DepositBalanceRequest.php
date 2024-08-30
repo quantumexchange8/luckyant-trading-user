@@ -31,6 +31,7 @@ class DepositBalanceRequest extends FormRequest
             'wallet_id' => ['required'],
             'to_meta_login' => ['required'],
             'amount' => $amountRule,
+            'type' => ['numeric'],
         ];
     }
 
@@ -45,6 +46,7 @@ class DepositBalanceRequest extends FormRequest
             'wallet_id' => trans('public.sidebar.wallet'),
             'to_meta_login' => trans('public.account_number'),
             'amount' => trans('public.amount'),
+            'type' => trans('public.type'),
         ];
     }
 }

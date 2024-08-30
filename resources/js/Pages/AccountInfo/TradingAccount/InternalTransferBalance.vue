@@ -20,7 +20,9 @@ const { formatAmount } = transactionFormat();
 const form = useForm({
     amount: '',
     to_meta_login: '',
+    to_type: '',
     from_meta_login: props.account.meta_login,
+    type: props.account.account_type,
 })
 
 const closeModal = () => {
@@ -41,6 +43,7 @@ const getTradingAccounts = async () => {
         const response = await axios.get('/account_info/getTradingAccounts?type=internal_transfer&meta_login=' + props.account.meta_login);
         tradingAccountsSel.value = response.data;
         form.to_meta_login = tradingAccountsSel.value.length > 0 ? tradingAccountsSel.value[0].value : null;
+        form.to_type = tradingAccountsSel.value.length > 0 ? tradingAccountsSel.value[0].account_type : null;
     } catch (error) {
         console.error('Error refreshing trading accounts data:', error);
     }

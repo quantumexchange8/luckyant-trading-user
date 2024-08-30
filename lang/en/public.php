@@ -522,4 +522,6 @@ return [
     "bank_sub_branch" => "Sub Branch",
     "deleted" => "Deleted",
     'inactive_accounts' => "Inactive Accounts",
+    'virtual_account' => "Virtual Account",
+    'created_virtual_account' => "Successfully Created Virtual Account",
 ];

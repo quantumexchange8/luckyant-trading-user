@@ -17,6 +17,7 @@ const { formatAmount } = transactionFormat();
 const form = useForm({
     meta_login: props.account.meta_login,
     leverage: props.account.margin_leverage,
+    type: props.account.account_type,
 })
 
 const closeModal = () => {

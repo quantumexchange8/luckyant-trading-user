@@ -737,7 +737,11 @@ class AccountInfoController extends Controller
     public function getTradingAccounts(Request $request)
     {
         if ($request->type == 'internal_transfer') {
-            $tradingAccount = TradingAccount::where('user_id', Auth::id())->whereNot('meta_login', $request->meta_login)->get();
+            $tradingAccount = TradingAccount::where('user_id', Auth::id())
+                ->whereDoesntHave('tradingUser', function ($subQuery) {
+                    $subQuery->whereIn('acc_status', ['Deleted']);
+                })
+                ->whereNot('meta_login', $request->meta_login)->get();
         } elseif ($request->type == 'subscribe') {
             $tradingAccount = TradingAccount::where('user_id', Auth::id())
                 ->whereDoesntHave('subscription', function ($subQuery) {
@@ -745,6 +749,9 @@ class AccountInfoController extends Controller
                 })
                 ->whereDoesntHave('pamm_subscription', function ($subQuery) {
                     $subQuery->whereIn('status', ['Pending', 'Active']);
+                })
+                ->whereDoesntHave('tradingUser', function ($subQuery) {
+                    $subQuery->whereIn('acc_status', ['Deleted']);
                 })
                 ->whereNot('meta_login', $request->meta_login)
                 ->get();
@@ -756,10 +763,17 @@ class AccountInfoController extends Controller
                 ->whereDoesntHave('subscription', function ($subQuery) {
                     $subQuery->whereIn('status', ['Pending', 'Active']);
                 })
+                ->whereDoesntHave('tradingUser', function ($subQuery) {
+                    $subQuery->whereIn('acc_status', ['Deleted']);
+                })
                 ->whereNot('meta_login', $request->meta_login)
                 ->get();
         } else {
-            $tradingAccount = TradingAccount::where('user_id', Auth::id())->get();
+            $tradingAccount = TradingAccount::where('user_id', Auth::id())
+                ->whereDoesntHave('tradingUser', function ($subQuery) {
+                    $subQuery->whereIn('acc_status', ['Deleted']);
+                })
+                ->get();
         }
 
         $connection = (new MetaFiveService())->getConnectionStatus();

@@ -131,6 +131,7 @@ class TradingController extends Controller
     {
         $user = Auth::user();
         $meta_login = $request->meta_login;
+        $type = $request->type;
         $wallet = Wallet::where('user_id', $user->id)->first();
         $masterAccount = Master::with('tradingAccount:id,meta_login,margin_leverage')->find($request->master_id);
         $metaService = new MetaFiveService();
@@ -160,13 +161,15 @@ class TradingController extends Controller
                 ->with('warning', trans('public.try_again_later'));
         }
 
-        try {
-            $metaService->getUserInfo($user->tradingAccounts);
-        } catch (\Exception $e) {
-            \Log::error('Error fetching trading accounts: '. $e->getMessage());
-            return redirect()->back()
-                ->with('title', trans('public.server_under_maintenance'))
-                ->with('warning', trans('public.try_again_later'));
+        if($type == 1){
+            try {
+                $metaService->getUserInfo($user->tradingAccounts);
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+                return redirect()->back()
+                    ->with('title', trans('public.server_under_maintenance'))
+                    ->with('warning', trans('public.try_again_later'));
+            }
         }
 
         $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
@@ -188,11 +191,20 @@ class TradingController extends Controller
 
         if ($amount > 0) {
             $deal = [];
-            try {
-                $deal = $metaService->createDeal($tradingAccount->meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
-            } catch (\Exception $e) {
-                \Log::error('Error creating deal: '. $e->getMessage());
+
+            if ($type == 1){
+                try {
+                    $deal = $metaService->createDeal($tradingAccount->meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);
+                } catch (\Exception $e) {
+                    \Log::error('Error creating deal: '. $e->getMessage());
+                }
             }
+            else{
+                $tradingAccount->update(['balance' => $tradingAccount->balance - $amount]);
+            }
+
+            $dealId = $deal['deal_Id'] ?? null;
+            $comment = $deal['conduct_Deal']['comment'] ?? 'Withdraw from trading account';
 
             // Calculate new wallet amount
             $new_wallet_amount = $wallet->balance + $amount;
@@ -203,14 +215,14 @@ class TradingController extends Controller
                 'user_id' => $user->id,
                 'to_wallet_id' => $wallet->id,
                 'from_meta_login' => $tradingAccount->meta_login,
-                'ticket' => $deal['deal_Id'],
+                'ticket' => $dealId,
                 'transaction_number' => RunningNumberService::getID('transaction'),
                 'transaction_type' => 'BalanceOut',
                 'amount' => $amount,
                 'transaction_charges' => 0,
                 'transaction_amount' => $amount,
                 'status' => 'Success',
-                'comment' => $deal['conduct_Deal']['comment'],
+                'comment' => $comment,
                 'new_wallet_amount' => $new_wallet_amount,
             ]);
 
@@ -218,13 +230,15 @@ class TradingController extends Controller
                 'balance' => $new_wallet_amount
             ]);
 
-            try {
-                $metaService->getUserInfo($user->tradingAccounts);
-            } catch (\Exception $e) {
-                \Log::error('Error fetching trading accounts: '. $e->getMessage());
-                return redirect()->back()
-                    ->with('title', trans('public.server_under_maintenance'))
-                    ->with('warning', trans('public.try_again_later'));
+            if($type == 1){
+                try {
+                    $metaService->getUserInfo($user->tradingAccounts);
+                } catch (\Exception $e) {
+                    \Log::error('Error fetching trading accounts: '. $e->getMessage());
+                    return redirect()->back()
+                        ->with('title', trans('public.server_under_maintenance'))
+                        ->with('warning', trans('public.try_again_later'));
+                }
             }
 
             $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
@@ -266,7 +280,9 @@ class TradingController extends Controller
             'status' => 'Pending'
         ]);
 
-        $metaService->disableTrade($meta_login);
+        if ($type == 1){
+            $metaService->disableTrade($meta_login);
+        }
 
         if ($amount > 0) {
             return redirect()->back()

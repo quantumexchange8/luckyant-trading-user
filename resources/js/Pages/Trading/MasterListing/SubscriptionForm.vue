@@ -35,13 +35,16 @@ const form = useForm({
     master_id: props.masterAccount.id,
     meta_login: '',
     terms: '',
+    type: '',
 })
 
 const getTradingAccounts = async () => {
     try {
         const response = await axios.get('/account_info/getTradingAccounts?type=subscribe&meta_login=' + props.masterAccount.meta_login);
         tradingAccountsSel.value = response.data;
+        console.log(tradingAccountsSel.value);
         form.meta_login = tradingAccountsSel.value.length > 0 ? tradingAccountsSel.value[0].value : null;
+        form.type = tradingAccountsSel.value.length > 0 ? tradingAccountsSel.value[0].account_type : null;
     } catch (error) {
         console.error('Error refreshing trading accounts data:', error);
     }
@@ -109,6 +112,7 @@ watchEffect(() => {
 
     <Modal :show="subscribeAccountModal" :title="$t('public.subscribe_master')" @close="closeModal">
         <form class="space-y-2">
+            <!-- acc number here -->
             <div class="space-y-2 mb-4">
                 <Label
                     for="leverage"

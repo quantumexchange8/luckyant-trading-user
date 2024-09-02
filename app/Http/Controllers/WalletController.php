@@ -451,7 +451,7 @@ class WalletController extends Controller
         $wallet->balance -= $amount;
         $wallet->save();
 
-        $transaction_amount = $final_amount * $conversion_rate->withdrawal_rate;
+        $conversion_amount = $final_amount * $conversion_rate->withdrawal_rate;
         $transaction_number = RunningNumberService::getID('transaction');
 
         Transaction::create([
@@ -466,7 +466,8 @@ class WalletController extends Controller
             'amount' => $amount,
             'conversion_rate' => $conversion_rate->withdrawal_rate,
             'transaction_charges' => $withdrawal_fee,
-            'transaction_amount' => $transaction_amount,
+            'conversion_amount' => $conversion_amount,
+            'transaction_amount' => $final_amount,
             'new_wallet_amount' => $wallet->balance,
             'status' => 'Processing',
         ]);

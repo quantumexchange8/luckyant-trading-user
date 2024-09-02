@@ -29,6 +29,7 @@ class Transaction extends Model implements HasMedia
         'amount',
         'conversion_rate',
         'transaction_charges',
+        'conversion_amount',
         'transaction_amount',
         'new_wallet_amount',
         'status',

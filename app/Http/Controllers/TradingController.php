@@ -84,28 +84,32 @@ class TradingController extends Controller
                 }
             });
 
-        if ($user->is_public == 0 && $first_leader) {
-            $leader = $first_leader;
-            while ($leader && $leader->masterAccounts->isEmpty()) {
-                $leader = $leader->getFirstLeader();
-            }
-
-            if ($leader) {
-                $masterAccounts = $masterAccounts
-                    ->where('is_public', $leader->is_public)
-                    ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
+        // Handle public/private logic
+        if ($user->is_public == 1) {
+            // User is public
+            if ($first_leader) {
+                $masterAccounts->where('is_public', $first_leader->is_public);
             } else {
-                // If leader is null, reset $masterAccounts to an empty query
-                $masterAccounts = $masterAccounts->where('id', null);
+                $masterAccounts->where('is_public', 1);
             }
-        } elseif ($user->is_public == 1 && $first_leader) {
-            $masterAccounts->where('is_public', $first_leader->is_public);
         } else {
-            if ($user->is_public == 0) {
-                $masterAccounts->where('is_public', $user->is_public)
-                    ->whereIn('id', $user->masterAccounts->pluck('id'));
+            // User is private
+            if ($first_leader) {
+                $leader = $first_leader;
+                while ($leader && $leader->masterAccounts->isEmpty()) {
+                    $leader = $leader->getFirstLeader();
+                }
+
+                if ($leader) {
+                    $masterAccounts->where('is_public', $leader->is_public)
+                        ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
+                } else {
+                    // No valid leader found, reset $masterAccounts to an empty query
+                    $masterAccounts->whereNull('id');
+                }
             } else {
-                $masterAccounts->where('is_public', $user->is_public);
+                $masterAccounts->where('is_public', 0)
+                    ->whereIn('id', $user->masterAccounts->pluck('id'));
             }
         }
 
@@ -361,8 +365,7 @@ class TradingController extends Controller
             ->sum('subscription_amount');
 
         $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-//        $master->subscribersCount = $master->subscribers->count();
-
+        $master->subscribersCount = $master->category == 'pamm' ? PammSubscription::where('master_id', $master->id)->where('status', 'Active')->count() : $master->subscribers->count();
         if ($master->total_fund > 0) {
             $master->totalFundWidth = (($totalSubscriptionsFee + $totalPammFund + $master->extra_fund) / $master->total_fund) * 100;
         } else {

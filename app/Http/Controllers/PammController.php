@@ -63,57 +63,94 @@ class PammController extends Controller
             ->where('status', 'Active')
             ->where('signal_status', 1)
             ->where('category', 'pamm')
-            ->whereNot('user_id', $user->id)
-            ->whereJsonDoesntContain('not_visible_to', $user->id)
-            ->when($first_leader, function ($query) use ($first_leader) {
-                $query->whereJsonDoesntContain('not_visible_to', $first_leader->id);
-            })
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = '%' . $request->input('search') . '%';
-                $query->whereHas('tradingAccount', function ($q) use ($search) {
-                    $q->where('meta_login', 'like', $search);
-                })
-                    ->orWhereHas('user', function ($q2) use ($search) {
-                        $q2->where('name', 'like', $search)
-                            ->orWhere('username', 'like', $search)
-                            ->orWhere('email', 'like', $search);
-                    });
-            })
-            ->when($request->filled('type'), function ($query) use ($request) {
-                $query->where('type', $request->type);
-            })
-            ->when($request->filled('sort'), function ($query) use ($request) {
-                $sort = $request->input('type');
-                switch ($sort) {
-                    case 'max_equity':
-                        $query->orderByDesc('min_join_equity');
-                        break;
-                    case 'min_equity':
-                        $query->orderBy('min_join_equity');
-                        break;
-                    case 'max_sub':
-                        $query->withCount('subscribers')->orderByDesc('subscribers_count');
-                        break;
-                    case 'min_sub':
-                        $query->withCount('subscribers')->orderBy('subscribers_count');
-                        break;
-                    // Add more cases as needed for other 'type' values
+            ->whereNot('user_id', $user->id);
+
+        // Handle public/private logic
+        if ($user->is_public == 1) {
+            // User is public
+            if ($first_leader) {
+                $masterAccounts->where('is_public', $first_leader->is_public);
+            } else {
+                $masterAccounts->where('is_public', 1);
+            }
+        } else {
+            // User is private
+            if ($first_leader) {
+                $leader = $first_leader;
+                while ($leader && $leader->masterAccounts->isEmpty()) {
+                    $leader = $leader->getFirstLeader();
                 }
+
+                if ($leader) {
+                    $masterAccounts->where('is_public', $leader->is_public)
+                        ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
+                } else {
+                    // No valid leader found, reset $masterAccounts to an empty query
+                    $masterAccounts->whereNull('id');
+                }
+            } else {
+                $masterAccounts->where('is_public', 0)
+                    ->whereIn('id', $user->masterAccounts->pluck('id'));
+            }
+        }
+
+        // Exclude accounts not visible to the first leader
+        if ($first_leader) {
+            $masterAccounts->whereJsonDoesntContain('not_visible_to', $first_leader->id);
+        }
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $search = '%' . $request->input('search') . '%';
+            $masterAccounts->where(function ($query) use ($search) {
+                $query->whereHas('tradingAccount', fn($q) => $q->where('meta_login', 'like', $search))
+                    ->orWhereHas('user', fn($q) => $q->where('name', 'like', $search)
+                        ->orWhere('username', 'like', $search)
+                        ->orWhere('email', 'like', $search));
             });
+        }
+
+        // Apply type filter
+        if ($request->filled('type')) {
+            $masterAccounts->where('type', $request->input('type'));
+        }
+
+        // Apply sort options
+        if ($request->filled('sort')) {
+            $sort = $request->input('sort');
+            switch ($sort) {
+                case 'max_equity':
+                    $masterAccounts->orderByDesc('min_join_equity');
+                    break;
+                case 'min_equity':
+                    $masterAccounts->orderBy('min_join_equity');
+                    break;
+                case 'max_sub':
+                    $masterAccounts->withCount('subscribers')->orderByDesc('subscribers_count');
+                    break;
+                case 'min_sub':
+                    $masterAccounts->withCount('subscribers')->orderBy('subscribers_count');
+                    break;
+                // Add more cases as needed for other sort values
+            }
+        }
 
         $masterAccounts = $masterAccounts->latest()->paginate(10);
 
+        // Enhance master accounts with additional data
         $masterAccounts->each(function ($master) {
             $totalSubscriptionsFee = PammSubscription::where('master_id', $master->id)
                 ->where('status', 'Active')
                 ->sum('subscription_fee');
 
             $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-            $master->total_subscription_amount = $totalSubscriptionsFee + $master->total_fund ?? 0;
+            $master->total_subscription_amount = ($totalSubscriptionsFee + $master->total_fund) ?? 0;
             $master->total_subscribers = PammSubscription::where('master_id', $master->id)->where('status', 'Active')->count();
             $master->tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tnc_pdf') : $master->getFirstMediaUrl('en_tnc_pdf');
             $master->tree_tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tree_pdf') : $master->getFirstMediaUrl('en_tree_pdf');
-            $master->totalFundWidth = $master->total_fund == 0 ? $totalSubscriptionsFee + $master->extra_fund : (($totalSubscriptionsFee + $master->extra_fund) ?? 0 / $master->total_fund) * 100 ;
+            $master->totalFundWidth = ($master->total_fund == 0)
+                ? ($totalSubscriptionsFee + $master->extra_fund)
+                : (($totalSubscriptionsFee + $master->extra_fund) ?? 0) / $master->total_fund * 100;
         });
 
         return response()->json($masterAccounts);

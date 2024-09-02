@@ -94,7 +94,7 @@ const statusVariant = (status) => {
                                 {{ $t('public.total_subscribers') }}
                             </div>
                             <div class="text-xl font-semibold">
-                                {{ masterListingDetail.total_subscribers }}
+                                {{ masterListingDetail.subscribersCount }}
                             </div>
                         </div>
                     </div>

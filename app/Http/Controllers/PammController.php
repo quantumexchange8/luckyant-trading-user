@@ -74,7 +74,6 @@ class PammController extends Controller
                 $masterAccounts->where('is_public', 1);
             }
         } else {
-            // User is private
             if ($first_leader) {
                 $leader = $first_leader;
                 while ($leader && $leader->masterAccounts->isEmpty()) {
@@ -82,15 +81,24 @@ class PammController extends Controller
                 }
 
                 if ($leader) {
-                    $masterAccounts->where('is_public', $leader->is_public)
-                        ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
+                    // Allow viewing leader's master accounts and public master accounts
+                    $masterAccounts->where(function ($query) use ($leader) {
+                        $query->where('is_public', 1) // Public master accounts
+                        ->orWhere(function ($query) use ($leader) {
+                            $query->where('is_public', $leader->is_public)
+                                ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
+                        });
+                    });
                 } else {
-                    // No valid leader found, reset $masterAccounts to an empty query
-                    $masterAccounts->whereNull('id');
+                    // No valid leader found, only show public accounts
+                    $masterAccounts->where('is_public', 1);
                 }
             } else {
-                $masterAccounts->where('is_public', 0)
-                    ->whereIn('id', $user->masterAccounts->pluck('id'));
+                // No leader, show public accounts and user's own master accounts
+                $masterAccounts->where(function ($query) use ($user) {
+                    $query->where('is_public', 1) // Public master accounts
+                    ->orWhereIn('id', $user->masterAccounts->pluck('id')); // User's own master accounts
+                });
             }
         }
 

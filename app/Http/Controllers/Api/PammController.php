@@ -45,17 +45,6 @@ class PammController extends Controller
             'amount' => $data['amount'],
         ];
 
-        $checkSubscription = PammSubscription::withTrashed()
-            ->where('meta_login', $result['follower_id'])
-            ->first();
-
-        if (!empty($checkSubscription)) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Follower id must be unique'
-            ]);
-        }
-
         $masterAccount = Master::find($result['master_id']);
 
         $pamm_subscription = PammSubscription::create([

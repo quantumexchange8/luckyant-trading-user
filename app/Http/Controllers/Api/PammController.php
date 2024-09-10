@@ -109,54 +109,82 @@ class PammController extends Controller
 
         $result = [
             'follower_id' => $data['follower_id'],
-            'strategy_number' => $data['strategy_number'],
             'master_id' => $data['master_id'],
             'amount' => $data['amount'],
         ];
 
-        $pamm_subscription = PammSubscription::withTrashed()
+        $pamm_subscriptions = PammSubscription::withTrashed()
             ->where('meta_login', $result['follower_id'])
-            ->where('subscription_number', $result['strategy_number'])
-            ->first();
+            ->where('master_id', $result['master_id']);
 
-        if (!$pamm_subscription) {
+        if ($pamm_subscriptions->get()->isEmpty()) {
             return response()->json([
                 'status' => 'failed',
                 'message' => 'Strategy not found'
             ]);
         }
 
-        if ($pamm_subscription->status == 'Revoked') {
+        $total_amount = $pamm_subscriptions->sum('subscription_amount');
+
+        if ($total_amount != $result['amount']) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Strategy revoked'
+                'message' => 'Amount mismatch'
             ]);
         }
 
-        $pamm_subscription->update([
-            'termination_date' => now(),
-            'status' => 'Revoked',
-        ]);
+        foreach ($pamm_subscriptions->get() as $pamm_subscription) {
+            // Check if the strategy is already revoked
+            if ($pamm_subscription->status == 'Revoked') {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Strategy already revoked'
+                ]);
+            }
 
+            // Update subscription status and termination date
+            $pamm_subscription->update([
+                'termination_date' => now(),
+                'status' => 'Revoked',
+            ]);
+        }
+
+        // Find the master account
         $masterAccount = Master::find($result['master_id']);
 
-        // deduct from master
-        $description = 'withdraw #' . $pamm_subscription->meta_login;
+        if (!$masterAccount) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Master account not found'
+            ]);
+        }
+
+        // Perform a single withdrawal for the total amount
+        $description = 'withdraw #' . $result['follower_id'];
         $master_deal = [];
 
         try {
-            $master_deal = (new MetaFiveService())->createDeal($pamm_subscription->master_meta_login, $pamm_subscription->subscription_amount, $description, dealAction::WITHDRAW);
+            $master_deal = (new MetaFiveService())->createDeal(
+                $pamm_subscriptions->first()->master_meta_login,
+                $total_amount,
+                $description,
+                dealAction::WITHDRAW
+            );
         } catch (\Exception $e) {
-            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            \Log::error('Error fetching trading accounts: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Failed to process withdrawal'
+            ]);
         }
 
+        // Update master account fund
         $masterAccount->total_fund -= $result['amount'];
         $masterAccount->save();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Revoked pamm master',
-            'strategy_number' => $pamm_subscription->subscription_number,
+            'message' => 'Revoked PAMM strategy',
         ]);
     }
 

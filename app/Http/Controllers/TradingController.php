@@ -100,13 +100,9 @@ class TradingController extends Controller
                 }
 
                 if ($leader) {
-                    // Allow viewing leader's master accounts and public master accounts
                     $masterAccounts->where(function ($query) use ($leader) {
-                        $query->where('is_public', 1) // Public master accounts
-                        ->orWhere(function ($query) use ($leader) {
-                            $query->where('is_public', $leader->is_public)
-                                ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
-                        });
+                        $query->where('is_public', $leader->is_public)
+                            ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
                     });
                 } else {
                     // No valid leader found, only show public accounts

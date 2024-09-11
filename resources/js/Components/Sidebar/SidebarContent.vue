@@ -8,10 +8,7 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 import {computed, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 
-const page = usePage();
 const currentDomain = window.location.hostname;
-
-const getMasterVisibility = ref(page.props.getMasterVisibility);
 </script>
 
 <template>
@@ -121,7 +118,6 @@ const getMasterVisibility = ref(page.props.getMasterVisibility);
                 :active="route().current('pamm.pamm_master_listing')"
             />
             <SidebarCollapsibleItem
-                v-if="getMasterVisibility"
                 :href="route('pamm.esg_investment_portfolio')"
                 :title="$t('public.esg_investment_portfolio')"
                 :active="route().current('pamm.esg_investment_portfolio')"

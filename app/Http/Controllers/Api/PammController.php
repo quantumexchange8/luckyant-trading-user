@@ -56,7 +56,7 @@ class PammController extends Controller
             'subscription_number' => RunningNumberService::getID('subscription'),
             'subscription_period' => $masterAccount->join_period,
             'settlement_period' => $masterAccount->roi_period,
-            'settlement_date' => now()->addDays($masterAccount->roi_period)->startOfDay(),
+            'settlement_date' => now()->addDays($masterAccount->roi_period)->endOfDay(),
             'expired_date' => now()->addDays($masterAccount->join_period)->endOfDay(),
             'approval_date' => now(),
             'max_out_amount' => $masterAccount->max_out_amount,

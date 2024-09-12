@@ -24,6 +24,7 @@ const props = defineProps({
     liveAccountQuota: Object,
     totalEquity: Number,
     totalBalance: Number,
+    virtualStatus: Boolean,
 })
 const {formatAmount} = transactionFormat();
 const addingTradingAccount = ref(false)
@@ -193,6 +194,7 @@ setInterval(refreshData, 10000);
                         class="flex justify-center items-center gap-2 w-full sm:w-auto"
                         v-slot="{ iconSizeClasses }"
                         @click="addTradingAccount"
+                        v-if="props.accountCounts < props.liveAccountQuota.value || props.virtualStatus"
                     >
                         <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses"/>
                         <span>{{ $t('public.add_account') }}</span>
@@ -273,6 +275,7 @@ setInterval(refreshData, 10000);
                         <Tab
                             as="template"
                             v-slot="{ selected }"
+                            v-if="props.virtualStatus"
                         >
                             <button
                                 :class="[
@@ -332,7 +335,7 @@ setInterval(refreshData, 10000);
                             </div>
                         </TabPanel>
                         
-                        <TabPanel class="py-3">
+                        <TabPanel class="py-3" v-if="props.virtualStatus">
                             <div class="space-y-2">
                                 <Label
                                     for="leverage"

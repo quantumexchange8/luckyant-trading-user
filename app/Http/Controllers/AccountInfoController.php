@@ -417,6 +417,8 @@ class AccountInfoController extends Controller
             ->whereNotIn('status', ['Pending', 'Rejected'])
             ->get();
 
+        $hasBalanceOutAfterUnsubscribed = false;
+
         if ($subscriberHistory->isNotEmpty()) {
             // Check for "Unsubscribed" status within the last 24 hours
             $lastUnsubscribed = $subscriberHistory->where('status', 'Unsubscribed')
@@ -430,6 +432,14 @@ class AccountInfoController extends Controller
             // Check if any subscriber is currently in "Subscribing" status
             if ($subscriberHistory->contains('status', 'Subscribing')) {
                 throw ValidationException::withMessages(['amount' => trans('public.subscribing_alert')]);
+            }
+
+            // Check for BalanceOut transactions after unsubscribe
+            if ($lastUnsubscribed) {
+                $hasBalanceOutAfterUnsubscribed = Transaction::where('from_meta_login', $meta_login)
+                    ->where('transaction_type', 'BalanceOut')
+                    ->where('created_at', '>', $lastUnsubscribed->unsubscribe_date)
+                    ->exists();
             }
         }
 
@@ -450,76 +460,11 @@ class AccountInfoController extends Controller
             $tradingAccount->update(['balance' => $tradingAccount->balance - $amount]);
         }
 
-        // Check if there's an e_wallet and process withdrawal
-        $e_wallet = Wallet::where('user_id', $user->id)->where('type', 'e_wallet')->first();
         $amount_remain = $amount;
 
-        if ($e_wallet) {
-            $eWalletBalanceIn = Transaction::where('from_wallet_id', $e_wallet->id)
-                ->where('to_meta_login', $meta_login)
-                ->where('transaction_type', 'BalanceIn')
-                ->where('status', 'Success')
-                ->sum('transaction_amount');
-
-            $eWalletBalanceOut = Transaction::where('to_wallet_id', $e_wallet->id)
-                ->where('from_meta_login', $meta_login)
-                ->where('transaction_type', 'BalanceOut')
-                ->where('status', 'Success')
-                ->sum('transaction_amount');
-
-            $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
-
-            if ($remainingBalance > 0) {
-                if ($remainingBalance >= $amount) {
-                    // Deduct full amount from e_wallet
-                    $e_wallet->balance += $amount;
-                    $e_wallet->save();
-
-                    Transaction::create([
-                        'category' => 'trading_account',
-                        'user_id' => $user->id,
-                        'to_wallet_id' => $e_wallet->id,
-                        'from_meta_login' => $meta_login,
-                        'ticket' => $dealId,
-                        'transaction_number' => RunningNumberService::getID('transaction'),
-                        'transaction_type' => 'BalanceOut',
-                        'amount' => $amount,
-                        'transaction_charges' => 0,
-                        'transaction_amount' => $amount,
-                        'status' => 'Success',
-                        'comment' => $comment,
-                        'new_wallet_amount' => $e_wallet->balance,
-                    ]);
-
-                    $amount_remain = 0;
-                } else {
-                    // Deduct partial amount from e_wallet
-                    $e_wallet->balance += $remainingBalance;
-                    $e_wallet->save();
-
-                    Transaction::create([
-                        'category' => 'trading_account',
-                        'user_id' => $user->id,
-                        'to_wallet_id' => $e_wallet->id,
-                        'from_meta_login' => $meta_login,
-                        'ticket' => $dealId,
-                        'transaction_number' => RunningNumberService::getID('transaction'),
-                        'transaction_type' => 'BalanceOut',
-                        'amount' => $remainingBalance,
-                        'transaction_charges' => 0,
-                        'transaction_amount' => $remainingBalance,
-                        'status' => 'Success',
-                        'comment' => $comment,
-                        'new_wallet_amount' => $e_wallet->balance,
-                    ]);
-
-                    $amount_remain -= $remainingBalance;
-                }
-            }
-        }
-
-        // Handle the remaining amount withdrawal
-        if ($amount_remain > 0) {
+        // Check if BalanceOut exists after unsubscribing
+        if ($hasBalanceOutAfterUnsubscribed) {
+            // Direct BalanceOut to the cash wallet
             $new_wallet_balance = $wallet->balance + $amount_remain;
 
             Transaction::create([
@@ -539,6 +484,97 @@ class AccountInfoController extends Controller
             ]);
 
             $wallet->update(['balance' => $new_wallet_balance]);
+            $amount_remain = 0;
+        } else {
+            // Check for e-wallet transactions and process accordingly
+            $e_wallet = Wallet::where('user_id', $user->id)->where('type', 'e_wallet')->first();
+
+            if ($e_wallet) {
+                $eWalletBalanceIn = Transaction::where('from_wallet_id', $e_wallet->id)
+                    ->where('to_meta_login', $meta_login)
+                    ->where('transaction_type', 'BalanceIn')
+                    ->where('status', 'Success')
+                    ->sum('transaction_amount');
+
+                $eWalletBalanceOut = Transaction::where('to_wallet_id', $e_wallet->id)
+                    ->where('from_meta_login', $meta_login)
+                    ->where('transaction_type', 'BalanceOut')
+                    ->where('status', 'Success')
+                    ->sum('transaction_amount');
+
+                $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
+
+                if ($remainingBalance > 0) {
+                    if ($remainingBalance >= $amount_remain) {
+                        // Full amount to e_wallet
+                        $e_wallet->balance += $amount_remain;
+                        $e_wallet->save();
+
+                        Transaction::create([
+                            'category' => 'trading_account',
+                            'user_id' => $user->id,
+                            'to_wallet_id' => $e_wallet->id,
+                            'from_meta_login' => $meta_login,
+                            'ticket' => $dealId,
+                            'transaction_number' => RunningNumberService::getID('transaction'),
+                            'transaction_type' => 'BalanceOut',
+                            'amount' => $amount_remain,
+                            'transaction_charges' => 0,
+                            'transaction_amount' => $amount_remain,
+                            'status' => 'Success',
+                            'comment' => $comment,
+                            'new_wallet_amount' => $e_wallet->balance,
+                        ]);
+
+                        $amount_remain = 0;
+                    } else {
+                        // Partial amount to e_wallet
+                        $e_wallet->balance += $remainingBalance;
+                        $e_wallet->save();
+
+                        Transaction::create([
+                            'category' => 'trading_account',
+                            'user_id' => $user->id,
+                            'to_wallet_id' => $e_wallet->id,
+                            'from_meta_login' => $meta_login,
+                            'ticket' => $dealId,
+                            'transaction_number' => RunningNumberService::getID('transaction'),
+                            'transaction_type' => 'BalanceOut',
+                            'amount' => $remainingBalance,
+                            'transaction_charges' => 0,
+                            'transaction_amount' => $remainingBalance,
+                            'status' => 'Success',
+                            'comment' => $comment,
+                            'new_wallet_amount' => $e_wallet->balance,
+                        ]);
+
+                        $amount_remain -= $remainingBalance;
+                    }
+                }
+            }
+
+            // Handle the remaining amount if any
+            if ($amount_remain > 0) {
+                $new_wallet_balance = $wallet->balance + $amount_remain;
+
+                Transaction::create([
+                    'category' => 'trading_account',
+                    'user_id' => $user->id,
+                    'to_wallet_id' => $wallet->id,
+                    'from_meta_login' => $meta_login,
+                    'ticket' => $dealId,
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'transaction_type' => 'BalanceOut',
+                    'amount' => $amount_remain,
+                    'transaction_charges' => 0,
+                    'transaction_amount' => $amount_remain,
+                    'status' => 'Success',
+                    'comment' => $comment,
+                    'new_wallet_amount' => $new_wallet_balance,
+                ]);
+
+                $wallet->update(['balance' => $new_wallet_balance]);
+            }
         }
 
         return redirect()->back()

@@ -53,6 +53,12 @@ class AccountInfoController extends Controller
         ->latest()
         ->get();
 
+        $enableVirtual = false;
+        if (\Auth::user()->id == 793 || strpos(\Auth::user()->hierarchyList, '-793-') !== false) 
+        {
+            $enableVirtual = true;
+        }
+
         return Inertia::render('AccountInfo/AccountInfo', [
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'leverageSel' => (new SelectOptionService())->getActiveLeverageSelection(),
@@ -61,6 +67,7 @@ class AccountInfoController extends Controller
             'liveAccountQuota' => Setting::where('slug', 'live_account_quota')->first(),
             'totalEquity' => $tradingAccounts->sum('equity'),
             'totalBalance' => $tradingAccounts->sum('balance'),
+            'virtualStatus' => $enableVirtual,
         ]);
     }
 

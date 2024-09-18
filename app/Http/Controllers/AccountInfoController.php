@@ -54,7 +54,7 @@ class AccountInfoController extends Controller
         ->get();
 
         $enableVirtual = false;
-        if (\Auth::user()->id == 793 || strpos(\Auth::user()->hierarchyList, '-793-') !== false) 
+        if (\Auth::user()->id == 793 || strpos(\Auth::user()->hierarchyList, '-793-') !== false)
         {
             $enableVirtual = true;
         }
@@ -411,6 +411,7 @@ class AccountInfoController extends Controller
 
         $user = Auth::user();
         $wallet = Wallet::find($request->to_wallet_id);
+        $e_wallet = Wallet::where('user_id', $user->id)->where('type', 'e_wallet')->first();
         $amount = $request->amount;
         $meta_login = $request->from_meta_login;
         $tradingAccount = TradingAccount::where('meta_login', $meta_login)->firstOrFail();
@@ -441,10 +442,11 @@ class AccountInfoController extends Controller
                 throw ValidationException::withMessages(['amount' => trans('public.subscribing_alert')]);
             }
 
-            // Check for BalanceOut transactions after unsubscribe
+            // Check for BalanceOut transactions after unsubscribe using e wallet
             if ($lastUnsubscribed) {
                 $hasBalanceOutAfterUnsubscribed = Transaction::where('from_meta_login', $meta_login)
                     ->where('transaction_type', 'BalanceOut')
+                    ->where('from_wallet_id', $e_wallet->id)
                     ->where('created_at', '>', $lastUnsubscribed->unsubscribe_date)
                     ->exists();
             }
@@ -470,7 +472,7 @@ class AccountInfoController extends Controller
         $amount_remain = $amount;
 
         // Check if BalanceOut exists after unsubscribing
-        if ($hasBalanceOutAfterUnsubscribed) {
+        if (!$hasBalanceOutAfterUnsubscribed) {
             // Direct BalanceOut to the cash wallet
             $new_wallet_balance = $wallet->balance + $amount_remain;
 
@@ -493,8 +495,6 @@ class AccountInfoController extends Controller
             $wallet->update(['balance' => $new_wallet_balance]);
             $amount_remain = 0;
         } else {
-            // Check for e-wallet transactions and process accordingly
-            $e_wallet = Wallet::where('user_id', $user->id)->where('type', 'e_wallet')->first();
 
             if ($e_wallet) {
                 $eWalletBalanceIn = Transaction::where('from_wallet_id', $e_wallet->id)

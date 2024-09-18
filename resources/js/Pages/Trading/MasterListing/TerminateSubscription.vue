@@ -23,7 +23,7 @@ const managementFeeAmount = ref(0);
 
 const openTerminationModal = () => {
     terminationModal.value = true;
-    managementFeeAmount.value = props.subscription.meta_balance * ((props.subscriberAccount.management_fee) / 100)
+    managementFeeAmount.value = props.subscriberAccount.totalPenalty;
 }
 
 const closeModal = () => {
@@ -142,7 +142,7 @@ const closeTermsModal = () => {
                 </div>
                 <div class="flex items-start justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.management_fee')}} ({{ formatAmount(subscriberAccount.management_fee, 0) }}%)
+                        {{$t('public.management_fee')}}
                     </div>
                     <div class="text-sm sm:text-base text-error-500 font-bold">
                          $ {{ formatAmount(managementFeeAmount) }}

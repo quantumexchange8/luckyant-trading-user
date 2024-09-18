@@ -25,7 +25,7 @@ terminationDate.setDate(terminationDate.getDate() + 1);
 
 const openRenewSubscriptionModal = () => {
     renewSubscriptionModal.value = true;
-    managementFeeAmount.value = props.subscription.meta_balance * ((props.subscriberAccount.management_fee_for_stop_renewal) / 100)
+    managementFeeAmount.value = props.subscriberAccount.totalPenalty_for_stop_renewal;
 }
 
 const closeModal = () => {
@@ -187,7 +187,7 @@ const closeTermsModal = () => {
                 </div>
                 <div class="flex items-start justify-between gap-2 self-stretch">
                     <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.management_fee')}} ({{ formatAmount(subscriberAccount.management_fee_for_stop_renewal, 0) }}%)
+                        {{$t('public.management_fee')}}
                     </div>
                     <div class="text-sm sm:text-base text-error-500 font-bold">
                          $ {{ formatAmount(managementFeeAmount) }}

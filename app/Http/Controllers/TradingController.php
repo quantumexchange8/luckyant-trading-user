@@ -801,6 +801,35 @@ class TradingController extends Controller
                     ];
                 });
 
+            $batches = SubscriptionBatch::where('meta_login', $subscriber->meta_login)
+            ->where('status', 'Active')
+            ->get();
+
+            $batches->each(function ($batch) use ($expiredDate) {
+                $approvalDate = Carbon::parse($batch->approval_date > now() ? now() : $batch->approval_date);
+                $today = Carbon::today();
+                $join_days = $approvalDate->diffInDays($today);
+
+                $daysDifference = $approvalDate->diffInDays($expiredDate);
+                
+                $management_fee = MasterManagementFee::where('master_id', $batch->master_id)
+                    ->where('penalty_days', '>', $join_days)
+                    ->first();
+
+                $management_fee_for_stop_renewal = MasterManagementFee::where('master_id', $batch->master_id)
+                ->where('penalty_days', '>', $daysDifference)
+                ->first();
+            
+                $penalty = $batch->meta_balance * ($management_fee->penalty_percentage ?? 0) / 100; 
+                $penalty_for_stop_renewal = $batch->meta_balance * ($management_fee_for_stop_renewal->penalty_percentage ?? 0) / 100; 
+
+                $batch->penalty = $penalty;
+                $batch->penalty_for_stop_renewal = $penalty_for_stop_renewal;
+            });
+            
+            $totalPenalty = $batches->sum('penalty');   
+            $totalPenalty_for_stop_renewal = $batches->sum('penalty_for_stop_renewal');
+
             $subscriber->join_days = $join_days;
             $subscriber->subscription_amount = $subscription_batches->sum('meta_balance');
             $subscriber->management_period = $subscriber->master->masterManagementFee->sum('penalty_days');
@@ -808,6 +837,8 @@ class TradingController extends Controller
             $subscriber->management_fee_for_stop_renewal = $management_fee->where('penalty_days', '>', $daysDifference)->first()->penalty_percentage ?? 0;
             $subscriber->penalty_exempt = $penalty_exempt;
             $subscriber->newMasterSel = $masterSel;
+            $subscriber->totalPenalty = $totalPenalty;
+            $subscriber->totalPenalty_for_stop_renewal = $totalPenalty_for_stop_renewal;
         });
 
         return response()->json([

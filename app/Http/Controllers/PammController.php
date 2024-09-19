@@ -65,6 +65,11 @@ class PammController extends Controller
             ->where('category', 'pamm')
             ->whereNot('user_id', $user->id);
 
+        // Exclude accounts not visible to the first leader
+        if ($first_leader) {
+            $masterAccounts->whereJsonDoesntContain('not_visible_to', $first_leader->id);
+        }
+
         // Handle public/private logic
         if ($user->is_public == 1) {
             // User is public
@@ -100,11 +105,6 @@ class PammController extends Controller
                     ->orWhereIn('id', $user->masterAccounts->pluck('id')); // User's own master accounts
                 });
             }
-        }
-
-        // Exclude accounts not visible to the first leader
-        if ($first_leader) {
-            $masterAccounts->whereJsonDoesntContain('not_visible_to', $first_leader->id);
         }
 
         // Apply search filter

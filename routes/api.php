@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\PammController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,15 @@ Route::get('getMasterGrowth', [MasterController::class, 'getMasterGrowth']);
 Route::get('getMasterLatestTrades', [MasterController::class, 'getMasterLatestTrades']);
 Route::get('getMasterCurrency', [MasterController::class, 'getMasterCurrency']);
 Route::get('getMasterOpenTrade', [MasterController::class, 'getMasterOpenTrade']);
+
+/**
+ * ==============================
+ *             Account
+ * ==============================
+ */
+Route::prefix('account')->group(function () {
+    Route::post('create_account', [AccountController::class, 'create_account']);
+});
 
 /**
  * ==============================

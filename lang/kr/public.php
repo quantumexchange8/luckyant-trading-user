@@ -520,4 +520,5 @@ return [
     "planting_agreement" => "심기 계약",
     "balance" => "잔액",
     "bank_sub_branch" => "하위 지점",
+    "lot" => "많은 거래",
 ];

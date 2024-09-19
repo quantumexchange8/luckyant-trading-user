@@ -28,6 +28,8 @@ const totalRebateAmount = ref(null);
 const totalAffiliateRebate = ref(null);
 const totalPersonalRebate = ref(null);
 const totalTradeLots = ref(null);
+const totalAffiliateLot = ref(null);
+const totalPersonalLot = ref(null);
 const tradeRebates = ref({data: []});
 const sorting = ref();
 const search = ref('');
@@ -99,6 +101,8 @@ const getResults = async (page = 1, paginate = 10, filterSearch = search.value, 
         totalRebateAmount.value = response.data.totalRebateAmount;
         totalPersonalRebate.value = response.data.totalPersonalRebate;
         totalAffiliateRebate.value = response.data.totalAffiliateRebate;
+        totalAffiliateLot.value = response.data.totalAffiliateLot;
+        totalPersonalLot.value = response.data.totalPersonalLot;
         totalTradeLots.value = response.data.totalTradeLots;
     } catch (error) {
         console.error(error);
@@ -151,11 +155,11 @@ const columns = [
 </script>
 
 <template>
-    <AuthenticatedLayout :title="$t('public.sidebar.trade_history')">
+    <AuthenticatedLayout :title="$t('public.sidebar.trade_rebate')">
         <template #header>
             <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <h2 class="text-xl font-semibold leading-tight">
-                    {{ $t('public.sidebar.trade_history') }}
+                    {{ $t('public.sidebar.trade_rebate') }}
                 </h2>
             </div>
         </template>
@@ -203,12 +207,13 @@ const columns = [
                         {{ $t('public.affiliate') }}
                     </div>
                     <div class="text-2xl font-bold">
-                        <span v-if="totalAffiliateRebate !== null">
-                            $ {{ totalAffiliateRebate !== '' ? formatAmount(totalAffiliateRebate) : '0' }}
-                        </span>
-                        <span v-else>
+                        <div v-if="totalAffiliateRebate !== null" class="flex flex-col">
+                            <span>$ {{ totalAffiliateRebate !== '' ? formatAmount(totalAffiliateRebate) : '0' }}</span>
+                            <span class="text-lg font-medium text-gray-600 dark:text-gray-400">{{ formatAmount(totalAffiliateLot) }} {{ $t('public.lot') }}</span>
+                        </div>
+                        <div v-else>
                             {{ $t('public.loading') }}
-                        </span>
+                        </div>
                     </div>
                 </div>
                 <div class="rounded-full flex items-center justify-center w-14 h-14 bg-purple-200">
@@ -221,12 +226,13 @@ const columns = [
                         {{ $t('public.personal') }}
                     </div>
                     <div class="text-2xl font-bold">
-                        <span v-if="totalPersonalRebate !== null">
-                            $ {{ totalPersonalRebate !== '' ? formatAmount(totalPersonalRebate) : '0' }}
-                        </span>
-                        <span v-else>
+                        <div v-if="totalPersonalRebate !== null" class="flex flex-col">
+                            <span>$ {{ totalPersonalRebate !== '' ? formatAmount(totalPersonalRebate) : '0' }}</span>
+                            <span class="text-lg font-medium text-gray-600 dark:text-gray-400">{{ formatAmount(totalPersonalLot) }} {{ $t('public.lot') }}</span>
+                        </div>
+                        <div v-else>
                             {{ $t('public.loading') }}
-                        </span>
+                        </div>
                     </div>
                 </div>
                 <div class="rounded-full flex items-center justify-center w-14 h-14 bg-gray-200">

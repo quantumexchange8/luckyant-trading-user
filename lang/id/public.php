@@ -520,4 +520,5 @@ return [
     "planting_agreement" => "Perjanjian Penanaman",
     "balance" => "Saldo",
     "bank_sub_branch" => "Cabang Pembantu",
+    'lot' => "Perdagangan",
 ];

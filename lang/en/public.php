@@ -524,4 +524,5 @@ return [
     'inactive_accounts' => "Inactive Accounts",
     'virtual_account' => "Virtual Account",
     'created_virtual_account' => "Successfully Created Virtual Account",
+    'lot' => "Lot",
 ];

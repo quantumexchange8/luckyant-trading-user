@@ -520,4 +520,5 @@ return [
     "planting_agreement" => "Hợp đồng trồng cây",
     "balance" => "Số dư",
     "bank_sub_branch" => "Chi nhánh phụ",
+    "lot" => "Lô giao dịch",
 ];

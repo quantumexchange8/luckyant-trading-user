@@ -520,4 +520,5 @@ return [
     "planting_agreement" => "植栽契約",
     "balance" => "残高",
     "bank_sub_branch" => "出張所",
+    "lot" => "トレードロット",
 ];

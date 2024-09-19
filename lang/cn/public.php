@@ -524,4 +524,5 @@ return [
     'inactive_accounts' => "未激活账户",
     'virtual_account' => "虚拟账户",
     'created_virtual_account' => "成功创建虚拟账户",
+    'lot' => "手数",
 ];

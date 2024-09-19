@@ -520,4 +520,5 @@ return [
     "planting_agreement" => "ข้อตกลงการปลูก",
     "balance" => "ยอดคงเหลือ",
     "bank_sub_branch" => "สาขาย่อย",
+    "lot" => "ซื้อขายจำนวนมาก",
 ];

@@ -87,6 +87,8 @@ class ReportController extends Controller
             'totalRebateAmount' => $totalRebateQuery->sum('rebate'),
             'totalAffiliateRebate' => $totalAffiliateQuery->whereIn('user_id', \Auth::user()->getChildrenIds())->whereNot('user_id', \Auth::id())->sum('rebate'),
             'totalPersonalRebate' => $totalPersonalQuery->where('user_id', \Auth::id())->sum('rebate'),
+            'totalAffiliateLot' => $totalAffiliateQuery->whereIn('user_id', \Auth::user()->getChildrenIds())->whereNot('user_id', \Auth::id())->sum('volume'),
+            'totalPersonalLot' => $totalPersonalQuery->where('user_id', \Auth::id())->sum('volume'),
             'totalTradeLots' => $totalRebateQuery->sum('volume'),
         ]);
     }

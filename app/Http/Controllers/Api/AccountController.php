@@ -34,10 +34,37 @@ class AccountController extends Controller
             ->where('name', $data['name'])
             ->first();
 
+        $originalEmail = $data['email'];
+
         if (empty($user)) {
             $user = User::create([
                 'name' => $data['name'],
-                'email' => $data['email'],
+                'email' => $originalEmail,
+                'email_verified_at' => now(),
+                'password' => Hash::make('lucky1234.'),
+                'remember_token' => Str::random(10),
+                'country' => 45,
+                'phone' => '+86' . rand(1000000, 9999999),
+                'dob' => '1990-09-12',
+                'remark' => 'china_pamm',
+                'status' => 'Inactive',
+            ]);
+        } else {
+            // Email already exists, create a new unique email by adding a suffix
+            $baseEmail = $originalEmail;
+            $index = 1;
+            $user_email = $baseEmail . '-' . $index;
+
+            // Check if the new email with a suffix already exists and increment the suffix if needed
+            while (User::withTrashed()->where('email', $user_email)->exists()) {
+                $index++;
+                $user_email = $baseEmail . '-' . $index;
+            }
+
+            // Create the new user with the unique email, but store the original email separately
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $user_email,  // Store the modified email with the suffix
                 'email_verified_at' => now(),
                 'password' => Hash::make('lucky1234.'),
                 'remember_token' => Str::random(10),
@@ -49,10 +76,11 @@ class AccountController extends Controller
             ]);
         }
 
-        $metaAccount = $metaService->createUser($user, 'JS', $data['leverage']);
+        // Use the original email for createUser and notifications
+        $metaAccount = $metaService->createUser($user, 'JS', $data['leverage'], $originalEmail);
         $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance');
 
-        Notification::route('mail', $user['email'])
+        Notification::route('mail', $originalEmail)
             ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
 
         if ($user->remark == 'china_pamm') {

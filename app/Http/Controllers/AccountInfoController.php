@@ -97,7 +97,7 @@ class AccountInfoController extends Controller
                     ->with('warning', trans('public.try_again_later'));
             }
 
-            $metaAccount = $metaService->createUser($user, $group, $leverage);
+            $metaAccount = $metaService->createUser($user, $group, $leverage, $user->email);
             $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance');
 
             Notification::route('mail', $user->email)

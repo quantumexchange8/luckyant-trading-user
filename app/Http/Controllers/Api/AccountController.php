@@ -37,19 +37,6 @@ class AccountController extends Controller
         $originalEmail = $data['email'];
 
         if (empty($user)) {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $originalEmail,
-                'email_verified_at' => now(),
-                'password' => Hash::make('lucky1234.'),
-                'remember_token' => Str::random(10),
-                'country' => 45,
-                'phone' => '+86' . rand(1000000, 9999999),
-                'dob' => '1990-09-12',
-                'remark' => 'china_pamm',
-                'status' => 'Inactive',
-            ]);
-        } else {
             // Email already exists, create a new unique email by adding a suffix
             $baseEmail = $originalEmail;
             $index = 1;

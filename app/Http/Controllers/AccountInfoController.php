@@ -183,7 +183,6 @@ class AccountInfoController extends Controller
             } elseif ((clone $pammSubscription)->whereIn('status', ['Pending', 'Active'])->exists()) {
                 $tradingAccount->balance_out = false;
                 $tradingAccount->balance_in = false;
-                $tradingAccount->pamm_subscription = $pammSubscription->where('status', 'Active')->with(['master', 'master.tradingUser'])->latest()->first();
             } elseif ($tradingAccount->demo_fund > 0) {
                 $tradingAccount->balance_out = false;
                 $tradingAccount->balance_in = true;
@@ -194,6 +193,7 @@ class AccountInfoController extends Controller
 
             // Set the latest subscribing subscriber
             $tradingAccount->active_subscriber = $latestSubscribing;
+            $tradingAccount->pamm_subscription = $pammSubscription->where('status', 'Active')->with(['master', 'master.tradingUser'])->latest()->first();
         });
 
         $masterAccounts = Master::with(['tradingAccount', 'tradingAccount.accountType:id,group_id,name', 'tradingUser:id,user_id,name,meta_login,company,acc_status'])->where('user_id', \Auth::id())->get();

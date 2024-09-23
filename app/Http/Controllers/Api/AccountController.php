@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\TradingAccount;
+use App\Models\TradingUser;
 use App\Models\User;
 use App\Notifications\AddTradingAccountNotification;
 use App\Services\MetaFiveService;
@@ -30,6 +31,7 @@ class AccountController extends Controller
 
         $user = User::withTrashed()
             ->where('email', $data['email'])
+            ->where('name', $data['name'])
             ->first();
 
         if (empty($user)) {
@@ -53,9 +55,12 @@ class AccountController extends Controller
         Notification::route('mail', $user['email'])
             ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
 
-        $user->delete();
-        $user->tradingUsers()->delete();
-        $user->tradingAccounts()->delete();
+        if ($user->remark == 'china_pamm') {
+            $user->delete();
+        }
+
+        TradingAccount::where('meta_login', $metaAccount['login'])->delete();
+        TradingUser::where('meta_login', $metaAccount['login'])->delete();
 
         return response()->json([
             'status' => 'success',

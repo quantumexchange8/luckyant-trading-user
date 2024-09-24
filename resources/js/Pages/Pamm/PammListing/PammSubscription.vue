@@ -108,7 +108,7 @@ watchEffect(() => {
                         <div class="text-sm">{{ $t('public.join_day') }}:</div>
                         <div class="text-sm font-semibold">{{ pamm.join_days }}</div>
                     </div>
-                    <div class="flex gap-1">
+                    <div class="flex gap-1" v-if="pamm.type === 'ESG'">
                         <div class="text-sm">{{ $t('public.valid_until') }}:</div>
                         <div class="text-sm font-semibold">{{ formatDateTime(pamm.expired_date, false) }}</div>
                     </div>

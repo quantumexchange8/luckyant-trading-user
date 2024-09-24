@@ -7,6 +7,7 @@ use App\Models\TradingAccount;
 use App\Models\TradingUser;
 use App\Models\User;
 use App\Notifications\AddTradingAccountNotification;
+use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -80,6 +81,37 @@ class AccountController extends Controller
         return response()->json([
             'status' => 'success',
             'meta_account' => $metaAccount,
+        ]);
+    }
+
+    public function deposit_account(Request $request)
+    {
+        $request->validate([
+            'meta_login' => 'required',
+            'amount' => 'required',
+        ]);
+
+        $metaService = new MetaFiveService();
+        $connection = $metaService->getConnectionStatus();
+
+        if ($connection != 0) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Connection to MT5 server failed',
+            ]);
+        }
+
+        $deal = [];
+
+        try {
+            $deal = $metaService->createDeal($request->meta_login, $request->amount, 'Deposit #' . $request->meta_login, dealAction::DEPOSIT);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'deal' => $deal,
         ]);
     }
 }

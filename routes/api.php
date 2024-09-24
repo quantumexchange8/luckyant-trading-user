@@ -39,6 +39,7 @@ Route::get('getMasterOpenTrade', [MasterController::class, 'getMasterOpenTrade']
  */
 Route::prefix('account')->group(function () {
     Route::post('create_account', [AccountController::class, 'create_account']);
+    Route::post('deposit_account', [AccountController::class, 'deposit_account']);
 });
 
 /**

@@ -104,7 +104,7 @@ class AccountController extends Controller
         $deal = [];
 
         try {
-            $deal = $metaService->createDeal($request->meta_login, $request->amount, 'Deposit #' . $request->meta_login, dealAction::DEPOSIT);
+            $deal = $metaService->createDeal($request->meta_login, $request->amount, 'Deposit', dealAction::DEPOSIT);
         } catch (\Exception $e) {
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
         }

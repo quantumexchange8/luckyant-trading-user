@@ -228,6 +228,7 @@ class ReportController extends Controller
     public function performance_incentive()
     {
         $rebateTypes = [
+            ['value' => '', 'label' => trans('public.all')],
             ['value' => 'affiliate', 'label' => trans('public.affiliate')],
             ['value' => 'personal', 'label' => trans('public.personal')],
         ];

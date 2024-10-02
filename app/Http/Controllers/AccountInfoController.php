@@ -53,10 +53,14 @@ class AccountInfoController extends Controller
         ->latest()
         ->get();
 
+        $ids = [793, 247];
         $enableVirtual = false;
-        if (\Auth::user()->id == 793 || strpos(\Auth::user()->hierarchyList, '-793-') !== false)
-        {
-            $enableVirtual = true;
+
+        foreach ($ids as $id) {
+            if (\Auth::user()->id == $id || strpos(\Auth::user()->hierarchyList, "-$id-") !== false) {
+                $enableVirtual = true;
+                break;
+            }
         }
 
         return Inertia::render('AccountInfo/AccountInfo', [

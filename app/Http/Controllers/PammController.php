@@ -151,9 +151,12 @@ class PammController extends Controller
                 ->where('status', 'Active')
                 ->sum('subscription_fee');
 
+            // requires active count relation
+            $pamm_subscription_count = PammSubscription::where('master_id', $master->id)->where('status', 'Active')->count();
+
             $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
             $master->total_subscription_amount = ($totalSubscriptionsFee + $master->total_fund) ?? 0;
-            $master->total_subscribers = PammSubscription::where('master_id', $master->id)->where('status', 'Active')->count();
+            $master->total_subscribers = $master->total_subscribers + $pamm_subscription_count;
             $master->tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tnc_pdf') : $master->getFirstMediaUrl('en_tnc_pdf');
             $master->tree_tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tree_pdf') : $master->getFirstMediaUrl('en_tree_pdf');
             $master->totalFundWidth = ($master->total_fund == 0)

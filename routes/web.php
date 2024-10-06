@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\PammController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\App;
@@ -90,6 +91,9 @@ Route::middleware('auth')->group(function () {
      * ==============================
      */
     Route::prefix('account_info')->group(function () {
+        Route::get('/', [AccountController::class, 'index'])->name('account_info');
+
+
         Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
         Route::get('/refreshTradingAccountsData', [AccountInfoController::class, 'refreshTradingAccountsData'])->name('account_info.refreshTradingAccountsData');
         Route::get('/getTradingAccounts', [AccountInfoController::class, 'getTradingAccounts'])->name('account_info.getTradingAccounts');

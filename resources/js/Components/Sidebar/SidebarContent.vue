@@ -32,7 +32,7 @@ const currentDomain = window.location.hostname;
 
         <SidebarLink
             :title="$t('public.sidebar.account_info')"
-            :href="route('account_info.account_info')"
+            :href="route('account_info')"
             :active="route().current('account_info.*')"
         >
             <template #icon>

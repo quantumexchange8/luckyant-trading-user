@@ -7,6 +7,7 @@ use App\Models\Master;
 use App\Models\PammSubscription;
 use App\Models\Subscription;
 use App\Models\TradePammInvestorAllocate;
+use App\Models\TradingUser;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
@@ -45,9 +46,14 @@ class PammController extends Controller
             'amount' => $data['amount'],
         ];
 
+        $trading_user = TradingUser::withTrashed()
+            ->where('meta_login', $data['follower_id'])
+            ->first();
+
         $masterAccount = Master::find($result['master_id']);
 
         $pamm_subscription = PammSubscription::create([
+            'user_id' => $trading_user ?->user_id,
             'meta_login' => $result['follower_id'],
             'master_id' => $masterAccount->id,
             'master_meta_login' => $masterAccount->meta_login,
@@ -62,7 +68,7 @@ class PammController extends Controller
             'max_out_amount' => $masterAccount->max_out_amount,
             'status' => 'Active',
             'remarks' => 'China PAMM',
-            'extra_conditions' => 'NOLOT_NOPAMM',
+            'extra_conditions' => $trading_user ? 'NOLOT' : 'NOLOT_NOPAMM',
         ]);
 
         // fund to master

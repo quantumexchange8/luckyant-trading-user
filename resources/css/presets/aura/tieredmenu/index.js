@@ -9,7 +9,7 @@ export default {
             'p-1',
 
             // Colors
-            'bg-surface-0 dark:bg-surface-900',
+            'bg-surface-0 dark:bg-gray-900',
             'border border-surface-200 dark:border-surface-700'
         ]
     },
@@ -30,11 +30,14 @@ export default {
             //Shape
             'rounded-[4px]',
 
+            //Font
+            'text-sm',
+
             // Colors
             'text-surface-700 dark:text-white/80',
             {
                 'text-surface-500 dark:text-white/70': !context.focused && !context.active,
-                'text-surface-500 dark:text-white/70 bg-surface-200': context.focused && !context.active,
+                'text-surface-500 dark:text-white/70 bg-surface-200 dark:bg-[rgba(255,255,255,0.03)]': context.focused && !context.active,
                 'text-primary-highlight-inverse bg-primary-highlight': (context.focused && context.active) || context.active || (!context.focused && context.active)
             },
 

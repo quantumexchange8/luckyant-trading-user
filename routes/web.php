@@ -92,15 +92,22 @@ Route::middleware('auth')->group(function () {
      */
     Route::prefix('account_info')->group(function () {
         Route::get('/', [AccountController::class, 'index'])->name('account_info');
+        Route::get('/getTradingAccountsData', [AccountController::class, 'getTradingAccountsData'])->name('account_info.getTradingAccountsData');
+        Route::get('/getAccountReport', [AccountController::class, 'getAccountReport'])->name('account_info.getAccountReport');
 
+        Route::post('/createAccount', [AccountController::class, 'createAccount'])->name('account_info.createAccount');
 
-        Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
+//        Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
+
+        // after change get master delete
         Route::get('/refreshTradingAccountsData', [AccountInfoController::class, 'refreshTradingAccountsData'])->name('account_info.refreshTradingAccountsData');
         Route::get('/getTradingAccounts', [AccountInfoController::class, 'getTradingAccounts'])->name('account_info.getTradingAccounts');
+        // end
+
         Route::get('/master_profile/{meta_login}', [AccountInfoController::class, 'master_profile'])->name('account_info.master_profile');
         Route::get('/getRequestHistory', [AccountInfoController::class, 'getRequestHistory'])->name('account_info.getRequestHistory');
-        Route::get('/transaction_history', [TransactionController::class, 'index'])->name('account_info.transaction_listing');
-        Route::get('/getTransactionData', [TransactionController::class, 'getTransactionData'])->name('account_info.getTransactionData');
+//        Route::get('/transaction_history', [TransactionController::class, 'index'])->name('account_info.transaction_listing');
+//        Route::get('/getTransactionData', [TransactionController::class, 'getTransactionData'])->name('account_info.getTransactionData');
         Route::get('/getInactiveAccountsData', [AccountInfoController::class, 'getInactiveAccountsData'])->name('account_info.getInactiveAccountsData');
 
         Route::post('/add-trading-account', [AccountInfoController::class, 'add_trading_account'])->name('account_info.add_trading_account');

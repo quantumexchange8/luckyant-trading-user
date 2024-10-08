@@ -22,7 +22,7 @@ const baseClasses = [
 
 const variantClasses = (variant) => ({
     'text-white bg-primary-600': variant === 'primary',
-    'bg-success-100 text-success-600 dark:bg-success-300 dark:text-success-800': variant === 'success',
+    'bg-success-100 text-success-600 dark:bg-success-300 dark:text-success-900': variant === 'success',
     'text-white bg-error-400 dark:bg-error-500': variant === 'danger',
     'text-white bg-blue-400 dark:bg-blue-500': variant === 'processing',
     'text-white bg-warning-400 dark:bg-warning-500': variant === 'warning',

@@ -204,8 +204,8 @@ const submit = () => {
             </div>
         </div>
 
-        <div class="border-t boarder-gray-300 pt-5" v-if="form.wallet_id === (walletSel.length > 1 ? walletSel[1].value : null)">
-            <div class="flex items-center justify-between gap-2 self-stretch">
+        <div class="border-t boarder-gray-300 dark:border-gray-700 pt-5" v-if="form.wallet_id === (walletSel.length > 1 ? walletSel[1].value : null)">
+            <div class="flex items-start justify-between gap-2 self-stretch">
                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                     {{  walletSel[1].name }} ({{ $t('public.max') }}: $ {{ formatAmount(maxEWalletAmount) }})
                 </div>
@@ -225,7 +225,7 @@ const submit = () => {
             <div class="flex items-center justify-end gap-2 self-stretch">
                 <InputError :message="form.errors.eWalletAmount" />
             </div>
-            <div class="flex items-center justify-between gap-2 self-stretch">
+            <div class="flex items-center justify-between gap-2 mt-3 self-stretch">
                 <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
                     {{ $t('public.cash_wallet') }}
                 </div>

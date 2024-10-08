@@ -11,8 +11,11 @@ export default {
             'border-0 rounded-md',
 
             // Color
-            'bg-surface-0 dark:bg-surface-900',
-            'text-surface-500 dark:text-white/60'
+            'bg-surface-0 dark:bg-gray-900',
+            'text-surface-500 dark:text-white/60',
+
+            // Font
+            'text-sm'
         ]
     },
     firstpagebutton: ({ context }) => ({

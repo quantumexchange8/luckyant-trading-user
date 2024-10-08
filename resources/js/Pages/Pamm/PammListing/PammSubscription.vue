@@ -90,10 +90,10 @@ watchEffect(() => {
                         />
                         <div class="flex flex-col">
                             <div v-if="currentLocale === 'en'" class="text-sm">
-                                {{ pamm.trading_user.name }}
+                                {{ pamm.master.trading_user.name }}
                             </div>
                             <div v-if="currentLocale === 'cn'" class="text-sm">
-                                {{ pamm.trading_user.company ? pamm.trading_user.company : pamm.trading_user.name }}
+                                {{ pamm.master.trading_user.company ? pamm.master.trading_user.company : pamm.master.trading_user.name }}
                             </div>
                             <div class="font-semibold">
                                 {{ pamm.master_meta_login }}

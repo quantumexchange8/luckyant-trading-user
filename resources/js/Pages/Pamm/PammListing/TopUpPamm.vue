@@ -130,7 +130,10 @@ const closeTermsModal = () => {
                         {{ pamm.subscription_number }}
                     </div>
                 </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
+                <div
+                    v-if="pamm.type === 'ESG'"
+                    class="flex items-center justify-between gap-2 self-stretch"
+                >
                     <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                         {{$t('public.product')}}
                     </div>
@@ -181,8 +184,8 @@ const closeTermsModal = () => {
                     inputId="horizontal-buttons"
                     showButtons
                     buttonLayout="horizontal"
-                    :min="1000"
-                    :step="1000"
+                    :min="pamm.type === 'ESG' ? 1000 : 10"
+                    :step="pamm.type === 'ESG' ? 1000 : 10"
                     mode="currency"
                     currency="USD"
                     fluid
@@ -194,7 +197,7 @@ const closeTermsModal = () => {
                         <MinusIcon class="w-5 h-5" />
                     </template>
                 </InputNumber>
-                <div class="text-sm text-gray-500">
+                <div v-if="pamm.type === 'ESG'" class="text-sm text-gray-500">
                     {{ (productQuantity ?? 0) + ' ' + $t('public.product') }}
                 </div>
                 <InputError :message="form.errors.top_up_amount" />

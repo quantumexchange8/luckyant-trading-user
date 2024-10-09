@@ -711,29 +711,31 @@ class PammController extends Controller
             'remarks' => 'Top Up'
         ]);
 
-        // balance half from trading account
-        $client_deal = [];
+        // balance half from trading account for ESG
+        if ($masterAccount->type == 'ESG') {
+            $client_deal = [];
 
-        try {
-            $client_deal = (new MetaFiveService())->createDeal($pamm_subscription->meta_login, $pamm_subscription->subscription_amount, '#' . $pamm_subscription->meta_login, dealAction::WITHDRAW);
-        } catch (\Exception $e) {
-            \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            try {
+                $client_deal = (new MetaFiveService())->createDeal($pamm_subscription->meta_login, $pamm_subscription->subscription_amount, '#' . $pamm_subscription->meta_login, dealAction::WITHDRAW);
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
+
+            Transaction::create([
+                'category' => 'trading_account',
+                'user_id' => $pamm_subscription->master->user_id,
+                'from_meta_login' => $pamm_subscription->meta_login,
+                'ticket' => $client_deal['deal_Id'],
+                'transaction_number' => RunningNumberService::getID('transaction'),
+                'transaction_type' => 'PurchaseProduct',
+                'fund_type' => 'RealFund',
+                'amount' => $pamm_subscription->subscription_amount,
+                'transaction_charges' => 0,
+                'transaction_amount' => $pamm_subscription->subscription_amount,
+                'status' => 'Success',
+                'comment' => $client_deal['conduct_Deal']['comment'],
+            ]);
         }
-
-        Transaction::create([
-            'category' => 'trading_account',
-            'user_id' => $pamm_subscription->master->user_id,
-            'from_meta_login' => $pamm_subscription->meta_login,
-            'ticket' => $client_deal['deal_Id'],
-            'transaction_number' => RunningNumberService::getID('transaction'),
-            'transaction_type' => 'PurchaseProduct',
-            'fund_type' => 'RealFund',
-            'amount' => $pamm_subscription->subscription_amount,
-            'transaction_charges' => 0,
-            'transaction_amount' => $pamm_subscription->subscription_amount,
-            'status' => 'Success',
-            'comment' => $client_deal['conduct_Deal']['comment'],
-        ]);
 
         // fund to master
         $description = $pamm_subscription->meta_login ? 'Login #' . $pamm_subscription->meta_login : ('Client #' . $pamm_subscription->user_id);

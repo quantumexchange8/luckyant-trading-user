@@ -51,7 +51,7 @@ class AccountController extends Controller
         $group = AccountType::with('metaGroup')->where('id', $type)->get()->value('metaGroup.meta_group_name');
         $leverage = $request->leverage;
 
-        if ($type == 'trading_account') {
+        if ($type == 1) {
             $metaService = new MetaFiveService();
             $connection = $metaService->getConnectionStatus();
 

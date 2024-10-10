@@ -764,6 +764,7 @@ class AccountInfoController extends Controller
                     $subQuery->whereIn('acc_status', ['Deleted']);
                 })
                 ->whereNot('meta_login', $request->meta_login)
+                ->where('account_type', 1)
                 ->get();
         } elseif ($request->type == 'pamm') {
             $tradingAccount = TradingAccount::where('user_id', Auth::id())

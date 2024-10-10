@@ -7,6 +7,7 @@ use App\Models\Master;
 use App\Models\PammSubscription;
 use App\Models\Subscription;
 use App\Models\TradePammInvestorAllocate;
+use App\Models\TradingAccount;
 use App\Models\TradingUser;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
@@ -321,6 +322,20 @@ class PammController extends Controller
     {
         $data = $request->all();
 
+        if (!isset($data['follower_id'])) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Missing follower_id'
+            ]);
+        }
+
+        if (!isset($data['master_id'])) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Missing master_id'
+            ]);
+        }
+
         $result = [
             'follower_id' => $data['follower_id'],
             'master_id' => $data['master_id'],
@@ -341,6 +356,66 @@ class PammController extends Controller
 
         $masterAccount->total_fund -= $result['amount'];
         $masterAccount->save();
+
+        // deduct trading account
+        $tradingAccount = TradingAccount::onlyTrashed()
+            ->where('meta_login', $result['follower_id'])
+            ->first();
+
+        if ($tradingAccount) {
+            try {
+                (new MetaFiveService())->createDeal($tradingAccount->meta_login, $result['amount'], 'Withdrawal', dealAction::WITHDRAW);
+            } catch (\Exception $e) {
+                \Log::error('Error withdraw trading account: '. $e->getMessage());
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Withdraw amount $ ' . $result['amount'] . ' from #' . $result['follower_id'],
+        ]);
+    }
+
+    public function withdrawBalance(Request $request)
+    {
+        $data = $request->all();
+
+        if (!isset($data['follower_id'])) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Missing follower_id'
+            ]);
+        }
+
+        $result = [
+            'follower_id' => $data['follower_id'],
+            'amount' => $data['amount'],
+        ];
+
+        $pamm_subscription = PammSubscription::onlyTrashed()
+            ->where('meta_login', $result['follower_id'])
+            ->where('status', 'Active')
+            ->first();
+
+        if ($pamm_subscription) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Follower following PAMM #' . $pamm_subscription->master_meta_login
+            ]);
+        }
+
+        // deduct trading account
+        $tradingAccount = TradingAccount::onlyTrashed()
+            ->where('meta_login', $result['follower_id'])
+            ->first();
+
+        if ($tradingAccount) {
+            try {
+                (new MetaFiveService())->createDeal($tradingAccount->meta_login, $result['amount'], 'Withdrawal', dealAction::WITHDRAW);
+            } catch (\Exception $e) {
+                \Log::error('Error withdraw trading account: '. $e->getMessage());
+            }
+        }
 
         return response()->json([
             'status' => 'success',

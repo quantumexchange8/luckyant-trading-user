@@ -33,4 +33,23 @@ class SidebarService {
         }
         return true;
     }
+
+    public function getSidebarContentVisibility(): bool
+    {
+        $user = User::find(1137);
+
+        if ($user) {
+            $childrenIds = $user->getChildrenIds();
+
+            $authUserId = \Auth::id();
+
+            if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
+                return false;
+            }
+
+        }
+
+        // Otherwise, return true
+        return true;
+    }
 }

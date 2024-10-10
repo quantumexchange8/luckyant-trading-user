@@ -18,6 +18,7 @@ use App\Models\Term;
 use App\Models\TradeHistory;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Wallet;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
@@ -34,6 +35,18 @@ class TradingController extends Controller
 {
     public function master_listing()
     {
+        $user = User::find(1137);
+
+        if ($user) {
+            $childrenIds = $user->getChildrenIds();
+
+            $authUserId = \Auth::id();
+
+            if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
+                return redirect()->back();
+            }
+        }
+
         return Inertia::render('Trading/MasterListing', [
             'terms' => Term::where('type', 'subscribe')->first()
         ]);
@@ -811,7 +824,7 @@ class TradingController extends Controller
                 $join_days = $approvalDate->diffInDays($today);
 
                 $daysDifference = $approvalDate->diffInDays($expiredDate);
-                
+
                 $management_fee = MasterManagementFee::where('master_id', $batch->master_id)
                     ->where('penalty_days', '>', $join_days)
                     ->first();
@@ -819,15 +832,15 @@ class TradingController extends Controller
                 $management_fee_for_stop_renewal = MasterManagementFee::where('master_id', $batch->master_id)
                 ->where('penalty_days', '>', $daysDifference)
                 ->first();
-            
-                $penalty = $batch->meta_balance * ($management_fee->penalty_percentage ?? 0) / 100; 
-                $penalty_for_stop_renewal = $batch->meta_balance * ($management_fee_for_stop_renewal->penalty_percentage ?? 0) / 100; 
+
+                $penalty = $batch->meta_balance * ($management_fee->penalty_percentage ?? 0) / 100;
+                $penalty_for_stop_renewal = $batch->meta_balance * ($management_fee_for_stop_renewal->penalty_percentage ?? 0) / 100;
 
                 $batch->penalty = $penalty;
                 $batch->penalty_for_stop_renewal = $penalty_for_stop_renewal;
             });
-            
-            $totalPenalty = $batches->sum('penalty');   
+
+            $totalPenalty = $batches->sum('penalty');
             $totalPenalty_for_stop_renewal = $batches->sum('penalty_for_stop_renewal');
 
             $subscriber->join_days = $join_days;

@@ -9,6 +9,7 @@ import {computed, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 
 const currentDomain = window.location.hostname;
+const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
 </script>
 
 <template>
@@ -44,7 +45,7 @@ const currentDomain = window.location.hostname;
         </SidebarLink>
 
         <SidebarCollapsible
-            v-if="currentDomain !== 'member.luckyantmallvn.com'"
+            v-if="currentDomain !== 'member.luckyantmallvn.com' && contentVisibility"
             :title="$t('public.sidebar.copy_trading')"
             :active="route().current('trading.*')"
         >
@@ -103,6 +104,7 @@ const currentDomain = window.location.hostname;
 <!--        </SidebarCollapsible>-->
 
         <SidebarCollapsible
+            v-if="contentVisibility"
             title="PAMM"
             :active="route().current('pamm.*')"
         >

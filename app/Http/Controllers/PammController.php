@@ -14,6 +14,7 @@ use App\Models\SubscriptionBatch;
 use App\Models\Term;
 use App\Models\TradingAccount;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Wallet;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
@@ -34,6 +35,18 @@ class PammController extends Controller
 {
     public function pamm_master_listing()
     {
+        $user = User::find(1137);
+
+        if ($user) {
+            $childrenIds = $user->getChildrenIds();
+
+            $authUserId = \Auth::id();
+
+            if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
+                return redirect()->back();
+            }
+        }
+
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
             'title' => trans('public.pamm_master_listing'),
             'pammType' => 'StandardGroup'

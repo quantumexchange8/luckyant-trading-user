@@ -46,6 +46,7 @@ class HandleInertiaRequests extends Middleware
             'auth.user.wallets' => fn() => $request->user() ? $request->user()->wallets : null,
             'locale' => session('locale') ? session('locale') : app()->getLocale(),
             'getMasterVisibility' => $request->user() ? $sidebarService->getMasterVisibility() : null,
+            'getSidebarContentVisibility' => $request->user() ? $sidebarService->getSidebarContentVisibility() : null,
         ];
     }
 }

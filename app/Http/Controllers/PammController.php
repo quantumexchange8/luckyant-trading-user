@@ -340,8 +340,15 @@ class PammController extends Controller
             ->whereNot('status', 'Pending')
             ->groupBy('meta_login', 'master_id');
 
-        $pamm_subscriptions = PammSubscription::with(['master', 'master.user','master.tradingUser', 'tradingUser:id,name,meta_login', 'package'])
-            ->joinSub($subQuery, 'grouped', function($join) {
+        $pamm_subscriptions = PammSubscription::with([
+            'master',
+            'master.user',
+            'master.tradingUser',
+            'master.masterManagementFee',
+            'tradingUser:id,name,meta_login',
+            'package'
+        ])
+            ->joinSub($subQuery, 'grouped', function ($join) {
                 $join->on('pamm_subscriptions.id', '=', 'grouped.first_id');
             })
             ->where('pamm_subscriptions.user_id', $user->id)
@@ -352,7 +359,7 @@ class PammController extends Controller
                         ->orWhere('meta_login', 'like', $search)
                         ->orWhere('company', 'like', $search);
                 })
-                ->orWhere('pamm_subscriptions.meta_login', 'like', $search);
+                    ->orWhere('pamm_subscriptions.meta_login', 'like', $search);
             })
             ->when($request->filled('type'), function ($query) use ($request) {
                 $query->where('pamm_subscriptions.type', $request->type);
@@ -360,8 +367,9 @@ class PammController extends Controller
             ->whereNot('pamm_subscriptions.status', 'Pending')
             ->get();
 
+        $totalPenalties = []; // Array to store total penalties per master
 
-        $pamm_subscriptions->each(function ($pamm) use ($user) {
+        $pamm_subscriptions->each(function ($pamm) use (&$totalPenalties) {
             $approvalDate = Carbon::parse($pamm->approval_date > now() ? now() : $pamm->approval_date);
             $today = Carbon::today();
             $join_days = $approvalDate->diffInDays($pamm->status == 'Terminated' ? $pamm->termination_date : $today);
@@ -373,9 +381,26 @@ class PammController extends Controller
                 $canTopUp = true;
             }
 
+            $management_fee = MasterManagementFee::where('master_id', $pamm->master_id)
+                ->where('penalty_days', '>', $join_days)
+                ->first();
+
+            $penalty = $pamm->subscription_amount * ($management_fee->penalty_percentage ?? 0) / 100;
+
             $pamm->join_days = $pamm->status != 'Rejected' ? $join_days : 0;
             $pamm->canTopUp = $canTopUp;
             $pamm->master->profile_pic = $pamm->master->user->getFirstMediaUrl('profile_photo');
+
+            // Accumulate total penalties per master
+            if (!isset($totalPenalties[$pamm->master_id])) {
+                $totalPenalties[$pamm->master_id] = 0;
+            }
+            $totalPenalties[$pamm->master_id] += $penalty;
+        });
+
+        // Attach total penalties to each master in the response
+        $pamm_subscriptions->each(function ($pamm) use ($totalPenalties) {
+            $pamm->master->totalManagementPenalty = $totalPenalties[$pamm->master_id] ?? 0;
         });
 
         return response()->json([
@@ -544,7 +569,13 @@ class PammController extends Controller
         $column = $decodedColumnName ? $decodedColumnName['id'] : 'approval_date';
         $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
 
-        $query = PammSubscription::with(['master', 'master.tradingUser', 'tradingUser:id,name,meta_login', 'package'])
+        $query = PammSubscription::with([
+            'master',
+            'master.tradingUser',
+            'master.masterManagementFee',
+            'tradingUser:id,name,meta_login',
+            'package'
+        ])
             ->where('user_id', Auth::id())
             ->where('meta_login', $request->meta_login);
 
@@ -577,12 +608,17 @@ class PammController extends Controller
 
         $results->each(function ($pamm) {
             $approvalDate = Carbon::parse($pamm->approval_date > now() ? now() : $pamm->approval_date);
+
             $today = Carbon::today();
+
             $join_days = $approvalDate->diffInDays($pamm->status == 'Terminated' ? $pamm->termination_date : $today);
 
+            $management_fee = MasterManagementFee::where('master_id', $pamm->master_id)
+                ->where('penalty_days', '>', $join_days)
+                ->first();
 
             $pamm->join_days = $pamm->status != 'Rejected' ? $join_days : 0;
-
+            $pamm->management_fee = $management_fee->penalty_percentage ?? 0;
         });
 
         return response()->json($results);
@@ -804,5 +840,77 @@ class PammController extends Controller
             'comment' => $comment,
             'new_wallet_amount' => $newWalletAmount,
         ]);
+    }
+
+    public function revokePamm(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'terms' => ['accepted']
+        ]);
+        $validator->setAttributeNames([
+            'terms' => trans('public.terms_and_conditions'),
+        ]);
+        $validator->validate();
+
+        $pamm_batches = PammSubscription::where('meta_login', $request->meta_login)
+            ->where('master_meta_login', $request->meta_master_login)
+            ->whereIn('status', ['Active', 'Terminated'])
+            ->get();
+
+        foreach ($pamm_batches as $pamm_batch) {
+            if ($pamm_batch->status == 'Revoked') {
+                return redirect()->back()
+                    ->with('title', trans('public.terminated_subscription'))
+                    ->with('warning', trans('public.terminated_subscription_error'));
+            }
+
+            $pamm_batch->update([
+                'termination_date' => now(),
+                'status' => 'Revoked'
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('title', trans('public.success_revoke'))
+            ->with('success', trans('public.successfully_revoked_pamm'));
+    }
+
+    public function terminatePammBatch(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'terms' => ['accepted']
+        ])->setAttributeNames([
+            'terms' => trans('public.terms_and_conditions'),
+        ]);
+        $validator->validate();
+
+        $subscription_batch = PammSubscription::find($request->id);
+
+        if ($subscription_batch->status == 'Terminated') {
+            return redirect()->back()
+                ->with('title', trans('public.terminated'))
+                ->with('warning', trans('public.terminated_subscription_error'));
+        }
+
+        $total_batch_amount = PammSubscription::where('meta_login', $subscription_batch->meta_login)
+            ->where('status', 'Active')
+            ->sum('subscription_amount');
+
+        $master = Master::find($subscription_batch->master_id);
+
+        if ($total_batch_amount - $subscription_batch->subscription_amount < $master->min_join_equity) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.low_subscription_amount_warning', ['amount' => $master->min_join_equity]));
+        }
+
+        $subscription_batch->update([
+            'termination_date' => now(),
+            'status' => 'Terminated'
+        ]);
+
+        return redirect()->back()
+            ->with('title', trans('public.success_terminate'))
+            ->with('success', trans('public.successfully_terminate'). ': ' . $subscription_batch->subscription_number);
     }
 }

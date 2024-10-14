@@ -521,4 +521,7 @@ return [
     "balance" => "잔액",
     "bank_sub_branch" => "하위 지점",
     "lot" => "많은 거래",
+    'revoke' => "취소",
+    'success_revoke' => "성공적으로 취소됨",
+    'successfully_revoked_pamm' => "PAMM이 성공적으로 취소되었습니다",
 ];

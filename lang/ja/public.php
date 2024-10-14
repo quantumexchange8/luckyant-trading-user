@@ -521,4 +521,7 @@ return [
     "balance" => "残高",
     "bank_sub_branch" => "出張所",
     "lot" => "トレードロット",
+    'revoke' => "取り消す",
+    'success_revoke' => "取り消し成功",
+    'successfully_revoked_pamm' => "PAMMの取り消しに成功しました",
 ];

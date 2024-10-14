@@ -521,4 +521,7 @@ return [
     "balance" => "Saldo",
     "bank_sub_branch" => "Cabang Pembantu",
     'lot' => "Perdagangan",
+    'revoke' => "Cabut",
+    'success_revoke' => "Berhasil Dicabut",
+    'successfully_revoked_pamm' => "Berhasil Mencabut PAMM",
 ];

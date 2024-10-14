@@ -5,7 +5,10 @@ import debounce from "lodash/debounce.js";
 import {usePage} from "@inertiajs/vue3";
 import NoData from "@/Components/NoData.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
-import TopUpPamm from "@/Pages/Pamm/PammListing/TopUpPamm.vue";;
+import TopUpPamm from "@/Pages/Pamm/PammListing/TopUpPamm.vue";
+import RevokePamm from "@/Pages/Pamm/PammListing/Partials/RevokePamm.vue";
+
+;
 
 const props = defineProps({
     terms: Object,
@@ -164,12 +167,18 @@ watchEffect(() => {
                         </div>
                     </div> -->
                 </div>
-                <TopUpPamm
-                    v-if="pamm.canTopUp"
-                    :pamm="pamm"
-                    :terms="terms"
-                    :walletSel="walletSel"
-                />
+                <div class="flex flex-col md:flex-row gap-3 items-center justify-center w-full">
+                    <TopUpPamm
+                        v-if="pamm.canTopUp"
+                        :pamm="pamm"
+                        :terms="terms"
+                        :walletSel="walletSel"
+                    />
+                    <RevokePamm
+                        :pamm="pamm"
+                        :terms="terms"
+                    />
+                </div>
             </div>
         </div>
         <div v-else class="text-2xl flex w-full items-center justify-center">

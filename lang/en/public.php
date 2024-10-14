@@ -525,4 +525,7 @@ return [
     'virtual_account' => "Virtual Account",
     'created_virtual_account' => "Successfully Created Virtual Account",
     'lot' => "Lot",
+    'revoke' => "Revoke",
+    'success_revoke' => "Success Revoke",
+    'successfully_revoked_pamm' => "Successfully Revoked PAMM",
 ];

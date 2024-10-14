@@ -521,4 +521,7 @@ return [
     "balance" => "Số dư",
     "bank_sub_branch" => "Chi nhánh phụ",
     "lot" => "Lô giao dịch",
+    'revoke' => "Thu hồi",
+    'success_revoke' => "Thu hồi thành công",
+    'successfully_revoked_pamm' => "Thu hồi PAMM thành công",
 ];

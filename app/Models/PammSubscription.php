@@ -76,4 +76,9 @@ class PammSubscription extends Model
     {
         return $this->belongsTo(MasterSubscriptionPackage::class, 'subscription_package_id', 'id');
     }
+
+    public function masterManagementFee(): \Illuminate\Database\Eloquent\Relations\hasMany
+    {
+        return $this->hasMany(MasterManagementFee::class, 'master_id', 'id');
+    }
 }

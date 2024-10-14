@@ -525,4 +525,7 @@ return [
     'virtual_account' => "虚拟账户",
     'created_virtual_account' => "成功创建虚拟账户",
     'lot' => "手数",
+    'revoke' => "撤销",
+    'success_revoke' => "成功撤销",
+    'successfully_revoked_pamm' => "成功撤销 PAMM",
 ];

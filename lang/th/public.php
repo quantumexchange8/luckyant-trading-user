@@ -521,4 +521,7 @@ return [
     "balance" => "ยอดคงเหลือ",
     "bank_sub_branch" => "สาขาย่อย",
     "lot" => "ซื้อขายจำนวนมาก",
+    'revoke' => "เพิกถอน",
+    'success_revoke' => "เพิกถอนสำเร็จ",
+    'successfully_revoked_pamm' => "เพิกถอน PAMM สำเร็จ",
 ];

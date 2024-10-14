@@ -31,6 +31,7 @@ const props = defineProps({
     countries: Array,
     rank: String,
     settingCryptoPayment: Object,
+    isCryptoServiceProvider: Boolean,
 })
 
 const copyReferralCode = () => {
@@ -308,6 +309,7 @@ getTotalTransactions();
                     :withdrawalFeePercentage="withdrawalFeePercentage"
                     :countries="countries"
                     :settingCryptoPayment="settingCryptoPayment"
+                    :isCryptoServiceProvider="isCryptoServiceProvider"
                 />
             </div>
 

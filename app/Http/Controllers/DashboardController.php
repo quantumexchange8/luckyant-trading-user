@@ -30,8 +30,26 @@ class DashboardController extends Controller
     {
         $announcement = Announcement::where('type', 'login')->where('status', 'Active')->latest()->first();
 
-        $PaymentBankDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();
-        $PaymentCryptoDetails = SettingPaymentMethod::where('payment_method', 'Bank')->where('status', 'Active')->get();
+        $PaymentBankDetails = SettingPaymentMethod::where('payment_method', 'Bank')
+            ->where('status', 'Active')
+            ->get();
+
+        $PaymentCryptoDetails = SettingPaymentMethod::where('payment_method', 'Bank')
+            ->where('status', 'Active')
+            ->get();
+
+        $user = User::find(1137);
+        $cryptocurrency_service_provider = false;
+
+        if ($user) {
+            $childrenIds = $user->getChildrenIds();
+
+            $authUserId = \Auth::id();
+
+            if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
+                $cryptocurrency_service_provider = true;
+            }
+        }
 
         if (!empty($announcement)) {
             $announcement->image = $announcement->getFirstMediaUrl('announcement');
@@ -70,6 +88,7 @@ class DashboardController extends Controller
             'rank' => $translations[$locale] ?? $rank->name,
             'total_global_trading_lot_size' => Setting::where('slug', 'total-global-trading-lot-size')->first(),
             'settingCryptoPayment' => SettingPaymentMethod::where('payment_method', 'Crypto')->where('status', 'Active')->first(),
+            'isCryptoServiceProvider' => $cryptocurrency_service_provider
         ]);
     }
 

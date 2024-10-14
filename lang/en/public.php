@@ -528,4 +528,5 @@ return [
     'revoke' => "Revoke",
     'success_revoke' => "Success Revoke",
     'successfully_revoked_pamm' => "Successfully Revoked PAMM",
+    'cryptocurrency_service_provider' => "Cryptocurrency Service Provider",
 ];

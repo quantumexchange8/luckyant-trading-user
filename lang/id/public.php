@@ -524,4 +524,5 @@ return [
     'revoke' => "Cabut",
     'success_revoke' => "Berhasil Dicabut",
     'successfully_revoked_pamm' => "Berhasil Mencabut PAMM",
+    'cryptocurrency_service_provider' => "Penyedia Layanan Cryptocurrency",
 ];

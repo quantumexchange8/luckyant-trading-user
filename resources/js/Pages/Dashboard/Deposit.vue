@@ -7,7 +7,7 @@ import Modal from "@/Components/Modal.vue";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import Input from "@/Components/Input.vue";
 import Label from "@/Components/Label.vue";
-import {useForm} from "@inertiajs/vue3";
+import {useForm, Link} from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import BaseListbox from "@/Components/BaseListbox.vue";
 import {
@@ -27,6 +27,7 @@ const props = defineProps({
     wallet: Object,
     countries: Array,
     settingCryptoPayment: Object,
+    isCryptoServiceProvider: Boolean,
 })
 
 const paymentType = [
@@ -53,7 +54,9 @@ const filteredPaymentTypes = computed(() => {
     if (windowOrigin === 'https://member.luckyantmallvn.com') {
         return paymentType.filter(type => type.name === 'payment_service');
     } else {
-        if (!props.settingCryptoPayment) {
+        if (props.isCryptoServiceProvider) {
+            return paymentType.filter(type => type.name !== 'bank');
+        } else if (!props.settingCryptoPayment) {
             return paymentType.filter(type => type.name !== 'payment_service');
         } else {
             return paymentType
@@ -289,7 +292,7 @@ const copyWalletAddress = () => {
                 />
             </div>
 
-            <div v-if="selected != null ? selected.name === 'payment_service' : '' " class="space-y-2">
+            <div v-if="selected != null && !isCryptoServiceProvider ? selected.name === 'payment_service' : '' " class="space-y-2">
                 <div class="flex flex-col items-center justify-center gap-2">
                     <qrcode-vue :class="['border-4 border-white']" :value="paymentDetails.account_no" :size="200"></qrcode-vue>
                     <input type="hidden" id="cryptoWalletAddress" :value="paymentDetails.account_no">
@@ -308,7 +311,7 @@ const copyWalletAddress = () => {
                 </div>
             </div>
 
-            <div v-if="selected" class="flex flex-col mt-5 items-start gap-3 self-stretch">
+            <div v-if="selected && !isCryptoServiceProvider" class="flex flex-col mt-5 items-start gap-3 self-stretch">
                 <div v-if="paymentDetails.payment_method" class="text-lg font-semibold dark:text-white">
                     {{ $t('public.payment_information') }}
                 </div>
@@ -355,9 +358,26 @@ const copyWalletAddress = () => {
                     </div>
                 </div>
             </div>
+
+            <div v-else-if="selected">
+                <div class="flex items-center justify-between gap-2 self-stretch">
+                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
+                        {{ $t('public.cryptocurrency_service_provider') }}
+                    </div>
+                    <div class="text-base text-gray-800 dark:text-white font-semibold">
+                        <a
+                            href="https://transak.com/"
+                            target="_blank"
+                            class="text-blue-500 hover:underline"
+                        >
+                            {{ 'Transak' }}
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <form v-if="selected" class="space-y-2 mt-5">
+        <form v-if="selected && !isCryptoServiceProvider" class="space-y-2 mt-5">
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
                 <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
                 <div class="flex flex-col w-full">

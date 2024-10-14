@@ -524,4 +524,5 @@ return [
     'revoke' => "취소",
     'success_revoke' => "성공적으로 취소됨",
     'successfully_revoked_pamm' => "PAMM이 성공적으로 취소되었습니다",
+    'cryptocurrency_service_provider' => "암호화폐 서비스 제공자",
 ];

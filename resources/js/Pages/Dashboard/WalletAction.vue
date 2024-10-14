@@ -17,6 +17,7 @@ const props = defineProps({
     withdrawalFeePercentage: Object,
     countries: Array,
     settingCryptoPayment: Object,
+    isCryptoServiceProvider: Boolean,
 })
 </script>
 
@@ -28,6 +29,7 @@ const props = defineProps({
                     :wallet="wallet"
                     :countries="countries"
                     :settingCryptoPayment="settingCryptoPayment"
+                    :isCryptoServiceProvider="isCryptoServiceProvider"
                 />
                 <Withdrawal
                     :wallet="wallet"

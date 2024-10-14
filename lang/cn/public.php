@@ -528,4 +528,5 @@ return [
     'revoke' => "撤销",
     'success_revoke' => "成功撤销",
     'successfully_revoked_pamm' => "成功撤销 PAMM",
+    'cryptocurrency_service_provider' => "加密货币服务提供商",
 ];

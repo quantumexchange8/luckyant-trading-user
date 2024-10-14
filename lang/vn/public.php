@@ -524,4 +524,5 @@ return [
     'revoke' => "Thu hồi",
     'success_revoke' => "Thu hồi thành công",
     'successfully_revoked_pamm' => "Thu hồi PAMM thành công",
+    'cryptocurrency_service_provider' => "Nhà cung cấp dịch vụ tiền điện tử",
 ];

@@ -340,6 +340,7 @@ class PammController extends Controller
             'follower_id' => $data['follower_id'],
             'master_id' => $data['master_id'],
             'amount' => $data['amount'],
+            'remarks' => $data['remarks'],
         ];
 
         $masterAccount = Master::find($result['master_id']);
@@ -364,7 +365,7 @@ class PammController extends Controller
 
         if ($tradingAccount) {
             try {
-                (new MetaFiveService())->createDeal($tradingAccount->meta_login, $result['amount'], 'Withdrawal', dealAction::WITHDRAW);
+                (new MetaFiveService())->createDeal($tradingAccount->meta_login, $result['amount'], $result['remarks'], dealAction::WITHDRAW);
             } catch (\Exception $e) {
                 \Log::error('Error withdraw trading account: '. $e->getMessage());
             }
@@ -390,6 +391,7 @@ class PammController extends Controller
         $result = [
             'follower_id' => $data['follower_id'],
             'amount' => $data['amount'],
+            'remarks' => $data['remarks'],
         ];
 
         $pamm_subscription = PammSubscription::onlyTrashed()
@@ -411,7 +413,7 @@ class PammController extends Controller
 
         if ($tradingAccount) {
             try {
-                (new MetaFiveService())->createDeal($tradingAccount->meta_login, $result['amount'], 'Withdrawal', dealAction::WITHDRAW);
+                (new MetaFiveService())->createDeal($tradingAccount->meta_login, $result['amount'], $result['remarks'], dealAction::WITHDRAW);
             } catch (\Exception $e) {
                 \Log::error('Error withdraw trading account: '. $e->getMessage());
             }

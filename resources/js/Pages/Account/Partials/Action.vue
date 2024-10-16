@@ -16,6 +16,7 @@ import EditLeverage from "@/Pages/AccountInfo/TradingAccount/EditLeverage.vue";
 import ChangePassword from "@/Pages/AccountInfo/TradingAccount/ChangePassword.vue";
 import InternalTransferBalance from "@/Pages/AccountInfo/TradingAccount/InternalTransferBalance.vue";
 import AccountReport from "@/Pages/Account/Partials/AccountReport.vue";
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     activeAccountCounts: Number,
@@ -78,7 +79,7 @@ const items = ref([
 const formattedItems = computed(() => {
     return items.value.filter(item => {
         if (item.label === 'balance_out') {
-            return props.account.balance_out;
+            return props.account.balance_out && usePage().props.auth.user.role !== 'special_demo';
         }
 
         if (item.label === 'internal_transfer') {

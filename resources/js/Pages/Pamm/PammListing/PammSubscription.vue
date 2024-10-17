@@ -8,8 +8,6 @@ import StatusBadge from "@/Components/StatusBadge.vue";
 import TopUpPamm from "@/Pages/Pamm/PammListing/TopUpPamm.vue";
 import RevokePamm from "@/Pages/Pamm/PammListing/Partials/RevokePamm.vue";
 
-;
-
 const props = defineProps({
     terms: Object,
     search: String,
@@ -175,6 +173,7 @@ watchEffect(() => {
                         :walletSel="walletSel"
                     />
                     <RevokePamm
+                        v-if="pamm.master.can_revoke"
                         :pamm="pamm"
                         :terms="terms"
                     />

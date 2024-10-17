@@ -529,4 +529,6 @@ return [
     'success_revoke' => "成功撤销",
     'successfully_revoked_pamm' => "成功撤销 PAMM",
     'cryptocurrency_service_provider' => "加密货币服务提供商",
+    'deposit_fail' => "结余转入失败",
+    'balance_in_fail' => "无法结余转入。请再试一次。",
 ];

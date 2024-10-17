@@ -529,4 +529,6 @@ return [
     'success_revoke' => "Success Revoke",
     'successfully_revoked_pamm' => "Successfully Revoked PAMM",
     'cryptocurrency_service_provider' => "Cryptocurrency Service Provider",
+    'deposit_fail' => "Deposit Failed",
+    'balance_in_fail' => "Fail to balance in account. Please try again.",
 ];

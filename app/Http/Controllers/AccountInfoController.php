@@ -283,25 +283,31 @@ class AccountInfoController extends Controller
         $deal = [];
 
         // Remember to check on equity
-        if ($type == 1){
+        if ($type == 1) {
             $connection = (new MetaFiveService())->getConnectionStatus();
             if ($connection == 0) {
                 try {
                     $deal = (new MetaFiveService())->createDeal($meta_login, $amount, 'Deposit to trading account', dealAction::DEPOSIT);
                 } catch (\Exception $e) {
-                    \Log::error('Error fetching trading accounts: '. $e->getMessage());
+                    \Log::error('Error fetching trading accounts: ' . $e->getMessage());
                 }
             } else {
                 return redirect()->back()
                     ->with('title', trans('public.server_under_maintenance'))
                     ->with('warning', trans('public.try_again_later'));
             }
-        }
-        else{
+
+            // Check if deal was created successfully
+            $dealId = $deal['deal_Id'] ?? null;
+            if (!$dealId) {
+                return redirect()->back()
+                    ->with('title', trans('public.deposit_fail'))
+                    ->with('warning', trans('public.balance_in_fail'));
+            }
+        } else {
             $trading_account->update(['balance' => $trading_account->balance + $amount]);
         }
 
-        $dealId = $deal['deal_Id'] ?? null;
         $comment = $deal['conduct_Deal']['comment'] ?? 'Deposit to trading account';
 
         if ($wallet->type == 'e_wallet') {

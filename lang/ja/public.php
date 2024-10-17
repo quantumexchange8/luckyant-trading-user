@@ -525,4 +525,6 @@ return [
     'success_revoke' => "取り消し成功",
     'successfully_revoked_pamm' => "PAMMの取り消しに成功しました",
     'cryptocurrency_service_provider' => "暗号通貨サービスプロバイダー",
+    'deposit_fail' => "入金に失敗しまし",
+    'balance_in_fail' => "口座の残高調整に失敗しました。もう一度お試しください。",
 ];

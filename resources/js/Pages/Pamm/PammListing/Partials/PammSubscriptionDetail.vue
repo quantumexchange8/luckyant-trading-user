@@ -158,7 +158,7 @@ const closeTermsModal = () => {
             </div>
         </div>
 
-        <div v-if="subscription.status === 'Active'" class="flex flex-col gap-3">
+        <div v-if="subscription.status === 'Active' && subscription.master.can_revoke" class="flex flex-col gap-3">
             <div class="text-gray-600 font-semibold">
                 {{ $t('public.terminate_details') }}
             </div>

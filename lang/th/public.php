@@ -525,4 +525,6 @@ return [
     'success_revoke' => "เพิกถอนสำเร็จ",
     'successfully_revoked_pamm' => "เพิกถอน PAMM สำเร็จ",
     'cryptocurrency_service_provider' => "ผู้ให้บริการสกุลเงินดิจิทัล",
+    'deposit_fail' => "การฝากเงินล้มเหลว",
+    'balance_in_fail' => "ไม่สามารถปรับสมดุลในบัญชีได้ กรุณาลองอีกครั้ง.",
 ];

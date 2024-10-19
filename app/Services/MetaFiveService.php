@@ -74,7 +74,7 @@ class MetaFiveService {
         $dealResponse = Http::acceptJson()->post($this->baseURL . "/conduct_deal", [
             'login' => $meta_login,
             'amount' => $amount,
-            'imtDeal_EnDealAction' => dealType::DEAL_BALANCE,
+            'imtDeal_EnDealAction' => 2,
             'comment' => $comment,
             'deposit' => $type,
         ]);

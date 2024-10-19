@@ -9,6 +9,7 @@ use App\Models\SubscriptionBatch;
 use App\Models\User;
 use App\Services\SidebarService;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use App\Models\Master;
 use App\Models\Wallet;
@@ -296,16 +297,15 @@ class AccountInfoController extends Controller
                     ->with('title', trans('public.server_under_maintenance'))
                     ->with('warning', trans('public.try_again_later'));
             }
-
-            // Check if deal was created successfully
-            $dealId = $deal['deal_Id'] ?? null;
-            if (!$dealId) {
-                return redirect()->back()
-                    ->with('title', trans('public.deposit_fail'))
-                    ->with('warning', trans('public.balance_in_fail'));
-            }
         } else {
             $trading_account->update(['balance' => $trading_account->balance + $amount]);
+        }
+
+        $dealId = $deal['deal_Id'] ?? null;
+        if (!$dealId) {
+            return redirect()->back()
+                ->with('title', trans('public.deposit_fail'))
+                ->with('warning', trans('public.balance_in_fail'));
         }
 
         $comment = $deal['conduct_Deal']['comment'] ?? 'Deposit to trading account';

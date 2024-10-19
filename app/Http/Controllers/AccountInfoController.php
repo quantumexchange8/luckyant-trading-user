@@ -284,7 +284,7 @@ class AccountInfoController extends Controller
         $deal = [];
 
         // Remember to check on equity
-        if ($type == 1) {
+        if ($trading_account->account_type == 1) {
             $connection = (new MetaFiveService())->getConnectionStatus();
             if ($connection == 0) {
                 try {

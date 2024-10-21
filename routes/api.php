@@ -55,4 +55,5 @@ Route::prefix('pamm')->group(function () {
     Route::post('revoke_investment_strategy', [PammController::class, 'revoke_investment_strategy']);
     Route::post('withdrawStrategyProfit', [PammController::class, 'withdrawStrategyProfit']);
     Route::post('withdraw_balance', [PammController::class, 'withdrawBalance']);
+    Route::post('terminate_investment_strategy', [PammController::class, 'terminate_investment_strategy']);
 });

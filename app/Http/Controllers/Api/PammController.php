@@ -424,4 +424,55 @@ class PammController extends Controller
             'message' => 'Withdraw amount $ ' . $result['amount'] . ' from #' . $result['follower_id'],
         ]);
     }
+
+    public function terminate_investment_strategy(Request $request)
+    {
+        $data = $request->all();
+
+        $request->validate([
+            'follower_id' => 'required',
+            'subscription_number' => 'required',
+        ]);
+
+        $result = [
+            'follower_id' => $data['follower_id'],
+            'subscription_number' => $data['subscription_number'],
+        ];
+
+        $subscription_batch = PammSubscription::onlyTrashed()
+            ->where('meta_login', $result['follower_id'])
+            ->where('subscription_number', $result['subscription_number'])
+            ->first();
+
+        if ($subscription_batch->status == 'Terminated') {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Batch terminated'
+            ]);
+        }
+
+        $total_batch_amount = PammSubscription::onlyTrashed()
+            ->where('meta_login', $subscription_batch->meta_login)
+            ->where('status', 'Active')
+            ->sum('subscription_amount');
+
+        $master = Master::find($subscription_batch->master_id);
+
+        if ($total_batch_amount - $subscription_batch->subscription_amount < $master->min_join_equity) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'The subscription amount will lower than the min requirement. Min amount: ' . $master->min_join_equity
+            ]);
+        }
+
+        $subscription_batch->update([
+            'termination_date' => now(),
+            'status' => 'Terminated'
+        ]);
+        
+        return response()->json([
+            'status' => 'success',
+            'pamm_subscription' => $subscription_batch,
+        ]);
+    }
 }

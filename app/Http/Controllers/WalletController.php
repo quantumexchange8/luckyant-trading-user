@@ -538,6 +538,12 @@ class WalletController extends Controller
             ]);
         }
 
+        if ($from_wallet->user_id != $user->id || $to_wallet->user_id != $user->id) {
+            return redirect()->back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.try_again_later'));
+        }
+
         // Check if balance is sufficient
         if ($from_wallet->balance < $amount || $amount <= 0) {
             throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $from_wallet->name])]);

@@ -300,13 +300,24 @@ class ReferralController extends Controller
             $countryName = json_decode($country->translations, true);
             $downlineUser->affiliate_country = $countryName[$locale] ?? $country->name;
 
-            $subscriptionAmount = Subscription::where('user_id', $downlineUser->id)->where('status', 'Active')->sum('meta_balance');
-            $downlineUser->subscription_amount = $subscriptionAmount;
+            $subscriptionAmount = Subscription::where('user_id', $downlineUser->id)
+                ->where('status', 'Active')
+                ->sum('meta_balance');
+
+            $pammAmount = PammSubscription::where('user_id', $downlineUser->id)
+                ->where('status', 'Active')
+                ->sum('subscription_amount');
+
+            $downlineUser->subscription_amount = $subscriptionAmount + $pammAmount;
         });
 
         $totalDeposit = Subscription::whereIn('user_id', $transactionQueryIds)
             ->where('status', 'Active')
             ->sum('meta_balance');
+
+        $totalDeposit += PammSubscription::whereIn('user_id', $transactionQueryIds)
+            ->where('status', 'Active')
+            ->sum('subscription_amount');
 
         return response()->json([
             'downlineUsers' => $results,

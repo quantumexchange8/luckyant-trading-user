@@ -45,8 +45,8 @@ const paymentTypes = computed(() => {
 
 const selected = ref(paymentTypes.value[0]);
 const cryptoWallet = ref('USDT (TRC20)');
-const country = ref(132);
-const currency = ref('MYR');
+const country = ref(45);
+const currency = ref('CNY');
 
 const form = useForm({
     payment_method: '',

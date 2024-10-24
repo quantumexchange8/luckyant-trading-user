@@ -16,7 +16,7 @@ class PaymentAccountRequest extends FormRequest
         ];
 
         if ($this->payment_method == 'Bank') {
-            $rules['bank_swift_code'] = ['required'];
+            $rules['bank_swift_code'] = ['nullable'];
             $rules['bank_sub_branch'] = ['required'];
         }
 

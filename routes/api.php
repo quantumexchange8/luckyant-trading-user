@@ -48,6 +48,7 @@ Route::prefix('account')->group(function () {
  * ==============================
  */
 Route::prefix('pamm')->group(function () {
+    Route::get('getStrategies', [PammController::class, 'getStrategies']);
     Route::get('getStrategySummary', [PammController::class, 'getStrategySummary']);
     Route::get('getStrategyDetails', [PammController::class, 'getStrategyDetails']);
 

@@ -19,10 +19,16 @@ use Illuminate\Support\Facades\Log;
 
 class PammController extends Controller
 {
-    public function get_investment_strategy_list()
+    public function getStrategies()
     {
+        $strategies = Master::select(['id', 'meta_login', 'category'])
+            ->withSum('activeCapitalFund', 'subscription_amount')
+            ->where('category', 'pamm')
+            ->where('project_based', 'CH')
+            ->get();
+
         return response()->json([
-           'strategy' => Master::where('type', 'PAMM')->get()
+           'strategies' => $strategies
         ]);
     }
 
@@ -469,7 +475,7 @@ class PammController extends Controller
             'termination_date' => now(),
             'status' => 'Terminated'
         ]);
-        
+
         return response()->json([
             'status' => 'success',
             'pamm_subscription' => $subscription_batch,

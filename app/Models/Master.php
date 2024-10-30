@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -71,4 +72,8 @@ class Master extends Model implements HasMedia
         return $this->hasMany(MasterManagementFee::class, 'master_id', 'id');
     }
 
+    public function activeCapitalFund(): HasMany
+    {
+        return $this->hasMany(PammSubscription::class, 'master_id', 'id')->where('status', 'Active')->withTrashed();
+    }
 }

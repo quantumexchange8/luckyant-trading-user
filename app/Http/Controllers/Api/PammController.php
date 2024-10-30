@@ -23,8 +23,8 @@ class PammController extends Controller
     {
         $strategies = Master::select(['id', 'meta_login', 'category'])
             ->withSum('activeCapitalFund', 'subscription_amount')
+            ->with('tradingUser:id,name,meta_login')
             ->where('category', 'pamm')
-            ->where('project_based', 'CH')
             ->get();
 
         return response()->json([

@@ -54,7 +54,7 @@ class Master extends Model implements HasMedia
 
     public function tradingUser(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(TradingUser::class, 'id', 'trading_account_id');
+        return $this->hasOne(TradingUser::class, 'meta_login', 'meta_login');
     }
 
     public function copyTradeHistories(): \Illuminate\Database\Eloquent\Relations\hasMany

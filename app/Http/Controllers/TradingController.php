@@ -60,7 +60,7 @@ class TradingController extends Controller
         $masterAccounts = Master::with([
             'user:id,username,name,email',
             'tradingAccount:id,meta_login,balance,equity',
-            'tradingUser:id,name,company',
+            'tradingUser:id,name,company,meta_login',
             'masterManagementFee'
         ])
             ->where('status', 'Active')
@@ -775,7 +775,7 @@ class TradingController extends Controller
             $management_fee = MasterManagementFee::where('master_id', $subscriber->master_id);
 
             $locale = app()->getLocale();
-            $availableMaster = Master::with('tradingUser:id,name,company')
+            $availableMaster = Master::with('tradingUser:id,name,company,meta_login')
                 ->where('status', 'Active')
                 ->where('signal_status', 1)
                 ->whereNot('id', $subscriber->master_id);
@@ -920,7 +920,7 @@ class TradingController extends Controller
         $masterAccounts = Master::with([
             'user:id,username,name,email',
             'tradingAccount:id,meta_login,balance,equity',
-            'tradingUser:id,name,company',
+            'tradingUser:id,name,company,meta_login',
             'masterManagementFee'
         ])->find($request->master_id);
 

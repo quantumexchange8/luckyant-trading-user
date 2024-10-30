@@ -70,7 +70,7 @@ class PammController extends Controller
         $masterAccounts = Master::with([
             'user:id,username,name,email',
             'tradingAccount:id,meta_login,balance,equity',
-            'tradingUser:id,name,company',
+            'tradingUser:id,name,company,meta_login',
             'masterManagementFee'
         ])
             ->where('status', 'Active')

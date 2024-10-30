@@ -91,6 +91,7 @@ const submit = () => {
         form.payment_platform_name = cryptoWallet.value
     }
 
+    form.currency = currency.value
     form.post(route('profile.addPaymentAccount'), {
         onSuccess: () => {
             closeModal();

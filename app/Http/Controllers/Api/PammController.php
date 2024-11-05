@@ -59,6 +59,18 @@ class PammController extends Controller
 
         $masterAccount = Master::find($result['master_id']);
 
+        $current_subscription = PammSubscription::onlyTrashed()
+            ->where('meta_login', $result['follower_id'])
+            ->where('status', 'Active')
+            ->first();
+
+        if ($current_subscription && $current_subscription->master_id != $result['master_id']) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => 'Current follower joining another investment strategy'
+            ]);
+        }
+
         $pamm_subscription = PammSubscription::create([
             'user_id' => $trading_user ?->user_id,
             'meta_login' => $result['follower_id'],

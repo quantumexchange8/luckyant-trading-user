@@ -69,7 +69,7 @@ const submit = () => {
 
     <Modal
         :show="terminationModal"
-        :title="$t('public.revoke_pamm')"
+        :title="$t('public.revoke')"
         @close="closeModal"
     >
         <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">

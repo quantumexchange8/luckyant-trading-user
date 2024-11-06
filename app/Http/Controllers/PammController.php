@@ -26,6 +26,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -385,7 +386,7 @@ class PammController extends Controller
                 ->where('penalty_days', '>', $join_days)
                 ->first();
 
-            $penalty = $pamm->subscription_amount * ($management_fee->penalty_percentage ?? 0) / 100;
+            $penalty = $pamm->total_amount * ($management_fee->penalty_percentage ?? 0) / 100;
 
             $pamm->join_days = $pamm->status != 'Rejected' ? $join_days : 0;
             $pamm->canTopUp = $canTopUp;

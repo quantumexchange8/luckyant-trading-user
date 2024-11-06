@@ -119,7 +119,7 @@ const submit = () => {
                         {{$t('public.amount')}}
                     </div>
                     <div class="text-sm sm:text-base text-primary-500 dark:text-primary-400 font-bold">
-                        $ {{ formatAmount(pamm.subscription_amount) }}
+                        $ {{ formatAmount(pamm.total_amount) }}
                     </div>
                 </div>
                 <div class="flex items-start justify-between gap-2 self-stretch">
@@ -135,7 +135,7 @@ const submit = () => {
                         {{$t('public.return_amount')}}
                     </div>
                     <div class="text-sm sm:text-base text-success-500 font-bold">
-                        $ {{ formatAmount(pamm.subscription_amount - pamm.master.totalManagementPenalty) }}
+                        $ {{ formatAmount(pamm.total_amount - pamm.master.totalManagementPenalty) }}
                     </div>
                 </div>
             </div>

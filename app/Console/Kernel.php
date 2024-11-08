@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
          $schedule->command('notify:auto-renew')->daily();
          $schedule->command('terminate:subscription')->daily();
          $schedule->command('notify:pamm-report')->dailyAt('08:00');
+         $schedule->command('check:bank-withdrawal')->daily();
     }
 
     /**

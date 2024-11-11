@@ -39,7 +39,7 @@ const closeTermsModal = () => {
 
 const form = useForm({
     meta_login: props.pamm.meta_login,
-    meta_master_login: props.pamm.meta_master_login,
+    master_meta_login: props.pamm.master_meta_login,
     terms: '',
 })
 

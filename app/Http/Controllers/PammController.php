@@ -854,7 +854,7 @@ class PammController extends Controller
         $validator->validate();
 
         $pamm_batches = PammSubscription::where('meta_login', $request->meta_login)
-            ->where('master_meta_login', $request->meta_master_login)
+            ->where('master_meta_login', $request->master_meta_login)
             ->whereIn('status', ['Active', 'Terminated'])
             ->get();
 

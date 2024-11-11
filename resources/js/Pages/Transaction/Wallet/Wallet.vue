@@ -1,13 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import TransactionHistory from "@/Pages/Transaction/Wallet/Partials/TransactionHistory.vue";
-import Button from "@/Components/Button.vue";
-import { ref } from 'vue'
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import Deposit from "@/Pages/Dashboard/Deposit.vue";
-import {RefreshIcon} from "@/Components/Icons/outline.jsx";
-import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
-import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
 import BalanceChart from "@/Pages/Transaction/Wallet/Partials/BalanceChart.vue";
 import {transactionFormat} from "@/Composables/index.js";
 

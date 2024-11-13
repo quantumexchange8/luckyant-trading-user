@@ -521,10 +521,11 @@ return [
     "balance" => "Saldo",
     "bank_sub_branch" => "Cabang Pembantu",
     'lot' => "Perdagangan",
-    'revoke' => "Cabut",
+    'revoke_pamm' => "Cabut",
     'success_revoke' => "Berhasil Dicabut",
     'successfully_revoked_pamm' => "Berhasil Mencabut PAMM",
     'cryptocurrency_service_provider' => "Penyedia Layanan Cryptocurrency",
     'deposit_fail' => "Gagal deposit",
     'balance_in_fail' => "Gagal menyeimbangkan akun. Silakan coba lagi.",
+    "platform" => "platform",
 ];

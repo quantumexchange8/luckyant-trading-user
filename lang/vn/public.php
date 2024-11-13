@@ -521,10 +521,11 @@ return [
     "balance" => "Số dư",
     "bank_sub_branch" => "Chi nhánh phụ",
     "lot" => "Lô giao dịch",
-    'revoke' => "Thu hồi",
+    'revoke_pamm' => "Thu hồi",
     'success_revoke' => "Thu hồi thành công",
     'successfully_revoked_pamm' => "Thu hồi PAMM thành công",
     'cryptocurrency_service_provider' => "Nhà cung cấp dịch vụ tiền điện tử",
     'deposit_fail' => "Nạp tiền thất bại",
     'balance_in_fail' => "Không thể cân đối tài khoản. Vui lòng thử lại.",
+    "platform" => "nền tảng",
 ];

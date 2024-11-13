@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CopyTradeHistory;
 use App\Models\PammSubscription;
+use App\Models\PaymentGateway;
+use App\Models\PaymentGatewayToLeader;
 use App\Models\PerformanceIncentive;
 use App\Models\Subscription;
 use App\Models\TradeHistory;
@@ -37,19 +39,6 @@ class DashboardController extends Controller
         $PaymentCryptoDetails = SettingPaymentMethod::where('payment_method', 'Bank')
             ->where('status', 'Active')
             ->get();
-
-        $user = User::find(1137);
-        $cryptocurrency_service_provider = false;
-
-        if ($user) {
-            $childrenIds = $user->getChildrenIds();
-
-            $authUserId = \Auth::id();
-
-            if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
-                $cryptocurrency_service_provider = true;
-            }
-        }
 
         if (!empty($announcement)) {
             $announcement->image = $announcement->getFirstMediaUrl('announcement');
@@ -88,7 +77,6 @@ class DashboardController extends Controller
             'rank' => $translations[$locale] ?? $rank->name,
             'total_global_trading_lot_size' => Setting::where('slug', 'total-global-trading-lot-size')->first(),
             'settingCryptoPayment' => SettingPaymentMethod::where('payment_method', 'Crypto')->where('status', 'Active')->first(),
-            'isCryptoServiceProvider' => $cryptocurrency_service_provider
         ]);
     }
 
@@ -210,21 +198,76 @@ class DashboardController extends Controller
 
     public function getPaymentDetails(Request $request)
     {
-        $settingPaymentId = $request->id;
-        $settingPaymentType = $request->type;
+        $settingPaymentTypes = $request->type;
+        $user = \Auth::user();
+        $paymentDetails = [];
+        switch ($settingPaymentTypes) {
+            case 'bank':
+                $paymentDetails = SettingPaymentMethod::with([
+                    'media',
+                    'country:id,name'
+                ])
+                    ->where('payment_method', 'Bank')
+                    ->get()
+                    ->map(function ($payment) {
+                        $payment->currency_rate = CurrencyConversionRate::firstWhere('base_currency', $payment->currency)->deposit_rate;
 
-        if ($settingPaymentId) {
-            $settingPayment = SettingPaymentMethod::with('country:id,name')->find($request->id);
-        } else {
-            $settingPayment = SettingPaymentMethod::with('country:id,name')->where('payment_method', $settingPaymentType)->inRandomOrder()->first();
+                        return $payment;
+                    });
+                break;
+
+            case 'payment_service':
+                $paymentDetails = SettingPaymentMethod::where('payment_method', 'Crypto')
+                    ->where('status', 'Active')
+                    ->inRandomOrder()
+                    ->first();
+                break;
+
+            case 'payment_merchant':
+                $leader = $user->getTopLeader();
+                if ($leader) {
+                    $payment_gateway_ids = PaymentGatewayToLeader::where('user_id', $leader->id)
+                        ->pluck('payment_gateway_id')
+                        ->toArray();
+
+                    $paymentDetails = PaymentGateway::select([
+                        'id',
+                        'name',
+                        'platform'
+                    ])
+                        ->whereIn('id', $payment_gateway_ids)
+                        ->get();
+                }
+                break;
         }
 
-        $conversionRate = CurrencyConversionRate::where('base_currency', $settingPayment->currency)->first();
-
         return response()->json([
-            'settingPayment' => $settingPayment,
-            'conversionRate' => $conversionRate,
+            'paymentDetails' => $paymentDetails,
         ]);
     }
 
+    public function getDepositOptions()
+    {
+        $options = ['bank', 'payment_service', 'payment_merchant'];
+
+        $user = User::find(1137);
+        $cryptocurrency_service_provider = false;
+
+        if ($user) {
+            $childrenIds = $user->getChildrenIds();
+            $authUserId = \Auth::id();
+
+            if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
+                $cryptocurrency_service_provider = true;
+            }
+        }
+
+        if ($cryptocurrency_service_provider) {
+            $options = ['cryptocurrency_service_provider'];
+        }
+
+        return response()->json([
+            'depositOptions' => $options
+        ]);
+    }
 }

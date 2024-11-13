@@ -57,15 +57,19 @@ Route::get('admin_login/{hashedToken}', function ($hashedToken) {
 
 Route::get('/getTerms', [TermController::class, 'getTerms'])->name('getTerms');
 Route::post('transaction_result', [WalletController::class, 'depositCallback']);
+Route::post('tt_pay_callback', [WalletController::class, 'tt_pay_callback']);
 
 Route::middleware('auth')->group(function () {
     Route::get('update_transaction', [WalletController::class, 'depositReturn']);
+    Route::get('tt_pay_return', [WalletController::class, 'tt_pay_return']);
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/getBalanceChart', [DashboardController::class, 'getBalanceChart']);
     Route::get('/getWallets', [DashboardController::class, 'getWallets']);
     Route::get('/getTotalTransactions', [DashboardController::class, 'getTotalTransactions']);
     Route::get('/getPaymentDetails', [DashboardController::class, 'getPaymentDetails']);
+    Route::get('/getDepositOptions', [DashboardController::class, 'getDepositOptions']);
+
     Route::post('/update_session', [DashboardController::class, 'update_session']);
 
     /**

@@ -1,102 +1,94 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CurrencyDollarIcon, DuplicateIcon} from "@heroicons/vue/outline";
-import { XIcon } from "@/Components/Icons/outline.jsx"
-import {ref, computed, watch} from "vue";
+import {CurrencyDollarIcon, DuplicateIcon, XIcon} from "@heroicons/vue/outline";
+import {ref, watch} from "vue";
 import Modal from "@/Components/Modal.vue";
-import InputIconWrapper from "@/Components/InputIconWrapper.vue";
-import Input from "@/Components/Input.vue";
-import Label from "@/Components/Label.vue";
-import {useForm, Link} from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
-import BaseListbox from "@/Components/BaseListbox.vue";
-import {
-  RadioGroup,
-  RadioGroupLabel,
-  RadioGroupDescription,
-  RadioGroupOption,
-} from '@headlessui/vue'
-import QrcodeVue from 'qrcode.vue';
-import Tooltip from "@/Components/Tooltip.vue";
 import {transactionFormat} from "@/Composables/index.js";
-import BankImg from "/public/assets/bank.jpg"
-import cryptoImg from "/public/assets/cryptocurrency.svg"
-import paymentMerchantImg from "/public/assets/payment_merchant.svg"
+import InputLabel from "@/Components/Label.vue";
+import RadioButton from "primevue/radiobutton";
+import Skeleton from "primevue/skeleton";
+import Dropdown from "primevue/dropdown";
+import Image from "primevue/image";
+import {useForm} from "@inertiajs/vue3";
+import InputNumber from "primevue/inputnumber";
+import InputError from "@/Components/InputError.vue";
+import QrcodeVue from 'qrcode.vue';
+import Tooltip from "@/Components/Tooltip.vue"
 
 const props = defineProps({
-    wallet: Object,
-    countries: Array,
-    settingCryptoPayment: Object,
-    isCryptoServiceProvider: Boolean,
+    wallet: Object
 })
 
-const paymentType = [
-    {
-         name: 'bank',
-         value: 'Bank',
-         imgUrl: BankImg
-    },
-    {
-        name: 'payment_service',
-        value: 'Crypto',
-        imgUrl: cryptoImg
-    },
-    {
-        name: 'payment_merchant',
-        value: 'Payment Merchant',
-        imgUrl: paymentMerchantImg
+const visible = ref(false);
+const depositOptions = ref();
+const loadingOptions = ref(false);
+const paymentDetails = ref();
+const loadingPayment = ref(false);
+const {formatAmount} = transactionFormat();
+const selectedOption = ref();
+
+const openModal = () => {
+    visible.value = true;
+    getDepositOptions();
+}
+
+const getDepositOptions = async () => {
+    loadingOptions.value = true;
+    try {
+        const response = await axios.get('/getDepositOptions');
+
+        depositOptions.value = response.data.depositOptions;
+
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loadingOptions.value = false;
     }
-]
+}
 
-const windowOrigin = window.location.origin;
+const getPaymentDetails = async () => {
+    loadingPayment.value = true;
+    try {
+        const response = await axios.get(`/getPaymentDetails?type=${selectedOption.value}`);
 
-const filteredPaymentTypes = computed(() => {
-    if (windowOrigin === 'https://member.luckyantmallvn.com') {
-        return paymentType.filter(type => type.name === 'payment_service');
-    } else {
-        if (props.isCryptoServiceProvider) {
-            return paymentType.filter(type => type.name !== 'bank');
-        } else if (!props.settingCryptoPayment) {
-            return paymentType.filter(type => type.name !== 'payment_service');
+        if (selectedOption.value === 'payment_service') {
+            payment.value = response.data.paymentDetails;
+            selectedOptionDetail.value = payment.value;
         } else {
-            return paymentType
+            paymentDetails.value = response.data.paymentDetails;
         }
+
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loadingPayment.value = false;
     }
-});
-
-const { formatAmount } = transactionFormat();
-const depositModal = ref(false);
-const selected = ref(null);
-const selectBank = ref(null);
-const paymentDetails = ref([]);
-const tooltipContent = ref('copy');
-const initialAmount = ref(null);
-const conversionRate = ref(0);
-const calculatedAmount = ref(0);
-
-const openDepositModal = () => {
-    depositModal.value = true;
 }
 
-const closeModal = () => {
-    depositModal.value = false;
-    selected.value = null
-    selectBank.value = null
-}
+watch(selectedOption, (value) => {
+    selectedOptionDetail.value = null;
+    getPaymentDetails()
+})
+
+const selectedOptionDetail = ref();
+const payment = ref();
+const amount = ref(0);
+
+watch(selectedOptionDetail, (value) => {
+    payment.value = value;
+})
+
+const form = useForm({
+    setting_payment_id: '',
+    wallet_id: props.wallet.id,
+    payment_method: '',
+    payment_detail: '',
+    amount: 0,
+    receipt: '',
+})
 
 const selectedReceipt = ref(null);
 const selectedReceiptName = ref(null);
-
-const form = useForm({
-    wallet_id: props.wallet.id,
-    setting_payment_id: '',
-    amount: '',
-    transaction_amount: 0,
-    receipt: null,
-    payment_method: '',
-    account_no: '',
-    conversion_rate: 0,
-})
 
 const onReceiptChanges = (event) => {
     const receiptInput = event.target;
@@ -119,63 +111,12 @@ const removeReceipt = () => {
     selectedReceipt.value = null;
 }
 
-const getPaymentDetails = async (settingPaymentValue) => {
-    try {
-        let url = '/getPaymentDetails';
-
-        if (selected.value.name === 'bank') {
-            url += `?id=${settingPaymentValue}`;
-        } else {
-            url += `?type=${settingPaymentValue}`;
-        }
-
-        const response = await axios.get(url);
-        paymentDetails.value = response.data.settingPayment;
-        conversionRate.value = response.data.conversionRate;
-
-        if (selected.value.name === 'bank') {
-            calculatedAmount.value = initialAmount.value * conversionRate.value.deposit_rate;
-        }
-
-    } catch (error) {
-        console.error('Error getting payment data:', error);
-    }
-}
-
-watch(selected, (newType) => {
-    if (newType) {
-        if (newType.name === 'payment_service') {
-            getPaymentDetails(newType.value)
-            selectBank.value = null
-        } else {
-            paymentDetails.value = []
-        }
-    }
-})
-
-watch(selectBank, (newValue) => {
-    if (newValue) {
-        if (selected.value.name === 'bank') {
-            getPaymentDetails(newValue);
-        }
-    }
-})
-
-watch(initialAmount, (newAmount) => {
-    if (newAmount && selected.value.name === 'bank') {
-        calculatedAmount.value = newAmount * conversionRate.value.deposit_rate;
-    }
-})
-
-const submit = () => {
-    form.setting_payment_id = paymentDetails.value.id;
-    form.payment_method = selected.value.value;
+const submitForm = () => {
+    form.setting_payment_id = selectedOptionDetail.value.id;
+    form.payment_method = selectedOption.value;
+    form.payment_detail = selectedOptionDetail.value;
     form.account_no = paymentDetails.value.account_no;
-    form.amount = initialAmount.value;
-    if (selected.value.name === 'bank') {
-        form.transaction_amount = calculatedAmount.value
-        form.conversion_rate = conversionRate.value.deposit_rate
-    }
+    form.amount = amount.value;
 
     form.post(route('transaction.deposit'), {
         onSuccess: () => {
@@ -184,6 +125,12 @@ const submit = () => {
         },
     });
 }
+
+const closeModal = () => {
+    visible.value = false;
+}
+
+const tooltipContent = ref('');
 
 const copyWalletAddress = () => {
     let walletAddressCopy = document.querySelector('#cryptoWalletAddress');
@@ -218,247 +165,255 @@ const copyWalletAddress = () => {
         variant="success"
         class="w-full flex justify-center gap-1"
         v-slot="{ iconSizeClasses }"
-        @click="openDepositModal"
+        @click="openModal"
     >
         <CurrencyDollarIcon aria-hidden="true" :class="iconSizeClasses" />
         {{ $t('public.deposit') }}
     </Button>
 
-    <Modal :show="depositModal" :title="$t('public.deposit')" @close="closeModal">
-
-        <!-- select payment method first -->
-        <div class="p-5 bg-gray-100 dark:bg-gray-600 rounded-lg">
-            <div class="flex flex-col items-start gap-3 self-stretch">
-                <div class="text-lg font-semibold dark:text-white">
-                    {{ $t('public.payment_methods') }}
+    <Modal
+        :show="visible"
+        :title="$t('public.deposit')"
+        @close="closeModal"
+    >
+        <div class="flex flex-col gap-5 self-start">
+            <div class="p-6 flex flex-col items-center gap-1 bg-gray-200 dark:bg-gray-800">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ $t('public.balance')}}
+                </div>
+                <div class="text-2xl font-bold text-gray-950 dark:text-white">
+                    ${{ formatAmount(wallet.balance) }}
                 </div>
             </div>
 
-            <div v-if="!selected" class="w-full py-4">
-                <div class="mx-auto w-full">
-                    <RadioGroup v-model="selected">
-                        <RadioGroupLabel class="sr-only">{{ $t('public.payment_methods') }}</RadioGroupLabel>
-                        <div class="flex sm:flex-row flex-col gap-3 items-center self-stretch w-full">
-                            <RadioGroupOption
-                                as="template"
-                                v-for="(type, index) in filteredPaymentTypes"
-                                :key="index"
-                                :value="type"
-                                v-slot="{ active, checked }"
-                            >
-                                <div
-                                    :class="[
-                                active
-                                    ? 'ring-0 ring-white ring-offset-0'
-                                    : '',
-                                checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
-                            ]"
-                                    class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none w-full"
-                                >
-                                    <div class="flex items-center w-full">
-                                        <div class="text-sm flex flex-col gap-3 w-full">
-                                            <RadioGroupLabel
-                                                as="div"
-                                                class="font-medium dark:text-white"
-                                            >
-                                                <div class="flex flex-col justify-center items-center gap-1">
-                                                    <img class="rounded-full w-12 h-12" :src="type.imgUrl" alt="payment-image">
-                                                    {{ $t('public.' + type.name) }}
-                                                </div>
-                                            </RadioGroupLabel>
-                                        </div>
-                                    </div>
-                                </div>
-                            </RadioGroupOption>
-                        </div>
-                        <InputError :message="form.errors.payment_method" class="mt-2" />
-                    </RadioGroup>
-                </div>
-            </div>
-
-            <!-- show banks -->
-            <div v-if="selected != null ? selected.name === 'bank' : '' " class="space-y-2">
-                <Label
-                    for="bank"
-                    :value="$t('public.bank_placeholder')"
+            <div class="flex flex-col gap-1 items-start self-stretch">
+                <InputLabel
+                    :value="$t('public.type')"
                 />
-                <BaseListbox
-                    class="w-full"
-                    :options="countries"
-                    v-model="selectBank"
+                <div v-if="depositOptions" class="flex flex-wrap gap-4">
+                    <div v-for="option in depositOptions" class="flex items-center">
+                        <RadioButton
+                            v-model="selectedOption"
+                            :inputId="option"
+                            :value="option"
+                        />
+                        <InputLabel :for="option" class="ml-2">{{ $t(`public.${option}`) }}</InputLabel>
+                    </div>
+                </div>
+                <Skeleton v-else width="8rem" class="my-1"></Skeleton>
+            </div>
+
+            <!-- Bank -->
+            <template v-if="selectedOption === 'bank'">
+                <Dropdown
+                    id="agent"
+                    v-model="selectedOptionDetail"
+                    :options="paymentDetails"
+                    filter
+                    :filterFields="['payment_platform_name']"
+                    optionLabel="payment_platform_name"
                     :placeholder="$t('public.bank_placeholder')"
-                    with-img
-                    :error="!!form.errors.payment_method"
-                />
-            </div>
+                    class="w-full"
+                    scroll-height="236px"
+                    :invalid="!!form.errors.payment_method"
+                >
+                    <template #value="slotProps">
+                        <div v-if="slotProps.value" class="flex items-center gap-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-5 h-5 rounded-full overflow-hidden">
+                                    <template v-if="slotProps.value.media">
+                                        <img :src="slotProps.value.media[0].original_url" alt="profile_picture" />
+                                    </template>
+                                </div>
+                                <div>{{ slotProps.value.payment_platform_name }}</div>
+                            </div>
+                        </div>
+                        <span v-else class="text-gray-400">{{ slotProps.placeholder }}</span>
+                    </template>
+                </Dropdown>
 
-            <div v-if="selected != null && !isCryptoServiceProvider ? selected.name === 'payment_service' : '' " class="space-y-2">
-                <div class="flex flex-col items-center justify-center gap-2">
-                    <qrcode-vue :class="['border-4 border-white']" :value="paymentDetails.account_no" :size="200"></qrcode-vue>
-                    <input type="hidden" id="cryptoWalletAddress" :value="paymentDetails.account_no">
+                <div
+                    v-if="selectedOptionDetail"
+                    class="flex flex-col gap-2 self-stretch"
+                >
+                    <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
+                        <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.bank_name') }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.payment_platform_name }}</span>
+                    </div>
+                    <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
+                        <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.account_no') }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.account_no }}</span>
+                    </div>
+                    <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
+                        <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.full_name') }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.payment_account_name }}</span>
+                    </div>
+                    <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
+                        <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.country') }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.country.name }}</span>
+                    </div>
+                    <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
+                        <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.amount_transfer') }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.currency }} {{ formatAmount(payment.currency_rate * amount) }}</span>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Crypto -->
+            <template v-if="selectedOption === 'payment_service'">
+                <div v-if="payment" class="flex flex-col items-center justify-center gap-2">
+                    <qrcode-vue
+                        :class="['border-4 border-white']"
+                        :value="payment.account_no"
+                        :size="200"
+                    ></qrcode-vue>
+                    <input
+                        type="hidden"
+                        id="cryptoWalletAddress"
+                        :value="payment.account_no"
+                    />
                     <div class="flex items-center gap-1">
-                        <span class="text-base text-gray-800 dark:text-white font-semibold">{{ paymentDetails.account_no }}</span>
+                        <span class="text-base text-gray-800 dark:text-white font-semibold">{{ payment.account_no }}</span>
                         <Tooltip :content="$t('public.' + tooltipContent)" placement="top">
                             <DuplicateIcon class="w-5 h-5 mt-1 text-gray-600 dark:text-white hover:cursor-pointer" @click="copyWalletAddress" />
                         </Tooltip>
                     </div>
                 </div>
-            </div>
+            </template>
 
-            <div v-if="selected != null ? selected.name === 'payment_merchant' : '' " class="space-y-2">
-                <div class="flex gap-2 dark:text-white">
-                   {{ $t('public.payment_service_message') }}
-                </div>
-            </div>
-
-            <div v-if="selected && !isCryptoServiceProvider" class="flex flex-col mt-5 items-start gap-3 self-stretch">
-                <div v-if="paymentDetails.payment_method" class="text-lg font-semibold dark:text-white">
-                    {{ $t('public.payment_information') }}
-                </div>
-                <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ paymentDetails.payment_method === 'Bank' ? $t('public.bank_name') : $t('public.payment_service') }}
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ paymentDetails.payment_platform_name }}
-                    </div>
-                </div>
-                <div v-if="paymentDetails.payment_method === 'Bank'" class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ $t('public.account_no') }}
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ paymentDetails.account_no }}
-                    </div>
-                </div>
-                <div v-if="paymentDetails.payment_method" class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ paymentDetails.payment_method === 'Bank' ? $t('public.account_name') : $t('public.wallet_name') }}
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ paymentDetails.payment_account_name }}
-                    </div>
-                </div>
-                <div v-if="paymentDetails.payment_method === 'Bank'" class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ $t('public.country') }}
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        {{ paymentDetails.country.name }}
-                    </div>
-                </div>
-                <div v-if="paymentDetails.payment_method === 'Bank'" class="border-t border-gray-300 w-full py-3">
-                    <div class="flex items-center justify-between gap-2 self-stretch">
-                        <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                            {{ $t('public.amount_transfer') }}
-                        </div>
-                        <div class="text-base text-gray-800 dark:text-white font-semibold">
-                            {{ paymentDetails.currency }} {{ formatAmount(calculatedAmount) }}
+            <!-- Payment Gateway -->
+            <template v-if="selectedOption === 'payment_merchant'">
+                <div class="flex flex-col gap-1 items-start self-stretch">
+                    <InputLabel
+                        :value="$t('public.platform')"
+                    />
+                    <div class="flex flex-wrap gap-4">
+                        <div v-for="option in paymentDetails" class="flex items-center">
+                            <RadioButton
+                                v-model="selectedOptionDetail"
+                                :inputId="option.platform"
+                                :value="option"
+                            />
+                            <InputLabel :for="option.platform" class="ml-2 text-sm uppercase">{{ option.platform }}</InputLabel>
                         </div>
                     </div>
                 </div>
-            </div>
+            </template>
 
-            <div v-else-if="selected">
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ $t('public.cryptocurrency_service_provider') }}
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        <a
-                            href="https://transak.com/"
-                            target="_blank"
-                            class="text-blue-500 hover:underline"
-                        >
-                            {{ 'Transak' }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <form v-if="selected && !isCryptoServiceProvider" class="space-y-2 mt-5">
-            <div class="flex flex-col sm:flex-row gap-4 pt-2">
-                <Label class="text-sm dark:text-white w-full md:w-1/4" for="amount" :value="$t('public.amount')  + ' ($)'" />
-                <div class="flex flex-col w-full">
-                    <Input
-                        id="amount"
-                        type="number"
-                        min="0"
-                        :placeholder="$t('public.deposit_placeholder')"
-                        class="block w-full"
-                        v-model="initialAmount"
-                        :invalid="form.errors.amount"
-                    />
-                    <InputError :message="form.errors.amount" class="mt-2" />
-                </div>
-            </div>
-
-            <!-- <div class="flex flex-col sm:flex-row gap-4 pt-2">
-                <Label class="text-sm dark:text-white w-full md:w-1/4 pt-0.5" for="txn_hash" value="Txn Hash" />
-                <div class="flex flex-col w-full">
-                    <Input
-                        id="txn_hash"
-                        type="text"
-                        min="0"
-                        placeholder="txn hash"
-                        class="block w-full"
-                        v-model="form.txn_hash"
-                        :invalid="form.errors.txn_hash"
-                    />
-                    <InputError :message="form.errors.txn_hash" class="mt-2" />
-                </div>
-            </div> -->
-
-            <div v-if="selected.name !== 'payment_merchant'" class="flex flex-col sm:flex-row gap-4 pt-2">
-                <Label for="receipt" class="text-sm dark:text-white md:w-1/4" :value="$t('public.payment_slip')"/>
-                <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
-                    <input
-                        ref="receiptInput"
-                        id="receipt"
-                        type="file"
-                        class="hidden"
-                        accept="image/*"
-                        @change="onReceiptChanges"
-                    />
-                    <Button
-                        type="button"
-                        variant="primary"
-                        @click="$refs.receiptInput.click()"
-                        class="justify-center gap-2 w-full sm:max-w-24"
+            <!-- Cryptocurrency service provider -->
+            <template v-if="selectedOption === 'cryptocurrency_service_provider'">
+                <div class="text-base text-gray-800 dark:text-white font-semibold">
+                    <a
+                        href="https://transak.com/"
+                        target="_blank"
+                        class="text-blue-500 hover:underline"
                     >
-                        <span>{{ $t('public.browse') }}</span>
-                    </Button>
-                    <InputError :message="form.errors.receipt"/>
+                        {{ 'Transak' }}
+                    </a>
                 </div>
+            </template>
+
+            <form>
                 <div
-                    v-if="selectedReceipt"
-                    class="relative w-full py-2 pl-4 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
-
+                    v-if="selectedOptionDetail && payment.platform !== 'ttpay'"
+                    class="flex flex-col gap-5 items-center self-stretch border-t border-gray-200 dark:border-gray-800"
                 >
-                    <div class="inline-flex items-center gap-3">
-                        <img :src="selectedReceipt" alt="Selected Image" class="max-w-full h-9 object-contain rounded" />
-                        <div class="text-gray-light-900 dark:text-white">
-                            {{ selectedReceiptName }}
+                    <div
+                        class="flex flex-col gap-1 items-start self-stretch mt-5"
+                    >
+                        <InputLabel
+                            for="amount"
+                            :value="$t('public.amount')"
+                        />
+                        <InputNumber
+                            v-model="amount"
+                            class="w-full"
+                            inputId="horizontal-buttons"
+                            buttonLayout="horizontal"
+                            :min="0"
+                            :step="100"
+                            mode="currency"
+                            currency="USD"
+                            fluid
+                            :invalid="!!form.errors.amount"
+                        />
+                        <InputError :message="form.errors.amount"/>
+                    </div>
+
+                    <div
+                        v-if="selectedOption !== 'payment_merchant'"
+                        class="flex flex-col gap-1 items-start self-stretch"
+                    >
+                        <InputLabel
+                            for="receipt"
+                            :value="$t('public.payment_slip')"
+                        />
+                        <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
+                            <input
+                                ref="receiptInput"
+                                id="receipt"
+                                type="file"
+                                class="hidden"
+                                accept="image/*"
+                                @change="onReceiptChanges"
+                            />
+                            <Button
+                                type="button"
+                                variant="primary"
+                                @click="$refs.receiptInput.click()"
+                                class="justify-center gap-2 w-full sm:max-w-24"
+                            >
+                                <span>{{ $t('public.browse') }}</span>
+                            </Button>
+                            <InputError :message="form.errors.receipt"/>
+                        </div>
+                        <div
+                            v-if="selectedReceipt"
+                            class="relative w-full py-2 pl-2 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
+
+                        >
+                            <div class="inline-flex items-center gap-3">
+                                <Image
+                                    :src="selectedReceipt"
+                                    preview
+                                    alt="Selected Image"
+                                    image-class="w-10 h-8 object-contain rounded" />
+                                <div class="text-gray-light-900 dark:text-white">
+                                    {{ selectedReceiptName }}
+                                </div>
+                            </div>
+                            <Button
+                                type="button"
+                                variant="transparent"
+                                pill
+                                @click="removeReceipt"
+                                size="sm"
+                                v-slot="{ iconSizeClasses }"
+                            >
+                                <XIcon :class="iconSizeClasses" />
+                            </Button>
                         </div>
                     </div>
-                    <Button
-                        type="button"
-                        variant="transparent"
-                        pill
-                        @click="removeReceipt"
-                    >
-                        <XIcon/>
-                    </Button>
                 </div>
-            </div>
+            </form>
 
-            <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
-                <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
+            <div v-if="selectedOption && selectedOption !== 'cryptocurrency_service_provider'" class="flex justify-end gap-5 items-center">
+                <Button
+                    variant="transparent"
+                    type="button"
+                    class="justify-center w-full md:w-auto"
+                    @click.prevent="closeModal"
+                >
                     {{$t('public.cancel')}}
                 </Button>
-                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
+                <Button
+                    class="justify-center w-full md:w-auto"
+                    @click="submitForm"
+                    :disabled="form.processing"
+                >
+                    {{$t('public.confirm')}}
+                </Button>
             </div>
-        </form>
+        </div>
     </Modal>
 </template>

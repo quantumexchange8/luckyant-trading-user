@@ -525,10 +525,11 @@ return [
     'virtual_account' => "Virtual Account",
     'created_virtual_account' => "Successfully Created Virtual Account",
     'lot' => "Lot",
-    'revoke' => "Revoke",
+    'revoke_pamm' => "Revoke",
     'success_revoke' => "Success Revoke",
     'successfully_revoked_pamm' => "Successfully Revoked PAMM",
     'cryptocurrency_service_provider' => "Cryptocurrency Service Provider",
     'deposit_fail' => "Deposit Failed",
     'balance_in_fail' => "Fail to balance in account. Please try again.",
+    "platform" => "Platform",
 ];

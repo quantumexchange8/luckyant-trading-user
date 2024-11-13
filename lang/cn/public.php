@@ -525,10 +525,11 @@ return [
     'virtual_account' => "虚拟账户",
     'created_virtual_account' => "成功创建虚拟账户",
     'lot' => "手数",
-    'revoke' => "撤销",
+    'revoke_pamm' => "撤销",
     'success_revoke' => "成功撤销",
     'successfully_revoked_pamm' => "成功撤销 PAMM",
     'cryptocurrency_service_provider' => "加密货币服务提供商",
     'deposit_fail' => "结余转入失败",
     'balance_in_fail' => "无法结余转入。请再试一次。",
+    "platform" => "平台",
 ];

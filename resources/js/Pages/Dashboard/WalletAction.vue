@@ -17,7 +17,6 @@ const props = defineProps({
     withdrawalFeePercentage: Object,
     countries: Array,
     settingCryptoPayment: Object,
-    isCryptoServiceProvider: Boolean,
 })
 </script>
 
@@ -27,9 +26,6 @@ const props = defineProps({
             <div class="flex justify-between w-full gap-2">
                 <Deposit
                     :wallet="wallet"
-                    :countries="countries"
-                    :settingCryptoPayment="settingCryptoPayment"
-                    :isCryptoServiceProvider="isCryptoServiceProvider"
                 />
                 <Withdrawal
                     :wallet="wallet"

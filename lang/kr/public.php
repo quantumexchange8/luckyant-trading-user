@@ -521,10 +521,11 @@ return [
     "balance" => "잔액",
     "bank_sub_branch" => "하위 지점",
     "lot" => "많은 거래",
-    'revoke' => "취소",
+    'revoke_pamm' => "취소",
     'success_revoke' => "성공적으로 취소됨",
     'successfully_revoked_pamm' => "PAMM이 성공적으로 취소되었습니다",
     'cryptocurrency_service_provider' => "암호화폐 서비스 제공자",
     'deposit_fail' => "입금 실패",
     'balance_in_fail' => "계정에 잔액을 맞추지 못했습니다. 다시 시도해주세요.",
+    "platform" => "플랫폼",
 ];

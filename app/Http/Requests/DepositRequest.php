@@ -11,8 +11,8 @@ class DepositRequest extends FormRequest
         return [
             'wallet_id' => ['required'],
             'payment_method' => ['required'],
-            'receipt' => $this->payment_method == 'Payment Merchant' ? ['nullable'] : ['required'],
-            'amount' => ['required', 'numeric', 'min:1'],
+            'receipt' => $this->payment_method == 'payment_merchant' ? ['nullable'] : ['required'],
+            'amount' => [$this->payment_method == 'payment_merchant' ? 'nullable' : 'required', 'numeric'],
         ];
     }
 

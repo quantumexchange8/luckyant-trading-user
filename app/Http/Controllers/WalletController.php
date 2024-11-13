@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PaymentGateway;
+use App\Models\PaymentGatewayToLeader;
 use App\Models\TradingAccount;
 use Auth;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use App\Models\Wallet;
 use App\Models\Setting;
@@ -182,13 +185,42 @@ class WalletController extends Controller
     {
         $user = Auth::user();
         $wallet = Wallet::find($request->wallet_id);
-        $amount = number_format(floatval($request->amount), 2, '.', '');
+        $payment_detail = $request->payment_detail;
         $latest_transaction = Transaction::where('user_id', $user->id)
             ->where('category', 'wallet')
             ->where('transaction_type', 'Deposit')
             ->where('status', 'Processing')
             ->latest()
             ->first();
+
+        $leader = $user->getTopLeader();
+        if ($leader && $request->payment_method == 'payment_merchant') {
+            $payment_gateway_ids = PaymentGatewayToLeader::where('user_id', $leader->id)
+                ->pluck('payment_gateway_id')
+                ->toArray();
+
+            $payment_gateway = PaymentGateway::whereIn('id', $payment_gateway_ids)
+                ->where('platform', $payment_detail['platform'])
+                ->first();
+        } else {
+            $payment_gateway = null;
+        }
+
+        if ($request->payment_method == 'payment_merchant' && $payment_gateway->platform == 'spritpayment') {
+            if ($request->amount == 0) {
+                throw ValidationException::withMessages([
+                    'amount' => trans('validation.min.numeric', [
+                        'attribute' => trans('amount'),
+                        'min' => 1
+                    ])
+                ]);
+            }
+
+            if (empty($request->amount)) {
+                throw ValidationException::withMessages(['amount' => trans('validation.required', ['attribute' => trans('amount')])]);
+            }
+        }
+        $amount = number_format(floatval($request->amount), 2, '.', '');
 
         // Check if a latest transaction exists and its created_at time is within the last 30 seconds
         if ($latest_transaction && Carbon::parse($latest_transaction->created_at)->diffInSeconds(Carbon::now()) < 30) {
@@ -206,15 +238,13 @@ class WalletController extends Controller
             'category' => 'wallet',
             'user_id' => $user->id,
             'to_wallet_id' => $wallet->id,
-            'setting_payment_method_id' => $request->setting_payment_id,
-            'payment_method' => $request->payment_method,
+            'payment_method' => $payment_detail['payment_method'] ?? 'Payment Merchant',
             'transaction_number' => $transaction_number,
-            'to_wallet_address' => $request->account_no,
+            'to_wallet_address' => $payment_detail['account_no'] ?? null,
             'transaction_type' => 'Deposit',
             'amount' => $amount,
             'transaction_charges' => 0,
-            'conversion_rate' => $request->conversion_rate ?? 0,
-            'transaction_amount' => $request->transaction_amount > 0 ? $request->transaction_amount : $amount,
+            'conversion_rate' => $payment_detail['currency_rate'] ?? 0,
             'status' => 'Processing',
         ]);
 
@@ -222,35 +252,51 @@ class WalletController extends Controller
             $transaction->addMedia($request->receipt)->toMediaCollection('receipt');
         }
 
-        if ($request->payment_method == 'Payment Merchant') {
-            $domain = $_SERVER['HTTP_HOST'];
-            $appUrl = parse_url(config('app.url'), PHP_URL_HOST);
-            $paymentGateway = config('payment-gateway');
-            $intAmount = intval($amount * 100);
+        if ($request->payment_method == 'payment_merchant' && $payment_gateway) {
+            $transaction->update([
+                'payment_gateway_id' => $request->setting_payment_id,
+            ]);
+            // Find available payment merchant
+            $params = [];
+            $baseUrl = '';
+            switch ($payment_gateway->platform) {
+                case 'ttpay':
+                    $vCode = md5($payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secondary_key . $payment_gateway->secret_key);
+                    $params = [
+                        'userName' => $user->name,
+                        'userEmail' => $user->email,
+                        'orderNumber' => $transaction_number,
+                        'userId' => $user->id,
+                        'merchantId' => $payment_gateway->secondary_key,
+                        'vCode' => $vCode,
+                        'token' => Str::random(40),
+                        'locale' => app()->getLocale(),
+                    ];
+                    $baseUrl = $payment_gateway->payment_url . '/payment';
+                    break;
 
-            if ($domain === 'testmember.luckyantfxasia.com') {
-                $selectedPaymentGateway = $paymentGateway['staging'];
-            } elseif ($domain === $appUrl) {
-                $selectedPaymentGateway = $paymentGateway['live'];
-            } else {
-                $selectedPaymentGateway = $paymentGateway['staging'];
+                case 'spritpayment':
+                    $intAmount = intval($amount * 100);
+                    $vCode = md5($intAmount . $payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secret_key);
+                    $params = [
+                        'amount' => $intAmount,
+                        'orderNumber' => $transaction_number,
+                        'userId' => $user->id,
+                        'vCode' => $vCode,
+                    ];
+                    $baseUrl = $payment_gateway->payment_url;
+                    break;
             }
 
-            // vCode
-            $vCode = md5($intAmount . $selectedPaymentGateway['appId'] . $transaction_number . $selectedPaymentGateway['vKey']);
-
-            $params = [
-                'amount' => $intAmount,
-                'orderNumber' => $transaction_number,
-                'userId' => $user->id,
-                'vCode' => $vCode,
-            ];
-
             // Send response
-            $baseUrl = $selectedPaymentGateway['paymentUrl'];
             $redirectUrl = $baseUrl . "?" . http_build_query($params);
 
             return Inertia::location($redirectUrl);
+        } else {
+            $transaction->update([
+                'setting_payment_method_id' => $request->setting_payment_id,
+                'transaction_amount' => $amount * $payment_detail['currency_rate'] > 0 ? $amount * $payment_detail['currency_rate'] : $amount,
+            ]);
         }
 
         return redirect()->back()
@@ -279,28 +325,20 @@ class WalletController extends Controller
             'paidTime' => $data['paidTime'] ?? null,
             'receivedAmount' => $data['receivedAmount'] ?? null,
         ];
+        $transaction = Transaction::where('user_id', $result['userId'])
+            ->where('transaction_number', $result['orderNumber'])
+            ->first();
 
-        $domain = $_SERVER['HTTP_HOST'];
-        $paymentGateway = config('payment-gateway');
-        $appUrl = parse_url(config('app.url'), PHP_URL_HOST);
-
-        if ($domain === 'testmember.luckyantfxasia.com') {
-            $selectedPaymentGateway = $paymentGateway['staging'];
-        } elseif ($domain === $appUrl) {
-            $selectedPaymentGateway = $paymentGateway['live'];
-        } else {
-            $selectedPaymentGateway = $paymentGateway['staging'];
-        }
+        $selectedPaymentGateway = PaymentGateway::find($transaction->payment_gateway_id);
 
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
-        $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway['appId'] . $selectedPaymentGateway['sKey']);
+        $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway->payment_app_name . $selectedPaymentGateway->secondary_key);
 
         if($result['status'] == 'PENDING') {
             return to_route('dashboard');
         }
 
         if ($result['sCode'] == $sCode2) {
-            $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
             $wallet = Wallet::find($transaction->to_wallet_id);
 
             if ($transaction->status == 'Processing') {
@@ -333,8 +371,6 @@ class WalletController extends Controller
     {
         $data = $request->all();
 
-        Log::debug($data);
-
         $result = [
             'amount' => $data['amount'],
             'userId' => $data['userId'],
@@ -351,20 +387,14 @@ class WalletController extends Controller
             'receivedAmount' => $data['receivedAmount'],
         ];
 
-        $domain = $_SERVER['HTTP_HOST'];
-        $paymentGateway = config('payment-gateway');
-        $appUrl = parse_url(config('app.url'), PHP_URL_HOST);
+        $transaction = Transaction::where('user_id', $result['userId'])
+            ->where('transaction_number', $result['orderNumber'])
+            ->first();
 
-        if ($domain === 'testmember.luckyantfxasia.com') {
-            $selectedPaymentGateway = $paymentGateway['staging'];
-        } elseif ($domain === $appUrl) {
-            $selectedPaymentGateway = $paymentGateway['live'];
-        } else {
-            $selectedPaymentGateway = $paymentGateway['staging'];
-        }
+        $selectedPaymentGateway = PaymentGateway::find($transaction->payment_gateway_id);
 
         $sCode1 = md5($result['transactionId'] . $result['orderNumber'] . $result['status'] . $result['amount']);
-        $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway['appId'] . $selectedPaymentGateway['sKey']);
+        $sCode2 = md5($result['walletAddress'] . $sCode1 . $selectedPaymentGateway->payment_app_name . $selectedPaymentGateway->secondary_key);
         $transaction = Transaction::where('user_id', $result['userId'])->where('transaction_number', $result['orderNumber'])->first();
 
         if($result['status'] == 'EXPIRED') {
@@ -403,7 +433,6 @@ class WalletController extends Controller
                 }
             }
         }
-
     }
 
     public function withdrawal(WithdrawalRequest $request)
@@ -798,4 +827,76 @@ class WalletController extends Controller
         ]);
     }
 
+    public function tt_pay_return(Request $request)
+    {
+        $data = $request->all();
+
+        Log::debug('deposit return ', $data);
+
+        if ($data['response_status'] == 'success') {
+
+            return redirect()->back()
+                ->with('title', trans('public.success_deposit'))
+                ->with('success', trans('public.successfully_deposit'));
+        } else {
+            return to_route('dashboard');
+        }
+    }
+
+    public function tt_pay_callback(Request $request)
+    {
+        $data = $request->all();
+
+        $result = [
+            "token" => $data['vCode'],
+            "from_wallet_address" => $data['from_wallet'],
+            "to_wallet_address" => $data['to_wallet'],
+            "txn_hash" => $data['txID'],
+            "transaction_number" => $data['transaction_number'],
+            "amount" => $data['transfer_amount'],
+            "status" => $data["status"],
+            "remarks" => 'System Approval',
+        ];
+
+        $transaction = Transaction::query()
+            ->where('transaction_number', $result['transaction_number'])
+            ->first();
+
+        $selectedPayout = PaymentGateway::find($transaction->payment_gateway_id);
+
+        $dataToHash = md5($transaction->transaction_number . $selectedPayout->payment_app_name . $selectedPayout->secondary_key);
+        $status = $result['status'] == 'success' ? 'Success' : 'Rejected';
+
+        if ($result['token'] === $dataToHash) {
+            //proceed approval
+            $transaction->update([
+                'to_wallet_address' => $result['to_wallet_address'],
+                'txn_hash' => $result['txn_hash'],
+                'amount' => $result['amount'],
+                'transaction_charges' => 0,
+                'transaction_amount' => $result['amount'],
+                'status' => $status,
+                'remarks' => $result['remarks'],
+                'approved_at' => now()
+            ]);
+
+            if ($transaction->status == 'Success') {
+                if ($transaction->transaction_type == 'deposit') {
+                    $wallet = Wallet::find($transaction->to_wallet_id);
+                    $walletTotalBalance = $wallet->balance + $transaction->transaction_amount;
+                    $transaction->update([
+                        'new_wallet_amount' => $walletTotalBalance
+                    ]);
+
+                    $wallet->update([
+                        'balance' => $walletTotalBalance,
+                    ]);
+
+                    Notification::route('mail', $transaction->user->email)->notify(new DepositConfirmationNotification($transaction));
+                }
+            }
+        }
+
+        return response()->json(['success' => false, 'message' => 'Deposit Failed']);
+    }
 }

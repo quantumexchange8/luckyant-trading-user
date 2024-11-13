@@ -87,6 +87,24 @@ class User extends Authenticatable implements HasMedia
         return $first_leader;
     }
 
+    public function getTopLeader()
+    {
+        $top_leader = User::find(7);
+
+        $upline = explode("-",substr($this->hierarchyList, 1, -1));
+        $count = count($upline)-1;
+        if ($count > 0) {
+            while ($count > -1) {
+                $user = User::find($upline[$count]);
+                if (!empty($user->leader_status) && $user->leader_status) {
+                    $top_leader = $user;
+                }
+                $count--;
+            }
+        }
+        return $top_leader;
+    }
+
     public function tradingAccounts(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(TradingAccount::class, 'user_id', 'id');

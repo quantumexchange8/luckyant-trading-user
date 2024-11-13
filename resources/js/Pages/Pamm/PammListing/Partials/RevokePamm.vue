@@ -64,12 +64,12 @@ const submit = () => {
             aria-hidden="true"
             :class="iconSizeClasses"
         />
-        {{ $t('public.revoke') }}
+        {{ $t('public.revoke_pamm') }}
     </Button>
 
     <Modal
         :show="terminationModal"
-        :title="$t('public.revoke')"
+        :title="$t('public.revoke_pamm')"
         @close="closeModal"
     >
         <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">

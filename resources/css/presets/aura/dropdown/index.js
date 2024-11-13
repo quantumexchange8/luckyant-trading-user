@@ -54,7 +54,7 @@ export default {
 
             // Sizing and Spacing
             'w-[1%]',
-            'py-2 px-3',
+            'py-2.5 px-4',
             { 'pr-7': props.showClear },
 
             //Shape

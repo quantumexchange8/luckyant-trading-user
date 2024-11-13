@@ -287,7 +287,7 @@ const copyWalletAddress = () => {
                     <InputLabel
                         :value="$t('public.platform')"
                     />
-                    <div class="flex flex-wrap gap-4">
+                    <div v-if="!loadingPayment" class="flex flex-wrap gap-4">
                         <div v-for="option in paymentDetails" class="flex items-center">
                             <RadioButton
                                 v-model="selectedOptionDetail"
@@ -297,6 +297,7 @@ const copyWalletAddress = () => {
                             <InputLabel :for="option.platform" class="ml-2 text-sm uppercase">{{ option.platform }}</InputLabel>
                         </div>
                     </div>
+                    <Skeleton v-else width="8rem" class="my-1"></Skeleton>
                 </div>
             </template>
 

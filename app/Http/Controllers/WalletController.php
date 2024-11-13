@@ -881,15 +881,13 @@ class WalletController extends Controller
             ]);
 
             if ($transaction->status == 'Success') {
-                if ($transaction->transaction_type == 'deposit') {
+                if ($transaction->transaction_type == 'Deposit') {
                     $wallet = Wallet::find($transaction->to_wallet_id);
-                    $walletTotalBalance = $wallet->balance + $transaction->transaction_amount;
-                    $transaction->update([
-                        'new_wallet_amount' => $walletTotalBalance
-                    ]);
+                    $wallet->balance += $result['amount'];
+                    $wallet->save();
 
-                    $wallet->update([
-                        'balance' => $walletTotalBalance,
+                    $transaction->update([
+                        'new_wallet_amount' => $wallet->balance
                     ]);
 
                     Notification::route('mail', $transaction->user->email)->notify(new DepositConfirmationNotification($transaction));

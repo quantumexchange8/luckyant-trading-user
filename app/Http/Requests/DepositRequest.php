@@ -11,6 +11,7 @@ class DepositRequest extends FormRequest
         return [
             'wallet_id' => ['required'],
             'payment_method' => ['required'],
+            'payment_detail' => ['required'],
             'receipt' => $this->payment_method == 'payment_merchant' ? ['nullable'] : ['required'],
             'amount' => [$this->payment_method == 'payment_merchant' ? 'nullable' : 'required', 'numeric'],
         ];
@@ -25,6 +26,7 @@ class DepositRequest extends FormRequest
     {
         return [
             'payment_method' => trans('public.payment_methods'),
+            'payment_detail' => trans('public.platform'),
             'wallet_id' => trans('public.sidebar.wallet'),
             'receipt' => trans('public.payment_slip'),
             'amount' => trans('public.amount'),

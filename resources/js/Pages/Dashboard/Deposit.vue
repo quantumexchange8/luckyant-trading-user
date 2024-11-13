@@ -14,6 +14,15 @@ import InputNumber from "primevue/inputnumber";
 import InputError from "@/Components/InputError.vue";
 import QrcodeVue from 'qrcode.vue';
 import Tooltip from "@/Components/Tooltip.vue"
+import {
+    RadioGroup,
+    RadioGroupLabel,
+    RadioGroupDescription,
+    RadioGroupOption,
+} from '@headlessui/vue'
+import BankImg from "/public/assets/bank.jpg"
+import cryptoImg from "/public/assets/cryptocurrency.svg"
+import paymentMerchantImg from "/public/assets/payment_merchant.svg"
 
 const props = defineProps({
     wallet: Object
@@ -112,9 +121,11 @@ const removeReceipt = () => {
 }
 
 const submitForm = () => {
-    form.setting_payment_id = selectedOptionDetail.value.id;
+    if (selectedOptionDetail.value) {
+        form.setting_payment_id = selectedOptionDetail.value.id;
+        form.payment_detail = selectedOptionDetail.value;
+    }
     form.payment_method = selectedOption.value;
-    form.payment_detail = selectedOptionDetail.value;
     form.account_no = paymentDetails.value.account_no;
     form.amount = amount.value;
 
@@ -190,14 +201,47 @@ const copyWalletAddress = () => {
                 <InputLabel
                     :value="$t('public.type')"
                 />
-                <div v-if="depositOptions" class="flex flex-wrap gap-4">
-                    <div v-for="option in depositOptions" class="flex items-center">
-                        <RadioButton
-                            v-model="selectedOption"
-                            :inputId="option"
-                            :value="option"
-                        />
-                        <InputLabel :for="option" class="ml-2">{{ $t(`public.${option}`) }}</InputLabel>
+                <div v-if="depositOptions" class="w-full">
+                    <div class="mx-auto w-full">
+                        <RadioGroup v-model="selectedOption">
+                            <RadioGroupLabel class="sr-only">{{ $t('public.payment_methods') }}</RadioGroupLabel>
+                            <div class="flex sm:flex-row flex-col gap-3 items-center self-stretch w-full">
+                                <RadioGroupOption
+                                    as="template"
+                                    v-for="(option, index) in depositOptions"
+                                    :key="index"
+                                    :value="option"
+                                    v-slot="{ active, checked }"
+                                >
+                                    <div
+                                        :class="[
+                                active
+                                    ? 'ring-0 ring-white ring-offset-0'
+                                    : '',
+                                checked ? 'border-primary-600 dark:border-primary-800 bg-primary-500 dark:bg-primary-800 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
+                            ]"
+                                        class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none w-full"
+                                    >
+                                        <div class="flex items-center w-full">
+                                            <div class="text-sm flex flex-col gap-3 w-full">
+                                                <RadioGroupLabel
+                                                    as="div"
+                                                    class="font-medium dark:text-white"
+                                                >
+                                                    <div class="flex flex-col justify-center items-center gap-1">
+                                                        <img v-if="option === 'bank'" class="rounded-full w-10 h-10" :src="BankImg" alt="payment-image">
+                                                        <img v-if="option === 'payment_service'" class="rounded-full w-10 h-10" :src="cryptoImg" alt="payment-image">
+                                                        <img v-if="option === 'payment_merchant' || option === 'cryptocurrency_service_provider'" class="rounded-full w-10 h-10" :src="paymentMerchantImg" alt="payment-image">
+                                                        {{ $t('public.' + option) }}
+                                                    </div>
+                                                </RadioGroupLabel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </RadioGroupOption>
+                            </div>
+                            <InputError :message="form.errors.payment_method" class="mt-2" />
+                        </RadioGroup>
                     </div>
                 </div>
                 <Skeleton v-else width="8rem" class="my-1"></Skeleton>
@@ -215,6 +259,7 @@ const copyWalletAddress = () => {
                     :placeholder="$t('public.bank_placeholder')"
                     class="w-full"
                     scroll-height="236px"
+                    :loading="loadingPayment"
                     :invalid="!!form.errors.payment_method"
                 >
                     <template #value="slotProps">
@@ -231,6 +276,7 @@ const copyWalletAddress = () => {
                         <span v-else class="text-gray-400">{{ slotProps.placeholder }}</span>
                     </template>
                 </Dropdown>
+                <InputError :message="form.errors.payment_detail"/>
 
                 <div
                     v-if="selectedOptionDetail"
@@ -298,6 +344,7 @@ const copyWalletAddress = () => {
                         </div>
                     </div>
                     <Skeleton v-else width="8rem" class="my-1"></Skeleton>
+                    <InputError :message="form.errors.payment_detail"/>
                 </div>
             </template>
 

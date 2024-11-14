@@ -528,4 +528,5 @@ return [
     'deposit_fail' => "入金に失敗しまし",
     'balance_in_fail' => "口座の残高調整に失敗しました。もう一度お試しください。",
     "platform" => "プラットフォーム",
+    "revoked" => "取り消された",
 ];

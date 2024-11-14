@@ -82,7 +82,7 @@ watchEffect(() => {
                 }"
                 @click="selectPammSubscription(pamm)"
                 >
-                <div class="flex justify-between items-center self-stretch">
+                <div class="flex justify-between items-start self-stretch">
                     <div class="flex gap-2 w-full">
                         <img
                             class="object-cover w-12 h-12 rounded-full"
@@ -101,7 +101,7 @@ watchEffect(() => {
                             </div>
                         </div>
                     </div>
-                    <StatusBadge :value="pamm.status" width="w-20"/>
+                    <StatusBadge :value="pamm.status" class="!min-w-20" />
                 </div>
 
                 <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 justify-between">
@@ -165,7 +165,7 @@ watchEffect(() => {
                         </div>
                     </div> -->
                 </div>
-                <div class="flex flex-col md:flex-row gap-3 items-center justify-center w-full">
+                <div v-if="pamm.status === 'Active'" class="flex flex-col md:flex-row gap-3 items-center justify-center w-full">
                     <TopUpPamm
                         v-if="pamm.canTopUp"
                         :pamm="pamm"

@@ -532,4 +532,5 @@ return [
     'deposit_fail' => "结余转入失败",
     'balance_in_fail' => "无法结余转入。请再试一次。",
     "platform" => "平台",
+    "revoked" => "已撤销",
 ];

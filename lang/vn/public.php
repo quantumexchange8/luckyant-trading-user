@@ -528,4 +528,5 @@ return [
     'deposit_fail' => "Nạp tiền thất bại",
     'balance_in_fail' => "Không thể cân đối tài khoản. Vui lòng thử lại.",
     "platform" => "nền tảng",
+    "revoked" => "đã thu hồi",
 ];

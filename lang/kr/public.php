@@ -528,4 +528,5 @@ return [
     'deposit_fail' => "입금 실패",
     'balance_in_fail' => "계정에 잔액을 맞추지 못했습니다. 다시 시도해주세요.",
     "platform" => "플랫폼",
+    "revoked" => "해지됨",
 ];

@@ -527,5 +527,6 @@ return [
     'cryptocurrency_service_provider' => "Penyedia Layanan Cryptocurrency",
     'deposit_fail' => "Gagal deposit",
     'balance_in_fail' => "Gagal menyeimbangkan akun. Silakan coba lagi.",
-    "platform" => "platform",
+    "platform" => "Platform",
+    "revoked" => "Dicabut",
 ];

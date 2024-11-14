@@ -532,4 +532,5 @@ return [
     'deposit_fail' => "Deposit Failed",
     'balance_in_fail' => "Fail to balance in account. Please try again.",
     "platform" => "Platform",
+    "revoked" => "Revoked",
 ];

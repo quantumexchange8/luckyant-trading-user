@@ -855,11 +855,11 @@ class PammController extends Controller
 
         $pamm_batches = PammSubscription::where('meta_login', $request->meta_login)
             ->where('master_meta_login', $request->master_meta_login)
-            ->whereIn('status', ['Active', 'Terminated'])
+            ->where('status', 'Active')
             ->get();
 
         foreach ($pamm_batches as $pamm_batch) {
-            if ($pamm_batch->status == 'Revoked') {
+            if ($pamm_batch->status == 'Terminated') {
                 return redirect()->back()
                     ->with('title', trans('public.terminated_subscription'))
                     ->with('warning', trans('public.terminated_subscription_error'));
@@ -867,7 +867,7 @@ class PammController extends Controller
 
             $pamm_batch->update([
                 'termination_date' => now(),
-                'status' => 'Revoked'
+                'status' => 'Terminated'
             ]);
         }
 

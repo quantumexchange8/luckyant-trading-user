@@ -7,7 +7,6 @@ import {transactionFormat} from "@/Composables/index.js";
 import {useForm, usePage} from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import Checkbox from "@/Components/Checkbox.vue";
-import Label from "@/Components/Label.vue";
 
 const props = defineProps({
     pamm: Object,
@@ -64,12 +63,12 @@ const submit = () => {
             aria-hidden="true"
             :class="iconSizeClasses"
         />
-        {{ $t('public.revoke_pamm') }}
+        {{ $t('public.terminate') }}
     </Button>
 
     <Modal
         :show="terminationModal"
-        :title="$t('public.revoke_pamm')"
+        :title="$t('public.terminate')"
         @close="closeModal"
     >
         <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">

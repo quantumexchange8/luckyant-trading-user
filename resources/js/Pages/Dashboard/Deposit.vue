@@ -284,23 +284,23 @@ const copyWalletAddress = () => {
                 >
                     <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
                         <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.bank_name') }}</span>
-                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.payment_platform_name }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 dark:text-white text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.payment_platform_name }}</span>
                     </div>
                     <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
                         <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.account_no') }}</span>
-                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.account_no }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 dark:text-white text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.account_no }}</span>
                     </div>
                     <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
                         <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.full_name') }}</span>
-                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.payment_account_name }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 dark:text-white text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.payment_account_name }}</span>
                     </div>
                     <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
                         <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.country') }}</span>
-                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.country.name }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 dark:text-white text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.country.name }}</span>
                     </div>
                     <div class="flex flex-col justify-center items-start gap-1 self-stretch sm:flex-row sm:justify-normal sm:items-center">
                         <span class="w-[140px] text-gray-500 text-sm font-medium">{{ $t('public.amount_transfer') }}</span>
-                        <span class="self-stretch sm:text-right text-gray-950 text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.currency }} {{ formatAmount(payment.currency_rate * amount) }}</span>
+                        <span class="self-stretch sm:text-right text-gray-950 dark:text-white text-sm font-medium sm:self-auto sm:flex-grow break-words">{{ payment.currency }} {{ formatAmount(payment.currency_rate * amount) }}</span>
                     </div>
                 </div>
             </template>

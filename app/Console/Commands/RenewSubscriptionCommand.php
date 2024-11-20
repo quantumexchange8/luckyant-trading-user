@@ -70,11 +70,11 @@ class RenewSubscriptionCommand extends Command
                     ]);
                 }
 
-                $cash_wallet = Wallet::where('user_id', $user->id)->where('type', 'cash_wallet')->first();
-                $cash_wallet->balance -= $newSubscription->subscription_fee;
-                $cash_wallet->save();
-
                 if ($newSubscription->subscription_fee > 0) {
+                    $cash_wallet = Wallet::where('user_id', $user->id)->where('type', 'cash_wallet')->first();
+                    $cash_wallet->balance -= $newSubscription->subscription_fee;
+                    $cash_wallet->save();
+
                     Transaction::create([
                         'category' => 'trading_account',
                         'user_id' => $subscription->user_id,

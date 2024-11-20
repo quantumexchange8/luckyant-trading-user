@@ -429,7 +429,7 @@ return [
     'to' => "到",
     'payment_charges' => "付款费用",
     'transaction_amount' => "交易金额",
-    'wallet_adjustment' => "钱包调整",
+    'wallet_adjustment' => "钱包回收",
     'max_drawdown' => "最大回撤率",
     "agreement" => "通过继续，我同意我已阅读支持文件并同意",
     "please_wait_for_seconds" => "请等待 :seconds 秒后再执行另一个交易",

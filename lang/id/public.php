@@ -529,4 +529,5 @@ return [
     'balance_in_fail' => "Gagal menyeimbangkan akun. Silakan coba lagi.",
     "platform" => "Platform",
     "revoked" => "Dicabut",
+    'wallet_redemption' => "Penebusan Dompet",
 ];

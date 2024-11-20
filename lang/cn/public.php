@@ -533,4 +533,5 @@ return [
     'balance_in_fail' => "无法结余转入。请再试一次。",
     "platform" => "平台",
     "revoked" => "已撤销",
+    'wallet_redemption' => "钱包回收",
 ];

@@ -529,4 +529,5 @@ return [
     'balance_in_fail' => "Không thể cân đối tài khoản. Vui lòng thử lại.",
     "platform" => "nền tảng",
     "revoked" => "đã thu hồi",
+    'wallet_redemption' => "đổi ví",
 ];

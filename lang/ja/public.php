@@ -529,4 +529,5 @@ return [
     'balance_in_fail' => "口座の残高調整に失敗しました。もう一度お試しください。",
     "platform" => "プラットフォーム",
     "revoked" => "取り消された",
+    'wallet_redemption' => "ウォレットの償還",
 ];

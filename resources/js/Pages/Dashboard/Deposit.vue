@@ -81,7 +81,7 @@ watch(selectedOption, (value) => {
 
 const selectedOptionDetail = ref();
 const payment = ref();
-const amount = ref(0);
+const amount = ref(null);
 
 watch(selectedOptionDetail, (value) => {
     payment.value = value;
@@ -92,7 +92,7 @@ const form = useForm({
     wallet_id: props.wallet.id,
     payment_method: '',
     payment_detail: '',
-    amount: 0,
+    amount: null,
     receipt: '',
 })
 
@@ -383,6 +383,7 @@ const copyWalletAddress = () => {
                             mode="currency"
                             currency="USD"
                             fluid
+                            placeholder="$0.00"
                             :invalid="!!form.errors.amount"
                         />
                         <InputError :message="form.errors.amount"/>

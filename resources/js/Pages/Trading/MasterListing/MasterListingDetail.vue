@@ -145,7 +145,7 @@ const statusVariant = (status) => {
                                     {{ $t('public.estimated_lot_size') }}
                                 </div>
                                 <div class="text-xl">
-                                    {{ masterListingDetail.estimated_lot_size }}
+                                    {{ masterListingDetail.estimated_lot_size }} {{ $t('public.lot') }}
                                 </div>
                             </div>
 

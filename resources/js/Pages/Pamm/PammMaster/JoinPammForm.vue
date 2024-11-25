@@ -189,7 +189,7 @@ watchEffect(() => {
                             {{ $t('public.estimated_lot_size') }}
                         </div>
                         <div class="text-base text-gray-800 dark:text-white font-semibold">
-                            {{ masterAccount.estimated_lot_size }}
+                            {{ masterAccount.estimated_lot_size }} {{ $t('public.lot') }}
                         </div>
                     </div>
                     <div class="flex items-center justify-between gap-2 self-stretch">

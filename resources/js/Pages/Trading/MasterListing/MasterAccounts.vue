@@ -190,7 +190,7 @@ const currentLocale = ref(usePage().props.locale);
                         {{ $t('public.estimated_lot_size') }}
                     </div>
                     <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                        {{ masterAccount.estimated_lot_size }}
+                        {{ masterAccount.estimated_lot_size }} {{ $t('public.lot') }}
                     </div>
                 </div>
             </div>

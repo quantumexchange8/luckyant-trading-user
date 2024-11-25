@@ -206,7 +206,7 @@ const openDetails = (masterAccountID) => {
                                 {{ $t('public.estimated_lot_size') }}
                             </div>
                             <div class="flex justify-center items-center text-gray-800 dark:text-white font-semibold">
-                                {{ masterAccount.estimated_lot_size }}
+                                {{ masterAccount.estimated_lot_size }} {{ $t('public.lot') }}
                             </div>
                         </div>
                         <div class="flex flex-col gap-1 items-center justify-center">

@@ -4,21 +4,23 @@ export default {
             'flex grow',
             {
                 'flex-col': props.layout === 'vertical',
-                'flex-row flex-1': props.layout === 'horizontal'
+                'flex-row': props.layout === 'horizontal'
             }
         ]
     }),
     event: ({ props, context }) => ({
         class: [
-            'flex relative min-h-[70px]',
+            'flex relative',
             {
                 'flex-row-reverse': props.align === 'right' || (props.layout === 'vertical' && props.align === 'alternate' && context.index % 2 === 1),
-                'flex-col flex-1': props.layout === 'horizontal',
-                'flex-col-reverse ': props.align === 'bottom' || (props.layout === 'horizontal' && props.align === 'alternate' && context.index % 2 === 1)
+                'flex-col [&:not(:last-child)]:flex-1': props.layout === 'horizontal',
+                'flex-col-reverse ': props.align === 'bottom' || (props.layout === 'horizontal' && props.align === 'alternate' && context.index % 2 === 1),
+                'min-h-0': props.layout === 'vertical' && context.index === context.count - 1,
+                'min-h-10': props.layout === 'vertical' && context.index !== context.count - 1,
             }
         ]
     }),
-    opposite: ({ props, context }) => ({
+    eventOpposite: ({ props, context }) => ({
         class: [
             'flex-1',
             {
@@ -31,7 +33,7 @@ export default {
             }
         ]
     }),
-    separator: ({ props }) => ({
+    eventSeparator: ({ props }) => ({
         class: [
             'flex items-center flex-initial',
             {
@@ -40,7 +42,7 @@ export default {
             }
         ]
     }),
-    marker: {
+    eventMarker: {
         class: [
             'relative',
 
@@ -59,7 +61,7 @@ export default {
             'after:absolute after:rounded-full after:w-full after:h-full after:shadow-sm'
         ]
     },
-    connector: ({ props }) => ({
+    eventConnector: ({ props }) => ({
         class: [
             'grow bg-surface-300 dark:bg-surface-700',
             {
@@ -68,9 +70,9 @@ export default {
             }
         ]
     }),
-    content: ({ props, context }) => ({
+    eventContent: ({ props, context }) => ({
         class: [
-            'flex-1',
+            'flex-1 text-sm',
             {
                 'px-4': props.layout === 'vertical',
                 'py-4': props.layout === 'horizontal'

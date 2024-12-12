@@ -34,7 +34,7 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
         <SidebarLink
             :title="$t('public.sidebar.account_info')"
             :href="route('account_info')"
-            :active="route().current('account_info.*')"
+            :active="route().current('account_info.*') || route().current('account_info')"
         >
             <template #icon>
                 <ViewGridIcon

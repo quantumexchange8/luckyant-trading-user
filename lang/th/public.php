@@ -530,4 +530,9 @@ return [
     "platform" => "แพลตฟอร์ม",
     "revoked" => "ถูกเพิกถอน",
     'wallet_redemption' => "การไถ่ถอนกระเป๋าสตางค์",
+    'hofi' => "บัญชี HOFI",
+    'standard_account' => "บัญชีมาตรฐาน",
+    'ecn_account' => "บัญชี ECN",
+    'alpha' => "บัญชี Alpha",
+    'virtual' => "บัญชีเสมือน",
 ];

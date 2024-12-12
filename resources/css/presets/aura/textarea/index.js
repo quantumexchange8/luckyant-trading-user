@@ -2,11 +2,11 @@ export default {
     root: ({ context, props, parent }) => ({
         class: [
             // Font
-            'leading-none',
+            'leading-none text-sm',
 
             // Spacing
             'm-0',
-            'py-2 px-3',
+            'py-3 px-4',
 
             // Shape
             'rounded-md',
@@ -19,8 +19,6 @@ export default {
             { 'border-surface-300 dark:border-surface-600': !props.invalid },
 
             // Invalid State
-            'invalid:focus:ring-red-200',
-            'invalid:hover:border-red-500',
             { 'border-red-500 dark:border-red-400': props.invalid },
 
             // States
@@ -35,6 +33,7 @@ export default {
 
             // Misc
             'appearance-none',
+            'shadow-input',
             'transition-colors duration-200'
         ]
     })

@@ -5,6 +5,7 @@ namespace App\Services\Data;
 use App\Models\TradingUser;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UpdateTradingUser
 {
@@ -15,9 +16,10 @@ class UpdateTradingUser
 
     public function updateTradingUser($meta_login, $data): TradingUser
     {
-        $tradingUser = TradingUser::query()->where('meta_login', $meta_login)->first();
+        $tradingUser = TradingUser::firstWhere('meta_login', $meta_login);
 
-        if ($tradingUser->acc_status === "Active" && $tradingUser->account_type === 1){
+        if ($tradingUser->acc_status === "Active" && $tradingUser->account_type != 2) {
+            Log::info($tradingUser);
             $tradingUser->name = $data['name'];
             $tradingUser->company = $data['company'];
             $tradingUser->leverage = $data['leverage'];

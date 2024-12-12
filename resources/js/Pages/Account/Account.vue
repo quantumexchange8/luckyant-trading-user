@@ -14,6 +14,9 @@ const props = defineProps({
     leverageSel: Array,
     walletSel: Array,
     masterAccountLogin: Array,
+    enableVirtualAccount: Boolean,
+    alphaDepositMax: Number,
+    alphaDepositQuota: Number,
 })
 
 const {formatAmount} = transactionFormat();
@@ -32,7 +35,7 @@ const totalBalance = ref(null);
                 <CreateAccount
                     :activeAccountCounts="activeAccountCounts"
                     :liveAccountQuota="liveAccountQuota"
-                    :leverageSel="leverageSel"
+                    :enableVirtualAccount="enableVirtualAccount"
                 />
             </div>
         </template>
@@ -132,6 +135,8 @@ const totalBalance = ref(null);
                             :activeAccountCounts="activeAccountCounts"
                             :walletSel="walletSel"
                             :leverageSel="leverageSel"
+                            :alphaDepositMax="alphaDepositMax"
+                            :alphaDepositQuota="alphaDepositQuota"
                             @update:total-equity="totalEquity = $event"
                             @update:total-balance="totalBalance = $event"
                         />

@@ -1,5 +1,5 @@
 export default {
-    wrapper: {
+    contentContainer: {
         class: [
             // Size & Position
             'h-full w-full',
@@ -17,7 +17,7 @@ export default {
     content: {
         class: [
             // Size & Spacing
-            'h-[calc(100%+18px)] w-[calc(100%+18px)] pr-[18px] pb-[18px] pl-0 pt-0',
+            'h-[calc(100%+18px)] w-[calc(100%+18px)] pr-[18px] pl-0 pt-0',
 
             // Overflow & Scrollbar
             'overflow-scroll scrollbar-none',

@@ -21,7 +21,7 @@ class UpdateTradingAccount
 
         $tradingUser = $tradingAccount->tradingUser;
 
-        if ($tradingUser->acc_status === "Active" && $tradingUser->account_type === 1){
+        if ($tradingUser->acc_status === "Active" && $tradingUser->account_type != 2) {
             $tradingAccount->currency_digits = $data['currencyDigits'];
             $tradingAccount->balance = $data['balance'];
             $tradingAccount->credit = $data['credit'];

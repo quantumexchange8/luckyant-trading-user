@@ -6,8 +6,8 @@ export default {
             'mx-auto',
 
             // Sizing
-            'w-28',
-            'h-28',
+            'w-10',
+            'h-10',
 
             // Flexbox
             'inline-block',

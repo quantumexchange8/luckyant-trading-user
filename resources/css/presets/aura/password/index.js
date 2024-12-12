@@ -1,15 +1,18 @@
 export default {
     root: ({ props }) => ({
-        class: ['inline-flex relative', { '[&>input]:pr-10': props.toggleMask }]
+        class: ['relative w-full', { '[&>input]:pr-10': props.toggleMask }, { 'flex [&>input]:w-full': props.fluid, 'inline-flex': !props.fluid }]
     }),
-    panel: {
+    overlay: {
         class: [
+            // Font
+            'text-xs',
+
             // Spacing
             'p-3',
 
             // Shape
             'border',
-            'shadow-md rounded-md',
+            'shadow rounded-md',
 
             // Colors
             'bg-surface-0 dark:bg-surface-900',
@@ -25,7 +28,7 @@ export default {
 
             // Shape and Size
             'border-0',
-            'h-[10px]',
+            'h-2',
             'rounded-md',
 
             // Spacing
@@ -35,39 +38,42 @@ export default {
             'bg-surface-100 dark:bg-surface-700'
         ]
     },
-    meterlabel: ({ instance }) => ({
+    meterLabel: ({ instance }) => ({
         class: [
             // Size
             'h-full',
 
             // Colors
             {
-                'bg-red-500 dark:bg-red-400/50': instance?.meter?.strength == 'weak',
-                'bg-orange-500 dark:bg-orange-400/50': instance?.meter?.strength == 'medium',
-                'bg-green-500 dark:bg-green-400/50': instance?.meter?.strength == 'strong'
+                'bg-error-500 dark:bg-error-400/80': instance?.meter?.strength == 'weak',
+                'bg-warning-500 dark:bg-warning-400/50': instance?.meter?.strength == 'medium',
+                'bg-success-500 dark:bg-success-400/50': instance?.meter?.strength == 'strong'
             },
 
             // Transitions
             'transition-all duration-1000 ease-in-out'
         ]
     }),
-    showicon: {
+    maskIcon: {
         class: ['absolute top-1/2 right-3 -mt-2 z-10', 'text-surface-600 dark:text-white/70']
     },
-    hideicon: {
+    unmaskIcon: {
         class: ['absolute top-1/2 right-3 -mt-2 z-10', 'text-surface-600 dark:text-white/70']
     },
-    input: {
+    pcinput: {
         root: ({ props, context, parent }) => ({
             class: [
                 // Font
-                'leading-none',
+                'text-sm',
 
                 // Flex
                 { 'flex-1 w-[1%]': parent.instance.$name == 'InputGroup' },
 
                 // Spacing
                 'm-0',
+                { 'w-full': props.fluid },
+
+                // Size
                 {
                     'py-3 px-3.5': props.size == 'large',
                     'py-1.5 px-2': props.size == 'small',
@@ -88,23 +94,22 @@ export default {
                 { 'border-surface-300 dark:border-surface-700': !props.invalid },
 
                 // Invalid State
-                'invalid:focus:ring-red-200',
-                'invalid:hover:border-red-500',
-                { 'border-red-500 dark:border-red-400': props.invalid },
+                { 'border-error-500 dark:border-error-400': props.invalid },
 
                 // States
                 {
                     'hover:border-surface-400 dark:hover:border-surface-600': !context.disabled && !props.invalid,
-                    'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10': !context.disabled,
-                    'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': context.disabled
+                    'focus:outline-none focus:ring-0 focus:border-primary-500 dark:focus:border-primary-300': !context.disabled,
+                    'bg-surface-200 dark:bg-surface-800 disabled:text-gray-500 dark:disabled:text-gray-500 select-none pointer-events-none cursor-default': context.disabled
                 },
 
                 // Filled State *for FloatLabel
-                { filled: parent.instance?.$parentInstance?.$name == 'FloatLabel' && parent.props.modelValue !== null && parent.props.modelValue?.length !== 0 },
+                { filled: parent.instance?.$name == 'FloatLabel' && context.filled },
 
                 // Misc
-                'appearance-none',
-                'transition-colors duration-200'
+                'appearance-none shadow-input',
+                'transition-colors duration-200',
+                'w-full',
             ]
         })
     },

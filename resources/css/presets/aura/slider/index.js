@@ -54,7 +54,7 @@ export default {
             // Shape
             'rounded-full',
 
-            'before:block before:w-[16px] before:h-[16px] before:rounded-full before:bg-surface-0 dark:before:bg-surface-600 before:shadow-md',
+            'before:block before:w-[16px] before:h-[16px] before:rounded-full before:bg-surface-0 dark:before:bg-surface-950 before:shadow-md',
 
             // Colors
             'bg-surface-200 dark:bg-surface-800',
@@ -71,7 +71,7 @@ export default {
             'touch-action-none'
         ]
     }),
-    starthandler: ({ props }) => ({
+    startHandler: ({ props }) => ({
         class: [
             'flex items-center justify-center',
 
@@ -103,7 +103,7 @@ export default {
             'touch-action-none'
         ]
     }),
-    endhandler: ({ props }) => ({
+    endHandler: ({ props }) => ({
         class: [
             'flex items-center justify-center',
 

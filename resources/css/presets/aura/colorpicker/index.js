@@ -8,7 +8,7 @@ export default {
             { 'opacity-60 select-none pointer-events-none cursor-default': props.disabled }
         ]
     }),
-    input: {
+    preview: {
         class: [
             // Font
             'text-base leading-none',
@@ -29,7 +29,7 @@ export default {
 
             // States
             'hover:border-surface-400 dark:hover:border-surface-600',
-            'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',
+            'focus:outline-none focus:outline-offset-0 focus:ring-0',
 
             // Transition
             'transition-colors duration-200',
@@ -47,29 +47,29 @@ export default {
             },
 
             // Shape
-            'shadow-md border',
+            'shadow-md border rounded-md',
 
             // Colors
-            'bg-surface-800 dark:bg-surface-900 border-surface-600 dark:border-surface-700'
+            'bg-primary-100 dark:bg-surface-900 border-primary-200 dark:border-surface-700'
         ]
     }),
-    selector: {
+    colorSelector: {
         class: [
             // Position
             'absolute top-[8px] left-[8px]',
 
             // Size
             'h-[150px] w-[150px]'
-        ]
+        ],
+        style: 'background: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0) 100%), linear-gradient(to right, #fff 0%, rgb(255 255 255 / 0) 100%)'
     },
     color: {
         class: [
             // Size
             'h-[150px] w-[150px]'
         ],
-        style: 'background: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0) 100%), linear-gradient(to right, #fff 0%, rgb(255 255 255 / 0) 100%)'
     },
-    colorhandle: {
+    colorHandle: {
         class: [
             'absolute',
 
@@ -102,7 +102,7 @@ export default {
         ],
         style: 'background: linear-gradient(0deg, red 0, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, red)'
     },
-    huehandle: {
+    hueHandle: {
         class: [
             // Position
             'absolute left-0 -ml-[2px] -mt-[5px]',

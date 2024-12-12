@@ -466,7 +466,7 @@ class AccountInfoController extends Controller
         $dealId = null; // Initialize $dealId as null
         $comment = 'Withdraw from trading account'; // Default comment
 
-        if ($type == 1) {
+        if ($type != 2) {
             try {
                 $metaService->getUserInfo(collect([$tradingAccount]));
                 $deal = $metaService->createDeal($meta_login, $amount, 'Withdraw from trading account', dealAction::WITHDRAW);

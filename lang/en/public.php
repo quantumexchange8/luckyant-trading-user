@@ -534,4 +534,9 @@ return [
     "platform" => "Platform",
     "revoked" => "Revoked",
     'wallet_redemption' => "Wallet Redemption",
+    'hofi' => "HOFI Account",
+    'standard_account' => "Standard Account",
+    'ecn_account' => "ECN Account",
+    'alpha' => "Alpha Account",
+    'virtual' => "Virtual Account",
 ];

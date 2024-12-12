@@ -1,39 +1,79 @@
 <script setup>
-import Button from "@/Components/Button.vue";
-import {PlusCircleIcon} from "@heroicons/vue/solid";
+import Button from "primevue/button";
+import {
+    IconCirclePlus,
+    IconCircleCheckFilled
+} from "@tabler/icons-vue";
 import {ref} from "vue";
-import Modal from "@/Components/Modal.vue";
-import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
-import BaseListbox from "@/Components/BaseListbox.vue";
-import InputError from "@/Components/InputError.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import Label from "@/Components/Label.vue";
 import {useForm} from "@inertiajs/vue3";
+import Dialog from "primevue/dialog";
+import RadioButton from "primevue/radiobutton";
+import Select from "primevue/select";
+import InputLabel from "@/Components/Label.vue";
+import InputError from "@/Components/InputError.vue";
+import Checkbox from "primevue/checkbox";
 
 const props = defineProps({
     activeAccountCounts: Number,
     liveAccountQuota: Number,
-    leverageSel: Array
+    enableVirtualAccount: Boolean,
 })
 
 const visible = ref(false);
-const activeTab = ref('trading_account');
-
 const form = useForm({
     leverage: 500,
     terms: '',
-    type: 1
+    account_type: '',
 })
 
-const handleTabChange = (tab) => {
-    activeTab.value = tab
-    form.type = tab === 'trading_account' ? 1 : 2
+const openDialog = () => {
+    visible.value = true;
+    getAccountTypes();
+    getLeverages();
 }
 
-const submit = () => {
+const selectedAccountType = ref('hofi');
+const selectAccount = (type) => {
+    selectedAccountType.value = type.slug;
+}
+
+const loadingAccountTypes = ref(false);
+const accountTypes = ref();
+
+const getAccountTypes = async () => {
+    loadingAccountTypes.value = true;
+    try {
+        const response = await axios.get('/getAccountTypes');
+        accountTypes.value = props.enableVirtualAccount
+            ? response.data
+            : response.data.filter(account => account.slug !== 'virtual');
+    } catch (error) {
+        console.error('Error fetching account types:', error);
+    } finally {
+        loadingAccountTypes.value = false;
+    }
+};
+
+const loadingLeverages = ref(false);
+const leverages = ref();
+
+const getLeverages = async () => {
+    loadingLeverages.value = true;
+    try {
+        const response = await axios.get('/getLeverages');
+        leverages.value = response.data;
+    } catch (error) {
+        console.error('Error fetching leverages:', error);
+    } finally {
+        loadingLeverages.value = false;
+    }
+};
+
+const submitForm = () => {
+    form.account_type = selectedAccountType.value;
     form.post(route('account_info.createAccount'), {
         onSuccess: () => {
-            closeModal()
+            closeDialog()
             form.reset()
         },
         onError: (errors) => {
@@ -42,7 +82,7 @@ const submit = () => {
     })
 }
 
-const closeModal = () => {
+const closeDialog = () => {
     visible.value = false
 }
 </script>
@@ -50,168 +90,128 @@ const closeModal = () => {
 <template>
     <Button
         type="button"
-        variant="primary"
-        size="sm"
         class="flex justify-center items-center gap-2 w-full sm:w-auto"
-        v-slot="{ iconSizeClasses }"
-        @click="visible = true"
-        :disabled="activeAccountCounts >= liveAccountQuota"
+        :disabled="activeAccountCounts >= liveAccountQuota && !enableVirtualAccount"
+        size="small"
+        @click="openDialog"
     >
-        <PlusCircleIcon aria-hidden="true" :class="iconSizeClasses"/>
+        <IconCirclePlus size="20" />
         <span>{{ $t('public.add_account') }}</span>
     </Button>
 
-    <Modal
-        :show="visible"
-        :title="$t('public.add_account')"
-        @close="closeModal"
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t('public.add_account')"
+        class="dialog-xs md:dialog-md"
     >
-        <form class="space-y-4">
-            <TabGroup>
-                <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-gray-800 p-1 w-full">
-                    <Tab
-                        as="template"
-                        v-slot="{ selected }"
-                        v-if="activeAccountCounts < liveAccountQuota"
-                    >
-                        <button
-                            :class="[
-                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                                    'ring-white/60 dark:ring-primary-800 ring-offset-2 ring-offset-primary-200 dark:ring-offset-primary-800 focus:outline-none focus:ring-2',
-                                    selected
-                                    ? 'bg-white dark:bg-primary-900 text-primary-800 dark:text-white shadow'
-                                    : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
-                                ]"
-                            @click="handleTabChange('trading_account')"
-                        >
-                            {{ $t('public.trading_account') }}
-                        </button>
-                    </Tab>
-
-                    <Tab
-                        as="template"
-                        v-slot="{ selected }"
-                        v-if="props.virtualStatus"
-                    >
-                        <button
-                            :class="[
-                                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                                    'ring-white/60 ring-offset-2 ring-offset-primary-200 focus:outline-none focus:ring-2',
-                                    selected
-                                    ? 'bg-white text-primary-800 shadow'
-                                    : 'text-blue-25 hover:bg-white/[0.12] hover:text-white',
-                                ]"
-                            @click="handleTabChange('virtual_account')"
-                        >
-                            {{ $t('public.virtual_account') }}
-                        </button>
-                    </Tab>
-                </TabList>
-                <TabPanels>
-                    <TabPanel class="py-3" v-if="activeAccountCounts < liveAccountQuota">
-                        <div class="space-y-2">
-                            <Label
-                                for="leverage"
-                                :value="$t('public.leverage')"
-                            />
-                            <BaseListbox
-                                :options="leverageSel"
-                                v-model="form.leverage"
-                            />
-                            <InputError :message="form.errors.leverage"/>
-                        </div>
-                        <div class="mt-6 space-y-4">
-                            <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{
-                                    $t('public.terms_and_conditions')
-                                }}</h3>
-                            <ol class="text-gray-500 dark:text-gray-400 text-xs list-decimal text-justify pl-6 mt-2">
-                                <li>{{ $t('public.terms_1') }}</li>
-                                <li>{{ $t('public.terms_2') }}</li>
-                                <li>{{ $t('public.terms_3') }}</li>
-                                <li>{{ $t('public.terms_4') }}</li>
-                                <li>{{ $t('public.terms_5') }}</li>
-                                <li>{{ $t('public.terms_6') }}</li>
-                                <li>{{ $t('public.terms_7') }}</li>
-                                <li>{{ $t('public.terms_8') }}</li>
-                                <li>{{ $t('public.terms_9') }}</li>
-                            </ol>
-
-                            <div class="flex items-center">
-                                <div class="flex items-center h-5">
-                                    <Checkbox id="terms" v-model="form.terms"/>
-                                </div>
-                                <div class="ml-3">
-                                    <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">{{
-                                            $t('public.accept_terms')
-                                        }}</label>
+        <form>
+            <div class="flex flex-col items-center gap-8 self-stretch">
+                <div class="flex flex-col items-center gap-5 self-stretch">
+                    <div class="flex flex-col items-start gap-2 self-stretch">
+                        <InputLabel for="accountType" :value="$t('public.type')" />
+                        <div class="grid grid-cols-1 md:grid-cols-2 items-start gap-3 self-stretch">
+                            <div
+                                v-for="account in accountTypes"
+                                @click="selectAccount(account)"
+                                class="group flex flex-col items-start py-3 px-4 gap-1 self-stretch rounded-lg border shadow-input transition-colors duration-300 select-none cursor-pointer w-full"
+                                :class="{
+                                    'bg-primary-50 dark:bg-gray-800 border-primary-500': selectedAccountType === account.slug,
+                                    'bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 hover:bg-primary-50 hover:border-primary-500': selectedAccountType !== account.slug,
+                                }"
+                            >
+                                <div class="flex items-center gap-3 self-stretch">
+                                <span
+                                    class="flex-grow text-sm font-semibold transition-colors duration-300 group-hover:text-primary-700 dark:group-hover:text-primary-500"
+                                    :class="{
+                                        'text-primary-700 dark:text-primary-300': selectedAccountType === account.slug,
+                                        'text-gray-950 dark:text-white': selectedAccountType !== account.slug
+                                    }"
+                                >
+                                    {{ $t(`public.${account.slug}`) }}
+                                </span>
+                                    <IconCircleCheckFilled v-if="selectedAccountType === account.slug" size="20" stroke-width="1.25" color="#2970FF" />
                                 </div>
                             </div>
-                            <InputError :message="form.errors.terms"/>
-
                         </div>
-                    </TabPanel>
+                    </div>
+                </div>
 
-                    <TabPanel class="py-3" v-if="props.virtualStatus">
-                        <div class="space-y-2">
-                            <Label
-                                for="leverage"
-                                :value="$t('public.leverage')"
+                <!-- Strategy -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 self-stretch">
+                    <div class="flex flex-col items-start gap-1 self-stretch">
+                        <InputLabel
+                            for="leverage"
+                            :value="$t('public.leverage')"
+                            :invalid="!!form.errors.leverage"
+                        />
+                        <Select
+                            input-id="leverage"
+                            v-model="form.leverage"
+                            :options="leverages"
+                            optionLabel="label"
+                            optionValue="value"
+                            :placeholder="$t('public.select_leverage')"
+                            class="w-full"
+                            :loading="loadingLeverages"
+                            :invalid="!!form.errors.leverage"
+                        />
+                        <InputError :message="form.errors.leverage" />
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{
+                            $t('public.terms_and_conditions')
+                        }}</h3>
+                    <ol class="text-gray-500 dark:text-gray-400 text-xs list-decimal text-justify pl-6 mt-2">
+                        <li>{{ $t('public.terms_1') }}</li>
+                        <li>{{ $t('public.terms_2') }}</li>
+                        <li>{{ $t('public.terms_3') }}</li>
+                        <li>{{ $t('public.terms_4') }}</li>
+                        <li>{{ $t('public.terms_5') }}</li>
+                        <li>{{ $t('public.terms_6') }}</li>
+                        <li>{{ $t('public.terms_7') }}</li>
+                        <li v-if="enableVirtualAccount">{{ $t('public.terms_8') }}</li>
+                        <li>{{ $t('public.terms_9') }}</li>
+                    </ol>
+
+                    <div class="flex flex-col gap-1 items-start self-stretch">
+                        <div class="flex items-start gap-2 self-stretch w-full">
+                            <Checkbox
+                                v-model="form.terms"
+                                inputId="terms"
+                                binary
+                                :invalid="!!form.errors.terms"
                             />
-                            <BaseListbox
-                                :options="leverageSel"
-                                v-model="form.leverage"
-                            />
-                            <InputError :message="form.errors.leverage"/>
+                            <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">{{
+                                    $t('public.accept_terms')
+                                }}</label>
                         </div>
-                        <div class="mt-6 space-y-4">
-                            <h3 class="text-gray-400 dark:text-gray-300 font-bold text-sm">{{
-                                    $t('public.terms_and_conditions')
-                                }}</h3>
-                            <ol class="text-gray-500 dark:text-gray-400 text-xs list-decimal text-justify pl-6 mt-2">
-                                <li>{{ $t('public.terms_1') }}</li>
-                                <li>{{ $t('public.terms_2') }}</li>
-                                <li>{{ $t('public.terms_3') }}</li>
-                                <li>{{ $t('public.terms_4') }}</li>
-                                <li>{{ $t('public.terms_5') }}</li>
-                                <li>{{ $t('public.terms_6') }}</li>
-                                <li>{{ $t('public.terms_7') }}</li>
-                                <li>{{ $t('public.terms_9') }}</li>
-                            </ol>
+                        <InputError :message="form.errors.terms"/>
+                    </div>
+                </div>
+            </div>
 
-                            <div class="flex items-center">
-                                <div class="flex items-center h-5">
-                                    <Checkbox id="terms" v-model="form.terms"/>
-                                </div>
-                                <div class="ml-3">
-                                    <label for="terms" class="text-gray-500 dark:text-gray-400 text-xs">{{
-                                            $t('public.accept_terms')
-                                        }}</label>
-                                </div>
-                            </div>
-                            <InputError :message="form.errors.terms"/>
-
-                        </div>
-                    </TabPanel>
-                </TabPanels>
-            </TabGroup>
-            <div class="mt-6 flex justify-end">
+            <div class="flex w-full justify-end gap-3">
                 <Button
                     type="button"
-                    variant="primary-transparent"
-                    @click="closeModal">
+                    severity="secondary"
+                    text
+                    class="justify-center w-full md:w-auto px-6"
+                    @click="closeDialog"
+                    :disabled="form.processing"
+                >
                     {{ $t('public.cancel') }}
                 </Button>
-
                 <Button
-                    variant="primary"
-                    class="ml-3"
-                    :class="{ 'opacity-25': form.processing }"
+                    type="submit"
+                    class="justify-center w-full md:w-auto px-6"
+                    @click.prevent="submitForm"
                     :disabled="form.processing"
-                    @click="submit"
                 >
-                    {{ $t('public.process') }}
+                    {{ $t('public.confirm') }}
                 </Button>
             </div>
         </form>
-    </Modal>
+    </Dialog>
 </template>

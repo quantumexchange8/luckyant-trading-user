@@ -530,4 +530,9 @@ return [
     "platform" => "nền tảng",
     "revoked" => "đã thu hồi",
     'wallet_redemption' => "đổi ví",
+    'hofi' => "Tài khoản HOFI",
+    'standard_account' => "Tài khoản tiêu chuẩn",
+    'ecn_account' => "Tài khoản ECN",
+    'alpha' => "Tài khoản Alpha",
+    'virtual' => "Tài khoản ảo",
 ];

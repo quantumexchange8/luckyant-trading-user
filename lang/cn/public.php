@@ -534,4 +534,9 @@ return [
     "platform" => "平台",
     "revoked" => "已撤销",
     'wallet_redemption' => "钱包回收",
+    'hofi' => "HOFI账户",
+    'standard_account' => "标准账户",
+    'ecn_account' => "ECN账户",
+    'alpha' => "Alpha账户",
+    'virtual' => "虚拟账户",
 ];

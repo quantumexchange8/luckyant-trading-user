@@ -530,4 +530,9 @@ return [
     "platform" => "Platform",
     "revoked" => "Dicabut",
     'wallet_redemption' => "Penebusan Dompet",
+    'hofi' => "Akun HOFI",
+    'standard_account' => "Akun Standar",
+    'ecn_account' => "Akun ECN",
+    'alpha' => "Akun Alpha",
+    'virtual' => "Akun Virtual",
 ];

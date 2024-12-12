@@ -34,12 +34,12 @@ class MetaFiveService {
 
     public function getMetaUser($meta_login)
     {
-        return Http::acceptJson()->get($this->baseURL . "/m_user/{$meta_login}")->json();
+        return Http::acceptJson()->get($this->baseURL . "/m_user/$meta_login")->json();
     }
 
     public function getMetaAccount($meta_login)
     {
-        return Http::acceptJson()->get($this->baseURL . "/trade_acc/{$meta_login}")->json();
+        return Http::acceptJson()->get($this->baseURL . "/trade_acc/$meta_login")->json();
     }
 
     public function getUserInfo($tradingAccounts): void
@@ -64,8 +64,8 @@ class MetaFiveService {
         ]);
         $accountResponse = $accountResponse->json();
 
-        (new CreateTradingAccount)->execute($user, $accountResponse);
-        (new CreateTradingUser)->execute($user, $accountResponse);
+        (new CreateTradingAccount)->execute($user, $accountResponse, $group);
+        (new CreateTradingUser)->execute($user, $accountResponse, $group);
         return $accountResponse;
     }
 

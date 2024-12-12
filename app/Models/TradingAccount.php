@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\LogOptions;
@@ -53,42 +55,42 @@ class TradingAccount extends Model
 //            ->dontSubmitEmptyLogs();
 //    }
 
-    public function ofUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function ofUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function accountType(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function accountType(): BelongsTo
     {
         return $this->belongsTo(AccountType::class, 'account_type', 'id');
     }
 
-    public function tradingUser(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function tradingUser(): HasOne
     {
         return $this->hasOne(TradingUser::class, 'meta_login', 'meta_login');
     }
 
-    public function masterRequest(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function masterRequest(): HasOne
     {
         return $this->hasOne(MasterRequest::class, 'trading_account_id', 'id');
     }
 
-    public function masterAccount(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function masterAccount(): HasOne
     {
         return $this->hasOne(Master::class, 'trading_account_id', 'id');
     }
 
-    public function subscriber(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function subscriber(): HasOne
     {
         return $this->hasOne(Subscriber::class, 'trading_account_id', 'id');
     }
 
-    public function subscription(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function subscription(): HasOne
     {
         return $this->hasOne(Subscription::class, 'trading_account_id', 'id');
     }
 
-    public function pamm_subscription(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function pamm_subscription(): HasOne
     {
         return $this->hasOne(PammSubscription::class, 'meta_login', 'meta_login');
     }

@@ -530,4 +530,9 @@ return [
     "platform" => "プラットフォーム",
     "revoked" => "取り消された",
     'wallet_redemption' => "ウォレットの償還",
+    'hofi' => "HOFIアカウント",
+    'standard_account' => "標準アカウント",
+    'ecn_account' => "ECNアカウント",
+    'alpha' => "Alphaアカウント",
+    'virtual' => "仮想アカウント",
 ];

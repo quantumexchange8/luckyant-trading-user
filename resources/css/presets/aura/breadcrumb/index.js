@@ -5,16 +5,13 @@ export default {
             'rounded-md',
 
             // Spacing
-            'p-4',
-
-            // Color
-            'bg-surface-0 dark:bg-surface-900',
+            'py-2 px-4',
 
             // Misc
             'overflow-x-auto'
         ]
     },
-    menu: {
+    list: {
         class: [
             // Flex & Alignment
             'flex items-center flex-nowrap',
@@ -23,10 +20,10 @@ export default {
             'm-0 p-0 list-none leading-none'
         ]
     },
-    action: {
+    itemLink: {
         class: [
             // Flex & Alignment
-            'flex items-center',
+            'flex items-center gap-2',
 
             // Shape
             'rounded-md',
@@ -45,7 +42,7 @@ export default {
             'text-decoration-none'
         ]
     },
-    icon: {
+    itemIcon: {
         class: 'text-surface-600 dark:text-white/70'
     },
     separator: {

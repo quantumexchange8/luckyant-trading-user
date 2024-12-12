@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\PammController;
+use App\Http\Controllers\SelectOptionController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +61,11 @@ Route::post('transaction_result', [WalletController::class, 'depositCallback']);
 Route::post('tt_pay_callback', [WalletController::class, 'tt_pay_callback']);
 
 Route::middleware('auth')->group(function () {
+    // Select Options
+    Route::get('getAccountTypes', [SelectOptionController::class, 'getAccountTypes']);
+    Route::get('getLeverages', [SelectOptionController::class, 'getLeverages']);
+    Route::get('getDepositWallets', [SelectOptionController::class, 'getDepositWallets']);
+
     Route::get('update_transaction', [WalletController::class, 'depositReturn']);
     Route::get('tt_pay_return', [WalletController::class, 'tt_pay_return']);
 
@@ -100,7 +106,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/getAccountReport', [AccountController::class, 'getAccountReport'])->name('account_info.getAccountReport');
 
         Route::post('/createAccount', [AccountController::class, 'createAccount'])->name('account_info.createAccount');
-
+        Route::post('/depositBalance', [AccountController::class, 'depositBalance'])->name('account_info.depositBalance');
 //        Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
 
         // after change get master delete

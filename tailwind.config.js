@@ -26,41 +26,20 @@ module.exports = {
                     'eval-2': '#2A2F42',
                     'eval-3': '#2C3142',
                 },
-                primary: 'rgb(var(--primary))',
-                'primary-inverse': 'rgb(var(--primary-inverse))',
-                'primary-hover': 'rgb(var(--primary-hover))',
-                'primary-active-color': 'rgb(var(--primary-active-color))',
-
-                'primary-highlight': 'rgb(var(--primary)/var(--primary-highlight-opacity))',
-                'primary-highlight-inverse': 'rgb(var(--primary-highlight-inverse))',
-                'primary-highlight-hover': 'rgb(var(--primary)/var(--primary-highlight-hover-opacity))',
-
-                'primary-25': 'rgb(var(--primary-25))',
-                'primary-50': 'rgb(var(--primary-50))',
-                'primary-100': 'rgb(var(--primary-100))',
-                'primary-200': 'rgb(var(--primary-200))',
-                'primary-300': 'rgb(var(--primary-300))',
-                'primary-400': 'rgb(var(--primary-400))',
-                'primary-500': 'rgb(var(--primary-500))',
-                'primary-600': 'rgb(var(--primary-600))',
-                'primary-700': 'rgb(var(--primary-700))',
-                'primary-800': 'rgb(var(--primary-800))',
-                'primary-900': 'rgb(var(--primary-900))',
-                'primary-950': 'rgb(var(--primary-950))',
-
-                'surface-0': 'rgb(var(--surface-0))',
-                'surface-50': 'rgb(var(--surface-50))',
-                'surface-100': 'rgb(var(--surface-100))',
-                'surface-200': 'rgb(var(--surface-200))',
-                'surface-300': 'rgb(var(--surface-300))',
-                'surface-400': 'rgb(var(--surface-400))',
-                'surface-500': 'rgb(var(--surface-500))',
-                'surface-600': 'rgb(var(--surface-600))',
-                'surface-700': 'rgb(var(--surface-700))',
-                'surface-800': 'rgb(var(--surface-800))',
-                'surface-900': 'rgb(var(--surface-900))',
-                'surface-950': 'rgb(var(--surface-950))',
-
+                primary: {
+                    25: 'var(--primary-25)',
+                    50: 'var(--primary-50)',
+                    100: 'var(--primary-100)',
+                    200: 'var(--primary-200)',
+                    300: 'var(--primary-300)',
+                    400: 'var(--primary-400)',
+                    500: 'var(--primary-500)',
+                    600: 'var(--primary-600)',
+                    700: 'var(--primary-700)',
+                    800: 'var(--primary-800)',
+                    900: 'var(--primary-900)',
+                    950: 'var(--primary-950)',
+                },
                 gray: {
                     25: '#FCFCFD',
                     50: '#F9FAFB',
@@ -114,6 +93,20 @@ module.exports = {
                     800: '#05603A',
                     900: '#054F31',
                 },
+                info: {
+                    25: '#F5FBFF',
+                    50: '#F0F9FF',
+                    100: '#E0F2FE',
+                    200: '#B9E6FE',
+                    300: '#7CD4FD',
+                    400: '#36BFFA',
+                    500: '#0BA5EC',
+                    600: '#0086C9',
+                    700: '#026AA2',
+                    800: '#065986',
+                    900: '#0B4A6F',
+                    950: '#062C41',
+                },
                 warning: {
                     25: '#FFFCF5',
                     50: '#FFFAEB',
@@ -146,7 +139,6 @@ module.exports = {
                 "vtd-primary": colors.sky,
                 "vtd-secondary": colors.zinc,
             },
-
             typography: ({ theme }) => ({
                 DEFAULT: {
                     css: {
@@ -156,15 +148,15 @@ module.exports = {
                         '--tw-prose-bold': theme('colors.gray[300]'),
                         h1: {
                             fontSize: '28px',
-                            lineHeight: '28px'
+                            lineHeight: '36px'
                         },
                         h2: {
                             fontSize: '24px',
-                            lineHeight: '24px'
+                            lineHeight: '32px'
                         },
                         h3: {
                             fontSize: '20px',
-                            lineHeight: '20px'
+                            lineHeight: '28px'
                         },
                         p: {
                             fontSize: '14px',
@@ -175,19 +167,22 @@ module.exports = {
             }),
         },
         fontSize: {
-            'xs': ['12px'],
-            'sm': ['14px'],
-            'lg': ['18px', {
-                fontWeight: '600',
-            }],
-            'xl': ['20px', {
-                fontWeight: '600',
-            }],
-            '2xl': ['24px', {
-                fontWeight: '600',
-            }],
-            '3xl': ['30px'],
-        }
+            xxs: ['10px', '16px'],
+            xs: ['12px', '18px'],
+            sm: ['14px', '20px'],
+            base: ['16px', '24px'],
+            lg: ['20px', '28px'],
+            xl: ['24px', '32px'],
+            xxl: ['30px', '42px'],
+        },
+        boxShadow: {
+            'input': '0 1px 2px 0px rgba(12, 17, 29, 0.05)',
+            'dialog': '0 12px 24px -4px rgba(12, 17, 29, 0.10)',
+            'toast': '0 4px 20px 0 rgba(12, 17, 29, 0.08)',
+            'box': '0 8px 16px -4px rgba(12, 17, 29, 0.08)',
+            'table': '0 2px 8px 0 rgba(12, 17, 29, 0.05)',
+            'dropdown': '0px 8px 16px -4px rgba(12, 17, 29, 0.08)',
+        },
     },
 
     plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],

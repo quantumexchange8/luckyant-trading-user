@@ -4,7 +4,7 @@ export default {
             // Font
             {
                 'text-xl': props.size == 'large',
-                'text-2xl': props.size == 'xlarge'
+                'text-xl': props.size == 'xlarge'
             },
 
             // Alignments

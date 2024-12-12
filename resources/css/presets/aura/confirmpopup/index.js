@@ -23,7 +23,7 @@ export default {
         class: ['p-4 items-center flex', 'rounded-t-lg', 'border-x border-t last:border-b border-surface-200 dark:border-surface-700']
     },
     icon: {
-        class: 'text-2xl mr-4'
+        class: 'text-xl mr-4'
     },
     footer: {
         class: [
@@ -46,56 +46,6 @@ export default {
             'text-surface-700 dark:text-surface-0/80',
             'border-x border-b border-surface-200 dark:border-surface-700'
         ]
-    },
-    rejectbutton: {
-        root: {
-            class: [
-                'relative',
-
-                // Alignments
-                'items-center inline-flex text-center align-bottom justify-center',
-
-                // Sizes & Spacing
-                'px-4 py-2 leading-none',
-
-                // Shape
-                'rounded-md',
-
-                // Color
-                'text-primary',
-
-                // States
-                'hover:bg-primary-300/20',
-                'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-500 dark:focus:ring-primary-400'
-            ]
-        }
-    },
-    acceptbutton: {
-        root: {
-            class: [
-                'relative',
-
-                // Alignments
-                'items-center inline-flex text-center align-bottom justify-center',
-
-                // Sizes & Spacing
-                'px-4 py-2 leading-none',
-
-                // Shape
-                'rounded-md',
-
-                // Color
-                'text-primary-inverse',
-                'bg-primary',
-                'border border-primary',
-
-                // States
-                'hover:bg-primary-hover hover:border-primary-hover',
-                'focus:outline-none focus:outline-offset-0 focus:ring',
-                'focus:ring-primary-500 dark:focus:ring-primary-400'
-            ]
-        }
     },
     transition: {
         enterFromClass: 'opacity-0 scale-y-[0.8]',

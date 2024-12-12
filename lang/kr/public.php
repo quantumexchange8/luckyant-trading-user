@@ -530,4 +530,9 @@ return [
     "platform" => "플랫폼",
     "revoked" => "해지됨",
     'wallet_redemption' => "지갑 상환",
+    'hofi' => "HOFI 계정",
+    'standard_account' => "표준 계정",
+    'ecn_account' => "ECN 계정",
+    'alpha' => "Alpha 계정",
+    'virtual' => "가상 계정",
 ];

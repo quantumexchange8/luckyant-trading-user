@@ -10,7 +10,7 @@ export default {
             { 'rounded-full': props.shape === 'circle', 'rounded-md': props.shape !== 'circle' },
 
             // Colors
-            'bg-surface-200 dark:bg-gray-800'
+            'bg-gray-200 dark:bg-gray-700'
         ]
     })
 };

@@ -6,39 +6,33 @@ export default {
 
             // Size
             'min-w-[12rem]',
-            'p-1',
+            'py-1',
 
             // Colors
-            'bg-surface-0 dark:bg-gray-900',
-            'border border-surface-200 dark:border-surface-700'
+            'bg-white dark:bg-gray-900',
+            'border border-gray-200 dark:border-gray-700'
         ]
     },
-    menu: {
+    rootList: {
         class: [
             // Spacings and Shape
             'list-none',
-            'm-0',
-            'p-0',
+            'flex flex-col',
+            'm-0 p-0',
             'outline-none'
         ]
     },
-    menuitem: {
+    item: {
         class: 'relative my-[2px] [&:first-child]:mt-0'
     },
-    content: ({ context }) => ({
+    itemContent: ({ context }) => ({
         class: [
-            //Shape
-            'rounded-[4px]',
-
-            //Font
-            'text-sm',
-
             // Colors
-            'text-surface-700 dark:text-white/80',
+            'text-gray-700 dark:text-white/80',
             {
-                'text-surface-500 dark:text-white/70': !context.focused && !context.active,
-                'text-surface-500 dark:text-white/70 bg-surface-200 dark:bg-[rgba(255,255,255,0.03)]': context.focused && !context.active,
-                'text-primary-highlight-inverse bg-primary-highlight': (context.focused && context.active) || context.active || (!context.focused && context.active)
+                'text-gray-500 dark:text-white/70': !context.focused && !context.active,
+                'text-gray-500 dark:text-white/70 bg-gray-200': context.focused && !context.active,
+                'bg-highlight': (context.focused && context.active) || context.active || (!context.focused && context.active)
             },
 
             // Transitions
@@ -47,15 +41,15 @@ export default {
 
             // States
             {
-                'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.active,
-                'hover:bg-primary-highlight-hover text-primary-highlight-inverse': context.active
+                'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.active,
+                'hover:bg-highlight-emphasis': context.active
             },
 
             // Disabled
             { 'opacity-60 pointer-events-none cursor-default': context.disabled }
         ]
     }),
-    action: {
+    itemLink: {
         class: [
             'relative',
             // Flexbox
@@ -68,7 +62,10 @@ export default {
             'px-3',
 
             // Color
-            'text-surface-700 dark:text-white/80',
+            'text-gray-700 dark:text-white/80',
+
+            // Font
+            'text-sm',
 
             // Misc
             'no-underline',
@@ -77,19 +74,19 @@ export default {
             'select-none'
         ]
     },
-    icon: {
+    itemIcon: {
         class: [
             // Spacing
             'mr-2',
 
             // Color
-            'text-surface-600 dark:text-white/70'
+            'text-gray-600 dark:text-white/70'
         ]
     },
-    label: {
+    itemLabel: {
         class: ['leading-none']
     },
-    submenuicon: {
+    submenuIcon: {
         class: [
             // Position
             'ml-auto'
@@ -98,24 +95,32 @@ export default {
     submenu: {
         class: [
             // Spacing
-            'p-1',
+            'flex flex-col',
             'm-0',
-            'list-none',
-            'min-w-[12.5rem]',
+            'outline-none',
+            'rounded-md',
+
+            // Size
+            'w-full',
+            'py-1',
 
             // Shape
-            'shadow-none sm:shadow-md',
-            'border border-surface-200 dark:border-surface-700',
+            'shadow-dropdown',
+            'border border-gray-200 dark:border-gray-700',
 
             // Position
             'static sm:absolute',
             'z-10',
 
             // Color
-            'bg-surface-0 dark:bg-surface-900'
+            'bg-white dark:bg-gray-900'
         ]
     },
     separator: {
-        class: 'border-t border-surface-200 dark:border-surface-600 my-[2px]'
+        class: 'border-t border-gray-200 dark:border-gray-600 my-[2px]'
+    },
+    transition: {
+        enterFromClass: 'opacity-0',
+        enterActiveClass: 'transition-opacity duration-250'
     }
 };

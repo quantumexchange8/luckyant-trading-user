@@ -39,7 +39,7 @@ const closeModal = () => {
             variant="gray"
             @click="openSubscriptionModal('view')"
         >
-            <MemberDetailIcon aria-hidden="true" class="w-6 h-6 absolute" />
+            <MemberDetailIcon aria-hidden="true" class="w-6 h-6 absolute"/>
         </Button>
     </Tooltip>
 

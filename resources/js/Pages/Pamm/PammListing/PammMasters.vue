@@ -14,7 +14,7 @@ const props = defineProps({
 const selectedSubscriberAccount = ref();
 const subscriberAccount = ref(null);
 const currentLocale = ref(usePage().props.locale);
-const { formatAmount, formatDateTime } = transactionFormat();
+const {formatAmount, formatDateTime} = transactionFormat();
 const emit = defineEmits(['update:master', 'update:meta_login'])
 
 const getResults = async (page = 1, search = props.search, filterMetaLogin = props.meta_login, date = props.date) => {
@@ -67,7 +67,9 @@ watchEffect(() => {
                         {{ subscriberAccount.master.trading_user.name }}
                     </div>
                     <div v-if="currentLocale === 'cn'" class="text-sm">
-                        {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
+                        {{
+                            subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name
+                        }}
                     </div>
                     <div class="font-semibold">
                         {{ subscriberAccount.master.meta_login }}
@@ -79,10 +81,14 @@ watchEffect(() => {
                 />
             </div>
 
-            <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
+            <div
+                class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 flex justify-between">
                 <div class="flex gap-1">
                     <div class="text-sm">{{ $t('public.join_date') }}:</div>
-                    <div class="text-sm font-semibold">{{ subscriberAccount.approval_date ? formatDateTime(subscriberAccount.approval_date, false) : $t('public.pending') }}</div>
+                    <div class="text-sm font-semibold">{{
+                            subscriberAccount.approval_date ? formatDateTime(subscriberAccount.approval_date, false) : $t('public.pending')
+                        }}
+                    </div>
                 </div>
                 <div class="flex gap-1">
                     <div class="text-sm">{{ $t('public.join_day') }}:</div>
@@ -96,7 +102,9 @@ watchEffect(() => {
                         {{ $t('public.live_account') }}
                     </div>
                     <div class="flex justify-center gap-2">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.trading_user.name }}
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{
+                                subscriberAccount.trading_user.name
+                            }}
                         </span>
                     </div>
                 </div>
@@ -114,7 +122,9 @@ watchEffect(() => {
                         {{ $t('public.sharing_profit') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{
+                                subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit)
+                            }}%</span>
                     </div>
                 </div>
                 <div class="space-y-1">
@@ -122,7 +132,9 @@ watchEffect(() => {
                         {{ $t('public.total_fund') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.master ? subscriberAccount.master.total_fund : 0, 0) }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{
+                                formatAmount(subscriberAccount.master ? subscriberAccount.master.total_fund : 0, 0)
+                            }}</span>
                     </div>
                 </div>
                 <div class="space-y-1">
@@ -130,7 +142,9 @@ watchEffect(() => {
                         {{ $t('public.estimated_roi') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.estimated_monthly_returns }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{
+                                subscriberAccount.master.estimated_monthly_returns
+                            }}</span>
                     </div>
                 </div>
                 <div class="space-y-1">
@@ -138,7 +152,9 @@ watchEffect(() => {
                         {{ $t('public.roi_period') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ subscriberAccount.master.roi_period }} {{ $t('public.days') }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">{{
+                                subscriberAccount.master.roi_period
+                            }} {{ $t('public.days') }}</span>
                     </div>
                 </div>
             </div>
@@ -151,7 +167,9 @@ watchEffect(() => {
                         {{ $t('public.package') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.meta_balance : 0, 0) }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{
+                                formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.meta_balance : 0, 0)
+                            }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col w-full">
@@ -159,7 +177,9 @@ watchEffect(() => {
                         {{ $t('public.max_out_amount') }}
                     </div>
                     <div class="flex justify-center">
-                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.max_out_amount : 0, 0) }}</span>
+                        <span class="text-gray-800 dark:text-gray-100 font-semibold">$ {{
+                                formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.max_out_amount : 0, 0)
+                            }}</span>
                     </div>
                 </div>
             </div>
@@ -176,7 +196,9 @@ watchEffect(() => {
                 </div>
                 <div class="mb-2 flex items-center justify-between text-xs">
                     <div class="dark:text-gray-400">
-                        $ {{ formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.cumulative_amount : 0, 0) }}
+                        $ {{
+                            formatAmount(subscriberAccount.subscription ? subscriberAccount.subscription.cumulative_amount : 0, 0)
+                        }}
                     </div>
                     <div class="dark:text-gray-400">$ {{ subscriberAccount.max_out_amount }}</div>
                 </div>

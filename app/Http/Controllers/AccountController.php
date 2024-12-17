@@ -111,7 +111,11 @@ class AccountController extends Controller
                 'leverage' => $leverage,
             ]);
 
-            return back()->with('toast', trans('public.created_virtual_account'));
+            return back()->with('toast', [
+                'title' => trans("public.success"),
+                'message' => trans('public.created_virtual_account'),
+                'type' => 'success',
+            ]);
         }
     }
 
@@ -184,13 +188,13 @@ class AccountController extends Controller
                 } elseif ($latest_unsubscribed && Carbon::parse($latest_unsubscribed->unsubscribe_date)->greaterThan(Carbon::now()->subHours(24))) {
                     $data['balance_in'] = true;
                     $data['balance_out'] = false;
-                } elseif ($active_subscriber->where('status', 'Pending')->exists()) {
+                } elseif ($active_subscriber->clone()->where('status', 'Pending')->exists()) {
                     $data['balance_in'] = false;
                     $data['balance_out'] = false;
-                } elseif ($active_subscriber->whereIn('status', ['Subscribing', 'Expiring'])->exists() && $tradingAccount->account_type == 3) {
+                } elseif ($active_subscriber->clone()->whereIn('status', ['Subscribing', 'Expiring'])->exists() && $tradingAccount->account_type == 3) {
                     $data['balance_in'] = false;
                     $data['balance_out'] = false;
-                } elseif ($active_subscriber->whereIn('status', ['Subscribing', 'Expiring'])->exists()) {
+                } elseif ($active_subscriber->clone()->whereIn('status', ['Subscribing', 'Expiring'])->exists()) {
                     $data['balance_in'] = true;
                     $data['balance_out'] = false;
                 } elseif ($tradingAccount->demo_fund > 0) {

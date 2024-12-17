@@ -6,16 +6,11 @@ import InputNumber from "primevue/inputnumber";
 import Checkbox from "primevue/checkbox";
 import {ref, watch} from "vue";
 import InputLabel from "@/Components/Label.vue";
-import InputText from "primevue/inputtext";
 import InputError from "@/Components/InputError.vue";
 import {transactionFormat} from "@/Composables/index.js";
 import {useForm} from "@inertiajs/vue3";
 import TermsAndCondition from "@/Components/TermsAndCondition.vue";
-import {MinusIcon, PlusIcon} from "@heroicons/vue/outline";
 import {useLangObserver} from "@/Composables/localeObserver.js";
-import {
-    IconFileInfo
-} from "@tabler/icons-vue"
 
 const props = defineProps({
     master: Object,
@@ -34,6 +29,7 @@ const openDialog = () => {
     visible.value = true;
     selectedAccount.value = null;
     getAvailableAccounts();
+    getTerms();
 }
 
 const getAvailableAccounts = async () => {
@@ -49,13 +45,24 @@ const getAvailableAccounts = async () => {
     }
 };
 
+const getTerms = async () => {
+    accountLoading.value = true;
+    try {
+        const response = await axios.get(`/${props.strategy}_strategy/getTerms`);
+        terms.value = response.data;
+
+    } catch (error) {
+        console.error('Error fetching trading accounts data:', error);
+    } finally {
+        accountLoading.value = false;
+    }
+};
+
 const form = useForm({
     master_id: props.master.id,
     meta_login: '',
     investment_amount: null,
-    amount_package_id: '',
-    package_product: '',
-    delivery_address: '',
+    type: '',
     terms: false,
 });
 
@@ -66,7 +73,7 @@ watch(selectedAccount, () => {
 });
 
 const submitForm = () => {
-    form.post(route('hofi_strategy.followPammMaster'), {
+    form.post(route('hofi_strategy.joinCopyTrade'), {
         onSuccess: () => {
             closeDialog();
         }
@@ -77,16 +84,6 @@ const closeDialog = () => {
     visible.value = false;
     selectedAccount.value = null;
 }
-
-const filterPammMedia = (media) => {
-    const targetCollection = `${locale.value}_tnc_pdf`;
-    return media.filter((item) => item.collection_name === targetCollection);
-};
-
-const filterTreeMedia = (media) => {
-    const targetCollection = `${locale.value}_tree_pdf`;
-    return media.filter((item) => item.collection_name === targetCollection);
-};
 </script>
 
 <template>
@@ -190,72 +187,17 @@ const filterTreeMedia = (media) => {
                         v-model="form.investment_amount"
                         inputId="investment_amount"
                         class="w-full"
-                        :min="Number(master.min_join_equity)"
-                        :step="master.type === 'ESG' ? 1000 : 100"
+                        :min="0"
+                        :step="100"
                         fluid
-                        showButtons
-                        buttonLayout="horizontal"
                         mode="currency"
                         currency="USD"
                         locale="en-US"
+                        readonly
                         :placeholder="'$ ' + formatAmount(master.min_join_equity)"
                         :invalid="!!form.errors.investment_amount"
-                    >
-                        <template #incrementbuttonicon>
-                            <PlusIcon class="w-4 h-4"/>
-                        </template>
-                        <template #decrementbuttonicon>
-                            <MinusIcon class="w-4 h-4"/>
-                        </template>
-                    </InputNumber>
-                    <small v-if="selectedAccount && selectedAccount.balance % 100 > 0" class="text-error-500">{{ $t('public.amount_return_cash_wallet') }}: <strong>${{ formatAmount(selectedAccount.balance % 100) }}</strong></small>
-                    <InputError :message="form.errors.investment_amount" />
-                </div>
-
-                <!-- Delivery Address -->
-                <div
-                    v-if="master.delivery_address"
-                    class="flex flex-col items-start gap-1 self-stretch w-full"
-                >
-                    <InputLabel for="delivery_address" :value="$t('public.delivery_address')" />
-                    <InputText
-                        id="delivery_address"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.delivery_address"
-                        :placeholder="$t('public.delivery_address')"
-                        :invalid="!!form.errors.delivery_address"
                     />
-                    <InputError :message="form.errors.delivery_address" />
-                </div>
-            </div>
-
-            <!-- ESG Tree notice -->
-            <div class="flex flex-col items-start gap-3 self-stretch">
-                <span class="text-gray-950 dark:text-white text-sm font-bold">{{ $t('public.notice') }}</span>
-                <div v-if="master.type === 'ESG'" class="text-sm text-gray-500">
-                    {{ $t('public.purchase_product_desc') }}
-                    <span class="font-semibold text-primary-500">{{ form.investment_amount / 1000 ?? 0 }}</span>
-                </div>
-                <div class="flex flex-col items-start gap-1 self-stretch">
-                    <div
-                        v-for="mediaItem in filterPammMedia(master.media)"
-                        :key="mediaItem.id"
-                        class="flex gap-1 items-center text-xs text-gray-500"
-                    >
-                        <IconFileInfo size="16" />
-                        {{ $t('public.pamm_agreement') }} -
-                        <a :href="mediaItem.original_url" target="_blank" class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-primary-700 dark:text-primary-600 dark:hover:text-primary-400">{{ $t('public.view_details') }}</a>
-                    </div>
-                    <div
-                        v-for="mediaItem in filterTreeMedia(master.media)"
-                        :key="mediaItem.id"
-                        class="flex gap-1 items-center text-xs text-gray-500"
-                    >
-                        <IconFileInfo size="16" />
-                        {{ $t('public.planting_agreement') }} -
-                        <a :href="mediaItem.original_url" target="_blank" class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-primary-700 dark:text-primary-600 dark:hover:text-primary-400">{{ $t('public.view_details') }}</a>
-                    </div>
+                    <small v-if="selectedAccount && selectedAccount.balance % 100 > 0" class="text-error-500">{{ $t('public.amount_return_cash_wallet') }}: <strong>${{ formatAmount(selectedAccount.balance % 100) }}</strong></small>
                 </div>
             </div>
 

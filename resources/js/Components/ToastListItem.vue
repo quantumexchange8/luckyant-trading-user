@@ -1,8 +1,17 @@
 <script setup>
 import {onMounted} from "vue";
+import {
+    IconCircleCheckFilled,
+    IconAlertTriangleFilled,
+    IconCircleXFilled,
+    IconInfoOctagonFilled,
+    IconX
+} from '@tabler/icons-vue';
 
 const props = defineProps({
+    title: String,
     message: String,
+    type: String, // Accepts 'success', 'info', 'warning', 'error'
     duration: {
         type: Number,
         default: 5000
@@ -14,17 +23,69 @@ onMounted(() => {
 });
 
 const emit = defineEmits(['remove']);
+
+// Determine icon based on the type
+const iconComponent = {
+    success: IconCircleCheckFilled,
+    warning: IconAlertTriangleFilled,
+    error: IconCircleXFilled,
+    info: IconInfoOctagonFilled
+}[props.type];
+
+const bgColor = {
+    success: 'bg-success-50/90 dark:bg-success-500/20',
+    warning: 'bg-warning-50/90 dark:bg-warning-500/20',
+    error: 'bg-error-50/90 dark:bg-error-500/20',
+    info: 'bg-info-50/90 dark:bg-info-500/20',
+}[props.type];
+
+const borderColor = {
+    success: 'border-success-200 dark:border-success-500/20',
+    warning: 'border-warning-200 dark:border-warning-500/20',
+    error: 'border-error-200 dark:border-error-500/20',
+    info: 'border-info-500/90 dark:border-info-500/20',
+}[props.type];
+
+const textColor = {
+    success: 'text-success-500',
+    warning: 'text-warning-500',
+    error: 'text-error-500',
+    info: 'text-info-500',
+}[props.type];
+
 </script>
 <template>
-    <div class="flex items-center p-4 text-gray-500 bg-gray-100 rounded-lg shadow dark:text-gray-900 dark:bg-white" role="alert">
-        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-blue-500 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-200">
-            <svg class="h-8 w-8 text-green-500"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <path d="M5 12l5 5l10 -10" /></svg>
-            <span class="sr-only">Check icon</span>
+    <div
+        class="mx-3 sm:mx-0 py-3 px-4 flex justify-center self-stretch gap-4 rounded border shadow-toast backdrop-blur-[10px]"
+        :class="[
+            message ? 'items-start' : 'items-center',
+            borderColor,
+            bgColor
+        ]"
+        role="alert"
+    >
+        <div :class="textColor">
+            <component :is="iconComponent" size="20" />
         </div>
-        <div class="ml-3 text-sm font-normal">{{ props.message }}</div>
-        <button @click="emit('remove')" type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-300 inline-flex h-8 w-8 dark:text-gray-600 dark:hover:text-white dark:bg-dark-eval-4 dark:hover:bg-gray-400" data-dismiss-target="#toast-default" aria-label="Close">
-            <span class="sr-only">Close</span>
-            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-        </button>
+        <div
+            class="flex flex-col items-start w-full text-sm"
+            :class="{
+                'gap-1': message
+            }"
+        >
+            <div class="font-semibold" :class="textColor">
+                {{ title }}
+            </div>
+            <div class="text-gray-700 text-xs dark:text-gray-300">
+                {{ message }}
+            </div>
+        </div>
+        <div
+            class="hover:cursor-pointer select-none"
+            :class="textColor"
+            @click="emit('remove')"
+        >
+            <IconX size="16" stroke-width="1.5" />
+        </div>
     </div>
 </template>

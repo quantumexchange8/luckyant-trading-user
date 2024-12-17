@@ -1,39 +1,38 @@
 <script setup>
-import Button from "@/Components/Button.vue";
-import Modal from "@/Components/Modal.vue";
+import Button from "primevue/button";
 import {ref, watch} from "vue";
-import {useForm, usePage} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
-import Label from "@/Components/Label.vue";
-import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
-import BaseListbox from "@/Components/BaseListbox.vue";
-import {MinusIcon, PlusIcon} from "@heroicons/vue/outline";
 import InputNumber from "primevue/inputnumber";
-import Checkbox from "@/Components/Checkbox.vue";
+import Checkbox from "primevue/checkbox";
+import dayjs from "dayjs";
+import {useLangObserver} from "@/Composables/localeObserver.js";
+import Select from "primevue/select";
+import InputLabel from "@/Components/Label.vue";
+import TermsAndCondition from "../../../../../../../Projects/luckyant-trading-user/resources/js/Components/TermsAndCondition.vue";
+import {MinusIcon, PlusIcon} from "@heroicons/vue/outline";
 
 const props = defineProps({
-    pamm: Object,
-    terms: Object,
-    walletSel: Object
+    strategyType: String,
+    subscriber: Object,
+    walletSel: Array
 })
 
-const topUpModal = ref(false);
-const currentLocale = ref(usePage().props.locale);
-const { formatDateTime, formatAmount } = transactionFormat();
-
-const openTopUpModal = () => {
-    topUpModal.value = true;
-}
-
-const closeModal = () => {
-    topUpModal.value = false;
-}
+const {formatAmount} = transactionFormat();
+const {locale} = useLangObserver();
+const top_up_amount = ref(null);
+const eWalletAmount = ref(null);
+const cashWalletAmount = ref(null);
+const maxEWalletAmount = ref(null);
+const minEWalletAmount = ref(null);
+const selectedWallet = ref(props.walletSel[0]);
+const terms = ref();
+const emit = defineEmits(['update:visible']);
 
 const form = useForm({
-    id: '',
-    wallet_id: props.walletSel[0].value,
-    pamm_id: props.pamm.id,
+    wallet_id: selectedWallet.value.value,
+    pamm_id: props.subscriber.id,
     top_up_amount: 0,
     eWalletAmount: 0,
     cashWalletAmount: 0,
@@ -42,225 +41,249 @@ const form = useForm({
     terms: ''
 })
 
-const top_up_amount = ref(null);
-const productQuantity = ref();
-const eWalletAmount = ref();
-const cashWalletAmount = ref();
-const maxEWalletAmount = ref();
-const minEWalletAmount = ref();
-const selectedPercentage = ref(20); // Default to 20%
+const getTerms = async () => {
+    try {
+        const response = await axios.get(`/${props.strategyType}_strategy/getTerms?type=pamm_esg`);
+        terms.value = response.data;
 
-watch(top_up_amount, (new_top_up_amount) => {
-    const percentage = selectedPercentage.value / 100; // Convert percentage to decimal
+    } catch (error) {
+        console.error('Error fetching trading accounts data:', error);
+    }
+};
 
-    eWalletAmount.value = (new_top_up_amount * percentage).toString();
-    cashWalletAmount.value = new_top_up_amount - eWalletAmount.value;
-    maxEWalletAmount.value = eWalletAmount.value;
-    minEWalletAmount.value = maxEWalletAmount.value * 0.05;
-    productQuantity.value = new_top_up_amount / 1000;
+getTerms();
+
+watch(selectedWallet, (newWallet) => {
+    top_up_amount.value = null
+    form.wallet_id = newWallet.value;
+})
+
+watch(top_up_amount, (newTopupAmount) => {
+    const percentage = 20 / 100;
+
+    if (selectedWallet.value.type === 'e_wallet') {
+        eWalletAmount.value = newTopupAmount * percentage;
+        cashWalletAmount.value = newTopupAmount - eWalletAmount.value;
+        maxEWalletAmount.value = eWalletAmount.value;
+        minEWalletAmount.value = maxEWalletAmount.value * 0.05;
+    } else {
+        cashWalletAmount.value = newTopupAmount;
+    }
 })
 
 watch(eWalletAmount, (newEWalletAmount) => {
-    const parseEWalletAmount = parseFloat(newEWalletAmount); // Convert to number
-    // Check if newEWalletAmount is within the range
-    if (parseEWalletAmount >= minEWalletAmount.value && parseEWalletAmount <= maxEWalletAmount.value) {
-        cashWalletAmount.value = top_up_amount.value - parseEWalletAmount;
+    if (newEWalletAmount >= minEWalletAmount.value && newEWalletAmount <= maxEWalletAmount.value) {
+        cashWalletAmount.value = top_up_amount.value - newEWalletAmount;
     }
 });
 
-const submit = () => {
-    form.top_up_amount = parseFloat(top_up_amount.value);
-    form.eWalletAmount = parseFloat(eWalletAmount.value);
-    form.cashWalletAmount = parseFloat(cashWalletAmount.value);
-    form.maxEWalletAmount = maxEWalletAmount.value;
-    form.minEWalletAmount = parseFloat(minEWalletAmount.value);
+const submitForm = () => {
+    form.top_up_amount = top_up_amount.value;
+    form.eWalletAmount = eWalletAmount.value ?? 0;
+    form.cashWalletAmount = cashWalletAmount.value ?? 0;
+    form.maxEWalletAmount = maxEWalletAmount.value ?? 0;
+    form.minEWalletAmount = minEWalletAmount.value ?? 0;
     form.post(route('pamm.topUpPamm'), {
         onSuccess: () => {
-            closeModal();
+            closeDialog();
             form.reset();
         },
     });
 }
 
-const termsModal = ref(false);
-
-const openTermsModal = () => {
-    termsModal.value = true
-}
-
-const closeTermsModal = () => {
-    termsModal.value = false
+const closeDialog = () => {
+    emit("update:visible", false);
 }
 </script>
 
 <template>
-    <Button
-        type="button"
-        variant="primary"
-        class="w-full flex justify-center"
-        @click="openTopUpModal"
-    >
-        {{ $t('public.top_up') }}
-    </Button>
-
-    <Modal :show="topUpModal" :title="$t('public.top_up')" @close="closeModal">
-        <div class="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <div class="flex flex-col items-start gap-3 self-stretch">
-                <div class="text-lg font-semibold dark:text-white">
-                    <div v-if="currentLocale === 'en'">
-                        {{ pamm.master.trading_user.name }}
+    <div class="flex flex-col items-center self-stretch gap-5 md:gap-8">
+        <div
+            class="py-5 px-6 flex flex-col items-center gap-4 bg-gray-50 dark:bg-gray-950 divide-y dark:divide-gray-700 self-stretch">
+            <div class="w-full flex items-center gap-4">
+                <div class="flex flex-col items-start self-stretch">
+                    <div class="self-stretch truncate w-[190px] md:w-64 text-gray-950 dark:text-white font-bold">
+                        <div v-if="locale === 'cn'">
+                            {{
+                                subscriber.master.trading_user.company ? subscriber.master.trading_user.company : subscriber.master.trading_user.name
+                            }}
+                        </div>
+                        <div v-else>
+                            {{ subscriber.master.trading_user.name }}
+                        </div>
                     </div>
-                    <div v-if="currentLocale === 'cn'">
-                        {{ pamm.master.trading_user.company ? pamm.master.trading_user.company : pamm.master.trading_user.name }}
-                    </div>
-                </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.account_number')}}
-                    </div>
-                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        {{ pamm.master_meta_login }}
+                    <div class="self-stretch truncate w-24 text-gray-500 text-sm">
+                        {{ subscriber.master.meta_login }}
                     </div>
                 </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.subscription_number')}}
+            </div>
+            <div class="flex flex-col items-start gap-3 w-full pt-4 self-stretch">
+                <div class="flex flex-col gap-1 items-center self-stretch">
+                    <div class="flex py-1 gap-3 items-start self-stretch">
+                        <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.account_no') }}</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{
+                                subscriber.meta_login
+                            }}</span>
                     </div>
-                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        {{ pamm.subscription_number }}
+                    <div class="flex py-1 gap-3 items-start self-stretch">
+                        <span class="w-full text-gray-500 font-medium text-xs">{{
+                                $t('public.subscription_number')
+                            }}</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{
+                                subscriber.subscription_number
+                            }}</span>
                     </div>
-                </div>
-                <div
-                    v-if="pamm.type === 'ESG'"
-                    class="flex items-center justify-between gap-2 self-stretch"
-                >
-                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.product')}}
+                    <div class="flex py-1 gap-3 items-start self-stretch">
+                        <span class="w-full text-gray-500 font-medium text-xs">{{
+                                $t('public.roi_date')
+                            }} ({{ subscriber.settlement_period }} {{ $t('public.days') }} )</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{
+                                dayjs(subscriber.settlement_date).format('YYYY/MM/DD')
+                            }}</span>
                     </div>
-                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        {{ pamm.package ? '$ ' + formatAmount(pamm.package.amount, 2) + ' - ' : null }} {{ pamm.subscription_package_product }}
-                    </div>
-                </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.fund')}}
-                    </div>
-                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        $ {{ formatAmount(pamm.subscription_amount, 0) }}
-                    </div>
-                </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        {{$t('public.roi_period')}} ({{ pamm.subscription_period }} {{ $t('public.days') }})
-                    </div>
-                    <div class="text-sm sm:text-base text-gray-800 dark:text-white font-semibold">
-                        {{ formatDateTime(pamm.expired_date, false) }}
+                    <div class="flex py-1 gap-3 items-start self-stretch">
+                        <span class="w-full text-gray-500 font-medium text-xs">{{
+                                $t('public.investment_amount')
+                            }}</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">$ {{
+                                formatAmount(subscriber.total_amount)
+                            }}</span>
                     </div>
                 </div>
             </div>
         </div>
-        <form class="space-y-4 my-4">
-            <div class="space-y-2">
-                <Label
-                    class="w-full text-gray-600 dark:text-white"
-                    for="wallet"
+
+        <div class="flex flex-col items-center gap-3 self-stretch">
+            <!-- Select Wallet -->
+            <div class="flex flex-col items-start gap-1 self-stretch">
+                <InputLabel
+                    for="wallet_id"
                     :value="$t('public.wallet')"
                 />
-                <BaseListbox
+                <Select
+                    input-id="wallet_id"
+                    v-model="selectedWallet"
                     :options="walletSel"
-                    v-model="form.wallet_id"
-                    :error="!!form.errors.wallet_id"
+                    optionLabel="label"
+                    :placeholder="$t('public.select_wallet')"
+                    class="w-full"
+                    :invalid="!!form.errors.wallet_id"
+                    :disabled="!walletSel.length"
                 />
+                <InputError :message="form.errors.wallet_id"/>
             </div>
-            <div class="space-y-2 pb-2">
-                <Label
-                    class="w-full text-gray-600 dark:text-white"
-                    for="top_up_amount"
-                    :value="$t('public.top_up_amount')"
-                />
+
+            <div class="flex flex-col items-start gap-1 self-stretch">
+                <InputLabel for="amount" :value="$t('public.amount')"/>
                 <InputNumber
                     v-model="top_up_amount"
                     class="w-full"
                     inputId="horizontal-buttons"
                     showButtons
                     buttonLayout="horizontal"
-                    :min="pamm.type === 'ESG' ? 1000 : 10"
-                    :step="pamm.type === 'ESG' ? 1000 : 10"
+                    :min="subscriber.type === 'ESG' ? 1000 : 10"
+                    :step="subscriber.type === 'ESG' ? 1000 : 10"
                     mode="currency"
                     currency="USD"
                     fluid
+                    :invalid="!!form.errors.top_up_amount"
                 >
                     <template #incrementbuttonicon>
                         <PlusIcon class="w-5 h-5"/>
                     </template>
                     <template #decrementbuttonicon>
-                        <MinusIcon class="w-5 h-5" />
+                        <MinusIcon class="w-5 h-5"/>
                     </template>
                 </InputNumber>
-                <div v-if="pamm.type === 'ESG'" class="text-sm text-gray-500">
-                    {{ (productQuantity ?? 0) + ' ' + $t('public.product') }}
+                <div v-if="subscriber.type === 'ESG'" class="text-sm text-gray-500">
+                    {{ $t('public.purchase_product_desc') }}
+                    <span class="font-semibold text-primary-500">{{ top_up_amount / 1000 ?? 0 }}</span>
                 </div>
-                <InputError :message="form.errors.top_up_amount" />
+                <InputError :message="form.errors.top_up_amount"/>
             </div>
 
-            <div class="border-t boarder-gray-300 pt-5" v-if="form.wallet_id === (walletSel.length > 1 ? walletSel[1].value : null)">
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{  walletSel[1].name }} ({{ $t('public.max') }}: $ {{ formatAmount(maxEWalletAmount) }})
+            <div
+                v-if="selectedWallet.value === (walletSel.length > 1 ? walletSel[1].value : null)"
+                class="grid grid-cols-1 md:grid-cols-2 gap-5 self-stretch"
+            >
+                <div class="flex flex-col items-start gap-1 self-stretch">
+                    <InputLabel for="amount" :value="walletSel[1].name"/>
+                    <InputNumber
+                        v-model="eWalletAmount"
+                        inputId="currency-us"
+                        mode="currency"
+                        currency="USD"
+                        class="w-full"
+                        :min="minEWalletAmount"
+                        :max="maxEWalletAmount"
+                        placeholder="$0.00"
+                        fluid
+                        showButtons
+                        :invalid="!!form.errors.eWalletAmount"
+                        :disabled="form.processing"
+                    />
+                    <div class="self-stretch text-gray-500 text-xs">{{ $t('public.max') }}:
+                        <span class="font-semibold text-sm dark:text-white">${{
+                                formatAmount(maxEWalletAmount ?? 0)
+                            }}</span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <Input
-                            id="eWalletAmount"
-                            type="number"
-                            :min="minEWalletAmount"
-                            :max="maxEWalletAmount"
-                            class="block w-24"
-                            v-model="eWalletAmount"
-                            :disabled="form.processing || !top_up_amount"
-                            :invalid="form.errors.eWalletAmount"
-                        />
-                    </div>
+                    <InputError :message="form.errors.eWalletAmount"/>
                 </div>
-                <div class="flex items-center justify-end gap-2 self-stretch">
-                    <InputError :message="form.errors.eWalletAmount" />
-                </div>
-                <div class="flex items-center justify-between gap-2 self-stretch">
-                    <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                        {{ $t('public.cash_wallet') }}
-                    </div>
-                    <div class="text-base text-gray-800 dark:text-white font-semibold">
-                        $ {{ formatAmount(cashWalletAmount ? cashWalletAmount : 0) }}
-                    </div>
+                <div class="flex flex-col items-start gap-1 self-stretch">
+                    <InputLabel for="amount" :value="$t('public.cash_wallet')"/>
+                    <InputNumber
+                        v-model="cashWalletAmount"
+                        inputId="currency-us"
+                        mode="currency"
+                        currency="USD"
+                        class="w-full"
+                        placeholder="$0.00"
+                        fluid
+                        disabled
+                    />
                 </div>
             </div>
 
-            <div class="flex items-center">
-                <div class="flex items-center h-5">
-                    <Checkbox id="terms" v-model="form.terms"/>
-                </div>
-                <div class="ml-3">
-                    <label for="terms" class="flex gap-1 text-gray-500 dark:text-gray-400 text-xs">
+            <!-- t&c -->
+            <div class="flex flex-col gap-1 items-start self-stretch">
+                <div class="flex items-start gap-2 self-stretch w-full">
+                    <Checkbox
+                        v-model="form.terms"
+                        inputId="terms"
+                        binary
+                        :invalid="!!form.errors.terms"
+                    />
+                    <label for="terms" class="text-gray-600 dark:text-gray-400 text-xs">
                         {{ $t('public.agreement') }}
-                        <div
-                            class="text-xs underline hover:cursor-pointer text-primary-500 hover:text-gray-700 dark:text-primary-600 dark:hover:text-primary-400"
-                            @click="openTermsModal"
-                        >
-                            {{ $t('public.terms_and_conditions') }}
-                        </div>
+                        <TermsAndCondition
+                            :termsLabel="$t('public.terms_and_conditions')"
+                            :terms="terms"
+                        />
                     </label>
                 </div>
+                <InputError :message="form.errors.terms"/>
             </div>
-            <InputError :message="form.errors.terms" />
-            <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
-                <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                    {{$t('public.cancel')}}
-                </Button>
-                <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
-            </div>
-        </form>
-    </Modal>
+        </div>
 
-    <Modal :show="termsModal" :title="$t('public.terms_and_conditions')" @close="closeTermsModal">
-        <div v-html="terms.contents" class="prose dark:text-white"></div>
-    </Modal>
+        <div class="flex w-full justify-end gap-3">
+            <Button
+                type="button"
+                severity="secondary"
+                text
+                class="justify-center w-full md:w-auto px-6"
+                @click="closeDialog"
+                :disabled="form.processing"
+            >
+                {{ $t('public.cancel') }}
+            </Button>
+            <Button
+                type="submit"
+                class="justify-center w-full md:w-auto px-6"
+                @click.prevent="submitForm"
+                :disabled="form.processing"
+            >
+                {{ $t('public.confirm') }}
+            </Button>
+        </div>
+    </div>
 </template>

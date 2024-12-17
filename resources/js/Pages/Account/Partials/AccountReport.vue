@@ -1,10 +1,10 @@
 <script setup>
-import { ref, watch } from 'vue';
-import Calendar from 'primevue/calendar';
-import Dropdown from "primevue/dropdown";
+import {ref, watch} from 'vue';
+import Datepicker from 'primevue/datepicker';
+import Select from "primevue/select";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import { transactionFormat } from '@/Composables/index.js';
+import {transactionFormat} from '@/Composables/index.js';
 import Dialog from 'primevue/dialog';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import {trans} from "laravel-vue-i18n";
@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 import Loading from "@/Components/Loading.vue";
 import {XCircleIcon} from "@/Components/Icons/outline.jsx";
 
-const { formatDate, formatDateTime, formatAmount } = transactionFormat();
+const {formatType, formatDateTime, formatAmount} = transactionFormat();
 
 const props = defineProps({
     account: Object,
@@ -28,12 +28,12 @@ const data = ref({});
 const tooltipText = ref('copy')
 
 const transferOptions = [
-    { name: trans('public.all'), value: 'all' },
-    { name: trans('public.balance_in'), value: 'balance_in' },
-    { name: trans('public.balance_out'), value: 'balance_out' },
-    { name: trans('public.internal_transfer'), value: 'internal_transfer' },
-    { name: trans('public.management_fee'), value: 'management_fee' },
-    { name: trans('public.top_up'), value: 'top_up' }
+    {name: trans('public.all'), value: 'all'},
+    {name: trans('public.balance_in'), value: 'balance_in'},
+    {name: trans('public.balance_out'), value: 'balance_out'},
+    {name: trans('public.internal_transfer'), value: 'internal_transfer'},
+    {name: trans('public.management_fee'), value: 'management_fee'},
+    {name: trans('public.top_up'), value: 'top_up'}
 ];
 
 const getAccountReport = async (filterDate = null, selectedOption = null) => {
@@ -138,7 +138,7 @@ function copyToClipboard(text) {
         <template #header>
             <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-3">
                 <div class="relative w-full">
-                    <Calendar
+                    <Datepicker
                         v-model="selectedDate"
                         selectionMode="range"
                         dateFormat="yy/mm/dd"
@@ -152,10 +152,10 @@ function copyToClipboard(text) {
                         class="absolute top-2/4 -mt-3 right-2 text-gray-400 select-none cursor-pointer bg-white dark:bg-surface-950"
                         @click="clearDate"
                     >
-                        <XCircleIcon class="w-5" />
+                        <XCircleIcon class="w-5"/>
                     </div>
                 </div>
-                <Dropdown
+                <Select
                     v-model="selectedOption"
                     :options="transferOptions"
                     optionLabel="name"
@@ -171,7 +171,7 @@ function copyToClipboard(text) {
         </template>
         <template #loading>
             <div class="flex flex-col gap-2 items-center justify-center">
-                <Loading />
+                <Loading/>
                 <span class="text-sm text-gray-700">{{ $t('public.loading') }}</span>
             </div>
         </template>
@@ -190,7 +190,7 @@ function copyToClipboard(text) {
             class="hidden md:table-cell"
         >
             <template #body="slotProps">
-                <span>{{ $t(`public.${slotProps.data.transaction_type}`) }}</span>
+                <span>{{ $t(`public.${formatType(slotProps.data.transaction_type).toLowerCase().replace(/\s+/g, '_')}`) }}</span>
             </template>
         </Column>
         <Column

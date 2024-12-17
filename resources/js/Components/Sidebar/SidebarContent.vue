@@ -7,6 +7,10 @@ import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.
 import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIcon } from '@heroicons/vue/outline'
 import {computed, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
+import {
+    IconCircleLetterA,
+    IconCircleLetterH,
+} from "@tabler/icons-vue"
 
 const currentDomain = window.location.hostname;
 const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
@@ -44,27 +48,66 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
             </template>
         </SidebarLink>
 
+        <!-- HOFI Strategy -->
         <SidebarCollapsible
-            v-if="currentDomain !== 'member.luckyantmallvn.com' && contentVisibility"
-            :title="$t('public.sidebar.copy_trading')"
-            :active="route().current('trading.*')"
+            :title="$t('public.hofi_strategy')"
+            :active="route().current('hofi_strategy.*')"
         >
             <template #icon>
-                <CoinsHandIcon
-                    class="flex-shrink-0 w-6 h-6"
-                    aria-hidden="true"
-                />
+                <IconCircleLetterH size="24" />
             </template>
 
             <SidebarCollapsibleItem
-                :href="route('trading.master_listing')"
-                :title="$t('public.sidebar.master_trader_listing')"
-                :active="route().current('trading.master_listing')"
+                v-if="currentDomain !== 'member.luckyantmallvn.com' && contentVisibility"
+                :href="route('hofi_strategy.master_listing')"
+                :title="$t('public.copy_trading')"
+                :active="route().current('hofi_strategy.master_listing')"
             />
             <SidebarCollapsibleItem
-                :href="route('trading.subscription_listing')"
+                v-if="contentVisibility"
+                :href="route('hofi_strategy.pamm_trading')"
+                :title="$t('public.pamm_trading')"
+                :active="route().current('hofi_strategy.pamm_trading')"
+            />
+            <SidebarCollapsibleItem
+                v-if="contentVisibility"
+                :href="route('hofi_strategy.esg_and_green_finance')"
+                :title="$t('public.esg_investment_portfolio')"
+                :active="route().current('hofi_strategy.esg_and_green_finance')"
+            />
+            <SidebarCollapsibleItem
+                :href="route('hofi_strategy.subscriptions')"
                 :title="$t('public.subscriptions')"
-                :active="route().current('trading.subscription_listing')"
+                :active="route().current('hofi_strategy.subscriptions')"
+            />
+        </SidebarCollapsible>
+
+        <!-- Alpha Strategy -->
+        <SidebarCollapsible
+            v-if="currentDomain !== 'member.luckyantmallvn.com' && contentVisibility"
+            :title="$t('public.alpha_strategy')"
+            :active="route().current('alpha_strategy.*')"
+        >
+            <template #icon>
+                <IconCircleLetterA size="24" />
+            </template>
+
+            <SidebarCollapsibleItem
+                v-if="currentDomain !== 'member.luckyantmallvn.com' && contentVisibility"
+                :href="route('alpha_strategy.master_listing')"
+                :title="$t('public.copy_trading')"
+                :active="route().current('alpha_strategy.master_listing')"
+            />
+            <SidebarCollapsibleItem
+                v-if="contentVisibility"
+                :href="route('alpha_strategy.pamm_trading')"
+                :title="$t('public.pamm_trading')"
+                :active="route().current('alpha_strategy.pamm_trading')"
+            />
+            <SidebarCollapsibleItem
+                :href="route('alpha_strategy.subscriptions')"
+                :title="$t('public.subscriptions')"
+                :active="route().current('alpha_strategy.subscriptions')"
             />
         </SidebarCollapsible>
 
@@ -102,34 +145,6 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
 <!--                :active="route().current('transaction.trading_account')"-->
 <!--            />-->
 <!--        </SidebarCollapsible>-->
-
-        <SidebarCollapsible
-            v-if="contentVisibility"
-            title="PAMM"
-            :active="route().current('pamm.*')"
-        >
-            <template #icon>
-                <CoinsStacked02Icon
-                    class="flex-shrink-0 w-6 h-6"
-                    aria-hidden="true"
-                />
-            </template>
-            <SidebarCollapsibleItem
-                :href="route('pamm.pamm_master_listing')"
-                :title="$t('public.pamm_master_listing')"
-                :active="route().current('pamm.pamm_master_listing')"
-            />
-            <SidebarCollapsibleItem
-                :href="route('pamm.esg_investment_portfolio')"
-                :title="$t('public.esg_investment_portfolio')"
-                :active="route().current('pamm.esg_investment_portfolio')"
-            />
-            <SidebarCollapsibleItem
-                :href="route('pamm.pamm_subscriptions')"
-                :title="$t('public.pamm_subscriptions')"
-                :active="route().current('pamm.pamm_subscriptions')"
-            />
-        </SidebarCollapsible>
 
         <SidebarCollapsible
             :title="$t('public.sidebar.affiliate_program')"

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CopyTradingController;
 use App\Http\Controllers\PammController;
 use App\Http\Controllers\SelectOptionController;
 use Inertia\Inertia;
@@ -132,6 +133,72 @@ Route::middleware('auth')->group(function () {
 //        Route::post('change-leverage', [AccountInfoController::class, 'change_leverage'])->name('account_info.change_leverage');
 //
 //        Route::get('/getTradingAccounts', [AccountInfoController::class, 'getTradingAccounts'])->name('account_info.getTradingAccounts');
+    });
+
+    /**
+     * ==============================
+     *             HOFI
+     * ==============================
+     */
+    Route::prefix('hofi_strategy')->group(function () {
+        // Copy Trading
+        Route::get('/copy_trading', [CopyTradingController::class, 'index'])->name('hofi_strategy.master_listing');
+        Route::get('/getMasters', [CopyTradingController::class, 'getMasters'])->name('hofi_strategy.getMasters');
+        Route::get('/getAvailableAccounts', [CopyTradingController::class, 'getAvailableAccounts'])->name('hofi_strategy.getAvailableAccounts');
+        Route::get('/getTerms', [CopyTradingController::class, 'getTerms'])->name('hofi_strategy.getTerms');
+
+        Route::post('joinCopyTrade', [CopyTradingController::class, 'joinCopyTrade'])->name('hofi_strategy.joinCopyTrade');
+
+        // PAMM Trading
+        Route::get('/pamm_trading', [PammController::class, 'pamm_master_listing'])->name('hofi_strategy.pamm_trading');
+        Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('hofi_strategy.getPammMasters');
+
+        // PAMM ESG
+        Route::get('/esg_and_green_finance', [PammController::class, 'esg_investment_portfolio'])->name('hofi_strategy.esg_and_green_finance');
+        Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('hofi_strategy.getPammMasters');
+
+        Route::post('/followPammMaster', [PammController::class, 'followPammMaster'])->name('hofi_strategy.followPammMaster');
+
+        // Subscriptions
+        Route::get('/subscriptions', [CopyTradingController::class, 'subscriptions'])->name('hofi_strategy.subscriptions');
+        Route::get('/getCopyTradeAccounts', [CopyTradingController::class, 'getCopyTradeAccounts'])->name('hofi_strategy.getCopyTradeAccounts');
+        Route::get('/getNewMaster', [CopyTradingController::class, 'getNewMaster'])->name('hofi_strategy.getNewMaster');
+        Route::get('/getCopyTradeSubscriptions', [CopyTradingController::class, 'getCopyTradeSubscriptions'])->name('hofi_strategy.getCopyTradeSubscriptions');
+
+        Route::get('/getPammAccounts', [PammController::class, 'getPammAccounts'])->name('hofi_strategy.getPammAccounts');
+        Route::get('/getPammSubscriptions', [PammController::class, 'getPammSubscriptions'])->name('hofi_strategy.getPammSubscriptions');
+        Route::get('/getPammSubscriptionDetail', [PammController::class, 'getPammSubscriptionDetail'])->name('hofi_strategy.getPammSubscriptionDetail');
+    });
+
+
+    /**
+     * ==============================
+     *             Alpha
+     * ==============================
+     */
+    Route::prefix('alpha_strategy')->group(function () {
+        // Copy Trading
+        Route::get('/copy_trading', [CopyTradingController::class, 'index'])->name('alpha_strategy.master_listing');
+        Route::get('/getMasters', [CopyTradingController::class, 'getMasters'])->name('alpha_strategy.getMasters');
+        Route::get('/getAvailableAccounts', [CopyTradingController::class, 'getAvailableAccounts'])->name('alpha_strategy.getAvailableAccounts');
+        Route::get('/getTerms', [CopyTradingController::class, 'getTerms'])->name('alpha_strategy.getTerms');
+
+        Route::post('joinCopyTrade', [CopyTradingController::class, 'joinCopyTrade'])->name('alpha_strategy.joinCopyTrade');
+
+        // PAMM Trading
+        Route::get('/pamm_trading', [PammController::class, 'pamm_master_listing'])->name('alpha_strategy.pamm_trading');
+        Route::get('/getPammMasters', [PammController::class, 'getPammMasters'])->name('alpha_strategy.getPammMasters');
+
+        Route::post('/followPammMaster', [PammController::class, 'followPammMaster'])->name('alpha_strategy.followPammMaster');
+
+        Route::get('/subscriptions', [CopyTradingController::class, 'subscriptions'])->name('alpha_strategy.subscriptions');
+        Route::get('/getCopyTradeAccounts', [CopyTradingController::class, 'getCopyTradeAccounts'])->name('alpha_strategy.getCopyTradeAccounts');
+        Route::get('/getNewMaster', [CopyTradingController::class, 'getNewMaster'])->name('alpha_strategy.getNewMaster');
+        Route::get('/getCopyTradeSubscriptions', [CopyTradingController::class, 'getCopyTradeSubscriptions'])->name('alpha_strategy.getCopyTradeSubscriptions');
+
+        Route::get('/getPammAccounts', [PammController::class, 'getPammAccounts'])->name('alpha_strategy.getPammAccounts');
+        Route::get('/getPammSubscriptions', [PammController::class, 'getPammSubscriptions'])->name('alpha_strategy.getPammSubscriptions');
+        Route::get('/getPammSubscriptionDetail', [PammController::class, 'getPammSubscriptionDetail'])->name('alpha_strategy.getPammSubscriptionDetail');
     });
 
     /**

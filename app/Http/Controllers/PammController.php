@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\FollowPammRequest;
 use App\Http\Requests\JoinPammRequest;
 use App\Models\Master;
-use App\Models\MasterManagementFee;
 use App\Models\MasterSubscriptionPackage;
 use App\Models\PammSubscription;
 use App\Models\Subscriber;
-use App\Models\Subscription;
 use App\Models\SubscriptionBatch;
 use App\Models\Term;
 use App\Models\TradingAccount;
@@ -20,13 +17,9 @@ use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
 use App\Services\SelectOptionService;
-use App\Services\SidebarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -34,151 +27,215 @@ use Inertia\Inertia;
 
 class PammController extends Controller
 {
-    public function pamm_master_listing()
+    /**
+     *
+     * @param Request $request
+     * @return string
+     */
+    private function getStrategyType(Request $request): string
     {
-        $user = User::find(1137);
+        $strategyTypeMapping = [
+            'hofi_strategy' => 'HOFI',
+            'alpha_strategy' => 'Alpha',
+        ];
 
+        $routeName = $request->route()->getName();
+
+        foreach ($strategyTypeMapping as $prefix => $type) {
+            if (str_starts_with($routeName, $prefix)) {
+                return $type;
+            }
+        }
+
+        abort(404, 'Invalid strategy type');
+    }
+
+    public function pamm_master_listing(Request $request)
+    {
+        $strategyType = $this->getStrategyType($request);
+
+        $user = User::find(1137);
         if ($user) {
             $childrenIds = $user->getChildrenIds();
-
-            $authUserId = \Auth::id();
+            $authUserId = Auth::id();
 
             if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
                 return redirect()->back();
             }
         }
 
+        $masterQuery = Master::where([
+            'category' => 'pamm',
+            'type' => 'StandardGroup',
+            'strategy_type' => $strategyType,
+            'status' => 'Active',
+        ]);
+
+        $authUser = Auth::user();
+        $first_leader = $authUser->getFirstLeader();
+
+        $masterQuery->whereHas('visible_to_leaders', function ($q) use ($first_leader) {
+            $q->where('user_id', $first_leader->id);
+        });
+
+        $mastersCount = $masterQuery->count();
+
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
-            'title' => trans('public.pamm_master_listing'),
+            'mastersCount' => $mastersCount,
+            'strategyType' => strtolower($strategyType),
             'pammType' => 'StandardGroup'
         ]);
     }
 
-    public function esg_investment_portfolio()
+    public function esg_investment_portfolio(Request $request)
     {
+        $strategyType = $this->getStrategyType($request);
+
+        $user = User::find(1137);
+        if ($user) {
+            $childrenIds = $user->getChildrenIds();
+            $authUserId = Auth::id();
+
+            if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
+                return redirect()->back();
+            }
+        }
+
+        $masterQuery = Master::where([
+            'category' => 'pamm',
+            'type' => 'ESG',
+            'strategy_type' => $strategyType,
+            'status' => 'Active',
+        ]);
+
+        $authUser = Auth::user();
+        $first_leader = $authUser->getFirstLeader();
+
+        $masterQuery->whereHas('visible_to_leaders', function ($q) use ($first_leader) {
+            $q->where('user_id', $first_leader->id);
+        });
+
+        $mastersCount = $masterQuery->count();
+
         return Inertia::render('Pamm/PammMaster/PammMasterListing', [
-            'terms' => Term::where('type', 'pamm_esg')->first(),
-            'title' => trans('public.esg_investment_portfolio'),
+            'mastersCount' => $mastersCount,
+            'strategyType' => strtolower($strategyType),
             'pammType' => 'ESG'
         ]);
     }
 
     public function getPammMasters(Request $request)
     {
-        $user = Auth::user();
-        $first_leader = $user->getFirstLeader();
+        // fetch limit with default
+        $limit = $request->input('limit', 12);
 
-        $masterAccounts = Master::with([
-            'user:id,username,name,email',
-            'tradingAccount:id,meta_login,balance,equity',
-            'tradingUser:id,name,company,meta_login',
-            'masterManagementFee'
-        ])
-            ->where('status', 'Active')
-            ->where('signal_status', 1)
-            ->where('category', 'pamm')
-            ->whereNot('user_id', $user->id);
+        // Fetch parameter from request
+        $search = $request->input('search', '');
+        $sortType = $request->input('sortType');
+        $tag = $request->input('tag', '');
 
-        // Exclude accounts not visible to the first leader
-        if ($first_leader) {
-            $masterAccounts->whereJsonDoesntContain('not_visible_to', $first_leader->id);
-        }
+        $strategyType = $this->getStrategyType($request);
 
-        // Handle public/private logic
-        if ($user->is_public == 1) {
-            // User is public
-            if ($first_leader) {
-                $masterAccounts->where('is_public', $first_leader->is_public);
-            } else {
-                $masterAccounts->where('is_public', 1);
-            }
-        } else {
-            if ($first_leader) {
-                $leader = $first_leader;
-                while ($leader && $leader->masterAccounts->isEmpty()) {
-                    $leader = $leader->getFirstLeader();
-                }
+        // Fetch paginated masters
+        $mastersQuery = Master::query()
+            ->with([
+                'tradingUser:id,meta_login,name,account_type',
+                'media',
+                'masterManagementFee'
+            ])
+            ->withCount([
+                'active_copy_trades',
+                'active_pamm'
+            ])
+            ->withSum('active_copy_trades', 'subscribe_amount')
+            ->withSum('active_pamm', 'subscription_amount')
+            ->addSelect([
+                'latest_profit' => DB::table('trade_histories')
+                    ->select('trade_profit')
+                    ->whereColumn('trade_histories.meta_login', 'masters.meta_login')
+                    ->latest('created_at')
+                    ->limit(1),
+            ])
+            ->where([
+                'category' => 'pamm',
+                'strategy_type' => $strategyType,
+                'type' => $request->pamm_type,
+                'status' => 'Active',
+            ]);
 
-                if ($leader) {
-                    // Allow viewing leader's master accounts and public master accounts
-                    $masterAccounts->where(function ($query) use ($leader) {
-                        $query->where('is_public', 1) // Public master accounts
-                        ->orWhere(function ($query) use ($leader) {
-                            $query->where('is_public', $leader->is_public)
-                                ->whereIn('user_id', $leader->masterAccounts->pluck('user_id'));
-                        });
-                    });
-                } else {
-                    // No valid leader found, only show public accounts
-                    $masterAccounts->where('is_public', 1);
-                }
-            } else {
-                // No leader, show public accounts and user's own master accounts
-                $masterAccounts->where(function ($query) use ($user) {
-                    $query->where('is_public', 1) // Public master accounts
-                    ->orWhereIn('id', $user->masterAccounts->pluck('id')); // User's own master accounts
+        $authUser = Auth::user();
+        $first_leader = $authUser->getFirstLeader();
+
+        $mastersQuery->whereHas('visible_to_leaders', function ($q) use ($first_leader) {
+            $q->where('user_id', $first_leader->id);
+        });
+
+        // Apply search parameter to multiple fields
+        if (!empty($search)) {
+            $keyword = '%' . $search . '%';
+            $mastersQuery->where(function ($q) use ($keyword) {
+                $q->whereHas('tradingUser', function ($account) use ($keyword) {
+                    $account->where('meta_login', 'like', $keyword)
+                        ->orWhere('name', 'like', $keyword)
+                        ->orWhere('company', 'like', $keyword);
                 });
-            }
-        }
-
-        // Apply search filter
-        if ($request->filled('search')) {
-            $search = '%' . $request->input('search') . '%';
-            $masterAccounts->where(function ($query) use ($search) {
-                $query->whereHas('tradingAccount', fn($q) => $q->where('meta_login', 'like', $search))
-                    ->orWhereHas('user', fn($q) => $q->where('name', 'like', $search)
-                        ->orWhere('username', 'like', $search)
-                        ->orWhere('email', 'like', $search));
             });
         }
 
-        // Apply type filter
-        if ($request->filled('type')) {
-            $masterAccounts->where('type', $request->input('type'));
-        }
+        // Apply sorting dynamically
+        if (in_array($sortType, ['latest', 'largest_fund', 'most_investors'])) {
+            switch ($sortType) {
+                case 'latest':
+                    $mastersQuery->orderBy('created_at', 'desc');
+                    break;
 
-        // Apply sort options
-        if ($request->filled('sort')) {
-            $sort = $request->input('sort');
-            switch ($sort) {
-                case 'max_equity':
-                    $masterAccounts->orderByDesc('min_join_equity');
+                case 'largest_fund':
+                    $mastersQuery->orderByDesc(DB::raw('COALESCE(active_copy_trades_sum_subscribe_amount, 0) + COALESCE(active_pamm_sum_subscription_amount, 0)'));
                     break;
-                case 'min_equity':
-                    $masterAccounts->orderBy('min_join_equity');
+
+                case 'most_investors':
+                    $mastersQuery->orderByDesc(DB::raw('COALESCE(active_copy_trades_count, 0) + COALESCE(active_pamm_count, 0)'));
                     break;
-                case 'max_sub':
-                    $masterAccounts->withCount('subscribers')->orderByDesc('subscribers_count');
-                    break;
-                case 'min_sub':
-                    $masterAccounts->withCount('subscribers')->orderBy('subscribers_count');
-                    break;
-                // Add more cases as needed for other sort values
+
+                default:
+                    return response()->json(['error' => 'Invalid filter'], 400);
             }
         }
 
-        $masterAccounts = $masterAccounts->latest()->paginate(10);
+        // Apply tag filter
+        if (!empty($tag)) {
+            $tags = explode(',', $tag);
 
-        // Enhance master accounts with additional data
-        $masterAccounts->each(function ($master) {
-            $totalSubscriptionsFee = PammSubscription::where('master_id', $master->id)
-                ->where('status', 'Active')
-                ->sum('subscription_fee');
+            foreach ($tags as $tag) {
+                if ($tag == 'no_min_investment') {
+                    $mastersQuery->where('min_join_equity', 0);
+                } elseif ($tag == 'lock_free') {
+                    $mastersQuery->where(function ($query) {
+                        $query->where('join_period', 0)
+                            ->orWhereNull('join_period');
+                    });
+                } elseif ($tag == 'zero_fee') {
+                    $mastersQuery->where(function ($query) {
+                        $query->where('sharing_profit', 0)
+                            ->orWhereNull('sharing_profit');
+                    });
+                } else {
+                    return response()->json(['error' => 'Invalid filter'], 400);
+                }
+            }
+        }
 
-            // requires active count relation
-            $pamm_subscription_count = PammSubscription::where('master_id', $master->id)->where('status', 'Active')->count();
+        // Get total count of masters
+        $totalRecords = $mastersQuery->count();
 
-            $master->user->profile_photo_url = $master->user->getFirstMediaUrl('profile_photo');
-            $master->total_subscription_amount = ($totalSubscriptionsFee + $master->total_fund) ?? 0;
-            $master->total_subscribers = $master->total_subscribers + $pamm_subscription_count;
-            $master->tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tnc_pdf') : $master->getFirstMediaUrl('en_tnc_pdf');
-            $master->tree_tnc_url = App::getLocale() == 'cn' ? $master->getFirstMediaUrl('cn_tree_pdf') : $master->getFirstMediaUrl('en_tree_pdf');
-            $master->totalFundWidth = ($master->total_fund == 0)
-                ? ($totalSubscriptionsFee + $master->extra_fund)
-                : (($totalSubscriptionsFee + $master->extra_fund) ?? 0) / $master->total_fund * 100;
-        });
+        // Fetch paginated results
+        $masters = $mastersQuery->paginate($limit);
 
-        return response()->json($masterAccounts);
+        return response()->json([
+            'masters' => $masters,
+            'totalRecords' => $totalRecords,
+            'currentPage' => $masters->currentPage(),
+        ]);
     }
 
     public function getMasterSubscriptionPackages(Request $request)
@@ -197,7 +254,7 @@ class PammController extends Controller
     {
         $user = Auth::user();
         $meta_login = $request->meta_login;
-        $amount = $request->amount;
+        $amount = $request->investment_amount;
         $wallet = Wallet::where('user_id', $user->id)->where('type', 'cash_wallet')->first();
         $masterAccount = Master::with('tradingAccount:id,meta_login,margin_leverage')->find($request->master_id);
 
@@ -227,20 +284,24 @@ class PammController extends Controller
 
         // check open trade
         if ($userTrade) {
-            return redirect()->back()
-                ->with('title', trans('public.invalid_action'))
-                ->with('warning', trans('public.user_got_trade'));
+            return back()->with('toast', [
+                'title' => trans("public.invalid_action"),
+                'message' => trans("public.user_got_trade"),
+                'type' => 'warning',
+            ]);
         }
 
         // check meta subscriber status
         if ($pamm_subscription) {
-            return redirect()->back()
-                ->with('title', trans('public.invalid_action'))
-                ->with('warning', trans('public.try_again_later'));
+            return back()->with('toast', [
+                'title' => trans("public.invalid_action"),
+                'message' => trans("public.try_again_later"),
+                'type' => 'warning',
+            ]);
         }
 
         try {
-            $metaService->getUserInfo($user->tradingAccounts);
+            $metaService->getUserInfo(TradingAccount::where('meta_login', $meta_login)->get());
         } catch (\Exception $e) {
             \Log::error('Error fetching trading accounts: '. $e->getMessage());
             return redirect()->back()
@@ -248,7 +309,7 @@ class PammController extends Controller
                 ->with('warning', trans('public.try_again_later'));
         }
 
-        $tradingAccount = TradingAccount::where('meta_login', $meta_login)->first();
+        $tradingAccount = TradingAccount::firstWhere('meta_login', $meta_login);
 
         if ($tradingAccount->margin_leverage != $masterAccount->tradingAccount->margin_leverage) {
             throw ValidationException::withMessages(['meta_login' => 'Leverage not same']);
@@ -304,6 +365,7 @@ class PammController extends Controller
             'subscription_package_id' => $request->amount_package_id,
             'subscription_package_product' => $masterAccount->type == 'ESG' ? $amount / 1000 . '棵沉香树' : $request->package_product,
             'type' => $masterAccount->type,
+            'strategy_type' => $masterAccount->strategy_type,
             'subscription_number' => RunningNumberService::getID('subscription'),
             'subscription_period' => $masterAccount->join_period,
             'settlement_period' => $masterAccount->roi_period,
@@ -316,9 +378,11 @@ class PammController extends Controller
 
         $metaService->disableTrade($meta_login);
 
-        return redirect()->back()
-            ->with('title', trans('public.success_subscribe'))
-            ->with('success', trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login);
+        return back()->with('toast', [
+            'title' => trans("public.success_submission"),
+            'message' => trans('public.successfully_subscribe'). ': ' . $masterAccount->meta_login,
+            'type' => 'success',
+        ]);
     }
 
     public function pamm_subscriptions()
@@ -330,18 +394,19 @@ class PammController extends Controller
         ]);
     }
 
-    public function getPammSubscriptionData(Request $request)
+    public function getPammAccounts(Request $request)
     {
         $user = Auth::user();
+        $limit = $request->input('limit', 6);
 
         $subQuery = PammSubscription::select(DB::RAW('COALESCE(MIN(CASE WHEN status = "Active" THEN id END),MAX(id)) AS first_id'),
-        DB::RAW('SUM(CASE WHEN status = "Active" THEN subscription_amount ELSE 0 END) AS total_amount'),
-        DB::RAW('SUM(CASE WHEN status = "Active" THEN CAST(SUBSTRING_INDEX(subscription_package_product, "棵沉香树", 1) AS UNSIGNED) ELSE 0 END) AS package_amount'))
+            DB::RAW('SUM(CASE WHEN status = "Active" THEN subscription_amount ELSE 0 END) AS total_amount'),
+            DB::RAW('SUM(CASE WHEN status = "Active" THEN CAST(SUBSTRING_INDEX(subscription_package_product, "棵沉香树", 1) AS UNSIGNED) ELSE 0 END) AS package_amount'))
             ->where('user_id', $user->id)
             ->whereNot('status', 'Pending')
             ->groupBy('meta_login', 'master_id');
 
-        $pamm_subscriptions = PammSubscription::with([
+        $pammQuery = PammSubscription::with([
             'master',
             'master.user',
             'master.tradingUser',
@@ -353,59 +418,27 @@ class PammController extends Controller
                 $join->on('pamm_subscriptions.id', '=', 'grouped.first_id');
             })
             ->where('pamm_subscriptions.user_id', $user->id)
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = '%' . $request->input('search') . '%';
-                $query->whereHas('master.tradingUser', function ($user) use ($search) {
-                    $user->where('name', 'like', $search)
-                        ->orWhere('meta_login', 'like', $search)
-                        ->orWhere('company', 'like', $search);
-                })
-                    ->orWhere('pamm_subscriptions.meta_login', 'like', $search);
-            })
-            ->when($request->filled('type'), function ($query) use ($request) {
-                $query->where('pamm_subscriptions.type', $request->type);
-            })
+            ->where('pamm_subscriptions.type', $request->type)
             ->whereNot('pamm_subscriptions.status', 'Pending')
-            ->get();
+            ->orderByRaw("
+                CASE
+                    WHEN pamm_subscriptions.status = 'Active' THEN 1
+                    WHEN pamm_subscriptions.status = 'Terminated' THEN 2
+                    WHEN pamm_subscriptions.status = 'Rejected' THEN 3
+                    ELSE 4
+                END")
+            ->latest();
 
-        $totalPenalties = []; // Array to store total penalties per master
+        // Get total count of masters
+        $totalRecords = $pammQuery->count();
 
-        $pamm_subscriptions->each(function ($pamm) use (&$totalPenalties) {
-            $approvalDate = Carbon::parse($pamm->approval_date > now() ? now() : $pamm->approval_date);
-            $today = Carbon::today();
-            $join_days = $approvalDate->diffInDays($pamm->status == 'Terminated' ? $pamm->termination_date : $today);
-
-            $domain = $_SERVER['HTTP_HOST'];
-            $canTopUp = false;
-
-            if ($domain != 'member.luckyantmallvn.com' && $pamm->master->can_top_up) {
-                $canTopUp = true;
-            }
-
-            $management_fee = MasterManagementFee::where('master_id', $pamm->master_id)
-                ->where('penalty_days', '>', $join_days)
-                ->first();
-
-            $penalty = $pamm->total_amount * ($management_fee->penalty_percentage ?? 0) / 100;
-
-            $pamm->join_days = $pamm->status != 'Rejected' ? $join_days : 0;
-            $pamm->canTopUp = $canTopUp;
-            $pamm->master->profile_pic = $pamm->master->user->getFirstMediaUrl('profile_photo');
-
-            // Accumulate total penalties per master
-            if (!isset($totalPenalties[$pamm->master_id])) {
-                $totalPenalties[$pamm->master_id] = 0;
-            }
-            $totalPenalties[$pamm->master_id] += $penalty;
-        });
-
-        // Attach total penalties to each master in the response
-        $pamm_subscriptions->each(function ($pamm) use ($totalPenalties) {
-            $pamm->master->totalManagementPenalty = $totalPenalties[$pamm->master_id] ?? 0;
-        });
+        // Fetch paginated results
+        $subscriptions = $pammQuery->paginate($limit);
 
         return response()->json([
-            'pamm_subscriptions' => $pamm_subscriptions
+            'subscriptions' => $subscriptions,
+            'totalRecords' => $totalRecords,
+            'currentPage' => $subscriptions->currentPage(),
         ]);
     }
 
@@ -563,39 +596,28 @@ class PammController extends Controller
 
     public function getPammSubscriptions(Request $request)
     {
-        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
-        // Decode the JSON
-        $decodedColumnName = json_decode(urldecode($columnName), true);
-
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'approval_date';
-        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
-
         $query = PammSubscription::with([
             'master',
             'master.tradingUser',
-            'master.masterManagementFee',
-            'tradingUser:id,name,meta_login',
-            'package'
+            'master.masterManagementFee'
         ])
             ->where('user_id', Auth::id())
             ->where('meta_login', $request->meta_login);
 
-        if ($request->filled('search')) {
-            $search = '%' . $request->input('search') . '%';
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('master.tradingUser', function ($user) use ($search) {
-                    $user->where('name', 'like', $search)
-                        ->orWhere('meta_login', 'like', $search)
-                        ->orWhere('company', 'like', $search);
-                });
-            })
-            ->orWhere('meta_login', 'like', $search);
+        $join_start_date = $request->query('joinStartDate');
+        $join_end_date = $request->query('joinEndDate');
+
+        if ($join_start_date && $join_end_date) {
+            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $join_start_date)->startOfDay();
+            $end_date = Carbon::createFromFormat('Y-m-d', $join_end_date)->endOfDay();
+
+            $query->whereBetween('created_at', [$start_date, $end_date]);
         }
 
-        if ($request->filled('master')) {
-            $master = $request->input('master');
-            $query->whereHas('master', function ($q) use ($master) {
-                $q->where('id', $master);
+        if ($request->filled('master_id')) {
+            $master_id = $request->input('master_id');
+            $query->whereHas('master', function ($q) use ($master_id) {
+                $q->where('id', $master_id);
             });
         } else {
             $query->whereHas('master', function ($q) use ($query) {
@@ -604,23 +626,15 @@ class PammController extends Controller
         }
 
         $results = $query
-            ->orderBy($column == null ? 'approval_date' : $column, $sortOrder)
-            ->paginate($request->input('paginate', 10));
+            ->orderByDesc('approval_date')
+            ->get()
+            ->map(function ($item) {
+                $activeSubscriptions = SubscriptionBatch::where('meta_login', $item->meta_login)->where('status', 'Active')->count();
 
-        $results->each(function ($pamm) {
-            $approvalDate = Carbon::parse($pamm->approval_date > now() ? now() : $pamm->approval_date);
+                $item->terminateBadgeStatus = $activeSubscriptions > 1;
 
-            $today = Carbon::today();
-
-            $join_days = $approvalDate->diffInDays($pamm->status == 'Terminated' ? $pamm->termination_date : $today);
-
-            $management_fee = MasterManagementFee::where('master_id', $pamm->master_id)
-                ->where('penalty_days', '>', $join_days)
-                ->first();
-
-            $pamm->join_days = $pamm->status != 'Rejected' ? $join_days : 0;
-            $pamm->management_fee = $management_fee->penalty_percentage ?? 0;
-        });
+                return $item;
+            });
 
         return response()->json($results);
     }
@@ -681,7 +695,7 @@ class PammController extends Controller
         }
 
         if (($eWalletAmount + $cashWalletAmount) !== $amount) {
-            throw ValidationException::withMessages(['amount' => trans('public.e_wallet_amount_error', ['SumAmount' => $eWalletAmount + $cashWalletAmount, 'DepositAmount' => $amount])]);
+            throw ValidationException::withMessages(['top_up_amount' => trans('public.e_wallet_amount_error', ['SumAmount' => $eWalletAmount + $cashWalletAmount, 'DepositAmount' => $amount])]);
         }
 
         if (!preg_match('/^\d+(\.\d{1,2})?$/', $eWalletAmount)) {
@@ -690,13 +704,13 @@ class PammController extends Controller
 
         if ($wallet->type == 'e_wallet') {
             if ($wallet->balance < $eWalletAmount || $amount <= 0) {
-                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $wallet->type)])]);
+                throw ValidationException::withMessages(['top_up_amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $wallet->type)])]);
             }
             if ($cash_wallet->balance < $cashWalletAmount) {
-                throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $cash_wallet->type)])]);
+                throw ValidationException::withMessages(['top_up_amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $cash_wallet->type)])]);
             }
         } elseif ($wallet->balance < $amount || $amount <= 0) {
-            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $wallet->type)])]);
+            throw ValidationException::withMessages(['top_up_amount' => trans('public.insufficient_wallet_balance', ['wallet' => trans('public.' . $wallet->type)])]);
         }
 
         // conduct deal and transaction record
@@ -812,17 +826,14 @@ class PammController extends Controller
             'comment' => $master_deal['conduct_Deal']['comment'],
         ]);
 
-//        $response = Http::post('https://api.luckyantmallvn.com/serverapi/pamm/subscription/join', $pamm_subscription);
-//        \Log::debug($response);
-
         $masterAccount->total_fund += $pamm_subscription->subscription_amount;
         $masterAccount->save();
-//        $master_response = \Http::post('https://api.luckyantmallvn.com/serverapi/pamm/strategy', $masterAccount);
-//        \Log::debug($master_response);
 
-        return redirect()->back()
-            ->with('title', trans('public.success_top_up'))
-            ->with('success', trans('public.successfully_top_up'). ': ' . $masterAccount->meta_login);
+        return back()->with('toast', [
+            'title' => trans("public.success"),
+            'message' => trans('public.toast_success_top_up_message'),
+            'type' => 'success',
+        ]);
     }
 
     protected function createTransaction($userId, $fromWalletId, $toMetaLogin, $ticket, $transactionType, $amount, $newWalletAmount, $comment, $transactionCharges, $category) {

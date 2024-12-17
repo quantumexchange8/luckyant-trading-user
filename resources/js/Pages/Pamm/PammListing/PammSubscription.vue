@@ -18,7 +18,7 @@ const props = defineProps({
 const selectedPammSubscription = ref();
 const pamm_subscriptions = ref({data: []})
 const currentLocale = ref(usePage().props.locale);
-const { formatAmount, formatDateTime } = transactionFormat();
+const {formatAmount, formatDateTime} = transactionFormat();
 const emit = defineEmits(['update:master', 'update:meta_login'])
 
 const getResults = async (page = 1, search = '', type = '') => {
@@ -81,7 +81,7 @@ watchEffect(() => {
                     'border-2 border-primary-400 dark:border-primary-300': selectedPammSubscription.id === pamm.id,
                 }"
                 @click="selectPammSubscription(pamm)"
-                >
+            >
                 <div class="flex justify-between items-start self-stretch">
                     <div class="flex gap-2 w-full">
                         <img
@@ -94,17 +94,20 @@ watchEffect(() => {
                                 {{ pamm.master.trading_user.name }}
                             </div>
                             <div v-if="currentLocale === 'cn'" class="text-sm">
-                                {{ pamm.master.trading_user.company ? pamm.master.trading_user.company : pamm.master.trading_user.name }}
+                                {{
+                                    pamm.master.trading_user.company ? pamm.master.trading_user.company : pamm.master.trading_user.name
+                                }}
                             </div>
                             <div class="font-semibold">
                                 {{ pamm.master_meta_login }}
                             </div>
                         </div>
                     </div>
-                    <StatusBadge :value="pamm.status" class="!min-w-20" />
+                    <StatusBadge :value="pamm.status" class="!min-w-20"/>
                 </div>
 
-                <div class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 justify-between">
+                <div
+                    class="border-y border-gray-300 dark:border-gray-600 w-full py-1 flex items-center gap-2 justify-between">
                     <div class="flex gap-1">
                         <div class="text-sm">{{ $t('public.join_day') }}:</div>
                         <div class="text-sm font-semibold">{{ pamm.join_days }}</div>
@@ -132,12 +135,14 @@ watchEffect(() => {
                             {{ pamm.subscription_number }}
                         </div>
                     </div>
-                    <div v-if="pamm.master.type !== 'StandardGroup'" class="flex flex-col gap-1 items-center justify-center">
+                    <div v-if="pamm.master.type !== 'StandardGroup'"
+                         class="flex flex-col gap-1 items-center justify-center">
                         <div class="text-xs flex justify-center text-center">
                             {{ $t('public.product') }}
                         </div>
                         <div class="flex justify-center items-center text-gray-800 dark:text-gray-100 font-semibold">
-                            {{ pamm.package ? '$ ' + formatAmount(pamm.package.amount, 2) + ' - ' : null }} {{ pamm.package_amount }}棵沉香树
+                            {{ pamm.package ? '$ ' + formatAmount(pamm.package.amount, 2) + ' - ' : null }}
+                            {{ pamm.package_amount }}棵沉香树
                         </div>
                     </div>
                     <div class="flex flex-col gap-1 items-center justify-center">
@@ -145,10 +150,13 @@ watchEffect(() => {
                             {{ $t('public.account_no') }}
                         </div>
                         <div class="flex justify-center">
-                            <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ pamm.meta_login }} - $ {{ formatAmount(pamm.total_amount, 0) }}</span>
+                            <span class="text-gray-800 dark:text-gray-100 font-semibold">{{
+                                    pamm.meta_login
+                                }} - $ {{ formatAmount(pamm.total_amount, 0) }}</span>
                         </div>
                     </div>
-                    <div v-if="pamm.master.type !== 'StandardGroup' && pamm.max_out_amount" class="flex flex-col gap-1 items-center justify-center">
+                    <div v-if="pamm.master.type !== 'StandardGroup' && pamm.max_out_amount"
+                         class="flex flex-col gap-1 items-center justify-center">
                         <div class="text-xs flex justify-center text-center">
                             {{ $t('public.max_out_amount') }}
                         </div>
@@ -165,7 +173,8 @@ watchEffect(() => {
                         </div>
                     </div> -->
                 </div>
-                <div v-if="pamm.status === 'Active'" class="flex flex-col md:flex-row gap-3 items-center justify-center w-full">
+                <div v-if="pamm.status === 'Active'"
+                     class="flex flex-col md:flex-row gap-3 items-center justify-center w-full">
                     <TopUpPamm
                         v-if="pamm.canTopUp"
                         :pamm="pamm"
@@ -180,8 +189,8 @@ watchEffect(() => {
                 </div>
             </div>
         </div>
-        <div v-else class="text-2xl flex w-full items-center justify-center">
-            <NoData />
+        <div v-else class="text-xl flex w-full items-center justify-center">
+            <NoData/>
         </div>
     </div>
 </template>

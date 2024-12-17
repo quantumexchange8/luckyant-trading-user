@@ -110,7 +110,26 @@ const closeDialog = () => {
                 <div class="flex flex-col items-center gap-5 self-stretch">
                     <div class="flex flex-col items-start gap-2 self-stretch">
                         <InputLabel for="accountType" :value="$t('public.type')" />
-                        <div class="grid grid-cols-1 md:grid-cols-2 items-start gap-3 self-stretch">
+                        <div
+                            v-if="loadingAccountTypes"
+                            class="grid grid-cols-1 md:grid-cols-2 items-start gap-3 self-stretch"
+                        >
+                            <div
+                                v-for="account in 2"
+                                class="group flex flex-col items-start py-3 px-4 gap-1 self-stretch rounded-lg border shadow-input transition-colors duration-300 select-none cursor-pointer w-full bg-primary-50 dark:bg-gray-800 border-primary-500"
+                            >
+                                <span
+                                    class="flex-grow text-sm font-semibold text-gray-950 dark:text-white"
+                                >
+                                    {{ $t('public.loading') }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div
+                            v-else
+                            class="grid grid-cols-1 md:grid-cols-2 items-start gap-3 self-stretch"
+                        >
                             <div
                                 v-for="account in accountTypes"
                                 @click="selectAccount(account)"

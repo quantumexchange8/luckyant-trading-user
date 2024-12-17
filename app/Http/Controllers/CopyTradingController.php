@@ -295,7 +295,7 @@ class CopyTradingController extends Controller
             ]);
         }
 
-        if($type == 1){
+        if($type != 2) {
             try {
                 $metaService->getUserInfo(TradingAccount::where('meta_login', $meta_login)->get());
             } catch (\Exception $e) {
@@ -326,7 +326,7 @@ class CopyTradingController extends Controller
         if ($amount > 0) {
             $deal = [];
 
-            if ($type == 1){
+            if ($type != 2) {
                 try {
                     $deal = $metaService->createDeal($tradingAccount->meta_login, $amount, 'Withdraw', dealAction::WITHDRAW);
                 } catch (\Exception $e) {
@@ -401,7 +401,7 @@ class CopyTradingController extends Controller
                 'status' => 'Pending'
             ]);
 
-        if ($type == 1){
+        if ($type != 2) {
             $metaService->disableTrade($meta_login);
         }
 

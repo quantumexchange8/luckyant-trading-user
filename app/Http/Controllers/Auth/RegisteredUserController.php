@@ -223,6 +223,13 @@ class RegisteredUserController extends Controller
 
         $user->setReferralId();
 
+        $leader = $user->getFirstLeader();
+
+        if ($leader) {
+            $user->enable_bank_withdrawal = $leader->enable_bank_withdrawal;
+            $user->save();
+        }
+
         Wallet::create([
             'user_id' => $user->id,
             'name' => 'Cash Wallet',

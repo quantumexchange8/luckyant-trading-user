@@ -10,10 +10,9 @@ import {transactionFormat} from "@/Composables/index.js";
 import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
 import QrcodeVue from 'qrcode.vue';
 import Tooltip from "@/Components/Tooltip.vue";
-import Button from "@/Components/Button.vue";
-import Input from "@/Components/Input.vue";
 import Badge from "@/Components/Badge.vue";
 import {LinkIcon, Coins04Icon} from "@/Components/Icons/outline.jsx"
+import Tag from "primevue/tag";
 
 const user = usePage().props.auth.user
 const { formatDateTime, formatAmount } = transactionFormat();
@@ -110,6 +109,7 @@ const copyReferralLink = () => {
 
     toast.add({
         message: trans('public.copy_success'),
+        type: 'success',
     });
 }
 
@@ -159,13 +159,8 @@ getTotalTransactions();
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="w-full">
-                                        <Badge
-                                            variant="primary"
-                                            width="auto"
-                                        >
-                                            <span class="text-sm">{{ props.rank }}</span>
-                                        </Badge>
+                                    <div class="w-full flex justify-end items-start">
+                                        <Tag severity="info" :value="rank" />
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-2 mt-5">

@@ -224,7 +224,7 @@ class DashboardController extends Controller
                 break;
 
             case 'payment_merchant':
-                $leader = $user->getTopLeader();
+                $leader = $user->getFirstLeader();
                 if ($leader) {
                     $payment_gateway_ids = PaymentGatewayToLeader::where('user_id', $leader->id)
                         ->pluck('payment_gateway_id')

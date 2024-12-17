@@ -7,8 +7,7 @@ import InputError from "@/Components/InputError.vue";
 import Checkbox from "primevue/checkbox";
 import dayjs from "dayjs";
 import {useLangObserver} from "@/Composables/localeObserver.js";
-import TermsAndCondition
-    from "../../../../../../../../Projects/luckyant-trading-user/resources/js/Components/TermsAndCondition.vue";
+import TermsAndCondition from "@/Components/TermsAndCondition.vue";
 
 const props = defineProps({
     strategyType: String,
@@ -170,7 +169,7 @@ const calculateManagementFee = (data) => {
                     binary
                     :invalid="!!form.errors.terms"
                 />
-                <label for="terms" class="text-gray-600 dark:text-gray-400 text-xs">
+                <label for="terms" class="flex text-gray-600 dark:text-gray-400 text-xs">
                     {{ $t('public.agreement') }}
                     <TermsAndCondition
                         :termsLabel="$t('public.terms_and_conditions')"

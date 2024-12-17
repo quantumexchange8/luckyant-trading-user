@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import {useLangObserver} from "@/Composables/localeObserver.js";
 import Select from "primevue/select";
 import InputLabel from "@/Components/Label.vue";
-import TermsAndCondition from "../../../../../../../Projects/luckyant-trading-user/resources/js/Components/TermsAndCondition.vue";
+import TermsAndCondition from "@/Components/TermsAndCondition.vue";
 import {MinusIcon, PlusIcon} from "@heroicons/vue/outline";
 
 const props = defineProps({

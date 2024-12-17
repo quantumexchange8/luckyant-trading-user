@@ -11,7 +11,7 @@ import {transactionFormat} from "@/Composables/index.js";
 import dayjs from "dayjs";
 import InputError from "@/Components/InputError.vue";
 import Checkbox from "primevue/checkbox";
-import TermsAndCondition from "../../../../../../Projects/luckyant-trading-user/resources/js/Components/TermsAndCondition.vue";
+import TermsAndCondition from "@/Components/TermsAndCondition.vue";
 import {useForm} from "@inertiajs/vue3";
 
 const props = defineProps({

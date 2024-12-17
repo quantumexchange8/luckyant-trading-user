@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Inertia\Inertia;
-use App\Mail\SendOtp;
 use Inertia\Response;
 use App\Models\Wallet;
 use App\Models\Country;

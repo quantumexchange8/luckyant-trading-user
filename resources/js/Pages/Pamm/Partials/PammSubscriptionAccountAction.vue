@@ -6,8 +6,6 @@ import {
 } from "@/Components/Icons/outline.jsx";
 import {IconBan} from "@tabler/icons-vue"
 import Dialog from "primevue/dialog";
-import StopRenewSubscription from "@/Pages/Trading/MasterListing/StopRenewSubscription.vue";
-import TerminateSubscription from "@/Pages/Trading/MasterListing/TerminateSubscription.vue";
 import TopUpPamm from "@/Pages/Pamm/PammListing/TopUpPamm.vue";
 import RevokePamm from "@/Pages/Pamm/PammListing/Partials/RevokePamm.vue";
 

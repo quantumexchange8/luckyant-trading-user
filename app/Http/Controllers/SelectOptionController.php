@@ -7,6 +7,7 @@ use App\Models\AccountTypeToLeader;
 use App\Models\SettingLeverage;
 use App\Models\Wallet;
 use Auth;
+use Illuminate\Http\Request;
 
 class SelectOptionController extends Controller
 {
@@ -42,11 +43,17 @@ class SelectOptionController extends Controller
         return response()->json($accountTypes);
     }
 
-    public function getDepositWallets()
+    public function getDepositWallets(Request $request)
     {
-        $wallets = Wallet::where('user_id', Auth::id())
-            ->whereNot('type', 'bonus_wallet')
-            ->get();
+        $query = Wallet::where('user_id', Auth::id());
+
+        if ($request->account_type == 'alpha') {
+            $query->whereNot('type', 'e_wallet');
+        } else {
+            $query->whereNot('type', 'bonus_wallet');
+        }
+
+        $wallets = $query->get();
 
         return response()->json($wallets);
     }

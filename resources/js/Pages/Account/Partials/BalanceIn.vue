@@ -46,7 +46,7 @@ const wallets = ref([]);
 const getDepositWallets = async () => {
     loadingWallets.value = true;
     try {
-        const response = await axios.get('/getDepositWallets');
+        const response = await axios.get(`/getDepositWallets?account_type=${props.account.account_type.slug}`);
         wallets.value = response.data;
         selectedWallet.value = wallets.value[0];
     } catch (error) {

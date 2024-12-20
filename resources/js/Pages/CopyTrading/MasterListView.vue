@@ -139,7 +139,7 @@ const openDetails = (masterAccountID) => {
                 :disabled="isLoading && masters.length === 0"
             >
                 <IconAdjustments size="16" />
-                Filter
+                {{ $t('public.filter') }}
             </Button>
 
             <Select
@@ -269,9 +269,6 @@ const openDetails = (masterAccountID) => {
                                         {{ master.meta_login }}
                                     </div>
                                 </div>
-                                <div class="flex gap-3 items-center w-full justify-end">
-
-                                </div>
                             </div>
 
                             <!-- StatusBadge Section -->
@@ -280,16 +277,7 @@ const openDetails = (masterAccountID) => {
                                     {{ master.min_join_equity > 0 ? '$ ' + formatAmount(master.min_join_equity, 0) : $t('public.no_min') }}
                                 </Tag>
                                 <Tag severity="secondary">
-                                    <div v-if="master.join_period && master.join_period !== 0">
-                                        {{ master.join_period }}
-                                        {{ $t('public.days') }}
-                                    </div>
-                                    <div v-else>
-                                        {{ $t('public.lock_free') }}
-                                    </div>
-                                </Tag>
-                                <Tag severity="secondary">
-                                    {{ formatAmount(master.sharing_profit, 0) + '%&nbsp;' + $t('public.profit') }}
+                                    {{ formatAmount(master.sharing_profit, 0) + '%&nbsp;' + $t('public.profit_sharing') }}
                                 </Tag>
                             </div>
 
@@ -377,16 +365,16 @@ const openDetails = (masterAccountID) => {
                 </div>
                 <div class="flex flex-col gap-1 self-stretch">
                     <div class="flex items-center gap-2 text-sm text-gray-950 dark:text-gray-300">
-                        <Checkbox v-model="tag" inputId="no_min_investment" value="no_min_investment" />
-                        <label for="no_min_investment">{{ $t('public.no_min') }}</label>
+                        <Checkbox v-model="tag" inputId="roi_seven" :value="7" />
+                        <label for="roi_seven">7 {{ $t('public.days_roi') }}</label>
                     </div>
                     <div class="flex items-center gap-2 text-sm text-gray-950 dark:text-gray-300">
-                        <Checkbox v-model="tag" inputId="lock_free" value="lock_free" />
-                        <label for="lock_free">{{ $t('public.lock_free') }}</label>
+                        <Checkbox v-model="tag" inputId="roi_fourteen" :value="14" />
+                        <label for="roi_fourteen">14 {{ $t('public.days_roi') }}</label>
                     </div>
                     <div class="flex items-center gap-2 text-sm text-gray-950 dark:text-gray-300">
-                        <Checkbox v-model="tag" inputId="zero_fee" value="zero_fee" />
-                        <label for="zero_fee">{{ $t('public.zero_fee') }}</label>
+                        <Checkbox v-model="tag" inputId="roi_thirty" :value="30" />
+                        <label for="roi_thirty">30 {{ $t('public.days_roi') }}</label>
                     </div>
                 </div>
             </div>

@@ -206,23 +206,7 @@ class PammController extends Controller
         if (!empty($tag)) {
             $tags = explode(',', $tag);
 
-            foreach ($tags as $tag) {
-                if ($tag == 'no_min_investment') {
-                    $mastersQuery->where('min_join_equity', 0);
-                } elseif ($tag == 'lock_free') {
-                    $mastersQuery->where(function ($query) {
-                        $query->where('join_period', 0)
-                            ->orWhereNull('join_period');
-                    });
-                } elseif ($tag == 'zero_fee') {
-                    $mastersQuery->where(function ($query) {
-                        $query->where('sharing_profit', 0)
-                            ->orWhereNull('sharing_profit');
-                    });
-                } else {
-                    return response()->json(['error' => 'Invalid filter'], 400);
-                }
-            }
+            $mastersQuery->whereIn('roi_period', $tags);
         }
 
         // Get total count of masters

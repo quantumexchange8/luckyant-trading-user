@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountType;
+use App\Models\AccountTypeLeverage;
 use App\Models\AccountTypeToLeader;
 use App\Models\SettingLeverage;
 use App\Models\Wallet;
@@ -11,15 +12,20 @@ use Illuminate\Http\Request;
 
 class SelectOptionController extends Controller
 {
-    public function getLeverages()
+    public function getLeverages(Request $request)
     {
-        $settingLeverages = SettingLeverage::where('status', 'Active')
-            ->get()->map(function ($settingLeverage) {
+        $type = $request->account_type;
+        $account_type = AccountType::firstWhere('slug', $type);
+
+        $settingLeverages = AccountTypeLeverage::with('leverage')
+            ->where('account_type_id', $account_type->id)
+            ->get()
+            ->map(function ($settingLeverage) {
                 return [
-                    'label' => $settingLeverage->display,
-                    'value' => $settingLeverage->value,
+                    'label' => $settingLeverage->leverage->display,
+                    'value' => $settingLeverage->leverage->value,
                 ];
-        });
+            });
 
         return response()->json($settingLeverages);
     }

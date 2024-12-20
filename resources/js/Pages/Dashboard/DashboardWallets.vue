@@ -66,7 +66,7 @@ watchEffect(() => {
         ]"
     >
         <div class="text-lg text-gray-600 dark:text-gray-400 font-bold">{{ $t('public.' + wallet.type) }} ({{wallet.wallet_address }})</div>
-        <div class="text-2xl">
+        <div class="text-xl font-semibold">
             $ {{ formatAmount(wallet.balance) }}
         </div>
         <WalletAction

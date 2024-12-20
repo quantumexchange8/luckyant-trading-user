@@ -541,8 +541,8 @@ return [
     'virtual' => "Tài khoản ảo",
     'select_wallet' => "Chọn Ví",
     'select_leverage' => "Chọn Đòn bẩy",
-    'alpha_strategy' => "Chiến lược Alpha",
-    'hofi_strategy' => "Chiến lược HOFI",
+    'alpha_strategy' => "ALPHA Trung Tâm",
+    'hofi_strategy' => "HOFI Chuỗi Thông Minh",
     'pamm_trading' => "Giao dịch PAMM",
     'hofi_copy_trading' => "Sao chép giao dịch HOFI",
     'alpha_copy_trading' => "Sao chép giao dịch Alpha",
@@ -570,4 +570,6 @@ return [
     'export' => "Xuất",
     'mature' => "Hoàn tất",
     'toast_success_top_up_message' => "Nạp tiền thành công",
+    'filter' => "bộ lọc",
+    'days_roi' => "Chu kỳ thanh toán số ngày",
 ];

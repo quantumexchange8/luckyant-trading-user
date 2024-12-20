@@ -541,8 +541,8 @@ return [
     'virtual' => "บัญชีเสมือน",
     'select_wallet' => "เลือกกระเป๋าเงิน",
     'select_leverage' => "เลือกเลเวอเรจ",
-    'alpha_strategy' => "กลยุทธ์ Alpha",
-    'hofi_strategy' => "กลยุทธ์ HOFI",
+    'alpha_strategy' => "อัลฟ่า ฮับ",
+    'hofi_strategy' => "โฮฟี่ สมาร์ทเชน",
     'pamm_trading' => "การเทรด PAMM",
     'hofi_copy_trading' => "HOFI คัดลอกการเทรด",
     'alpha_copy_trading' => "Alpha คัดลอกการเทรด",
@@ -570,4 +570,6 @@ return [
     'export' => "ส่งออก",
     'mature' => "เสร็จสิ้น",
     'toast_success_top_up_message' => "เติมเงินสำเร็จ",
+    'filter' => "ตัวกรอง",
+    'days_roi' => "รอบการชำระหนี้จำนวนวัน",
 ];

@@ -21,7 +21,7 @@ const props = defineProps({
 
 const visible = ref(false);
 const form = useForm({
-    leverage: 500,
+    leverage: '',
     terms: '',
     account_type: '',
 })
@@ -35,6 +35,7 @@ const openDialog = () => {
 const selectedAccountType = ref('hofi');
 const selectAccount = (type) => {
     selectedAccountType.value = type.slug;
+    getLeverages();
 }
 
 const loadingAccountTypes = ref(false);
@@ -56,12 +57,14 @@ const getAccountTypes = async () => {
 
 const loadingLeverages = ref(false);
 const leverages = ref();
+const selectedLeverage = ref();
 
 const getLeverages = async () => {
     loadingLeverages.value = true;
     try {
-        const response = await axios.get('/getLeverages');
+        const response = await axios.get(`/getLeverages?account_type=${selectedAccountType.value}`);
         leverages.value = response.data;
+        selectedLeverage.value = leverages.value[0].value;
     } catch (error) {
         console.error('Error fetching leverages:', error);
     } finally {
@@ -71,6 +74,7 @@ const getLeverages = async () => {
 
 const submitForm = () => {
     form.account_type = selectedAccountType.value;
+    form.leverage = selectedLeverage.value;
     form.post(route('account_info.createAccount'), {
         onSuccess: () => {
             closeDialog()
@@ -166,7 +170,7 @@ const closeDialog = () => {
                         />
                         <Select
                             input-id="leverage"
-                            v-model="form.leverage"
+                            v-model="selectedLeverage"
                             :options="leverages"
                             optionLabel="label"
                             optionValue="value"

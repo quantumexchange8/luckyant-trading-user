@@ -541,8 +541,8 @@ return [
     'virtual' => "가상 계정",
     'select_wallet' => "지갑 선택",
     'select_leverage' => "레버리지 선택",
-    'alpha_strategy' => "알파 전략",
-    'hofi_strategy' => "HOFI 전략",
+    'alpha_strategy' => "알파 허브",
+    'hofi_strategy' => "호피 스마트 체인",
     'pamm_trading' => "PAMM 거래",
     'hofi_copy_trading' => "HOFI 카피 트레이딩",
     'alpha_copy_trading' => "알파 카피 트레이딩",
@@ -570,4 +570,6 @@ return [
     'export' => "내보내기",
     'mature' => "완료됨",
     'toast_success_top_up_message' => "충전이 성공적으로 완료되었습니다",
+    'filter' => "필터",
+    'days_roi' => "일정산주기",
 ];

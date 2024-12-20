@@ -98,12 +98,12 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
                 :title="$t('public.copy_trading')"
                 :active="route().current('alpha_strategy.master_listing')"
             />
-            <SidebarCollapsibleItem
-                v-if="contentVisibility"
-                :href="route('alpha_strategy.pamm_trading')"
-                :title="$t('public.pamm_trading')"
-                :active="route().current('alpha_strategy.pamm_trading')"
-            />
+<!--            <SidebarCollapsibleItem-->
+<!--                v-if="contentVisibility"-->
+<!--                :href="route('alpha_strategy.pamm_trading')"-->
+<!--                :title="$t('public.pamm_trading')"-->
+<!--                :active="route().current('alpha_strategy.pamm_trading')"-->
+<!--            />-->
             <SidebarCollapsibleItem
                 :href="route('alpha_strategy.subscriptions')"
                 :title="$t('public.subscriptions')"

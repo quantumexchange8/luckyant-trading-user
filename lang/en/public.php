@@ -541,8 +541,8 @@ return [
     'virtual' => "Virtual Account",
     'select_wallet' => "Select Wallet",
     'select_leverage' => "Select Leverage",
-    'alpha_strategy' => "Alpha Strategy",
-    'hofi_strategy' => "HOFI Strategy",
+    'alpha_strategy' => "ALPHA Hub",
+    'hofi_strategy' => "HOFI Connect",
     'pamm_trading' => "PAMM Trading",
     'hofi_copy_trading' => "HOFI Copy Trading",
     'alpha_copy_trading' => "Alpha Copy Trading",
@@ -570,4 +570,6 @@ return [
     'export' => "Export",
     'mature' => "Mature",
     'toast_success_top_up_message' => "Successfully Top Up",
+    'filter' => "Filter",
+    'days_roi' => "Days Settlement",
 ];

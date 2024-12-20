@@ -541,8 +541,8 @@ return [
     'virtual' => "仮想アカウント",
     'select_wallet' => "ウォレットを選択",
     'select_leverage' => "レバレッジを選択",
-    'alpha_strategy' => "アルファ戦略",
-    'hofi_strategy' => "HOFI戦略",
+    'alpha_strategy' => "ALPHAハブ",
+    'hofi_strategy' => "HOFIスマートチェーン",
     'pamm_trading' => "PAMM取引",
     'hofi_copy_trading' => "HOFIコピートレード",
     'alpha_copy_trading' => "アルファコピートレード",
@@ -570,4 +570,6 @@ return [
     'export' => "エクスポート",
     'mature' => "完了",
     'toast_success_top_up_message' => "チャージが成功しました",
+    'filter' => "フィルター",
+    'days_roi' => "決済サイクルの日数",
 ];

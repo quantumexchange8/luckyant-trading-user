@@ -541,8 +541,8 @@ return [
     'virtual' => "Akun Virtual",
     'select_wallet' => "Pilih Dompet",
     'select_leverage' => "Pilih Leverage",
-    'alpha_strategy' => "Strategi Alpha",
-    'hofi_strategy' => "Strategi HOFI",
+    'alpha_strategy' => "ALPHA Pusat",
+    'hofi_strategy' => "HOFI Rantai Pintar",
     'pamm_trading' => "Perdagangan PAMM",
     'hofi_copy_trading' => "Copy Trading HOFI",
     'alpha_copy_trading' => "Copy Trading Alpha",
@@ -570,4 +570,6 @@ return [
     'export' => "Ekspor",
     'mature' => "Selesai",
     'toast_success_top_up_message' => "Isi ulang berhasil",
+    'filter' => "menyaring",
+    'days_roi' => "Siklus penyelesaian hari",
 ];

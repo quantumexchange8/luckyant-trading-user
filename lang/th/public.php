@@ -572,4 +572,5 @@ return [
     'toast_success_top_up_message' => "เติมเงินสำเร็จ",
     'filter' => "ตัวกรอง",
     'days_roi' => "รอบการชำระหนี้จำนวนวัน",
+    'clear_all' => "ล้างตัวกรอง",
 ];

@@ -572,4 +572,5 @@ return [
     'toast_success_top_up_message' => "充值成功",
     'filter' => "筛选",
     'days_roi' => "天结算周期",
+    'clear_all' => "清除筛选",
 ];

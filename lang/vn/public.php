@@ -572,4 +572,5 @@ return [
     'toast_success_top_up_message' => "Nạp tiền thành công",
     'filter' => "bộ lọc",
     'days_roi' => "Chu kỳ thanh toán số ngày",
+    'clear_all' => "Xóa bộ lọc",
 ];

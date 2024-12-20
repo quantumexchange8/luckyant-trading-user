@@ -572,4 +572,5 @@ return [
     'toast_success_top_up_message' => "Isi ulang berhasil",
     'filter' => "menyaring",
     'days_roi' => "Siklus penyelesaian hari",
+    'clear_all' => "Hapus filter",
 ];

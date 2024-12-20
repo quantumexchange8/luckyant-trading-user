@@ -386,7 +386,7 @@ const openDetails = (masterAccountID) => {
                 outlined
                 @click="clearAll"
             >
-                Clear All
+                {{ $t('public.clear_all') }}
             </Button>
         </div>
     </Popover>

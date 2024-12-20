@@ -572,4 +572,5 @@ return [
     'toast_success_top_up_message' => "충전이 성공적으로 완료되었습니다",
     'filter' => "필터",
     'days_roi' => "일정산주기",
+    'clear_all' => "필터 지우기",
 ];

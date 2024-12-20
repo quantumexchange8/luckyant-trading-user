@@ -572,4 +572,5 @@ return [
     'toast_success_top_up_message' => "チャージが成功しました",
     'filter' => "フィルター",
     'days_roi' => "決済サイクルの日数",
+    'clear_all' => "フィルターをクリア",
 ];

@@ -572,4 +572,5 @@ return [
     'toast_success_top_up_message' => "Successfully Top Up",
     'filter' => "Filter",
     'days_roi' => "Days Settlement",
+    'clear_all' => "Clear All",
 ];

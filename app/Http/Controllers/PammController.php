@@ -749,6 +749,7 @@ class PammController extends Controller
             'subscription_amount' => $masterAccount->type == 'ESG' ? $amount/2 : $amount,
             'subscription_package_product' => $masterAccount->type == 'ESG' ? $request->top_up_amount / 1000 . '棵沉香树' : null,
             'type' => $masterAccount->type,
+            'strategy_type' => $masterAccount->strategy_type,
             'subscription_number' => RunningNumberService::getID('subscription'),
             'subscription_period' => $masterAccount->join_period,
             'settlement_period' => $masterAccount->roi_period,

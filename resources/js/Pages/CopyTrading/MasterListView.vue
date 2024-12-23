@@ -180,7 +180,7 @@ const openDetails = (masterAccountID) => {
                             <div class="w-full flex items-center gap-4 self-stretch">
                                 <img
                                     class="object-cover w-10 h-10 rounded-full"
-                                    :src="master.profile_photo ? master.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                    src="https://img.freepik.com/free-icon/user_318-159711.jpg"
                                     alt="masterPic"
                                 />
                                 <div class="flex flex-col items-start">
@@ -251,9 +251,22 @@ const openDetails = (masterAccountID) => {
                         <div class="flex flex-col items-center gap-4 self-stretch">
                             <!-- Profile Section -->
                             <div class="w-full flex items-center gap-4 self-stretch">
+                                <div v-if="master.media.length > 0">
+                                    <div
+                                        v-for="mediaItem in master.media"
+                                        :key="mediaItem.id"
+                                    >
+                                        <img
+                                            class="object-cover w-10 h-10 rounded-full"
+                                            :src="mediaItem.collection_name === 'master_logo' ? mediaItem.original_url : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                            alt="masterPic"
+                                        />
+                                    </div>
+                                </div>
                                 <img
+                                    v-else
                                     class="object-cover w-10 h-10 rounded-full"
-                                    :src="master.profile_photo ? master.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                    src="https://img.freepik.com/free-icon/user_318-159711.jpg"
                                     alt="masterPic"
                                 />
                                 <div class="flex flex-col items-start">

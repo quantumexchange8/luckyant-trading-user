@@ -260,7 +260,7 @@ return [
     'address' => "住所",
     'identification_no' => "識別番号",
     'identification_number' => "識別番号",
-    'proof_of_identity' => "身元の証明",
+    'proof_of_identity' => "IDカード/パスポート",
     'profile_photo' => "プロフィール写真",
     'front' => "表面",
     'click_add_account' => "アカウントを追加するにはクリックしてください",

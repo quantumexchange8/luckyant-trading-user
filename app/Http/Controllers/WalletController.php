@@ -827,20 +827,9 @@ class WalletController extends Controller
         ]);
     }
 
-    public function tt_pay_return(Request $request)
+    public function tt_pay_return()
     {
-        $data = $request->all();
-
-        Log::debug('deposit return ', $data);
-
-        if ($data['response_status'] == 'success') {
-
-            return redirect()->back()
-                ->with('title', trans('public.success_deposit'))
-                ->with('success', trans('public.successfully_deposit'));
-        } else {
-            return to_route('dashboard');
-        }
+        return to_route('dashboard');
     }
 
     public function tt_pay_callback(Request $request)

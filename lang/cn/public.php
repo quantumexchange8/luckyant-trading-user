@@ -260,7 +260,7 @@ return [
     'address' => "地址",
     'identification_no' => "身份证号",
     'identification_number' => "身份证号码",
-    'proof_of_identity' => "身份证证明",
+    'proof_of_identity' => "身份证/护照",
     'profile_photo' => "个人头像",
     'front' => "正面",
     'click_add_account' => "点击添加账户",

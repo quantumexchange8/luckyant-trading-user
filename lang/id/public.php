@@ -260,7 +260,7 @@ return [
     'address' => "Alamat",
     'identification_no' => "Nomor Identifikasi",
     'identification_number' => "Nomor Identifikasi",
-    'proof_of_identity' => "Bukti Identitas",
+    'proof_of_identity' => "KTP/paspor",
     'profile_photo' => "Foto Profil",
     'front' => "Depan",
     'click_add_account' => "Klik untuk menambahkan akun",

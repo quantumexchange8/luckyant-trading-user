@@ -260,7 +260,7 @@ return [
     'address' => "ที่อยู่",
     'identification_no' => "หมายเลขประจำตัว",
     'identification_number' => "หมายเลขประจำตัว",
-    'proof_of_identity' => "หลักฐานการรับรองตัวตน",
+    'proof_of_identity' => "บัตรประจำตัวประชาชน/หนังสือเดินทาง",
     'profile_photo' => "รูปโปรไฟล์",
     'front' => "ด้านหน้า",
     'click_add_account' => "คลิกเพื่อเพิ่มบัญชี",

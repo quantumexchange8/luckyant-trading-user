@@ -260,7 +260,7 @@ return [
     'address' => "주소",
     'identification_no' => "식별 번호",
     'identification_number' => "식별 번호",
-    'proof_of_identity' => "신분증 확인",
+    'proof_of_identity' => "신분증/여권",
     'profile_photo' => "프로필 사진",
     'front' => "앞면",
     'click_add_account' => "계정 추가를 클릭하세요",

@@ -260,7 +260,7 @@ return [
     'address' => "Địa Chỉ",
     'identification_no' => "Số Xác Thực",
     'identification_number' => "Số Xác Thực",
-    'proof_of_identity' => "Chứng Minh Thư",
+    'proof_of_identity' => "CMND/hộ chiếu",
     'profile_photo' => "Ảnh Hồ Sơ",
     'front' => "Trước",
     'click_add_account' => "Nhấp để thêm tài khoản",

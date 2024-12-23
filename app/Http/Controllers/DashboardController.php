@@ -248,7 +248,7 @@ class DashboardController extends Controller
 
     public function getDepositOptions()
     {
-        $options = ['bank', 'payment_service', 'payment_merchant'];
+        $options = ['bank', 'payment_merchant'];
 
         $user = User::find(1137);
         $cryptocurrency_service_provider = false;

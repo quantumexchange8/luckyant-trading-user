@@ -193,7 +193,7 @@ class WalletController extends Controller
             ->latest()
             ->first();
 
-        $leader = $user->getTopLeader();
+        $leader = $user->getFirstLeader();
         if ($leader && $request->payment_method == 'payment_merchant') {
             $payment_gateway_ids = PaymentGatewayToLeader::where('user_id', $leader->id)
                 ->pluck('payment_gateway_id')

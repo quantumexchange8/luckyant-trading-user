@@ -161,9 +161,13 @@ watchEffect(() => {
                                 </div>
                             </div>
                         </div>
+<!--                        <Tag-->
+<!--                            :severity="account.account_type.slug === 'hofi' ? 'warn' : 'info'"-->
+<!--                            :value="$t(`public.${account.account_type.slug}`)"-->
+<!--                        />-->
                         <Tag
-                            :severity="account.account_type.slug === 'hofi' ? 'warn' : 'info'"
-                            :value="$t(`public.${account.account_type.slug}`)"
+                            severity="success"
+                            :value="$t('public.active')"
                         />
                     </div>
                     <div class="flex justify-end" v-if="account.trading_user.acc_status === 'Active'">

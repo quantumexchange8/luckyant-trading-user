@@ -52,7 +52,7 @@ const tabs = ref([
                 component: h(PammSubscriptions, {
                     strategyType: props.strategyType,
                     pammType: 'ESG',
-                    pammsCount: props.pammsCount,
+                    pammsCount: props.esgsCount,
                     walletSel: props.walletSel,
                 })
             }

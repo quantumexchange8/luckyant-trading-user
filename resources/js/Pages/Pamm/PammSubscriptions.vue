@@ -1,5 +1,4 @@
 <script setup>
-import SubscriptionAccount from "@/Pages/CopyTrading/Partials/SubscriptionAccount.vue";
 import NoData from "@/Components/NoData.vue";
 import Card from "primevue/card"
 import Column from "primevue/column";

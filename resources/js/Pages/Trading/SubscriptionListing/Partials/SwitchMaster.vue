@@ -1,237 +1,258 @@
 <script setup>
-import Button from "@/Components/Button.vue";
-import {RefreshCw05Icon, ChevronRightDoubleIcon} from "@/Components/Icons/outline.jsx";
-import {ref, watch} from "vue";
-import Modal from "@/Components/Modal.vue";
+import {
+    IconChevronsRight
+} from "@tabler/icons-vue"
+import {useLangObserver} from "@/Composables/localeObserver.js";
 import {transactionFormat} from "@/Composables/index.js";
-import {useForm, usePage} from "@inertiajs/vue3";
-import BaseListbox from "@/Components/BaseListbox.vue";
+import dayjs from "dayjs";
+import Select from "primevue/select";
+import {ref} from "vue";
+import Button from "primevue/button";
+import {useForm} from "@inertiajs/vue3";
 
 const props = defineProps({
-    subscriberAccount: Object,
-    subscription: Object,
+    strategyType: String,
+    subscriber: Object,
 })
 
-const switchModal = ref(false);
-const { formatDateTime, formatAmount } = transactionFormat();
-const currentLocale = ref(usePage().props.locale);
-const selectedNewMaster = ref(props.subscriberAccount.newMasterSel[0].value)
-const newMaster = ref(null);
+const {locale} = useLangObserver();
+const {formatAmount} = transactionFormat();
 
-const openSwitchModal = () => {
-    switchModal.value = true;
-}
+const getJoinedDays = (account) => {
+    const approvalDate = dayjs(account.approval_date);
+    const endDate =
+        account.status === 'Terminated'
+            ? dayjs(account.termination_date)
+            : dayjs(); // Use today's date if not terminated
 
-const closeModal = () => {
-    switchModal.value = false
-}
+    return endDate.diff(approvalDate, 'day'); // Calculate the difference in days
+};
 
-const getSelectedNewMaster = async (masterId = selectedNewMaster.value) => {
+const masters = ref([]);
+const masterLoading = ref(false);
+const selectedMaster = ref(null);
+const emit = defineEmits(['update:visible']);
+
+const getSelectedNewMaster = async () => {
+    masterLoading.value = true;
     try {
-        const response = await axios.get('/trading/getSelectedNewMaster?master_id=' + masterId);
-        newMaster.value = response.data;
+        const response = await axios.get(`/${props.strategyType}_strategy/getNewMaster?current_master_id=${props.subscriber.master_id}`);
+        masters.value = response.data;
+        selectedMaster.value = masters.value[0];
     } catch (error) {
         console.error(error);
+    } finally {
+        masterLoading.value = false;
     }
 }
 
 getSelectedNewMaster();
 
-watch(selectedNewMaster, (newMaster) => {
-    getSelectedNewMaster(newMaster);
-})
-
 const form = useForm({
     new_master_id: '',
-    subscriber_id: props.subscriberAccount.id
+    subscriber_id: props.subscriber.id
 })
 
-const submit = () => {
-    form.new_master_id = selectedNewMaster.value
+const submitForm = () => {
+    form.new_master_id = selectedMaster.value.id
 
     form.post(route('trading.switchMaster'), {
         onSuccess: () => {
-            closeModal();
+            closeDialog();
         },
     })
+}
+
+const closeDialog = () => {
+    emit("update:visible", false);
 }
 </script>
 
 <template>
-    <Button
-        v-if="subscriberAccount.status === 'Subscribing'"
-        type="button"
-        size="sm"
-        v-slot="{ iconSizeClasses }"
-        class="flex gap-2 justify-center items-center w-full"
-        @click="openSwitchModal"
-    >
-        <RefreshCw05Icon
-            aria-hidden="true"
-            :class="iconSizeClasses"
-        />
-        {{ $t('public.switch_master') }}
-    </Button>
-
-    <Modal :show="switchModal" :title="$t('public.switch_master')" @close="closeModal" max-width="4xl">
-        <div class="grid grid-cols-11">
-            <div class="col-span-11 sm:col-span-5 bg-gray-100 dark:bg-gray-950 rounded-lg p-5">
-                <div class="flex flex-col items-start gap-3 self-stretch">
-                    <div class="flex items-center justify-center w-full">
-                        <div class="flex flex-col items-start gap-3 self-stretch w-full">
-                            <div class="text-lg font-semibold dark:text-white">
-                                <div v-if="currentLocale === 'en'">
-                                    {{ subscriberAccount.master.trading_user.name }}
+    <div class="grid grid-cols-11">
+        <div class="col-span-11 sm:col-span-5 bg-gray-100 dark:bg-gray-950 p-5">
+            <div class="flex flex-col items-start gap-3 self-stretch">
+                <div class="flex items-center justify-center w-full">
+                    <div class="flex flex-col items-start gap-3 self-stretch w-full">
+                        <div class="flex flex-col items-start">
+                            <div class="self-stretch truncate text-gray-950 dark:text-white font-bold">
+                                <div v-if="locale === 'cn'">
+                                    {{ subscriber.master.trading_user.company ? subscriber.master.trading_user.company : subscriber.master.trading_user.name }}
                                 </div>
-                                <div v-if="currentLocale === 'cn'">
-                                    {{ subscriberAccount.master.trading_user.company ? subscriberAccount.master.trading_user.company : subscriberAccount.master.trading_user.name }}
+                                <div v-else>
+                                    {{ subscriber.master.trading_user.name }}
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.account_number')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ subscriberAccount.meta_login }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.subscription_number')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ subscription.subscription_number }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.join_date')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ formatDateTime(subscriberAccount.approval_date, false) }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.join_day') }}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ subscriberAccount.join_days }} {{ $t('public.days') }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.roi_period') }}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ subscriberAccount.master.roi_period }} {{ $t('public.days') }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.sharing_profit') }}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ subscriberAccount.master.sharing_profit % 1 === 0 ? formatAmount(subscriberAccount.master.sharing_profit, 0) : formatAmount(subscriberAccount.master.sharing_profit) }}%
-                                </div>
-                            </div>
-                            <div class="flex items-start justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.amount')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-primary-500 dark:text-primary-400 font-bold">
-                                    $ {{ formatAmount(subscription.meta_balance) }}
-                                </div>
+                            <div class="self-stretch truncate text-gray-500 text-sm">
+                                {{ subscriber.master.meta_login }}
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-span-11 sm:col-span-1 rounded-lg p-2">
-                <div class="flex items-center justify-center w-full h-full">
-                    <ChevronRightDoubleIcon class="text-gray-400 rotate-90 sm:rotate-0" />
-                </div>
-            </div>
-            <div class="col-span-11 sm:col-span-5 bg-gray-100 dark:bg-gray-950 rounded-lg p-5">
-                <div class="flex flex-col items-start gap-3 self-stretch">
-                    <div class="flex items-center justify-center w-full">
-                        <div class="flex flex-col items-start gap-3 self-stretch w-full">
-                            <BaseListbox
-                                v-model="selectedNewMaster"
-                                :options="subscriberAccount.newMasterSel"
-                                class="w-full"
-                            />
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.account_number')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ subscriberAccount.meta_login }}
-                                </div>
+                        <div class="flex items-start justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{$t('public.subscription_number')}}
                             </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.estimated_monthly_returns')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ newMaster ? newMaster.estimated_monthly_returns : $t('public.loading') }}
-                                </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ subscriber.subscription.subscription_number }}
                             </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.estimated_lot_size')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ newMaster ? newMaster.estimated_lot_size : $t('public.loading') }}
-                                </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{$t('public.join_date')}}
                             </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.max_drawdown') }}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ newMaster ? newMaster.max_drawdown : $t('public.loading') }}
-                                </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ dayjs(subscriber.approval_date).format('YYYY/MM/DD') }}
                             </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.roi_period') }}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ newMaster ? newMaster.roi_period + $t('public.days') : $t('public.loading') }}
-                                </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{ $t('public.join_day') }}
                             </div>
-                            <div class="flex items-center justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.sharing_profit') }}
-                                </div>
-                                <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
-                                    {{ newMaster ? (newMaster.sharing_profit % 1 === 0 ? formatAmount(newMaster.sharing_profit, 0) : formatAmount(newMaster.sharing_profit)) + '%' : $t('public.loading') }}
-                                </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ getJoinedDays(subscriber) }} {{ $t('public.days') }}
                             </div>
-                            <div class="flex items-start justify-between gap-2 self-stretch">
-                                <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {{$t('public.min_join_equity')}}
-                                </div>
-                                <div class="text-xs sm:text-sm text-primary-500 dark:text-primary-400 font-bold">
-                                    $ {{ newMaster ? formatAmount(newMaster.min_join_equity, 0) : $t('public.loading') }}
-                                </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{ $t('public.roi_period') }}
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ subscriber.roi_period }} {{ $t('public.days') }}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{ $t('public.sharing_profit') }}
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ subscriber.master.sharing_profit % 1 === 0 ? formatAmount(subscriber.master.sharing_profit, 0) : formatAmount(subscriber.master.sharing_profit) }}%
+                            </div>
+                        </div>
+                        <div class="flex items-start justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{$t('public.amount')}}
+                            </div>
+                            <div class="text-xs sm:text-sm text-primary-500 dark:text-primary-400 font-bold">
+                                $ {{ formatAmount(subscriber.subscription.meta_balance) }}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="pt-5 text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-            {{$t('public.switch_master_description')}}
+        <div class="col-span-11 sm:col-span-1 p-2">
+            <div class="flex items-center justify-center w-full h-full">
+                <IconChevronsRight size="24" />
+            </div>
         </div>
-
-        <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
-            <Button variant="transparent" type="button" class="justify-center" @click.prevent="closeModal">
-                {{$t('public.cancel')}}
-            </Button>
-            <Button class="justify-center" @click="submit" :disabled="form.processing">{{$t('public.confirm')}}</Button>
+        <div class="col-span-11 sm:col-span-5 bg-gray-100 dark:bg-gray-950 p-5">
+            <div class="flex flex-col items-start gap-3 self-stretch">
+                <div class="flex items-center justify-center w-full">
+                    <div class="flex flex-col items-start gap-3 self-stretch w-full">
+                        <Select
+                            v-model="selectedMaster"
+                            :options="masters"
+                            optionLabel="name"
+                            class="w-full"
+                            :loading="masterLoading"
+                            :placeholder="$t('public.placeholder')"
+                            :disabled="!masters.length"
+                        >
+                            <template #value="slotProps">
+                                <div v-if="slotProps.value" class="flex items-center">
+                                    <div v-if="locale === 'cn'">
+                                        {{ slotProps.value.trading_user.company ? slotProps.value.trading_user.company : slotProps.value.trading_user.name }} ({{ slotProps.value.meta_login }})
+                                    </div>
+                                    <div v-else>
+                                        {{ slotProps.value.trading_user.name }} ({{ slotProps.value.meta_login }})
+                                    </div>
+                                </div>
+                                <span v-else>{{ slotProps.placeholder }}</span>
+                            </template>
+                            <template #option="slotProps">
+                                <div v-if="locale === 'cn'">
+                                    {{ slotProps.option.trading_user.company ? slotProps.option.trading_user.company : slotProps.option.trading_user.name }} ({{ slotProps.option.meta_login }})
+                                </div>
+                                <div v-else>
+                                    {{ slotProps.option.trading_user.name }} ({{ slotProps.option.meta_login }})
+                                </div>
+                            </template>
+                        </Select>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{$t('public.estimated_roi')}}
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ selectedMaster ? selectedMaster.estimated_monthly_returns : $t('public.loading') }}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{$t('public.estimated_lot_size')}}
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ selectedMaster ? selectedMaster.estimated_lot_size + ` ${$t('public.lot')}` : $t('public.loading') }}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{ $t('public.max_drawdown') }}
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ selectedMaster ? selectedMaster.max_drawdown : $t('public.loading') }}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{ $t('public.roi_period') }}
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ selectedMaster ? selectedMaster.roi_period + ` ${$t('public.days')}` : $t('public.loading') }}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{ $t('public.sharing_profit') }}
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-800 dark:text-white font-semibold">
+                                {{ selectedMaster ? (selectedMaster.sharing_profit % 1 === 0 ? formatAmount(selectedMaster.sharing_profit, 0) : formatAmount(selectedMaster.sharing_profit)) + '%' : $t('public.loading') }}
+                            </div>
+                        </div>
+                        <div class="flex items-start justify-between gap-2 self-stretch">
+                            <div class="font-semibold text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                {{$t('public.min_join_equity')}}
+                            </div>
+                            <div class="text-xs sm:text-sm text-primary-500 dark:text-primary-400 font-bold">
+                                $ {{ selectedMaster ? formatAmount(selectedMaster.min_join_equity, 0) : $t('public.loading') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </Modal>
+    </div>
+
+    <div class="pt-5 text-gray-600 dark:text-gray-400 text-sm">
+        {{$t('public.switch_master_description')}}
+    </div>
+
+    <div class="flex w-full justify-end gap-3 mt-5">
+        <Button
+            type="button"
+            severity="secondary"
+            text
+            class="justify-center w-full md:w-auto px-6"
+            @click="closeDialog"
+            :disabled="form.processing"
+        >
+            {{ $t('public.cancel') }}
+        </Button>
+        <Button
+            type="submit"
+            class="justify-center w-full md:w-auto px-6"
+            @click.prevent="submitForm"
+            :disabled="form.processing"
+        >
+            {{ $t('public.confirm') }}
+        </Button>
+    </div>
 </template>

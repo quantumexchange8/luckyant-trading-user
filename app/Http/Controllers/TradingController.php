@@ -414,10 +414,9 @@ class TradingController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'terms' => ['accepted']
-        ]);
-        $validator->setAttributeNames([
+        ])->setAttributeNames([
             'terms' => trans('public.terms_and_conditions'),
-        ]);
+        ])->validate();
 
         $subscription = Subscription::find($request->subscription_id);
 
@@ -453,9 +452,11 @@ class TradingController extends Controller
                 ]);
             }
 
-            return redirect()->back()
-                ->with('title', trans('public.success_terminate'))
-                ->with('success', trans('public.successfully_terminate'). ': ' . $subscription->subscription_number);
+            return back()->with('toast', [
+                'title' => trans('public.success_terminate'),
+                'message' => trans('public.successfully_terminate'). ': ' . $subscription->subscription_number,
+                'type' => 'success',
+            ]);
         }
     }
 
@@ -463,10 +464,9 @@ class TradingController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'terms' => ['accepted']
-        ]);
-        $validator->setAttributeNames([
+        ])->setAttributeNames([
             'terms' => trans('public.terms_and_conditions'),
-        ]);
+        ])->validate();
 
         $subscription = Subscription::find($request->subscription_id);
 
@@ -529,14 +529,18 @@ class TradingController extends Controller
                     ]);
                 }
 
-                return redirect()->back()
-                    ->with('title', $messages[$request->action]['title'])
-                    ->with('success', $messages[$request->action]['success']);
+                return back()->with('toast', [
+                    'title' => $messages[$request->action]['title'],
+                    'message' => $messages[$request->action]['success'],
+                    'type' => 'success',
+                ]);
             }
 
-            return redirect()->back()
-                ->with('title', trans('public.invalid_action'))
-                ->with('warning', trans('public.try_again_later'));
+            return back()->with('toast', [
+                'title' => trans("public.invalid_action"),
+                'message' => trans('public.try_again_later'),
+                'type' => 'warning',
+            ]);
         }
     }
 
@@ -1051,11 +1055,13 @@ class TradingController extends Controller
             'status' => 'Pending',
         ]);
 
-        return redirect()->back()
-            ->with('title', trans('public.success_request_switch'))
-            ->with('success', trans('public.successfully_request_switch', [
+        return back()->with('toast', [
+            'title' => trans('public.success_request_switch'),
+            'message' => trans('public.successfully_request_switch', [
                 'from' => $subscriber->master_meta_login,
                 'to' => $new_master->meta_login
-            ]));
+            ]),
+            'type' => 'success',
+        ]);
     }
 }

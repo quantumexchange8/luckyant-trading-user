@@ -149,7 +149,7 @@ const getSeverity = (status) => {
 
         <Card class="w-full">
             <template #content>
-                <div class="font-bold mb-5">
+                <div class="font-bold mb-5 dark:text-white">
                     {{ $t('public.subscription_history') }}
                 </div>
                 <div

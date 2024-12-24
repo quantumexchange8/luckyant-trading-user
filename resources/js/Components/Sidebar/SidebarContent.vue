@@ -9,7 +9,7 @@ import {computed, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {
     IconCircleLetterA,
-    IconCircleLetterH,
+    IconAi,
 } from "@tabler/icons-vue"
 
 const currentDomain = window.location.hostname;
@@ -54,7 +54,7 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
             :active="route().current('hofi_strategy.*')"
         >
             <template #icon>
-                <IconCircleLetterH size="24" />
+                <IconAi size="24" />
             </template>
 
             <SidebarCollapsibleItem

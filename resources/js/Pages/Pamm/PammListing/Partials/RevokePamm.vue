@@ -15,7 +15,7 @@ const props = defineProps({
 })
 
 const terminationModal = ref(false);
-const {formatAmount} = transactionFormat();
+const { formatAmount } = transactionFormat();
 const {locale} = useLangObserver();
 const terms = ref();
 const emit = defineEmits(['update:visible']);
@@ -85,15 +85,12 @@ const calculateManagementFee = (data) => {
 
 <template>
     <div class="flex flex-col items-center self-stretch gap-5 md:gap-8">
-        <div
-            class="py-5 px-6 flex flex-col items-center gap-4 bg-gray-50 dark:bg-gray-950 divide-y dark:divide-gray-700 self-stretch">
+        <div class="py-5 px-6 flex flex-col items-center gap-4 bg-gray-50 dark:bg-gray-950 divide-y dark:divide-gray-700 self-stretch">
             <div class="w-full flex items-center gap-4">
                 <div class="flex flex-col items-start self-stretch">
                     <div class="self-stretch truncate w-[190px] md:w-64 text-gray-950 dark:text-white font-bold">
                         <div v-if="locale === 'cn'">
-                            {{
-                                subscriber.master.trading_user.company ? subscriber.master.trading_user.company : subscriber.master.trading_user.name
-                            }}
+                            {{ subscriber.master.trading_user.company ? subscriber.master.trading_user.company : subscriber.master.trading_user.name }}
                         </div>
                         <div v-else>
                             {{ subscriber.master.trading_user.name }}
@@ -108,56 +105,37 @@ const calculateManagementFee = (data) => {
                 <div class="flex flex-col gap-1 items-center self-stretch">
                     <div class="flex py-1 gap-3 items-start self-stretch">
                         <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.account_no') }}</span>
-                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{
-                                subscriber.meta_login
-                            }}</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{ subscriber.meta_login }}</span>
                     </div>
                     <div class="flex py-1 gap-3 items-start self-stretch">
-                        <span class="w-full text-gray-500 font-medium text-xs">{{
-                                $t('public.subscription_number')
-                            }}</span>
-                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{
-                                subscriber.subscription_number
-                            }}</span>
+                        <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.subscription_number') }}</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{ subscriber.subscription_number }}</span>
                     </div>
                     <div class="flex py-1 gap-3 items-start self-stretch">
-                        <span class="w-full text-gray-500 font-medium text-xs">{{
-                                $t('public.roi_date')
-                            }} ({{ subscriber.settlement_period }} {{ $t('public.days') }} )</span>
-                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{
-                                dayjs(subscriber.settlement_date).format('YYYY/MM/DD')
-                            }}</span>
+                        <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.roi_date') }} ({{ subscriber.settlement_period }} {{ $t('public.days') }} )</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">{{ dayjs(subscriber.settlement_date).format('YYYY/MM/DD') }}</span>
                     </div>
                     <div class="flex py-1 gap-3 items-start self-stretch">
-                        <span class="w-full text-gray-500 font-medium text-xs">{{
-                                $t('public.investment_amount')
-                            }}</span>
-                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">$ {{
-                                formatAmount(subscriber.total_amount)
-                            }}</span>
+                        <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.investment_amount') }}</span>
+                        <span class="w-full text-gray-950 dark:text-white font-medium text-sm">$ {{ formatAmount(subscriber.total_amount) }}</span>
                     </div>
 
                     <div class="flex py-1 gap-3 items-start self-stretch">
                         <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.management_fee') }}</span>
                         <span
-                            class="w-full text-error-500 font-semibold text-sm">$ {{
-                                formatAmount(calculateManagementFee(subscriber))
-                            }}</span>
+                            class="w-full text-error-500 font-semibold text-sm">$ {{ formatAmount(calculateManagementFee(subscriber)) }}</span>
                     </div>
                     <div class="flex py-1 gap-3 items-start self-stretch">
                         <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.return_amount') }}</span>
                         <span
-                            class="w-full text-success-500 font-semibold text-sm">$ {{
-                                formatAmount(subscriber.total_amount - calculateManagementFee(subscriber))
-                            }}</span>
+                            class="w-full text-success-500 font-semibold text-sm">$ {{ formatAmount(subscriber.total_amount - calculateManagementFee(subscriber)) }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="text-gray-600 dark:text-gray-400 text-xs">
-            {{ $t('public.confirm_terminate_warning_1') }} <strong>{{ subscriber.meta_login }}</strong>
-            {{ $t('public.confirm_terminate_warning_2') }}
+            {{$t('public.confirm_terminate_warning_1')}} <strong>{{ subscriber.meta_login }}</strong> {{$t('public.confirm_terminate_warning_2')}}
         </div>
 
         <!-- t&c -->
@@ -169,7 +147,7 @@ const calculateManagementFee = (data) => {
                     binary
                     :invalid="!!form.errors.terms"
                 />
-                <label for="terms" class="flex text-gray-600 dark:text-gray-400 text-xs">
+                <label for="terms" class="text-gray-600 dark:text-gray-400 text-xs">
                     {{ $t('public.agreement') }}
                     <TermsAndCondition
                         :termsLabel="$t('public.terms_and_conditions')"

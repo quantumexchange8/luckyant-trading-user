@@ -22,7 +22,6 @@ import {
 import dayjs from "dayjs";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker"
-import CopyTradeSubscriptionsAction from "@/Pages/CopyTrading/CopyTradeSubscriptionsAction.vue";
 import {IconAdjustments} from "@tabler/icons-vue";
 import PammSubscriptionAccount from "@/Pages/Pamm/Partials/PammSubscriptionAccount.vue";
 import PammSubscriptionsAction from "@/Pages/Pamm/PammSubscriptionsAction.vue";

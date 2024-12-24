@@ -13,7 +13,7 @@ class JoinPammRequest extends FormRequest
 
         $rules = [
             'meta_login' => ['required'],
-            'amount' => ['required'],
+            'investment_amount' => ['required'],
             'terms' => ['accepted'],
         ];
 
@@ -35,7 +35,7 @@ class JoinPammRequest extends FormRequest
         $master = Master::find($this->master_id);
 
         return [
-            'amount' => $master->delivery_requirement ? trans('public.package') : trans('public.amount'),
+            'investment_amount' => $master->delivery_requirement ? trans('public.package') : trans('public.investment_amount'),
             'meta_login' => trans('public.account_no'),
             'package_product' => trans('public.select_product'),
             'delivery_address' => trans('public.delivery_address'),

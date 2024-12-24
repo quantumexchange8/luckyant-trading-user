@@ -541,7 +541,7 @@ return [
     'virtual' => "虚拟账户",
     'select_wallet' => "Select Wallet",
     'select_leverage' => "Select Leverage",
-    'alpha_strategy' => "交易汇站",
+    'alpha_strategy' => "Alpha 连接",
     'hofi_strategy' => "AI 智链",
 //    'hofi_strategy' => "HOFI 智链",
     'pamm_trading' => "PAMM 交易",
@@ -574,4 +574,7 @@ return [
     'filter' => "筛选",
     'days_roi' => "天结算周期",
     'clear_all' => "清除筛选",
+    'traders_hub' => "交易汇站",
+    'ai_community' => "人工智能社区",
+    'analytics' => "分析工具",
 ];

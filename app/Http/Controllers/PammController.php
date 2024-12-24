@@ -867,9 +867,11 @@ class PammController extends Controller
             ]);
         }
 
-        return redirect()->back()
-            ->with('title', trans('public.success_revoke'))
-            ->with('success', trans('public.successfully_revoked_pamm'));
+        return back()->with('toast', [
+            'title' => trans("public.success"),
+            'message' => trans('public.successfully_revoked_pamm'),
+            'type' => 'success',
+        ]);
     }
 
     public function terminatePammBatch(Request $request)

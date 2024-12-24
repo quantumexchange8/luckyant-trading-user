@@ -46,7 +46,7 @@ const submitForm = () => {
 }
 
 const closeDialog = () => {
-    emit("update:visible", false);
+    emit('update:visible', false);
 }
 
 const getJoinedDays = (data) => {

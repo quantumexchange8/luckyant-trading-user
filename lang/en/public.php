@@ -541,7 +541,7 @@ return [
     'virtual' => "Virtual Account",
     'select_wallet' => "Select Wallet",
     'select_leverage' => "Select Leverage",
-    'alpha_strategy' => "Traders Hub",
+    'alpha_strategy' => "ALPHA Connect",
     'hofi_strategy' => "AI Connect",
 //    'hofi_strategy' => "HOFI Connect",
     'pamm_trading' => "PAMM Trading",
@@ -574,4 +574,7 @@ return [
     'filter' => "Filter",
     'days_roi' => "Days Settlement",
     'clear_all' => "Clear All",
+    'traders_hub' => "Traders Hub",
+    'ai_community' => "AI Community",
+    'analytics' => "Analytics",
 ];

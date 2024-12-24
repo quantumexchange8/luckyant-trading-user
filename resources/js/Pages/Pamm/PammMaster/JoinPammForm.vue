@@ -29,6 +29,8 @@ const terms = ref();
 const selectedAccount = ref(null);
 const {formatAmount} = transactionFormat();
 const {locale} = useLangObserver();
+const investmentAmount = ref();
+const returnAmount = ref();
 
 const openDialog = () => {
     visible.value = true;
@@ -61,11 +63,16 @@ const form = useForm({
 
 watch(selectedAccount, () => {
     form.meta_login = selectedAccount.value.meta_login;
-    form.investment_amount = selectedAccount.value.balance - (selectedAccount.value.balance % 100);
+    investmentAmount.value = selectedAccount.value.balance - (selectedAccount.value.balance % 100);
     form.type = selectedAccount.value.account_type;
 });
 
+watch(investmentAmount, (newAmount) => {
+    returnAmount.value = selectedAccount.value.balance - newAmount
+})
+
 const submitForm = () => {
+    form.investment_amount = investmentAmount.value;
     form.post(route('hofi_strategy.followPammMaster'), {
         onSuccess: () => {
             closeDialog();
@@ -187,7 +194,7 @@ const filterTreeMedia = (media) => {
                 <div class="flex flex-col items-start gap-1 self-stretch w-full">
                     <InputLabel for="investment_amount" :value="$t('public.investment_amount') + ' ($)'" />
                     <InputNumber
-                        v-model="form.investment_amount"
+                        v-model="investmentAmount"
                         inputId="investment_amount"
                         class="w-full"
                         :min="Number(master.min_join_equity)"
@@ -200,6 +207,7 @@ const filterTreeMedia = (media) => {
                         locale="en-US"
                         :placeholder="'$ ' + formatAmount(master.min_join_equity)"
                         :invalid="!!form.errors.investment_amount"
+                        :disabled="!selectedAccount"
                     >
                         <template #incrementbuttonicon>
                             <PlusIcon class="w-4 h-4"/>
@@ -208,7 +216,7 @@ const filterTreeMedia = (media) => {
                             <MinusIcon class="w-4 h-4"/>
                         </template>
                     </InputNumber>
-                    <small v-if="selectedAccount && selectedAccount.balance % 100 > 0" class="text-error-500">{{ $t('public.amount_return_cash_wallet') }}: <strong>${{ formatAmount(selectedAccount.balance % 100) }}</strong></small>
+                    <small v-if="selectedAccount && returnAmount > 0" class="text-error-500">{{ $t('public.amount_return_cash_wallet') }}: <strong>${{ formatAmount(returnAmount) }}</strong></small>
                     <InputError :message="form.errors.investment_amount" />
                 </div>
 
@@ -235,7 +243,7 @@ const filterTreeMedia = (media) => {
                 <span class="text-gray-950 dark:text-white text-sm font-bold">{{ $t('public.notice') }}</span>
                 <div v-if="master.type === 'ESG'" class="text-sm text-gray-500">
                     {{ $t('public.purchase_product_desc') }}
-                    <span class="font-semibold text-primary-500">{{ form.investment_amount / 1000 ?? 0 }}</span>
+                    <span class="font-semibold text-primary-500">{{ formatAmount((investmentAmount > 0 ? investmentAmount : 0) / 1000, 0) }}</span>
                 </div>
                 <div class="flex flex-col items-start gap-1 self-stretch">
                     <div
@@ -268,7 +276,7 @@ const filterTreeMedia = (media) => {
                         binary
                         :invalid="!!form.errors.terms"
                     />
-                    <label for="terms" class="flex text-gray-600 dark:text-gray-400 text-xs">
+                    <label for="terms" class="text-gray-600 dark:text-gray-400 text-xs">
                         {{ $t('public.agreement') }}
                         <TermsAndCondition
                             :termsLabel="$t('public.terms_and_conditions')"

@@ -8,9 +8,10 @@ import { TemplateIcon, ViewGridIcon, SwitchHorizontalIcon, UserGroupIcon, UserIc
 import {computed, ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import {
-    IconCircleLetterA,
+    IconFileSearch,
     IconAi,
 } from "@tabler/icons-vue"
+import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 
 const currentDomain = window.location.hostname;
 const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
@@ -49,6 +50,10 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
         </SidebarLink>
 
         <!-- HOFI Strategy -->
+        <SidebarCategoryLabel
+            :title="$t('public.ai_community')"
+        />
+
         <SidebarCollapsible
             :title="$t('public.hofi_strategy')"
             :active="route().current('hofi_strategy.*')"
@@ -83,13 +88,17 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
         </SidebarCollapsible>
 
         <!-- Alpha Strategy -->
+        <SidebarCategoryLabel
+            :title="$t('public.traders_hub')"
+        />
+
         <SidebarCollapsible
             v-if="currentDomain !== 'member.luckyantmallvn.com' && contentVisibility"
             :title="$t('public.alpha_strategy')"
             :active="route().current('alpha_strategy.*')"
         >
             <template #icon>
-                <IconCircleLetterA size="24" />
+                <IconFileSearch size="24" />
             </template>
 
             <SidebarCollapsibleItem
@@ -145,6 +154,10 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
 <!--                :active="route().current('transaction.trading_account')"-->
 <!--            />-->
 <!--        </SidebarCollapsible>-->
+
+        <SidebarCategoryLabel
+            :title="$t('public.analytics')"
+        />
 
         <SidebarCollapsible
             :title="$t('public.sidebar.affiliate_program')"

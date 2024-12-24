@@ -76,6 +76,9 @@ const getSeverity = (status) => {
         case 'Subscribing':
             return 'success';
 
+        case 'Switched':
+            return 'secondary';
+
         case 'Pending':
             return 'info';
 

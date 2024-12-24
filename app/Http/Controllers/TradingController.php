@@ -412,7 +412,7 @@ class TradingController extends Controller
 
     public function terminateSubscription(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        Validator::make($request->all(), [
             'terms' => ['accepted']
         ])->setAttributeNames([
             'terms' => trans('public.terms_and_conditions'),
@@ -426,38 +426,34 @@ class TradingController extends Controller
                 ->with('warning', trans('public.terminated_subscription_error'));
         }
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        } else {
-            Subscriber::where('subscription_id', $subscription->id)->first()->update([
-                'unsubscribe_date' => now(),
-                'status' => 'Unsubscribed',
-                'auto_renewal' => false
-            ]);
+        Subscriber::where('subscription_id', $subscription->id)->first()->update([
+            'unsubscribe_date' => now(),
+            'status' => 'Unsubscribed',
+            'auto_renewal' => false
+        ]);
 
-            $subscription->update([
-                'termination_date' => now(),
-                'status' => 'Terminated',
+        $subscription->update([
+            'termination_date' => now(),
+            'status' => 'Terminated',
+            'auto_renewal' => false,
+        ]);
+
+        $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
+            ->get();
+
+        foreach ($subscription_batches as $subscription_batch) {
+            $subscription_batch->update([
                 'auto_renewal' => false,
-            ]);
-
-            $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)
-                ->get();
-
-            foreach ($subscription_batches as $subscription_batch) {
-                $subscription_batch->update([
-                    'auto_renewal' => false,
-                    'termination_date' => now(),
-                    'status' => 'Terminated'
-                ]);
-            }
-
-            return back()->with('toast', [
-                'title' => trans('public.success_terminate'),
-                'message' => trans('public.successfully_terminate'). ': ' . $subscription->subscription_number,
-                'type' => 'success',
+                'termination_date' => now(),
+                'status' => 'Terminated'
             ]);
         }
+
+        return back()->with('toast', [
+            'title' => trans('public.success_terminate'),
+            'message' => trans('public.successfully_terminate'). ': ' . $subscription->subscription_number,
+            'type' => 'success',
+        ]);
     }
 
     public function renewalSubscription(Request $request)

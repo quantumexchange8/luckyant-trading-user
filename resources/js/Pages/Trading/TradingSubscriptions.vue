@@ -28,32 +28,36 @@ const tabs = ref([
             copyTradesCount: props.copyTradesCount
         })
     },
-    // {
-    //     title: 'pamm_trading',
-    //     value: '1',
-    //     count: props.pammsCount,
-    //     component: h(PammSubscriptions, {
-    //         strategyType: props.strategyType,
-    //         pammType: 'StandardGroup',
-    //         pammsCount: props.pammsCount,
-    //         walletSel: props.walletSel,
-    //     })
-    // },
-    // ...(props.strategyType !== 'alpha'
-    //     ? [
-    //         {
-    //             title: 'esg_investment_portfolio',
-    //             value: '2',
-    //             count: props.esgsCount,
-    //             component: h(PammSubscriptions, {
-    //                 strategyType: props.strategyType,
-    //                 pammType: 'ESG',
-    //                 pammsCount: props.pammsCount,
-    //                 walletSel: props.walletSel,
-    //             })
-    //         }
-    //     ]
-    //     : []),
+    ...(props.strategyType !== 'alpha'
+        ? [
+            {
+                title: 'pamm_trading',
+                value: '1',
+                count: props.pammsCount,
+                component: h(PammSubscriptions, {
+                    strategyType: props.strategyType,
+                    pammType: 'StandardGroup',
+                    pammsCount: props.pammsCount,
+                    walletSel: props.walletSel,
+                })
+            }
+        ]
+        : []),
+    ...(props.strategyType !== 'alpha'
+        ? [
+            {
+                title: 'esg_investment_portfolio',
+                value: '2',
+                count: props.esgsCount,
+                component: h(PammSubscriptions, {
+                    strategyType: props.strategyType,
+                    pammType: 'ESG',
+                    pammsCount: props.pammsCount,
+                    walletSel: props.walletSel,
+                })
+            }
+        ]
+        : []),
 ]);
 </script>
 

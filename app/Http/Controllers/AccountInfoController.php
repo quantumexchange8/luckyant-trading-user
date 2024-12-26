@@ -790,6 +790,13 @@ class AccountInfoController extends Controller
                 ->whereDoesntHave('tradingUser', function ($subQuery) {
                     $subQuery->whereIn('acc_status', ['Deleted']);
                 })
+                ->whereDoesntHave('subscriber', function ($subQuery) {
+                    $subQuery->where('status', 'Pending');
+                })
+                ->whereDoesntHave('pamm_subscription', function ($subQuery) {
+                    $subQuery->whereIn('status', ['Pending', 'Active']);
+                })
+                ->whereNotIn('account_type', [2,3])
                 ->get();
         }
 

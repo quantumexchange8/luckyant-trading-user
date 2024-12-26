@@ -45,9 +45,12 @@ const totalBalance = ref(null);
                 class="border-2 border-primary-500 dark:border-primary-800 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-primary-300 dark:to-primary-800"
             >
                 <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_equity') }}</legend>
-                <div class="text-xl font-bold sm:text-3xl">
+                <div class="text-xl font-bold sm:text-xxl">
                     <div v-if="totalEquity !== null">
                         $ {{ formatAmount(totalEquity) }}
+                    </div>
+                    <div v-else-if="activeAccountCounts === 0">
+                        $ {{ formatAmount(0) }}
                     </div>
                     <div v-else>
                         {{ $t('public.loading') }}
@@ -59,9 +62,12 @@ const totalBalance = ref(null);
                 class="border-2 border-purple-500 dark:border-purple-700 p-4 rounded-lg shadow-md text-center bg-gradient-to-b from-transparent to-purple-300 dark:to-purple-700"
             >
                 <legend class="text-lg px-4 uppercase font-semibold">{{ $t('public.total_balance') }}</legend>
-                <div class="text-xl font-bold sm:text-3xl">
+                <div class="text-xl font-bold sm:text-xxl">
                     <div v-if="totalBalance !== null">
                         $ {{ formatAmount(totalBalance) }}
+                    </div>
+                    <div v-else-if="activeAccountCounts === 0">
+                        $ {{ formatAmount(0) }}
                     </div>
                     <div v-else>
                         {{ $t('public.loading') }}

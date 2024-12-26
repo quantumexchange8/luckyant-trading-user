@@ -89,9 +89,7 @@ const leave = (el) => {
             appear
         >
             <div
-                v-show="
-                    isOpen && (sidebarState.isOpen || sidebarState.isHovered)
-                "
+                v-show="isOpen && (sidebarState.isOpen || sidebarState.isHovered)"
                 class="overflow-hidden transition-all duration-200 max-h-0"
             >
                 <ul

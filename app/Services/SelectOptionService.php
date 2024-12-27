@@ -24,6 +24,7 @@ class SelectOptionService
                 'name' => trans('public.' . $wallet->type),
                 'label' => trans('public.' . $wallet->type) . ' ($' . number_format($wallet->balance, 2) . ')',
                 'balance' => $wallet->balance,
+                'type' => $wallet->type,
             ];
         });
     }

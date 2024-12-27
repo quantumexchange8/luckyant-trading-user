@@ -56,11 +56,16 @@ getTerms();
 watch(selectedWallet, (newWallet) => {
     top_up_amount.value = null
     form.wallet_id = newWallet.value;
+
+    if (selectedWallet.value.type === 'e_wallet') {
+        maxEWalletAmount.value = selectedWallet.value.balance;
+    }
 })
 
 watch(top_up_amount, (newTopupAmount) => {
     const percentage = 20 / 100;
 
+    console.log(selectedWallet.value);
     if (selectedWallet.value.type === 'e_wallet') {
         eWalletAmount.value = newTopupAmount * percentage;
         cashWalletAmount.value = newTopupAmount - eWalletAmount.value;

@@ -19,6 +19,7 @@ class SubscriptionBatch extends Model
         'master_id',
         'master_meta_login',
         'type',
+        'strategy_type',
         'subscriber_id',
         'subscription_id',
         'subscription_number',

@@ -18,6 +18,7 @@ class PammSubscription extends Model
         'subscription_package_id',
         'subscription_package_product',
         'type',
+        'strategy_type',
         'transaction_id',
         'subscription_number',
         'subscription_period',

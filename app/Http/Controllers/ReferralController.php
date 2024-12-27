@@ -33,22 +33,24 @@ class ReferralController extends Controller
         $locale = app()->getLocale();
 
         if ($searchTerm) {
-
-            $searchUser = User::where('name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('email', 'like', '%' . $searchTerm . '%')
-                ->whereIn('id', $childrenIds)
+            // Search for a user by name or email
+            $searchUser = User::where(function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('email', 'like', '%' . $searchTerm . '%');
+            })
+                ->whereIn('id', $childrenIds) // Ensure the user is within the children IDs
                 ->first();
 
-            if (!$searchUser) {
-                return Auth::user();
+            // If no user is found or user is not a child, fallback to the authenticated user
+            if (!$searchUser || !in_array($searchUser->id, $childrenIds)) {
+                $user = Auth::user();
+            } else {
+                $user = $searchUser;
             }
-
-            if (!in_array($searchUser->id, $childrenIds)) {
-                return Auth::user();
-            }
+        } else {
+            // If no search term, use the authenticated user
+            $user = Auth::user();
         }
-
-        $user = $searchUser ?? Auth::user();
 
         $users = User::whereHas('upline', function ($query) use ($user) {
             $query->where('id', $user->id);
@@ -67,7 +69,7 @@ class ReferralController extends Controller
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level,
-            'rank' => $translations[$locale] ?? $rank->name,
+            'rank' => $translations[$locale] ?? '-',
             'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
             'self_deposit' => $this->getSelfDeposit($user),
@@ -100,7 +102,7 @@ class ReferralController extends Controller
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level + 1,
-            'rank' => $translations[$locale] ?? $rank->name,
+            'rank' => $translations[$locale] ?? '-',
             'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
             'self_deposit' => $this->getSelfDeposit($user),

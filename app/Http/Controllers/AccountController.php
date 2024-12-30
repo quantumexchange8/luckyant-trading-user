@@ -425,13 +425,11 @@ class AccountController extends Controller
                 'amount' => $amount,
                 'transaction_charges' => 0,
                 'transaction_amount' => $amount,
-                'comment' => $comment,
-                'new_wallet_amount' => $wallet->balance - $amount,
             ]);
 
             if ($trading_account->accountType->slug == 'alpha') {
                 $transaction->update([
-                   'status' => 'Pending',
+                   'status' => 'Processing',
                 ]);
 
                 Notification::route('mail', 'sluckyant@gmail.com')
@@ -439,10 +437,12 @@ class AccountController extends Controller
             } else {
                 $transaction->update([
                     'status' => 'Success',
+                    'comment' => $comment,
+                    'new_wallet_amount' => $wallet->balance - $amount,
                 ]);
-            }
 
-            $wallet->update(['balance' => $wallet->balance - $amount]);
+                $wallet->update(['balance' => $wallet->balance - $amount]);
+            }
         }
 
         // check subscriber

@@ -577,4 +577,6 @@ return [
     'traders_hub' => "Pusat Pedagang",
     'ai_community' => "Komunitas AI",
     'analytics' => "Alat Analisis",
+    'min' => "Minimal",
+    'min_amount_error' => "Masukkan jumlah minimal",
 ];

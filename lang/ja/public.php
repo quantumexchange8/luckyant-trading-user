@@ -577,4 +577,6 @@ return [
     'traders_hub' => "トレーダーハブ",
     'ai_community' => "AIコミュニティ",
     'analytics' => "分析ツール",
+    'min' => "最小",
+    'min_amount_error' => "最小金額を入力してください",
 ];

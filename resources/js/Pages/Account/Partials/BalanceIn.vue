@@ -38,6 +38,7 @@ const form = useForm({
 const openDialog = () => {
     visible.value = true;
     getDepositWallets();
+    getBalanceInAmount();
 }
 
 const loadingWallets = ref(false);
@@ -53,6 +54,21 @@ const getDepositWallets = async () => {
         console.error('Error fetching account types:', error);
     } finally {
         loadingWallets.value = false;
+    }
+};
+
+const minAmount = ref(null);
+const loadingMinAmount = ref(false);
+
+const getBalanceInAmount = async () => {
+    loadingMinAmount.value = true;
+    try {
+        const response = await axios.get(`/getBalanceInAmount?meta_login=${props.account.meta_login}`);
+        minAmount.value = response.data;
+    } catch (error) {
+        console.error('Error fetching account types:', error);
+    } finally {
+        loadingMinAmount.value = false;
     }
 };
 
@@ -213,11 +229,18 @@ const closeDialog = () => {
                                 {{ depositAmount ? $t('public.clear') : $t('public.full_amount') }}
                             </div>
                         </div>
-                        <div v-if="account.account_type.id === 3" class="self-stretch text-gray-500 text-xs">
-                            {{ $t('public.max') }}:
-                            <span class="font-semibold text-sm dark:text-white">${{
-                                    formatAmount(alphaDepositMax > alphaDepositQuota ? alphaDepositQuota : alphaDepositMax)
-                                }}</span>
+                        <div v-if="account.account_type.slug === 'alpha'" class="flex self-stretch gap-2 items-center">
+                            <div class="text-gray-500 text-xs">
+                                {{ $t('public.min') }}:
+                                <span v-if="loadingMinAmount">{{ $t('public.loading') }}</span>
+                                <span v-else class="font-semibold text-sm dark:text-white">${{ formatAmount(minAmount) }}</span>
+                            </div>
+                            <div class="text-gray-500 text-xs">
+                                {{ $t('public.max') }}:
+                                <span class="font-semibold text-sm dark:text-white">${{
+                                        formatAmount(alphaDepositMax > alphaDepositQuota ? alphaDepositQuota : alphaDepositMax)
+                                    }}</span>
+                            </div>
                         </div>
                         <InputError :message="form.errors.amount"/>
                     </div>

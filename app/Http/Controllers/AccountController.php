@@ -17,6 +17,7 @@ use App\Models\TradingUser;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Notifications\AddTradingAccountNotification;
+use App\Notifications\DepositRequestNotification;
 use App\Services\AlphaFundService;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
@@ -86,12 +87,16 @@ class AccountController extends Controller
             }
 
             $metaAccount = $metaService->createUser($user, $account_type->name, $leverage, $user->email);
-            $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance');
+            $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance') ?? 0;
 
             Notification::route('mail', $user->email)
                 ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
 
-            return back()->with('toast', trans('public.created_trading_account'));
+            return back()->with('toast', [
+                'title' => trans("public.success"),
+                'message' => trans('public.created_trading_account'),
+                'type' => 'success',
+            ]);
         } else {
             $virtual_account = RunningNumberService::getID('virtual_account');
 
@@ -331,37 +336,68 @@ class AccountController extends Controller
         /*
          * Alpha acc deposit is 20% of total active fund from PROFIT/BONUS amount;
          * */
-        if ($trading_account->account_type == 3) {
+        if ($trading_account->accountType->slug == 'alpha') {
             $fundDetails = AlphaFundService::calculateRemainingQuota($user);
 
             // Validate the amount
             if ($amount > $fundDetails['available_deposit_balance'] || $amount > $fundDetails['remaining_quota']) {
                 throw ValidationException::withMessages(['amount' => trans('public.amount_entered_exceed')]);
             }
+
+            $passBalanceIn = Transaction::where([
+                'category' => 'trading_account',
+                'transaction_type' => 'BalanceIn',
+                'to_meta_login' => $meta_login,
+                'status' => 'Success'
+            ])
+                ->first();
+
+            if (empty($passBalanceIn)) {
+                $minAmount = 100;
+            } else {
+                $minAmount = 10;
+            }
+
+            if ($amount < $minAmount) {
+                throw ValidationException::withMessages(['amount' => trans('public.min_amount_error')]);
+            }
         }
 
         // conduct deal and transaction record
         $deal = [];
 
-        if ($trading_account->account_type != 2) {
+        if ($trading_account->accountType->slug != 'virtual') {
             $connection = (new MetaFiveService())->getConnectionStatus();
-            if ($connection == 0) {
-                try {
-                    $deal = (new MetaFiveService())->createDeal($meta_login, $amount, 'Deposit to trading account', dealAction::DEPOSIT);
-                } catch (\Exception $e) {
-                    \Log::error('Error fetching trading accounts: ' . $e->getMessage());
+
+            if ($trading_account->accountType->slug != 'alpha') {
+                if ($connection == 0) {
+                    try {
+                        $deal = (new MetaFiveService())->createDeal($meta_login, $amount, 'Deposit to trading account', dealAction::DEPOSIT);
+                    } catch (\Exception $e) {
+                        \Log::error('Error fetching trading accounts: ' . $e->getMessage());
+                    }
+                } else {
+                    return redirect()->back()
+                        ->with('title', trans('public.server_under_maintenance'))
+                        ->with('warning', trans('public.try_again_later'));
                 }
-            } else {
-                return redirect()->back()
-                    ->with('title', trans('public.server_under_maintenance'))
-                    ->with('warning', trans('public.try_again_later'));
             }
         } else {
             $trading_account->update(['balance' => $trading_account->balance + $amount]);
         }
 
         $dealId = $deal['deal_Id'] ?? null;
-        if (!$dealId) {
+        if (
+            !$dealId &&
+            $trading_account->accountType->slug != 'virtual' &&
+            $trading_account->accountType->slug != 'alpha'
+        ) {
+            return redirect()->back()
+                ->with('title', trans('public.deposit_fail'))
+                ->with('warning', trans('public.balance_in_fail'));
+        }
+
+        if (!$dealId && $trading_account->accountType->slug != 'alpha') {
             return redirect()->back()
                 ->with('title', trans('public.deposit_fail'))
                 ->with('warning', trans('public.balance_in_fail'));
@@ -369,7 +405,7 @@ class AccountController extends Controller
 
         $comment = $deal['conduct_Deal']['comment'] ?? 'Deposit to trading account';
 
-        if ($wallet->type == 'e_wallet' && $trading_account->account_type != 2) {
+        if ($wallet->type == 'e_wallet' && $trading_account->accountType->slug != 'virtual') {
             $this->createTransaction($user->id, $wallet->id, $meta_login, $dealId, 'BalanceIn', $eWalletAmount, $wallet->balance - $eWalletAmount, $comment, 0, 'trading_account');
             $wallet->balance -= $eWalletAmount;
             $wallet->save();
@@ -378,7 +414,7 @@ class AccountController extends Controller
             $cash_wallet->balance -= $cashWalletAmount;
             $cash_wallet->save();
         } else {
-            Transaction::create([
+            $transaction = Transaction::create([
                 'category' => 'trading_account',
                 'user_id' => $user->id,
                 'from_wallet_id' => $wallet->id,
@@ -389,10 +425,22 @@ class AccountController extends Controller
                 'amount' => $amount,
                 'transaction_charges' => 0,
                 'transaction_amount' => $amount,
-                'status' => 'Success',
                 'comment' => $comment,
                 'new_wallet_amount' => $wallet->balance - $amount,
             ]);
+
+            if ($trading_account->accountType->slug == 'alpha') {
+                $transaction->update([
+                   'status' => 'Pending',
+                ]);
+
+                Notification::route('mail', 'sluckyant@gmail.com')
+                    ->notify(new DepositRequestNotification($transaction));
+            } else {
+                $transaction->update([
+                    'status' => 'Success',
+                ]);
+            }
 
             $wallet->update(['balance' => $wallet->balance - $amount]);
         }
@@ -460,15 +508,11 @@ class AccountController extends Controller
             }
         }
 
-        return redirect()->back()
-            ->with('title', trans('public.success_deposit'))
-            ->with('success', trans('public.successfully_deposit') . ' $' . number_format($amount, 2) . trans('public.to_login') . ': ' . $request->to_meta_login);
-
-//        return back()->with('toast', [
-//            'title' => trans("public.success_deposit"),
-//            'message' => trans('public.successfully_deposit') . ' $' . number_format($amount, 2) . trans('public.to_login') . ': ' . $request->to_meta_login,
-//            'type' => 'success',
-//        ]);
+        return back()->with('toast', [
+            'title' => trans("public.success"),
+            'message' => trans('public.successfully_deposit') . ' $' . number_format($amount, 2) . trans('public.to_login') . ': ' . $request->to_meta_login,
+            'type' => 'success',
+        ]);
     }
 
     protected function createTransaction($userId, $fromWalletId, $toMetaLogin, $ticket, $transactionType, $amount, $newWalletAmount, $comment, $transactionCharges, $category) {

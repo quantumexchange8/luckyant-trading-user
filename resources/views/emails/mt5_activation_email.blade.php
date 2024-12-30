@@ -7,18 +7,18 @@ We are pleased to confirm that your MT5 trading account has been successfully op
 
 Here are the details of your MT5 trading account:
 
-**Account Type**: MT5 Trading Account  
-**Account Number**: {{ $metaAccount['login'] }}  
-**Initial Deposit**: {{ $balance }}  
-**Leverage**: 1:{{ $metaAccount['leverage'] }}  
-**Trading Server**: {{ $metaAccount['server'] }}  
-**Login**: {{ $metaAccount['login'] }}  
-**Main Password**: {{ $metaAccount['mainPassword'] }}  
+**Account Type**: MT5 Trading Account
+**Account Number**: {{ $metaAccount['login'] }}
+**Initial Deposit**: {{ number_format($balance, 2) }}
+**Leverage**: 1:{{ $metaAccount['leverage'] }}
+**Trading Server**: {{ $metaAccount['server'] }}
+**Login**: {{ $metaAccount['login'] }}
+**Main Password**: {{ $metaAccount['mainPassword'] }}
 **Investor Password**: {{ $metaAccount['investPassword'] }}
 
 You can use the above login credentials to access our trading platform and begin trading. If you have any questions about the MT5 trading platform or need assistance, please feel free to contact our customer service team. Our staff is dedicated to providing you with support and assistance.
 
-Best Regards,  
+Best Regards,
 Lucky Ant Trading Team
 
 @component('mail::subcopy')
@@ -41,13 +41,13 @@ Lucky Ant Trading Team
 
 以下是您的MT5交易账户的详细信息:
 
-**账户类型**: MT5交易账户  
-**账户编号**: {{ $metaAccount['login'] }}  
-**初始存款**: {{ $balance }}  
-**杠杆比例**: 1:{{ $metaAccount['leverage'] }}  
-**交易服务器**: {{ $metaAccount['server'] }}  
-**登录用户名**: {{ $metaAccount['login'] }}  
-**主密码**: {{ $metaAccount['mainPassword'] }}  
+**账户类型**: MT5交易账户
+**账户编号**: {{ $metaAccount['login'] }}
+**初始存款**: {{ number_format($balance, 2) }}
+**杠杆比例**: 1:{{ $metaAccount['leverage'] }}
+**交易服务器**: {{ $metaAccount['server'] }}
+**登录用户名**: {{ $metaAccount['login'] }}
+**主密码**: {{ $metaAccount['mainPassword'] }}
 **观察密码**: {{ $metaAccount['investPassword'] }}
 
 您可以使用以上登录凭据访问我们的交易平台并开始交易。如果您对MT5交易平台有任何疑问或需要帮助,请随时联系我们的客户服务团队。我们的工作人员致力于为您提供支持和协助。

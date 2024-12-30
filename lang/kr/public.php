@@ -577,4 +577,6 @@ return [
     'traders_hub' => "거래 허브",
     'ai_community' => "인공지능 커뮤니티",
     'analytics' => "분석 도구",
+    'min' => "최소",
+    'min_amount_error' => "최소 금액을 입력하세요",
 ];

@@ -577,4 +577,6 @@ return [
     'traders_hub' => "交易汇站",
     'ai_community' => "人工智能社区",
     'analytics' => "分析工具",
+    'min' => "最小值",
+    'min_amount_error' => "请输入最小金额",
 ];

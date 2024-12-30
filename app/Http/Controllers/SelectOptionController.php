@@ -6,6 +6,7 @@ use App\Models\AccountType;
 use App\Models\AccountTypeLeverage;
 use App\Models\AccountTypeToLeader;
 use App\Models\SettingLeverage;
+use App\Models\Transaction;
 use App\Models\Wallet;
 use Auth;
 use Illuminate\Http\Request;
@@ -62,5 +63,24 @@ class SelectOptionController extends Controller
         $wallets = $query->get();
 
         return response()->json($wallets);
+    }
+
+    public function getBalanceInAmount(Request $request)
+    {
+        $passBalanceIn = Transaction::where([
+            'category' => 'trading_account',
+            'transaction_type' => 'BalanceIn',
+            'to_meta_login' => $request->meta_login,
+            'status' => 'Success'
+        ])
+            ->first();
+
+        if (empty($passBalanceIn)) {
+            $minAmount = 100;
+        } else {
+            $minAmount = 10;
+        }
+
+        return response()->json($minAmount);
     }
 }

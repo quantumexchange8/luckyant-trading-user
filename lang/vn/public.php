@@ -577,4 +577,6 @@ return [
     'traders_hub' => "Trung tâm giao dịch",
     'ai_community' => "Cộng đồng AI",
     'analytics' => "Công cụ phân tích",
+    'min' => "Tối thiểu",
+    'min_amount_error' => "Nhập số tiền tối thiểu",
 ];

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PaymentGateway;
 use App\Models\PaymentGatewayToLeader;
 use App\Models\TradingAccount;
+use App\Notifications\DepositRequestNotification;
 use Auth;
 use Carbon\Carbon;
 use App\Models\User;
@@ -297,6 +298,9 @@ class WalletController extends Controller
                 'setting_payment_method_id' => $request->setting_payment_id,
                 'transaction_amount' => $amount * $payment_detail['currency_rate'] > 0 ? $amount * $payment_detail['currency_rate'] : $amount,
             ]);
+
+            Notification::route('mail', 'sluckyant@gmail.com')
+                ->notify(new DepositRequestNotification($transaction));
         }
 
         return redirect()->back()

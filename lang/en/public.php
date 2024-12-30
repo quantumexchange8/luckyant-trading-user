@@ -577,4 +577,6 @@ return [
     'traders_hub' => "Traders Hub",
     'ai_community' => "AI Community",
     'analytics' => "Analytics",
+    'min' => "Min",
+    'min_amount_error' => "Enter the minimum amount",
 ];

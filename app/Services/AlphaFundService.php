@@ -41,8 +41,9 @@ class AlphaFundService
             ->whereHas('to_meta_login', function ($query) use ($user) {
                 $query->where([
                     'user_id' => $user->id,
-                    'account_type' => 3,
-                ]);
+                ])->whereHas('accountType', function ($q) {
+                    $q->where('slug', 'alpha');
+                });
             })
             ->sum('amount');
 

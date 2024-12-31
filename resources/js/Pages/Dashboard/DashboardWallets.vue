@@ -69,16 +69,16 @@ watchEffect(() => {
         <div class="text-xl font-semibold">
             $ {{ formatAmount(wallet.balance) }}
         </div>
-        <WalletAction
-            :wallet="wallet"
-            :walletSel="walletSel"
-            :eWalletSel="eWalletSel"
-            :paymentAccountSel="paymentAccountSel"
-            :paymentDetails="paymentDetails"
-            :withdrawalFee="withdrawalFee"
-            :withdrawalFeePercentage="withdrawalFeePercentage"
-            :countries="countries"
-            :settingCryptoPayment="settingCryptoPayment"
-        />
+<!--        <WalletAction-->
+<!--            :wallet="wallet"-->
+<!--            :walletSel="walletSel"-->
+<!--            :eWalletSel="eWalletSel"-->
+<!--            :paymentAccountSel="paymentAccountSel"-->
+<!--            :paymentDetails="paymentDetails"-->
+<!--            :withdrawalFee="withdrawalFee"-->
+<!--            :withdrawalFeePercentage="withdrawalFeePercentage"-->
+<!--            :countries="countries"-->
+<!--            :settingCryptoPayment="settingCryptoPayment"-->
+<!--        />-->
     </div>
 </template>

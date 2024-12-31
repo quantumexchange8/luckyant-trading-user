@@ -207,11 +207,11 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
                 :active="route().current('report.trade_rebate_history')"
             />
 
-            <SidebarCollapsibleItem
-                :href="route('report.wallet_history')"
-                :title="$t('public.sidebar.wallet_history')"
-                :active="route().current('report.wallet_history')"
-            />
+<!--            <SidebarCollapsibleItem-->
+<!--                :href="route('report.wallet_history')"-->
+<!--                :title="$t('public.sidebar.wallet_history')"-->
+<!--                :active="route().current('report.wallet_history')"-->
+<!--            />-->
 
             <SidebarCollapsibleItem
                 :href="route('report.trade_history')"

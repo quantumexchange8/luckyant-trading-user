@@ -27,6 +27,7 @@ const openDialog = (type) => {
 <template>
     <div v-if="subscriber.status === 'Active'" class="flex gap-3 items-center w-full">
         <Button
+            v-if="subscriber.master.can_top_up"
             type="button"
             size="small"
             class="w-full gap-2"

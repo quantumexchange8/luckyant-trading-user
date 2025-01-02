@@ -439,19 +439,57 @@ class WalletController extends Controller
         }
     }
 
-    public function withdrawal(WithdrawalRequest $request)
+    public function withdrawal(Request $request)
     {
-        $user = \Auth::user();
-        $amount = number_format(floatval($request->amount), 2, '.', '');
-        $paymentAccount = PaymentAccount::find($request->wallet_address);
-        $conversion_rate = CurrencyConversionRate::where('base_currency', $paymentAccount->currency)->first();
+        $user = Auth::user();
 
-        if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
-            return back()
-                ->with('title', trans('public.invalid_action'))
-                ->with('warning', trans('public.current_pin_invalid'));
+//        if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
+//            return back()
+//                ->with('title', trans('public.invalid_action'))
+//                ->with('warning', trans('public.current_pin_invalid'));
+//        }
+//
+//        if ($user->password_changed_at !== null) {
+//            $passwordChangedTime = Carbon::parse($user->password_changed_at);
+//            $hoursDifference = $passwordChangedTime->diffInHours(Carbon::now());
+//
+//            if ($hoursDifference < 24) {
+//                return back()
+//                    ->with('title', trans('public.invalid_action'))
+//                    ->with('warning', trans('public.password_change_restriction'));
+//            }
+//        }
+
+        $payment_account = PaymentAccount::find($request->payment_account_id);
+        $conversion_rate = CurrencyConversionRate::firstWhere('base_currency', $payment_account->currency);
+
+        $withdraw_wallets = $request->withdraw_wallets;
+
+        $total_wallet_balance = 0;
+        $total_withdraw_amount = 0;
+        foreach ($withdraw_wallets as $withdraw_wallet => $amount) {
+            $wallet = Wallet::find($withdraw_wallet);
+
+            if ($wallet->balance < $amount) {
+                throw ValidationException::withMessages(['withdraw_wallets.' . $wallet->id => trans('public.insufficient_wallet_balance', ['wallet' => trans("public.$wallet->type")])]);
+            }
+
+            $total_wallet_balance += $wallet->balance;
+            $total_withdraw_amount += $amount;
         }
 
+        if ($total_wallet_balance < $total_withdraw_amount) {
+            return back()->with('toast', [
+                'title' => trans("public.warning"),
+                'message' => trans('public.insufficient_balance'),
+                'type' => 'warning',
+            ]);
+        }
+
+        $transaction_charges = $request->transaction_charges;
+        $final_amount = $total_withdraw_amount - $transaction_charges;
+
+        dd($request->all());
         $wallet = Wallet::find($request->wallet_id);
 
         $currentTime = Carbon::now();

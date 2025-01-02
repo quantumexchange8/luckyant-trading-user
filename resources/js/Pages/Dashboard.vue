@@ -13,6 +13,7 @@ import Tooltip from "@/Components/Tooltip.vue";
 import Badge from "@/Components/Badge.vue";
 import {LinkIcon, Coins04Icon} from "@/Components/Icons/outline.jsx"
 import Tag from "primevue/tag";
+import Withdrawal from "@/Pages/Dashboard/WithdrawalDev.vue";
 
 const user = usePage().props.auth.user
 const { formatDateTime, formatAmount } = transactionFormat();
@@ -169,7 +170,7 @@ getTotalTransactions();
                                     </div>
                                     <div class="grid grid-cols-6 gap-4 w-full mt-4">
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
-                                            <div class="text-sm font-semibold flex justify-center">
+                                            <div class="text-sm font-semibold flex justify-center lg:justify-start truncate">
                                                 {{ $t('public.total_active_balance') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
@@ -177,7 +178,7 @@ getTotalTransactions();
                                             </div>
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
-                                            <div class="text-sm font-semibold flex justify-center">
+                                            <div class="text-sm font-semibold flex justify-center lg:justify-start truncate">
                                                 {{ $t('public.total_profit_sharing') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
@@ -185,7 +186,7 @@ getTotalTransactions();
                                             </div>
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
-                                            <div class="text-sm font-semibold flex justify-center">
+                                            <div class="text-sm font-semibold flex justify-center lg:justify-start truncate">
                                                 {{ $t('public.total_profit_loss') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
@@ -193,7 +194,7 @@ getTotalTransactions();
                                             </div>
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
-                                            <div class="text-sm font-semibold flex justify-center">
+                                            <div class="text-sm font-semibold flex justify-center lg:justify-start truncate">
                                                 {{ $t('public.total_rebate_earn') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
@@ -201,15 +202,15 @@ getTotalTransactions();
                                             </div>
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
-                                            <div class="text-sm font-semibold flex justify-center">
+                                            <div class="text-sm text-left font-semibold flex justify-center lg:justify-start truncate">
                                                 {{ $t('public.performance_incentive') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-success-500">
-                                                <span class="text-success-500 font-semibold">{{ formatAmount(performanceIncentive) }}</span>
+                                                <span class="text-success-500 font-semibold">$ {{ formatAmount(performanceIncentive) }}</span>
                                             </div>
                                         </div>
                                         <div class="space-y-2 col-span-6 sm:col-span-3 lg:col-span-2 w-full">
-                                            <div class="text-sm font-semibold flex justify-center">
+                                            <div class="text-sm font-semibold flex justify-center lg:justify-start truncate">
                                                 {{ $t('public.total_withdrawal') }}
                                             </div>
                                             <div class="py-2 flex justify-center rounded-md border border-error-500">
@@ -299,13 +300,15 @@ getTotalTransactions();
                     :eWalletSel="eWalletSel"
                     :paymentAccountSel="paymentAccountSel"
                     :paymentDetails="paymentDetails"
-                    :withdrawalFee="withdrawalFee"
-                    :withdrawalFeePercentage="withdrawalFeePercentage"
                     :countries="countries"
                     :settingCryptoPayment="settingCryptoPayment"
                 />
-            </div>
 
+                <Withdrawal
+                    :withdrawalFee="withdrawalFee"
+                    :withdrawalFeePercentage="withdrawalFeePercentage"
+                />
+            </div>
         </div>
 
         <Modal :show="announcementModal" :title="$t('public.details')" @close="closeModal">

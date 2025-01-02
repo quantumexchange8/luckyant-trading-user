@@ -66,7 +66,7 @@ let removeFinishEventListener = Inertia.on("finish", () => {
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 px-4 sm:px-6">
+            <main class="flex-1 px-4 sm:px-6 pb-10">
                 <Alert
                     :show="showAlert"
                     :on-dismiss="() => showAlert = false"

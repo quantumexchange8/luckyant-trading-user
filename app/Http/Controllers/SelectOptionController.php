@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountType;
 use App\Models\AccountTypeLeverage;
 use App\Models\AccountTypeToLeader;
+use App\Models\PaymentAccount;
 use App\Models\SettingLeverage;
 use App\Models\Transaction;
 use App\Models\Wallet;
@@ -82,5 +83,28 @@ class SelectOptionController extends Controller
         }
 
         return response()->json($minAmount);
+    }
+
+    public function getWithdrawalWallets()
+    {
+        $wallets = Wallet::where('user_id', Auth::id())
+            ->whereNot('type', 'e_wallet');
+
+        return response()->json([
+            'wallets' => $wallets->get(),
+            'total_balance' => $wallets->sum('balance')
+        ]);
+    }
+
+    public function getPaymentAccounts()
+    {
+        $paymentAccounts = PaymentAccount::where([
+            'user_id' => Auth::id(),
+            'status' => 'Active'
+        ])
+            ->latest()
+            ->get();
+
+        return response()->json($paymentAccounts);
     }
 }

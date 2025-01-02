@@ -579,4 +579,6 @@ return [
     'analytics' => "Analytics",
     'min' => "Min",
     'min_amount_error' => "Enter the minimum amount",
+    'available_balance_to_withdraw' => "Available balance to withdraw",
+    "receive_amount" => "Receive Amount",
 ];

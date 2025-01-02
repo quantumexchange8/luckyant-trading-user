@@ -12,7 +12,7 @@ import {useForm, usePage} from "@inertiajs/vue3";
 import {transactionFormat} from "@/Composables/index.js";
 import VOtpInput from "vue3-otp-input";
 import UserPin from "@/Pages/Profile/Partials/UserPin.vue";
-import DepositBalance from "@/Pages/AccountInfo/TradingAccount/DepositBalance.vue";
+import {CreditCardDownIcon} from "@/Components/Icons/outline.jsx";
 
 const props = defineProps({
     wallet: Object,
@@ -121,11 +121,11 @@ const changedDuration = passwordChangedDuration();
         type="button"
         size="sm"
         variant="danger"
-        class="w-full flex justify-center gap-1"
+        class="w-full flex justify-center gap-2"
         v-slot="{ iconSizeClasses }"
         @click="openWithdrawalModal"
     >
-        <CurrencyDollarIcon aria-hidden="true" :class="iconSizeClasses" />
+        <CreditCardDownIcon aria-hidden="true" :class="iconSizeClasses" />
         {{ $t('public.withdrawal') }}
     </Button>
 

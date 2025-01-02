@@ -13,8 +13,6 @@ const props = defineProps({
     eWalletSel: Array,
     paymentAccountSel: Array,
     paymentDetails: Object,
-    withdrawalFee: Object,
-    withdrawalFeePercentage: Object,
     countries: Array,
     settingCryptoPayment: Object,
 })
@@ -26,12 +24,6 @@ const props = defineProps({
             <div class="flex justify-between w-full gap-2">
                 <Deposit
                     :wallet="wallet"
-                />
-                <Withdrawal
-                    :wallet="wallet"
-                    :withdrawalFee="withdrawalFee"
-                    :withdrawalFeePercentage="withdrawalFeePercentage"
-                    :paymentAccountSel="paymentAccountSel"
                 />
             </div>
             <div class="flex items-center justify-center w-full">

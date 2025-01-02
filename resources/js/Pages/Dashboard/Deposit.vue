@@ -192,7 +192,7 @@ const copyWalletAddress = () => {
                 <div class="text-sm text-gray-600 dark:text-gray-400">
                     {{ $t('public.balance')}}
                 </div>
-                <div class="text-2xl font-bold text-gray-950 dark:text-white">
+                <div class="text-xl font-bold text-gray-950 dark:text-white">
                     ${{ formatAmount(wallet.balance) }}
                 </div>
             </div>

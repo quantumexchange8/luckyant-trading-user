@@ -327,6 +327,7 @@ const withdrawalConfirmation = (accountType) => {
                 <InputOtp
                     v-model="form.security_pin"
                     mask
+                    integerOnly
                     :length="6"
                 />
                 <InputError :message="form.errors.security_pin" />

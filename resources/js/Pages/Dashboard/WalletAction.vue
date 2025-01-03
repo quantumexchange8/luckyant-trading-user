@@ -3,11 +3,14 @@ import Deposit from "@/Pages/Dashboard/Deposit.vue";
 import InternalTransfer from "@/Pages/Dashboard/InternalTransfer.vue";
 import DepositToMeta from "@/Pages/Dashboard/DepositToMeta.vue";
 import Transfer from "@/Pages/Dashboard/Transfer.vue"
+import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 
 const props = defineProps({
     wallet: Object,
     walletSel: Array,
     eWalletSel: Array,
+    withdrawalFee: Object,
+    withdrawalFeePercentage: Object,
 })
 </script>
 
@@ -17,6 +20,10 @@ const props = defineProps({
             <div class="flex justify-between w-full gap-2">
                 <Deposit
                     :wallet="wallet"
+                />
+                <Withdrawal
+                    :withdrawalFee="withdrawalFee"
+                    :withdrawalFeePercentage="withdrawalFeePercentage"
                 />
             </div>
             <div class="flex items-center justify-center w-full">

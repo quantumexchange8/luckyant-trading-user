@@ -294,9 +294,6 @@ getTotalTransactions();
                 <DashboardWallets
                     :walletSel="walletSel"
                     :eWalletSel="eWalletSel"
-                />
-
-                <Withdrawal
                     :withdrawalFee="withdrawalFee"
                     :withdrawalFeePercentage="withdrawalFeePercentage"
                 />

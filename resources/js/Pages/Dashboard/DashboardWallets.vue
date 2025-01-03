@@ -7,6 +7,8 @@ import {usePage} from "@inertiajs/vue3";
 const props = defineProps({
     walletSel: Array,
     eWalletSel: Array,
+    withdrawalFee: Object,
+    withdrawalFeePercentage: Object,
 })
 
 const wallets = ref([]);
@@ -66,6 +68,8 @@ watchEffect(() => {
             :wallet="wallet"
             :walletSel="walletSel"
             :eWalletSel="eWalletSel"
+            :withdrawalFee="withdrawalFee"
+            :withdrawalFeePercentage="withdrawalFeePercentage"
         />
     </div>
 </template>

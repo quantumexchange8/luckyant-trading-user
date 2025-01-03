@@ -28,7 +28,7 @@ const getWallets = async () => {
 getWallets();
 
 watchEffect(() => {
-    if (usePage().props.title !== null) {
+    if (usePage().props.title !== null || usePage().props.toast !== null) {
         getWallets();
     }
 });

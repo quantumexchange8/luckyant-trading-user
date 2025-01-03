@@ -37,6 +37,7 @@ const action = ref('');
 const currentPage = ref(1);
 const currentLocale = ref(usePage().props.locale);
 
+const isLoading = ref(false);
 const { formatDateTime, formatAmount } = transactionFormat();
 const formatter = ref({
     date: 'YYYY-MM-DD',
@@ -52,7 +53,7 @@ const pageSizes = [
 ]
 
 const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterType = type.value, filterWallet = wallet.value, filterDate = date.value, columnName = sorting.value) => {
-    // isLoading.value = true
+    isLoading.value = true
     try {
         let url = `/wallet/getWalletHistories?page=${page}`;
 
@@ -89,6 +90,8 @@ const getResults = async (page = 1, paginate = 10, filterSearch = search.value, 
         ewalletAmount.value = response.data.ewalletAmount;
     } catch (error) {
         console.error(error);
+    } finally {
+        isLoading.value = false
     }
 }
 
@@ -220,10 +223,13 @@ watch(
                     <div>
                         {{ $t('public.' + wallet.type) }}
                     </div>
-                    <div class="text-2xl font-bold">
+                    <div v-if="!isLoading" class="text-lg font-bold">
                         $ {{
                             formatAmount(wallet.type === 'cash_wallet' ? cashWalletAmount : wallet.type === 'bonus_wallet' ? bonusWalletAmount : ewalletAmount)
                         }}
+                    </div>
+                    <div v-else class="text-lg font-bold">
+                        {{ $t('public.loading') }}
                     </div>
                 </div>
                 <div

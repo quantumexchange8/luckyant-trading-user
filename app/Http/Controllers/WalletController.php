@@ -443,6 +443,14 @@ class WalletController extends Controller
     {
         $user = Auth::user();
 
+        if (empty($request->withdraw_wallets)) {
+            return back()->with('toast', [
+                'title' => trans("public.warning"),
+                'message' => trans('public.insufficient_balance'),
+                'type' => 'warning',
+            ]);
+        }
+
         if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
             return back()
                 ->with('title', trans('public.invalid_action'))
@@ -514,11 +522,11 @@ class WalletController extends Controller
                         'transaction_charges' => $charge_per_wallet,
                         'conversion_amount' => $conversion_amount,
                         'transaction_amount' => $partial_amount,
-                        'new_wallet_amount' => $wallet->balance - $partial_amount,
+                        'new_wallet_amount' => $wallet->balance - $amount,
                         'status' => 'Processing',
                     ]);
 
-                     $wallet->balance -= $partial_amount;
+                     $wallet->balance -= $amount;
                      $wallet->save();
                 }
             }
@@ -543,11 +551,11 @@ class WalletController extends Controller
                         'transaction_charges' => $transaction_charges,
                         'conversion_amount' => $conversion_amount,
                         'transaction_amount' => $final_amount,
-                        'new_wallet_amount' => $wallet->balance - $final_amount,
+                        'new_wallet_amount' => $wallet->balance - $amount,
                         'status' => 'Processing',
                     ]);
 
-                    $wallet->balance -= $final_amount;
+                    $wallet->balance -= $amount;
                     $wallet->save();
                 }
             }

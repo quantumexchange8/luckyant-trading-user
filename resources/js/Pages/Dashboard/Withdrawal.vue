@@ -123,6 +123,7 @@ const submitForm = () => {
         onSuccess: () => {
             closeDialog();
             form.reset();
+            withdrawAmounts.value = {};
         },
     });
 }

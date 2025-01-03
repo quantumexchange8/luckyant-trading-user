@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/Authenticated.vue'
-import {DuplicateIcon, CashIcon, RefreshIcon} from "@heroicons/vue/outline"
+import {DuplicateIcon} from "@heroicons/vue/outline"
 import {usePage} from "@inertiajs/vue3";
 import toast from "@/Composables/toast.js";
 import {trans} from "laravel-vue-i18n";
@@ -10,10 +10,9 @@ import {transactionFormat} from "@/Composables/index.js";
 import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
 import QrcodeVue from 'qrcode.vue';
 import Tooltip from "@/Components/Tooltip.vue";
-import Badge from "@/Components/Badge.vue";
-import {LinkIcon, Coins04Icon} from "@/Components/Icons/outline.jsx"
+import {LinkIcon} from "@/Components/Icons/outline.jsx"
 import Tag from "primevue/tag";
-import Withdrawal from "@/Pages/Dashboard/WithdrawalDev.vue";
+import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 
 const user = usePage().props.auth.user
 const { formatDateTime, formatAmount } = transactionFormat();
@@ -22,15 +21,12 @@ const props = defineProps({
     firstTimeLogin: Number,
     walletSel: Array,
     eWalletSel: Array,
-    paymentAccountSel: Array,
-    paymentDetails: Object,
     withdrawalFee: Object,
     withdrawalFeePercentage: Object,
     total_global_trading_lot_size: Object,
     registerLink: String,
     countries: Array,
     rank: String,
-    settingCryptoPayment: Object,
 })
 
 const copyReferralCode = () => {
@@ -298,10 +294,6 @@ getTotalTransactions();
                 <DashboardWallets
                     :walletSel="walletSel"
                     :eWalletSel="eWalletSel"
-                    :paymentAccountSel="paymentAccountSel"
-                    :paymentDetails="paymentDetails"
-                    :countries="countries"
-                    :settingCryptoPayment="settingCryptoPayment"
                 />
 
                 <Withdrawal

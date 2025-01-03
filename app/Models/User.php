@@ -4,6 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -105,43 +108,48 @@ class User extends Authenticatable implements HasMedia
         return $top_leader;
     }
 
-    public function tradingAccounts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function tradingAccounts(): HasMany
     {
         return $this->hasMany(TradingAccount::class, 'user_id', 'id');
     }
 
-    public function tradingUsers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function tradingUsers(): HasMany
     {
         return $this->hasMany(TradingUser::class, 'user_id', 'id');
     }
 
-    public function masterAccounts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function masterAccounts(): HasMany
     {
         return $this->hasMany(Master::class, 'user_id', 'id');
     }
 
-    public function upline(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function upline(): BelongsTo
     {
         return $this->belongsTo(User::class, 'upline_id', 'id');
     }
 
-    public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function children(): HasMany
     {
         return $this->hasMany(User::class, 'upline_id', 'id');
     }
 
-    public function wallets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function wallets(): HasMany
     {
         return $this->hasMany(Wallet::class, 'user_id', 'id');
     }
 
-    public function rank(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function rank(): HasOne
     {
         return $this->hasOne(SettingRank::class, 'id', 'display_rank_id');
     }
 
-    public function userCountry(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function userCountry(): HasOne
     {
         return $this->hasOne(Country::class, 'id', 'country');
+    }
+
+    public function payment_accounts(): HasMany
+    {
+        return $this->hasMany(PaymentAccount::class, 'user_id', 'id');
     }
 }

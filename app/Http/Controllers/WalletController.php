@@ -439,26 +439,26 @@ class WalletController extends Controller
         }
     }
 
-    public function withdrawal(Request $request)
+    public function withdrawal(WithdrawalRequest $request)
     {
         $user = Auth::user();
 
-//        if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
-//            return back()
-//                ->with('title', trans('public.invalid_action'))
-//                ->with('warning', trans('public.current_pin_invalid'));
-//        }
-//
-//        if ($user->password_changed_at !== null) {
-//            $passwordChangedTime = Carbon::parse($user->password_changed_at);
-//            $hoursDifference = $passwordChangedTime->diffInHours(Carbon::now());
-//
-//            if ($hoursDifference < 24) {
-//                return back()
-//                    ->with('title', trans('public.invalid_action'))
-//                    ->with('warning', trans('public.password_change_restriction'));
-//            }
-//        }
+        if (!is_null($user->security_pin) && !Hash::check($request->get('security_pin'), $user->security_pin)) {
+            return back()
+                ->with('title', trans('public.invalid_action'))
+                ->with('warning', trans('public.current_pin_invalid'));
+        }
+
+        if ($user->password_changed_at !== null) {
+            $passwordChangedTime = Carbon::parse($user->password_changed_at);
+            $hoursDifference = $passwordChangedTime->diffInHours(Carbon::now());
+
+            if ($hoursDifference < 24) {
+                return back()
+                    ->with('title', trans('public.invalid_action'))
+                    ->with('warning', trans('public.password_change_restriction'));
+            }
+        }
 
         $payment_account = PaymentAccount::find($request->payment_account_id);
         $conversion_rate = CurrencyConversionRate::firstWhere('base_currency', $payment_account->currency);
@@ -487,63 +487,77 @@ class WalletController extends Controller
         }
 
         $transaction_charges = $request->transaction_charges;
-        $final_amount = $total_withdraw_amount - $transaction_charges;
+        $transaction_number = RunningNumberService::getID('transaction');
 
-        dd($request->all());
-        $wallet = Wallet::find($request->wallet_id);
+        $non_zero_wallets = array_filter($withdraw_wallets, fn($amount) => $amount > 0);
 
-        $currentTime = Carbon::now();
+        if (count($non_zero_wallets) > 1) {
+            $charge_per_wallet = $transaction_charges / count($non_zero_wallets);
 
-        if ($user->password_changed_at !== null) {
-            $passwordChangedTime = Carbon::parse($user->password_changed_at);
-            $hoursDifference = $passwordChangedTime->diffInHours($currentTime);
+            foreach ($withdraw_wallets as $withdraw_wallet => $amount) {
+                if ($amount > 0) {
+                    $wallet = Wallet::find($withdraw_wallet);
+                    $partial_amount = $amount - $charge_per_wallet;
+                    $conversion_amount = $partial_amount * $conversion_rate->withdrawal_rate;
 
-            if ($hoursDifference < 24) {
-                return back()
-                    ->with('title', trans('public.invalid_action'))
-                    ->with('warning', trans('public.password_change_restriction'));
+                    Transaction::create([
+                        'category' => 'wallet',
+                        'user_id' => $user->id,
+                        'from_wallet_id' => $wallet->id,
+                        'transaction_number' => $transaction_number,
+                        'payment_account_id' => $payment_account->id,
+                        'payment_method' => $payment_account->payment_platform,
+                        'to_wallet_address' => $payment_account->account_no,
+                        'transaction_type' => 'Withdrawal',
+                        'amount' => $amount,
+                        'conversion_rate' => $conversion_rate->withdrawal_rate,
+                        'transaction_charges' => $charge_per_wallet,
+                        'conversion_amount' => $conversion_amount,
+                        'transaction_amount' => $partial_amount,
+                        'new_wallet_amount' => $wallet->balance - $partial_amount,
+                        'status' => 'Processing',
+                    ]);
+
+                     $wallet->balance -= $partial_amount;
+                     $wallet->save();
+                }
+            }
+        } else {
+            foreach ($withdraw_wallets as $withdraw_wallet => $amount) {
+                if ($amount > 0) {
+                    $wallet = Wallet::find($withdraw_wallet);
+                    $final_amount = $amount - $transaction_charges;
+                    $conversion_amount = $final_amount * $conversion_rate->withdrawal_rate;
+
+                    Transaction::create([
+                        'category' => 'wallet',
+                        'user_id' => $user->id,
+                        'from_wallet_id' => $wallet->id,
+                        'transaction_number' => $transaction_number,
+                        'payment_account_id' => $payment_account->id,
+                        'payment_method' => $payment_account->payment_platform,
+                        'to_wallet_address' => $payment_account->account_no,
+                        'transaction_type' => 'Withdrawal',
+                        'amount' => $amount,
+                        'conversion_rate' => $conversion_rate->withdrawal_rate,
+                        'transaction_charges' => $transaction_charges,
+                        'conversion_amount' => $conversion_amount,
+                        'transaction_amount' => $final_amount,
+                        'new_wallet_amount' => $wallet->balance - $final_amount,
+                        'status' => 'Processing',
+                    ]);
+
+                    $wallet->balance -= $final_amount;
+                    $wallet->save();
+                }
             }
         }
 
-        if ($wallet->balance < $amount) {
-            throw ValidationException::withMessages(['amount' => trans('public.insufficient_wallet_balance', ['wallet' => $wallet->name])]);
-        }
-
-        $tradingAccountDemoFunds = TradingAccount::where('user_id', $user->id)->sum('demo_fund');
-
-        if ($tradingAccountDemoFunds > 0) {
-            return back()
-                ->with('title', trans('public.invalid_action'))
-                ->with('warning', trans('public.not_allowed_to_withdraw'));
-        }
-
-        $withdrawal_fee = $request->transaction_charges;
-        $final_amount = $amount - $withdrawal_fee;
-        $wallet->balance -= $amount;
-        $wallet->save();
-
-        $conversion_amount = $final_amount * $conversion_rate->withdrawal_rate;
-        $transaction_number = RunningNumberService::getID('transaction');
-
-        Transaction::create([
-            'category' => 'wallet',
-            'user_id' => $user->id,
-            'from_wallet_id' => $wallet->id,
-            'transaction_number' => $transaction_number,
-            'payment_account_id' => $paymentAccount->id,
-            'payment_method' => $paymentAccount->payment_platform,
-            'to_wallet_address' => $paymentAccount->account_no,
-            'transaction_type' => 'Withdrawal',
-            'amount' => $amount,
-            'conversion_rate' => $conversion_rate->withdrawal_rate,
-            'transaction_charges' => $withdrawal_fee,
-            'conversion_amount' => $conversion_amount,
-            'transaction_amount' => $final_amount,
-            'new_wallet_amount' => $wallet->balance,
-            'status' => 'Processing',
+        return back()->with('toast', [
+            'title' => trans("public.success"),
+            'message' => trans('public.successfully_submit_withdrawal_request'),
+            'type' => 'success',
         ]);
-
-        return redirect()->back()->with('title', trans('public.success_submit_withdrawal_request'))->with('success', trans('public.successfully_submit_withdrawal_request'));
     }
 
     public function getPaymentDetails(Request $request)

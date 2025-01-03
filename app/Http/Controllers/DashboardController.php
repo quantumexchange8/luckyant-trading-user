@@ -67,16 +67,12 @@ class DashboardController extends Controller
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
             'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'eWalletSel' => (new SelectOptionService())->getInternalTransferWalletSelection(),
-            'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
-            'paymentDetails' => $PaymentBankDetails,
-            'PaymentCryptoDetails' => $PaymentCryptoDetails,
             'countries' => $formattedCurrencies,
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),
             'withdrawalFeePercentage' => Setting::where('slug', 'withdrawal-fee-percentage')->first(),
             'registerLink' => $registerLink,
             'rank' => $translations[$locale] ?? $rank->name,
             'total_global_trading_lot_size' => Setting::where('slug', 'total-global-trading-lot-size')->first(),
-            'settingCryptoPayment' => SettingPaymentMethod::where('payment_method', 'Crypto')->where('status', 'Active')->first(),
         ]);
     }
 

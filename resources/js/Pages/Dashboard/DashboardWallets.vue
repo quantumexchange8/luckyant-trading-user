@@ -1,5 +1,4 @@
 <script setup>
-import Button from "@/Components/Button.vue";
 import {ref, watchEffect} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import WalletAction from "@/Pages/Dashboard/WalletAction.vue";
@@ -8,10 +7,6 @@ import {usePage} from "@inertiajs/vue3";
 const props = defineProps({
     walletSel: Array,
     eWalletSel: Array,
-    paymentAccountSel: Array,
-    paymentDetails: Object,
-    countries: Array,
-    settingCryptoPayment: Object,
 })
 
 const wallets = ref([]);
@@ -71,10 +66,6 @@ watchEffect(() => {
             :wallet="wallet"
             :walletSel="walletSel"
             :eWalletSel="eWalletSel"
-            :paymentAccountSel="paymentAccountSel"
-            :paymentDetails="paymentDetails"
-            :countries="countries"
-            :settingCryptoPayment="settingCryptoPayment"
         />
     </div>
 </template>

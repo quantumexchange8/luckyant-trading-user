@@ -8,6 +8,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m'
 import { i18nVue } from 'laravel-vue-i18n'
 import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
 
 const appName =
     window.document.getElementsByTagName('title')[0]?.innerText || 'Luckyant Trading'
@@ -34,6 +35,7 @@ createInertiaApp({
                 unstyled: true,
                 pt: Aura                            //apply preset
             })
+            .use(ConfirmationService)
             .mount(el)
     },
     progress: {

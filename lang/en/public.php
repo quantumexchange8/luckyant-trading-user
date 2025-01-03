@@ -581,4 +581,12 @@ return [
     'min_amount_error' => "Enter the minimum amount",
     'available_balance_to_withdraw' => "Available balance to withdraw",
     "receive_amount" => "Receive Amount",
+    "select_account" => "Select Account",
+    "add_account_suffix" => "Head to Profile to add payment account",
+    "no_security_pin" => "Seems that you don't have a security pin.",
+    "add_security_pin_suffix" => "Head to Profile to add security pin",
+    "verify_kyc" => "Verify KYC",
+    "kyc_not_verified" => "KYC is not verified.",
+    "kyc_not_verified_suffix" => "Head to Profile to submit KYC document",
+    "password_changed" => "Password Changed",
 ];

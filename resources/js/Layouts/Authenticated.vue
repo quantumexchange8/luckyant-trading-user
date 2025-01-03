@@ -8,6 +8,7 @@ import ToastList from "@/Components/ToastList.vue";
 import {ref} from "vue";
 import {Inertia} from "@inertiajs/inertia";
 import Alert from "@/Components/Alert.vue";
+import ConfirmationDialog from "@/Components/ConfirmationDialog.vue";
 
 defineProps({
     title: String
@@ -77,6 +78,7 @@ let removeFinishEventListener = Inertia.on("finish", () => {
                     {{ alertMessage }}
                 </Alert>
                 <ToastList />
+                <ConfirmationDialog />
                 <slot />
             </main>
 

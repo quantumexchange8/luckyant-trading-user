@@ -37,6 +37,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'user.rank' => $request->user() ? $request->user()->rank : null,
+                'user.payment_accounts' => $request->user() ? $request->user()->payment_accounts : null,
             ],
             'auth.user.profile_photo' => fn() => $request->user() ? $request->user()->getFirstMediaUrl('profile_photo') : null,
             'toast' => session('toast'),

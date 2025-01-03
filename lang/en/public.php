@@ -589,4 +589,5 @@ return [
     "kyc_not_verified" => "KYC is not verified.",
     "kyc_not_verified_suffix" => "Head to Profile to submit KYC document",
     "password_changed" => "Password Changed",
+    "drag_and_drop_file" => "Drag and drop files to here to upload"
 ];

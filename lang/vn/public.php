@@ -589,4 +589,5 @@ return [
     'kyc_not_verified' => "KYC chưa được xác minh.",
     'kyc_not_verified_suffix' => "Đi tới Hồ sơ để nộp tài liệu KYC",
     'password_changed' => "Mật khẩu đã thay đổi",
+    "drag_and_drop_file" => "Kéo và thả tệp vào đây để tải lên",
 ];

@@ -23,6 +23,14 @@ import {
 import BankImg from "/public/assets/bank.jpg"
 import cryptoImg from "/public/assets/cryptocurrency.svg"
 import paymentMerchantImg from "/public/assets/payment_merchant.svg"
+import FileUpload from "primevue/fileupload";
+import {
+    IconPhotoPlus,
+    IconX,
+    IconUpload
+} from "@tabler/icons-vue";
+import { usePrimeVue } from 'primevue/config';
+import PrimeButton from "primevue/button";
 
 const props = defineProps({
     wallet: Object
@@ -93,32 +101,34 @@ const form = useForm({
     payment_method: '',
     payment_detail: '',
     amount: null,
-    receipt: '',
+    images: null,
 })
 
-const selectedReceipt = ref(null);
-const selectedReceiptName = ref(null);
+const files = ref([]);
+const $primevue = usePrimeVue();
 
-const onReceiptChanges = (event) => {
-    const receiptInput = event.target;
-    const file = receiptInput.files[0];
+const onRemoveTemplatingFile = (removeFileCallback, index) => {
+    removeFileCallback(index);
+};
 
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            selectedReceipt.value = reader.result
-        };
-        reader.readAsDataURL(file);
-        selectedReceiptName.value = file.name;
-        form.receipt = event.target.files[0];
-    } else {
-        selectedReceipt.value = null;
+const onSelectedFiles = (event) => {
+    files.value = event.files;
+};
+
+const formatSize = (bytes) => {
+    const k = 1024;
+    const dm = 3;
+    const sizes = $primevue.config.locale.fileSizeTypes;
+
+    if (bytes === 0) {
+        return `0 ${sizes[0]}`;
     }
-}
 
-const removeReceipt = () => {
-    selectedReceipt.value = null;
-}
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+
+    return `${formattedSize} ${sizes[i]}`;
+};
 
 const submitForm = () => {
     if (selectedOptionDetail.value) {
@@ -128,6 +138,7 @@ const submitForm = () => {
     form.payment_method = selectedOption.value;
     form.account_no = paymentDetails.value.account_no;
     form.amount = amount.value;
+    form.images = files.value;
 
     form.post(route('transaction.deposit'), {
         onSuccess: () => {
@@ -391,56 +402,94 @@ const copyWalletAddress = () => {
 
                     <div
                         v-if="selectedOption !== 'payment_merchant'"
-                        class="flex flex-col gap-1 items-start self-stretch"
+                        class="flex flex-col gap-1 items-start self-stretch w-full"
                     >
                         <InputLabel
                             for="receipt"
                             :value="$t('public.payment_slip')"
                         />
-                        <div v-if="selectedReceipt == null" class="flex items-center gap-3 w-full">
-                            <input
-                                ref="receiptInput"
-                                id="receipt"
-                                type="file"
-                                class="hidden"
-                                accept="image/*"
-                                @change="onReceiptChanges"
-                            />
-                            <Button
-                                type="button"
-                                variant="primary"
-                                @click="$refs.receiptInput.click()"
-                                class="justify-center gap-2 w-full sm:max-w-24"
-                            >
-                                <span>{{ $t('public.browse') }}</span>
-                            </Button>
-                            <InputError :message="form.errors.receipt"/>
-                        </div>
                         <div
-                            v-if="selectedReceipt"
-                            class="relative w-full py-2 pl-2 flex justify-between rounded-lg border focus:ring-1 focus:outline-none"
-
+                            class="flex flex-col gap-3 md:gap-5 w-full"
                         >
-                            <div class="inline-flex items-center gap-3">
-                                <Image
-                                    :src="selectedReceipt"
-                                    preview
-                                    alt="Selected Image"
-                                    image-class="w-10 h-8 object-contain rounded" />
-                                <div class="text-gray-light-900 dark:text-white">
-                                    {{ selectedReceiptName }}
-                                </div>
-                            </div>
-                            <Button
-                                type="button"
-                                variant="transparent"
-                                pill
-                                @click="removeReceipt"
-                                size="sm"
-                                v-slot="{ iconSizeClasses }"
+                            <FileUpload
+                                name="demo[]"
+                                :multiple="true"
+                                accept="image/*"
+                                @select="onSelectedFiles"
                             >
-                                <XIcon :class="iconSizeClasses" />
-                            </Button>
+                                <template #header="{ chooseCallback, clearCallback, files }">
+                                    <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
+                                        <div class="flex gap-2">
+                                            <PrimeButton
+                                                type="button"
+                                                severity="secondary"
+                                                size="small"
+                                                @click="chooseCallback()"
+                                                rounded
+                                                outlined
+                                                class="!px-2"
+                                            >
+                                                <IconPhotoPlus size="16" stroke-width="1.5" />
+                                            </PrimeButton>
+                                            <PrimeButton
+                                                type="button"
+                                                severity="danger"
+                                                size="small"
+                                                @click="clearCallback()"
+                                                rounded
+                                                outlined
+                                                class="!px-2"
+                                                :disabled="!files || files.length === 0"
+                                            >
+                                                <IconX size="16" stroke-width="1.5" />
+                                            </PrimeButton>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template #content="{ files, removeFileCallback }">
+                                    <div class="flex flex-col gap-3">
+                                        <div v-if="files.length > 0">
+                                            <div class="flex overflow-x-scroll gap-4">
+                                                <div
+                                                    v-for="(file, index) of files" :key="file.name + file.type + file.size"
+                                                    class="p-5 rounded-border w-full max-w-64 flex flex-col border border-surface items-center gap-4 relative"
+                                                >
+                                                    <div class="absolute top-2 right-2">
+                                                        <PrimeButton
+                                                            type="button"
+                                                            severity="danger"
+                                                            size="small"
+                                                            @click="onRemoveTemplatingFile(removeFileCallback, index)"
+                                                            rounded
+                                                            text
+                                                            class="!px-2"
+                                                            :disabled="!files || files.length === 0"
+                                                        >
+                                                            <IconX size="16" stroke-width="1.5" />
+                                                        </PrimeButton>
+                                                    </div>
+                                                    <div class="max-h-20 mt-5">
+                                                        <Image role="presentation" :alt="file.name" :src="file.objectURL" preview imageClass="w-48 object-contain h-20" />
+                                                    </div>
+                                                    <div class="flex flex-col gap-1 items-center self-stretch w-52">
+                                                        <span class="font-semibold text-center text-xs truncate w-full max-w-52">{{ file.name }}</span>
+                                                        <div class="text-xxs">{{ formatSize(file.size) }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template #empty>
+                                    <div class="flex items-center justify-center flex-col gap-3 mt-3">
+                                        <div class="flex items-center justify-center p-3 text-surface-400 dark:text-surface-600 rounded-full border border-surface-400 dark:border-surface-600">
+                                            <IconUpload size="24" stroke-width="1.5" />
+                                        </div>
+                                        <p class="text-sm">{{ $t('public.drag_and_drop_file') }}</p>
+                                        <InputError :message="form.errors.images" />
+                                    </div>
+                                </template>
+                            </FileUpload>
                         </div>
                     </div>
                 </div>

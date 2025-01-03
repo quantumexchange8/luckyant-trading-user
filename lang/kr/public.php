@@ -589,4 +589,5 @@ return [
     'kyc_not_verified' => "KYC가 인증되지 않았습니다.",
     'kyc_not_verified_suffix' => "프로필로 이동하여 KYC 문서를 제출하세요",
     'password_changed' => "비밀번호가 변경되었습니다",
+    "drag_and_drop_file" => "파일을 여기에 드래그 앤 드롭하여 업로드하세요",
 ];

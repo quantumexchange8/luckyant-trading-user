@@ -589,4 +589,5 @@ return [
     'kyc_not_verified' => "KYCが認証されていません。",
     'kyc_not_verified_suffix' => "プロフィールに移動してKYCドキュメントを提出してください",
     'password_changed' => "パスワードが変更されました",
+    "drag_and_drop_file" => "ファイルをここにドラッグ＆ドロップしてアップロードしてください",
 ];

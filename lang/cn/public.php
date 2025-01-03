@@ -589,4 +589,5 @@ return [
     'kyc_not_verified' => "身份未验证。",
     'kyc_not_verified_suffix' => "前往个人资料提交身份验证文件",
     'password_changed' => "密码已更改",
+    "drag_and_drop_file" => "拖放文件到此处上传",
 ];

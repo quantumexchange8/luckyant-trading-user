@@ -12,7 +12,7 @@ class DepositRequest extends FormRequest
             'wallet_id' => ['required'],
             'payment_method' => ['required'],
             'payment_detail' => ['required'],
-            'receipt' => $this->payment_method == 'payment_merchant' ? ['nullable'] : ['required'],
+            'images' => $this->payment_method == 'payment_merchant' ? ['nullable'] : ['required'],
             'amount' => [$this->payment_method == 'payment_merchant' ? 'nullable' : 'required', 'numeric', 'min:1'],
         ];
     }
@@ -28,7 +28,7 @@ class DepositRequest extends FormRequest
             'payment_method' => trans('public.payment_methods'),
             'payment_detail' => trans('public.platform'),
             'wallet_id' => trans('public.sidebar.wallet'),
-            'receipt' => trans('public.payment_slip'),
+            'images' => trans('public.payment_slip'),
             'amount' => trans('public.amount'),
         ];
     }

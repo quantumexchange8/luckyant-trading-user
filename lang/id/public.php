@@ -589,4 +589,5 @@ return [
     'kyc_not_verified' => "KYC belum diverifikasi.",
     'kyc_not_verified_suffix' => "Pergi ke Profil untuk mengunggah dokumen KYC",
     'password_changed' => "Kata sandi telah diubah",
+    "drag_and_drop_file" => "Seret dan jatuhkan file ke sini untuk mengunggah",
 ];

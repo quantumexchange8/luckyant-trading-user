@@ -249,8 +249,10 @@ class WalletController extends Controller
             'status' => 'Processing',
         ]);
 
-        if ($request->hasfile('receipt')){
-            $transaction->addMedia($request->receipt)->toMediaCollection('receipt');
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $transaction->addMedia($image)->toMediaCollection('receipt');
+            }
         }
 
         if ($request->payment_method == 'payment_merchant' && $payment_gateway) {

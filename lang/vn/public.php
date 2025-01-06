@@ -590,4 +590,8 @@ return [
     'kyc_not_verified_suffix' => "Đi tới Hồ sơ để nộp tài liệu KYC",
     'password_changed' => "Mật khẩu đã thay đổi",
     "drag_and_drop_file" => "Kéo và thả tệp vào đây để tải lên",
+    "paginator_caption" => "Hiển thị từ {first} đến {last} trên tổng số {totalRecords} mục",
+    "filter_by_type" => "Lọc theo loại",
+    "select_type" => "Chọn loại",
+    "filter_date" => "Lọc theo ngày",
 ];

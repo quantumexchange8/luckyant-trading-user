@@ -590,4 +590,8 @@ return [
     'kyc_not_verified_suffix' => "프로필로 이동하여 KYC 문서를 제출하세요",
     'password_changed' => "비밀번호가 변경되었습니다",
     "drag_and_drop_file" => "파일을 여기에 드래그 앤 드롭하여 업로드하세요",
+    "paginator_caption" => "{first}에서 {last}까지 표시 중, 총 {totalRecords}개 항목",
+    "filter_by_type" => "유형별 필터",
+    "select_type" => "유형 선택",
+    "filter_date" => "날짜 필터",
 ];

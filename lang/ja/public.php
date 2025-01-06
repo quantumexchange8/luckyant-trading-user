@@ -590,4 +590,8 @@ return [
     'kyc_not_verified_suffix' => "プロフィールに移動してKYCドキュメントを提出してください",
     'password_changed' => "パスワードが変更されました",
     "drag_and_drop_file" => "ファイルをここにドラッグ＆ドロップしてアップロードしてください",
+    "paginator_caption" => "{first} から {last} までを表示、全 {totalRecords} 件",
+    "filter_by_type" => "タイプでフィルター",
+    "select_type" => "タイプを選択",
+    "filter_date" => "日付でフィルター",
 ];

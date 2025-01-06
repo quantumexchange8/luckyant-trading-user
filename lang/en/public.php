@@ -589,5 +589,9 @@ return [
     "kyc_not_verified" => "KYC is not verified.",
     "kyc_not_verified_suffix" => "Head to Profile to submit KYC document",
     "password_changed" => "Password Changed",
-    "drag_and_drop_file" => "Drag and drop files to here to upload"
+    "drag_and_drop_file" => "Drag and drop files to here to upload",
+    "paginator_caption" => "Showing {first} to {last} of {totalRecords} entries",
+    "filter_by_type" => "Filter by Type",
+    "select_type" => "Select Type",
+    "filter_date" => "Filter Date",
 ];

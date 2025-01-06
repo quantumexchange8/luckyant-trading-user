@@ -590,4 +590,8 @@ return [
     'kyc_not_verified_suffix' => "Pergi ke Profil untuk mengunggah dokumen KYC",
     'password_changed' => "Kata sandi telah diubah",
     "drag_and_drop_file" => "Seret dan jatuhkan file ke sini untuk mengunggah",
+    "paginator_caption" => "Menampilkan {first} hingga {last} dari {totalRecords} entri",
+    "filter_by_type" => "Filter berdasarkan Jenis",
+    "select_type" => "Pilih Jenis",
+    "filter_date" => "Filter Tanggal",
 ];

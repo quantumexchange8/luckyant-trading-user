@@ -589,4 +589,8 @@ return [
     'kyc_not_verified_suffix' => "ไปที่โปรไฟล์เพื่อส่งเอกสารยืนยันตัวตน",
     'password_changed' => "รหัสผ่านถูกเปลี่ยน",
     "drag_and_drop_file" => "ลากและวางไฟล์ที่นี่เพื่ออัปโหลด",
+    "paginator_caption" => "แสดง {first} ถึง {last} จาก {totalRecords} รายการ",
+    "filter_by_type" => "กรองตามประเภท",
+    "select_type" => "เลือกประเภท",
+    "filter_date" => "กรองวันที่",
 ];

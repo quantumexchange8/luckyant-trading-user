@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PerformanceIncentive;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\Wallet;
 use App\Models\WalletLog;
@@ -29,68 +31,91 @@ class ReportController extends Controller
 
     public function getTradeRebateHistories(Request $request)
     {
-        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
-        // Decode the JSON
-        $decodedColumnName = json_decode(urldecode($columnName), true);
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
-        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+            $query = TradeRebateSummary::with([
+                'ofUser',
+                'tradingAccount'
+            ])
+                ->where([
+                    'upline_user_id' => Auth::id(),
+                    'status' => 'Approved'
+                ]);
 
-        $query = TradeRebateSummary::with(['ofUser', 'tradingAccount.tradingUser'])
-            ->where('upline_user_id', \Auth::id())
-            ->where('status', 'Approved');
+            if ($data['filters']['global']['value']) {
+                $query->whereHas('ofUser', function($q) use ($data) {
+                    $q->where(function ($query) use ($data) {
+                        $keyword = $data['filters']['global']['value'];
 
-        if ($request->filled('search')) {
-            $search = '%' . $request->input('search') . '%';
-            $query->where(function ($query) use ($search) {
-                $query->where('meta_login', 'like', $search)
-                    ->orWhere('rebate', 'like', $search)
-                    ->orWhere('volume', 'like', $search)
-                    ->orWhereHas('ofUser', function ($subQuery) use ($search) {
-                        $subQuery->where('username', 'like', $search)
-                            ->orWhere('email', 'like', $search);
-                    })
-                    ->orWhereHas('tradingAccount.tradingUser', function ($subQuery) use ($search) {
-                        $subQuery->where('name', 'like', $search);
+                        $query->where('name', 'like', '%' . $keyword . '%')
+                            ->orWhere('username', 'like', '%' . $keyword . '%')
+                            ->orWhere('email', 'like', '%' . $keyword . '%');
                     });
-            });
-        }
-
-        if ($request->filled('date')) {
-            $date = $request->input('date');
-            $dateRange = explode(' - ', $date);
-            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
-            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
-
-            $query->whereBetween('created_at', [$start_date, $end_date]);
-        }
-
-        $totalRebateQuery = clone $query;
-        $totalAffiliateQuery = clone $totalRebateQuery;
-        $totalPersonalQuery = clone $totalRebateQuery;
-
-        if ($request->filled('type')) {
-            if ($request->type == 'affiliate') {
-                $childrenIds = \Auth::user()->getChildrenIds();
-                $query->whereIn('user_id', $childrenIds);
-            } elseif ($request->type == 'personal') {
-                $query->where('user_id', \Auth::id());
+                });
             }
+
+            if (!empty($data['filters']['start_date']['value']) && !empty($data['filters']['end_date']['value'])) {
+                $start_date = Carbon::parse($data['filters']['start_date']['value'])->addDay()->startOfDay();
+                $end_date = Carbon::parse($data['filters']['end_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            }
+
+            // Calculate totals before pagination
+            $totalRebateAmount = (clone $query)->sum('rebate');
+            $totalAffiliateRebate = (clone $query)
+                ->whereNot('user_id', Auth::id())
+                ->sum('rebate');
+            $totalPersonalRebate = (clone $query)
+                ->where('user_id', Auth::id())
+                ->sum('rebate');
+
+            $totalAffiliateLot = (clone $query)
+                ->whereNot('user_id', Auth::id())
+                ->sum('volume');
+            $totalPersonalLot = (clone $query)
+                ->where('user_id', Auth::id())
+                ->sum('volume');
+            $totalTradeLots = (clone $query)->sum('volume');
+
+            if ($data['filters']['type']['value']) {
+                $type = $data['filters']['type']['value'];
+                if ($type == 'affiliate') {
+                    $query->whereNot('user_id', Auth::id());
+                } elseif ($type == 'personal') {
+                    $query->where('user_id', Auth::id());
+                }
+            }
+
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->latest();
+            }
+
+            // Export logic
+//            if ($request->has('exportStatus') && $request->exportStatus) {
+//                return Excel::download(new TransactionsExport($query), now() . '-'. $data['filters']['type']['value'] . 'report.xlsx');
+//            }
+
+
+            $tradeRebates = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $tradeRebates,
+                'totalRebateAmount' => $totalRebateAmount,
+                'totalAffiliateRebate' => $totalAffiliateRebate,
+                'totalPersonalRebate' => $totalPersonalRebate,
+                'totalAffiliateLot' => $totalAffiliateLot,
+                'totalPersonalLot' => $totalPersonalLot,
+                'totalTradeLots' => $totalTradeLots,
+            ]);
         }
 
-        $results = $query
-            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
-            ->paginate($request->input('paginate', 10));
-
-        return response()->json([
-            'tradeRebates' => $results,
-            'totalRebateAmount' => $totalRebateQuery->sum('rebate'),
-            'totalAffiliateRebate' => $totalAffiliateQuery->whereIn('user_id', \Auth::user()->getChildrenIds())->whereNot('user_id', \Auth::id())->sum('rebate'),
-            'totalPersonalRebate' => $totalPersonalQuery->where('user_id', \Auth::id())->sum('rebate'),
-            'totalAffiliateLot' => $totalAffiliateQuery->whereIn('user_id', \Auth::user()->getChildrenIds())->whereNot('user_id', \Auth::id())->sum('volume'),
-            'totalPersonalLot' => $totalPersonalQuery->where('user_id', \Auth::id())->sum('volume'),
-            'totalTradeLots' => $totalRebateQuery->sum('volume'),
-        ]);
+        return response()->json(['success' => false, 'data' => []]);
     }
 
     public function wallet_history()

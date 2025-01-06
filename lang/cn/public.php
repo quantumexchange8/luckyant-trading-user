@@ -590,4 +590,8 @@ return [
     'kyc_not_verified_suffix' => "前往个人资料提交身份验证文件",
     'password_changed' => "密码已更改",
     "drag_and_drop_file" => "拖放文件到此处上传",
+    "paginator_caption" => "显示第 {first} 到第 {last} 项，共 {totalRecords} 项记录",
+    "filter_by_type" => "按类型筛选",
+    "select_type" => "选择类型",
+    "filter_date" => "筛选日期",
 ];

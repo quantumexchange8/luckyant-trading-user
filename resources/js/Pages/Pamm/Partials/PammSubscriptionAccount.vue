@@ -274,7 +274,7 @@ watchEffect(() => {
                                     <IconTrees size="20" stroke-width="1.25" />
                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
                                             <span class="text-primary-500">{{
-                                                    formatAmount((subscriber.subscription_amount ?? 0) / 1000, 0)
+                                                    formatAmount((subscriber.subscription_amount * 2 ?? 0) / 1000, 0)
                                                 }}</span> {{ $t('public.agarwood_tree') }}
                                     </div>
                                 </div>

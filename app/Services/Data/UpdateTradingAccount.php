@@ -17,11 +17,11 @@ class UpdateTradingAccount
 
     public function updateTradingAccount($meta_login, $data): TradingAccount
     {
-        $tradingAccount = TradingAccount::query()->where('meta_login', $meta_login)->first();
+        $tradingAccount = TradingAccount::with('accountType')->firstWhere('meta_login', $meta_login);
 
         $tradingUser = $tradingAccount->tradingUser;
 
-        if ($tradingUser->acc_status === "Active" && $tradingUser->account_type != 2) {
+        if ($tradingUser->acc_status === "Active" && $tradingAccount->accountType->slug != 'virtual') {
             $tradingAccount->currency_digits = $data['currencyDigits'];
             $tradingAccount->balance = $data['balance'];
             $tradingAccount->credit = $data['credit'];

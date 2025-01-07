@@ -427,7 +427,7 @@ class AccountController extends Controller
                 'transaction_amount' => $amount,
             ]);
 
-            if ($trading_account->accountType->slug == 'alpha') {
+            if ($trading_account->accountType->requires_approval) {
                 $transaction->update([
                    'status' => 'Processing',
                 ]);

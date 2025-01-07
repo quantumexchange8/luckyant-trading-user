@@ -78,8 +78,9 @@ const totalBalance = ref(null);
 
         <div class="w-full">
             <TabGroup>
-                <TabList v-if="activeAccountCounts > 0"
-                         class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-transparent p-1 w-full max-w-md">
+                <TabList
+                    class="flex space-x-1 rounded-xl bg-blue-900/20 dark:bg-transparent p-1 w-full max-w-md"
+                >
                     <Tab
                         as="template"
                         v-slot="{ selected }"
@@ -133,7 +134,7 @@ const totalBalance = ref(null);
                     </Tab>
                 </TabList>
 
-                <TabPanels v-if="activeAccountCounts > 0" class="mt-2">
+                <TabPanels class="mt-2">
                     <TabPanel
                         class="py-3"
                     >
@@ -170,18 +171,6 @@ const totalBalance = ref(null);
                         />
                     </TabPanel>
                 </TabPanels>
-
-                <div
-                    v-else
-                    class="flex flex-col justify-center items-center w-full min-h-52"
-                >
-                    <div class="text-2xl text-gray-600 dark:text-gray-200">
-                        {{ $t('public.no_account') }}
-                    </div>
-                    <div class="text-lg text-gray-400 dark:text-gray-600">
-                        {{ $t('public.no_account_message') }}
-                    </div>
-                </div>
             </TabGroup>
         </div>
 

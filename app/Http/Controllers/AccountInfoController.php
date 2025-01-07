@@ -796,7 +796,11 @@ class AccountInfoController extends Controller
                 ->whereDoesntHave('pamm_subscription', function ($subQuery) {
                     $subQuery->whereIn('status', ['Pending', 'Active']);
                 })
-                ->whereNotIn('account_type', [2,3])
+                ->whereHas('accountType', function ($subQuery) {
+                    $subQuery->whereIn('slug', [
+                        'hofi'
+                    ]);
+                })
                 ->get();
         }
 

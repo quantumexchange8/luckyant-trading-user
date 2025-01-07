@@ -61,7 +61,7 @@ onMounted(() => {
 });
 
 watchEffect(() => {
-    if (usePage().props.title !== null) {
+    if (usePage().props.toast !== null) {
         getResults();
     }
 });

@@ -369,7 +369,7 @@ class AccountController extends Controller
         if ($trading_account->accountType->slug != 'virtual') {
             $connection = (new MetaFiveService())->getConnectionStatus();
 
-            if ($trading_account->accountType->slug != 'alpha') {
+            if (!$trading_account->accountType->requires_approval) {
                 if ($connection == 0) {
                     try {
                         $deal = (new MetaFiveService())->createDeal($meta_login, $amount, 'Deposit to trading account', dealAction::DEPOSIT);
@@ -390,14 +390,8 @@ class AccountController extends Controller
         if (
             !$dealId &&
             $trading_account->accountType->slug != 'virtual' &&
-            $trading_account->accountType->slug != 'alpha'
+            !$trading_account->accountType->requires_approval
         ) {
-            return redirect()->back()
-                ->with('title', trans('public.deposit_fail'))
-                ->with('warning', trans('public.balance_in_fail'));
-        }
-
-        if (!$dealId && $trading_account->accountType->slug != 'alpha') {
             return redirect()->back()
                 ->with('title', trans('public.deposit_fail'))
                 ->with('warning', trans('public.balance_in_fail'));

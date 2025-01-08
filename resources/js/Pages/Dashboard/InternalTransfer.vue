@@ -84,7 +84,7 @@ const submit = () => {
                 <div class="flex flex-col w-full">
                     <div v-if="eWalletSel">
                         <BaseListbox
-                            :options="wallet.type === 'cash_wallet' ? eWalletSel : walletSel"
+                            :options="eWalletSel"
                             :placeholder="$t('public.placeholder')"
                             v-model="form.to_wallet"
                         />

@@ -94,7 +94,7 @@ const statusVariant = (status) => {
                                 {{ $t('public.total_subscribers') }}
                             </div>
                             <div class="text-xl font-semibold">
-                                {{ masterListingDetail.subscribersCount }}
+                                {{ Number(masterListingDetail.active_copy_trades_count) + Number(masterListingDetail.active_pamm_count) + Number(masterListingDetail.total_subscribers) }}
                             </div>
                         </div>
                     </div>
@@ -149,27 +149,27 @@ const statusVariant = (status) => {
                                 </div>
                             </div>
 
-                            <div class="flex flex-col gap-2 self-stretch col-span-2">
-                                <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $t('public.total_fund') }}
-                                </div>
-                                <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">
-                                    <div
-                                        :style="{ width: `${masterListingDetail.totalFundWidth}%` }"
-                                        class="rounded-full bg-gradient-to-r from-primary-300 to-primary-600 dark:from-primary-500 dark:to-primary-800 transition-all duration-500 ease-out"
-                                    >
-                                    </div>
-                                </div>
-                                <div class="mb-2 flex items-center justify-between text-xs">
-                                    <div class="dark:text-gray-400">
-                                        $ 1
-                                    </div>
-                                    <div class="dark:text-gray-400">
-                                        $ {{ formatAmount(masterListingDetail.total_fund/2) }}
-                                    </div>
-                                    <div class="dark:text-gray-400">$ {{ masterListingDetail.total_fund }}</div>
-                                </div>
-                            </div>
+<!--                            <div class="flex flex-col gap-2 self-stretch col-span-2">-->
+<!--                                <div class="font-semibold text-sm text-gray-500 dark:text-gray-400">-->
+<!--                                    {{ $t('public.total_fund') }}-->
+<!--                                </div>-->
+<!--                                <div class="mb-1 flex h-2.5 w-full overflow-hidden rounded-full bg-gray-300 dark:bg-gray-400 text-xs">-->
+<!--                                    <div-->
+<!--                                        :style="{ width: `${masterListingDetail.totalFundWidth}%` }"-->
+<!--                                        class="rounded-full bg-gradient-to-r from-primary-300 to-primary-600 dark:from-primary-500 dark:to-primary-800 transition-all duration-500 ease-out"-->
+<!--                                    >-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="mb-2 flex items-center justify-between text-xs">-->
+<!--                                    <div class="dark:text-gray-400">-->
+<!--                                        $ 1-->
+<!--                                    </div>-->
+<!--                                    <div class="dark:text-gray-400">-->
+<!--                                        $ {{ formatAmount(masterListingDetail.total_fund/2) }}-->
+<!--                                    </div>-->
+<!--                                    <div class="dark:text-gray-400">$ {{ masterListingDetail.total_fund }}</div>-->
+<!--                                </div>-->
+<!--                            </div>-->
 
                         </div>
                     </div>

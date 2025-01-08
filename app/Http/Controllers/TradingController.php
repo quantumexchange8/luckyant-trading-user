@@ -383,7 +383,12 @@ class TradingController extends Controller
 
     public function masterListingDetail($id)
     {
-        $master = Master::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,meta_login,company'])->find($id);
+        $master = Master::with(['user:id,username,name,email', 'tradingAccount:id,meta_login,balance,equity', 'tradingUser:id,name,meta_login,company'])
+            ->withCount([
+                'active_copy_trades',
+                'active_pamm'
+            ])
+            ->find($id);
 
         if (!$master || $master->status !== 'Active' || $master->user_id === auth()->id()) {
             return redirect()->route('trading.master_listing')

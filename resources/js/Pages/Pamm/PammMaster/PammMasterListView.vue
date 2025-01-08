@@ -9,13 +9,7 @@ import Paginator from "primevue/paginator";
 import Tag from "primevue/tag";
 import NoData from "@/Components/NoData.vue";
 import {transactionFormat} from "@/Composables/index.js";
-import {
-    IconCircleXFilled,
-    IconUserDollar,
-    IconPremiumRights,
-    IconAdjustments,
-    IconTrees
-} from '@tabler/icons-vue';
+import {IconAdjustments, IconCircleXFilled, IconPremiumRights, IconTrees, IconUserDollar} from '@tabler/icons-vue';
 import Skeleton from "primevue/skeleton";
 import {usePage} from "@inertiajs/vue3";
 import debounce from "lodash/debounce.js";
@@ -112,8 +106,7 @@ watchEffect(() => {
 });
 
 const openDetails = (masterAccountID) => {
-    const detailUrl = `/trading/master_listing/${masterAccountID}`;
-    window.location.href = detailUrl;
+    window.location.href = `/trading/master_listing/${masterAccountID}`;
 }
 </script>
 
@@ -324,16 +317,14 @@ const openDetails = (masterAccountID) => {
                                     <div class="py-1 flex items-center gap-3 self-stretch w-full text-gray-500">
                                         <IconUserDollar size="20" stroke-width="1.25"/>
                                         <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                            {{ master.active_copy_trades_count + master.active_pamm_count + master.total_subscribers }}
+                                            {{ Number(master.active_pamm_count) + Number(master.total_subscribers) }}
                                             {{ $t('public.subscribers') }}
                                         </div>
                                     </div>
                                     <div class="py-1 flex items-center gap-3 self-stretch text-gray-500">
                                         <IconPremiumRights size="20" stroke-width="1.25"/>
                                         <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                            <span class="text-primary-500">$ {{
-                                                    formatAmount(master.active_copy_trades_sum_subscribe_amount ?? 0 + master.active_pamm_sum_subscription_amount ?? 0)
-                                                }}</span> {{ $t('public.fund') }}
+                                            <span class="text-primary-500">$ {{ formatAmount(Number(master.active_pamm_sum_subscription_amount ?? 0) + Number(master.extra_fund)) }}</span> {{ $t('public.fund') }}
                                         </div>
                                     </div>
                                     <div

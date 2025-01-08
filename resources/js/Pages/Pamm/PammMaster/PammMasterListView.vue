@@ -324,7 +324,7 @@ const openDetails = (masterAccountID) => {
                                     <div class="py-1 flex items-center gap-3 self-stretch w-full text-gray-500">
                                         <IconUserDollar size="20" stroke-width="1.25"/>
                                         <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                            {{ master.active_copy_trades_count + master.active_pamm_count }}
+                                            {{ master.active_copy_trades_count + master.active_pamm_count + master.total_subscribers }}
                                             {{ $t('public.subscribers') }}
                                         </div>
                                     </div>

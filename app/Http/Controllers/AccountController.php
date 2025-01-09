@@ -89,6 +89,10 @@ class AccountController extends Controller
             $metaAccount = $metaService->createUser($user, $account_type->name, $leverage, $user->email);
             $balance = TradingAccount::where('meta_login', $metaAccount['login'])->value('balance') ?? 0;
 
+            if (!$account_type->allow_trade) {
+                $metaService->disableTrade($metaAccount['login']);
+            }
+
             Notification::route('mail', $user->email)
                 ->notify(new AddTradingAccountNotification($metaAccount, $balance, $user));
 
@@ -360,6 +364,11 @@ class AccountController extends Controller
 
             if ($amount < $minAmount) {
                 throw ValidationException::withMessages(['amount' => trans('public.min_amount_error')]);
+            }
+        } else {
+            $minAmount = $amount % 100;
+            if ($minAmount != 0) {
+                throw ValidationException::withMessages(['amount' => trans('public.amount_multiples_of_100')]);
             }
         }
 

@@ -146,12 +146,12 @@ watchEffect(() => {
                 class="flex flex-col items-start gap-5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg p-5 w-full shadow-lg"
             >
                 <div class="flex justify-between items-start self-stretch">
-                    <div class="flex items-start gap-3">
+                    <div class="flex flex-col md:flex-row items-start gap-3 w-full">
                         <div class="flex flex-col gap-2 items-start">
                             <div class="text-lg font-bold">
                                 {{ $t('public.account_no') }}: {{ account.meta_login }}
                             </div>
-                            <div class="text-xs">
+                            <div class="text-xs flex w-full">
                                 <div v-if="currentLocale === 'en'">
                                     {{ $t('public.name') }}: {{ account.trading_user.name }}
                                 </div>
@@ -161,14 +161,16 @@ watchEffect(() => {
                                 </div>
                             </div>
                         </div>
-<!--                        <Tag-->
-<!--                            :severity="account.account_type.slug === 'hofi' ? 'warn' : 'info'"-->
-<!--                            :value="$t(`public.${account.account_type.slug}`)"-->
-<!--                        />-->
-                        <Tag
-                            severity="success"
-                            :value="$t('public.active')"
-                        />
+                        <div class="flex items-center gap-3">
+                            <Tag
+                                severity="info"
+                                :value="$t(`public.${account.account_type.slug}`)"
+                            />
+                            <Tag
+                                severity="success"
+                                :value="$t('public.active')"
+                            />
+                        </div>
                     </div>
                     <div class="flex justify-end" v-if="account.trading_user.acc_status === 'Active'">
                         <Action

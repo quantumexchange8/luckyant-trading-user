@@ -16,7 +16,7 @@ class SelectOptionService
 {
     public function getWalletSelection(): \Illuminate\Support\Collection
     {
-        $wallets = Wallet::where('user_id', \Auth::id())->whereIn('type', ['cash_wallet', 'e_wallet']);
+        $wallets = Wallet::where('user_id', \Auth::id());
 
         return $wallets->get()->map(function ($wallet) {
             return [

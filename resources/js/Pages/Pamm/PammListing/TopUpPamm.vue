@@ -59,6 +59,10 @@ watch(selectedWallet, (newWallet) => {
 
     if (selectedWallet.value.type === 'e_wallet') {
         maxEWalletAmount.value = selectedWallet.value.balance;
+    } else {
+        eWalletAmount.value = null;
+        minEWalletAmount.value = null;
+        maxEWalletAmount.value = null;
     }
 })
 
@@ -208,11 +212,11 @@ const closeDialog = () => {
             </div>
 
             <div
-                v-if="selectedWallet.value === (walletSel.length > 1 ? walletSel[1].value : null)"
+                v-if="selectedWallet.value === (walletSel.length > 1 ? walletSel.find(wallet => wallet.type === 'e_wallet')?.value : null)"
                 class="grid grid-cols-1 md:grid-cols-2 gap-5 self-stretch"
             >
                 <div class="flex flex-col items-start gap-1 self-stretch">
-                    <InputLabel for="amount" :value="walletSel[1].name"/>
+                    <InputLabel for="amount" :value="walletSel.find(wallet => wallet.type === 'e_wallet')?.name"/>
                     <InputNumber
                         v-model="eWalletAmount"
                         inputId="currency-us"

@@ -1,14 +1,17 @@
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3'
 import { MailIcon, LockClosedIcon, LoginIcon } from '@heroicons/vue/outline'
-import InputIconWrapper from '@/Components/InputIconWrapper.vue'
+import InputError from '@/Components/InputError.vue'
 import Button from '@/Components/Button.vue'
 import Checkbox from '@/Components/Checkbox.vue'
 import GuestLayout from '@/Layouts/Guest.vue'
-import Input from '@/Components/Input.vue'
+import InputText from 'primevue/inputtext'
 import Label from '@/Components/Label.vue'
 import ValidationErrors from '@/Components/ValidationErrors.vue'
 import {onMounted, ref} from "vue";
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import Password from 'primevue/password';
 
 defineProps({
     canResetPassword: Boolean,
@@ -39,32 +42,38 @@ onMounted(() => {
 
 <template>
     <GuestLayout :title="$t('public.log_in')">
-        <ValidationErrors class="mb-4" />
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
-
         <form @submit.prevent="submit">
             <div class="grid gap-6">
                 <div class="space-y-2">
                     <Label for="email" :value="$t('public.email')" />
-                    <InputIconWrapper>
-                        <template #icon>
-                            <MailIcon aria-hidden="true" class="w-5 h-5" />
-                        </template>
-                        <Input withIcon id="email" type="email" class="block w-full" :placeholder="$t('public.email')" v-model="form.email" autofocus autocomplete="username" />
-                    </InputIconWrapper>
+                    <InputText
+                        id="email"
+                        type="email"
+                        class="block w-full"
+                        v-model="form.email"
+                        autofocus
+                        :placeholder="$t('public.email')"
+                        :invalid="!!form.errors.email"
+                        autocomplete="username"
+                    />
+                    <InputError :message="form.errors.email" />
                 </div>
 
                 <div class="space-y-2">
                     <Label for="password" :value="$t('public.password')" />
-                    <InputIconWrapper>
-                        <template #icon>
-                            <LockClosedIcon aria-hidden="true" class="w-5 h-5" />
-                        </template>
-                        <Input withIcon id="password" type="password" class="block w-full" :placeholder="$t('public.password')" v-model="form.password" autocomplete="current-password" />
-                    </InputIconWrapper>
+                    <IconField>
+                        <InputIcon>
+                            <LockClosedIcon aria-hidden="true" class="w-5 h-5 text-gray-400" />
+                        </InputIcon>
+                        <Password
+                            v-model="form.password"
+                            toggleMask
+                            placeholder="••••••••"
+                            :invalid="!!form.errors.password"
+                            :feedback="false"
+                        />
+                    </IconField>
+                    <InputError :message="form.errors.password" />
                 </div>
 
                 <div class="flex items-center justify-between">

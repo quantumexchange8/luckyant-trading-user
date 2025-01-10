@@ -594,4 +594,5 @@ return [
     "filter_by_type" => "按类型筛选",
     "select_type" => "选择类型",
     "filter_date" => "筛选日期",
+    "invalid_password" => "密码错误",
 ];

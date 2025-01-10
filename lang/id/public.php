@@ -594,4 +594,5 @@ return [
     "filter_by_type" => "Filter berdasarkan Jenis",
     "select_type" => "Pilih Jenis",
     "filter_date" => "Filter Tanggal",
+    "invalid_password" => "Kata Sandi Tidak Valid",
 ];

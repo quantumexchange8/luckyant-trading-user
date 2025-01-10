@@ -5,7 +5,6 @@ import WalletAction from "@/Pages/Dashboard/WalletAction.vue";
 import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
-    walletSel: Array,
     eWalletSel: Array,
     withdrawalFee: Object,
     withdrawalFeePercentage: Object,
@@ -66,7 +65,6 @@ watchEffect(() => {
         </div>
         <WalletAction
             :wallet="wallet"
-            :walletSel="walletSel"
             :eWalletSel="eWalletSel"
             :withdrawalFee="withdrawalFee"
             :withdrawalFeePercentage="withdrawalFeePercentage"

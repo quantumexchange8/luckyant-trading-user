@@ -594,4 +594,5 @@ return [
     "filter_by_type" => "유형별 필터",
     "select_type" => "유형 선택",
     "filter_date" => "날짜 필터",
+    "invalid_password" => "잘못된 비밀번호",
 ];

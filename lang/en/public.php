@@ -594,4 +594,5 @@ return [
     "filter_by_type" => "Filter by Type",
     "select_type" => "Select Type",
     "filter_date" => "Filter Date",
+    "invalid_password" => "Invalid password",
 ];

@@ -11,7 +11,6 @@ import Action from "@/Pages/AccountInfo/TradingAccount/Action.vue";
 import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
-    walletSel: Array,
     leverageSel: Array,
     accountCounts: Number,
     masterAccountLogin: Array

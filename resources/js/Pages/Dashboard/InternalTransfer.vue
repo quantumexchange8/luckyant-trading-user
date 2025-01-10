@@ -12,7 +12,6 @@ import { transactionFormat } from "@/Composables/index.js";
 import { trans } from "laravel-vue-i18n";
 
 const props = defineProps({
-    walletSel: Array,
     eWalletSel: Array,
     wallet: Object,
 });

@@ -153,7 +153,6 @@ const totalBalance = ref(null);
                         class="py-3"
                     >
                         <InactiveAccount
-                            :walletSel="walletSel"
                             :leverageSel="leverageSel"
                             :accountCounts="activeAccountCounts"
                             :masterAccountLogin="masterAccountLogin"

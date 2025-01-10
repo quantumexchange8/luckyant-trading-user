@@ -6,7 +6,6 @@ import {transactionFormat} from "@/Composables/index.js";
 
 const props = defineProps({
     wallets: Object,
-    walletSel: Array,
     paymentAccountSel: Array,
     withdrawalFee: Object,
     paymentDetails: Object,

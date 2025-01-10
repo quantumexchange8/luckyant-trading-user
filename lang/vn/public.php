@@ -594,4 +594,5 @@ return [
     "filter_by_type" => "Lọc theo loại",
     "select_type" => "Chọn loại",
     "filter_date" => "Lọc theo ngày",
+    "invalid_password" => "Mật khẩu không hợp lệ",
 ];

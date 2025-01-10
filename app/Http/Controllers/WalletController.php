@@ -60,7 +60,6 @@ class WalletController extends Controller
 
         return Inertia::render('Transaction/Wallet/Wallet', [
             'wallets' => $wallets,
-            'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'paymentAccountSel' => (new SelectOptionService())->getPaymentAccountSelection(),
             'paymentDetails' => SettingPaymentMethod::where('status', 'Active')->latest()->first(),
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),

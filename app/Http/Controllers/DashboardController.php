@@ -65,7 +65,6 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'announcement' => $announcement,
             'firstTimeLogin' => \Session::get('first_time_logged_in'),
-            'walletSel' => (new SelectOptionService())->getWalletSelection(),
             'eWalletSel' => (new SelectOptionService())->getInternalTransferWalletSelection(),
             'countries' => $formattedCurrencies,
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),

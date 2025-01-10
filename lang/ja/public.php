@@ -594,4 +594,5 @@ return [
     "filter_by_type" => "タイプでフィルター",
     "select_type" => "タイプを選択",
     "filter_date" => "日付でフィルター",
+    "invalid_password" => "無効なパスワード",
 ];

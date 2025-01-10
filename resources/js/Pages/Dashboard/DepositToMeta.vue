@@ -13,7 +13,6 @@ import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
 
 const props = defineProps({
     wallet: Object,
-    walletSel: Array,
 })
 
 const internalTransferModal = ref(false);

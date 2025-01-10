@@ -7,7 +7,6 @@ import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 
 const props = defineProps({
     wallet: Object,
-    walletSel: Array,
     eWalletSel: Array,
     withdrawalFee: Object,
     withdrawalFeePercentage: Object,
@@ -35,14 +34,12 @@ const props = defineProps({
         </template>
         <template v-else-if="wallet.type === 'bonus_wallet'">
             <InternalTransfer
-                :walletSel="walletSel"
                 :eWalletSel="eWalletSel"
                 :wallet="wallet"
             />
         </template>
         <template v-else-if="wallet.type === 'e_wallet'">
             <DepositToMeta
-                :walletSel="walletSel"
                 :wallet="wallet"
             />
             <Transfer

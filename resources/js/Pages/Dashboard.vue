@@ -12,14 +12,12 @@ import QrcodeVue from 'qrcode.vue';
 import Tooltip from "@/Components/Tooltip.vue";
 import {LinkIcon} from "@/Components/Icons/outline.jsx"
 import Tag from "primevue/tag";
-import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
 
 const user = usePage().props.auth.user
 const { formatDateTime, formatAmount } = transactionFormat();
 const props = defineProps({
     announcement: Object,
     firstTimeLogin: Number,
-    walletSel: Array,
     eWalletSel: Array,
     withdrawalFee: Object,
     withdrawalFeePercentage: Object,
@@ -292,7 +290,6 @@ getTotalTransactions();
 
             <div class="flex flex-col gap-5 w-full sm:w-[480px] lg:pl-5 lg:border-l-2 lg:border-gray-300 h-full">
                 <DashboardWallets
-                    :walletSel="walletSel"
                     :eWalletSel="eWalletSel"
                     :withdrawalFee="withdrawalFee"
                     :withdrawalFeePercentage="withdrawalFeePercentage"

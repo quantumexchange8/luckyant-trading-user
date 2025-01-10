@@ -9,7 +9,7 @@ import InputNumber from "primevue/inputnumber"
 import InputError from "@/Components/InputError.vue";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Select from "primevue/select";
-import InputOtp from "primevue/inputotp";
+import VOtpInput from "vue3-otp-input";
 import Skeleton from "primevue/skeleton";
 import {trans} from "laravel-vue-i18n";
 import {useConfirm} from 'primevue/useconfirm';
@@ -198,6 +198,9 @@ const withdrawalConfirmation = (accountType) => {
         accept: action
     });
 };
+
+const inputClasses = ['rounded-lg w-full py-2.5 bg-white dark:bg-gray-800 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-gray-50 border border-gray-300 dark:border-gray-800 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500']
+
 </script>
 
 <template>
@@ -324,11 +327,15 @@ const withdrawalConfirmation = (accountType) => {
                     for="security_pin"
                     :value="$t('public.security_pin')"
                 />
-                <InputOtp
-                    v-model="form.security_pin"
-                    mask
-                    integerOnly
-                    :length="6"
+                <VOtpInput
+                    :input-classes="inputClasses"
+                    class="flex gap-2"
+                    separator=""
+                    inputType="password"
+                    :num-inputs="6"
+                    v-model:value="form.security_pin"
+                    :should-auto-focus="false"
+                    :should-focus-order="true"
                 />
                 <InputError :message="form.errors.security_pin" />
             </div>

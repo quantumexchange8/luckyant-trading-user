@@ -427,7 +427,7 @@ const copyWalletAddress = () => {
                                                 @click="chooseCallback()"
                                                 rounded
                                                 outlined
-                                                class="!px-2"
+                                                class="!p-2"
                                             >
                                                 <IconPhotoPlus size="16" stroke-width="1.5" />
                                             </PrimeButton>
@@ -438,7 +438,7 @@ const copyWalletAddress = () => {
                                                 @click="clearCallback()"
                                                 rounded
                                                 outlined
-                                                class="!px-2"
+                                                class="!p-2"
                                                 :disabled="!files || files.length === 0"
                                             >
                                                 <IconX size="16" stroke-width="1.5" />
@@ -452,7 +452,7 @@ const copyWalletAddress = () => {
                                             <div class="flex overflow-x-scroll gap-4">
                                                 <div
                                                     v-for="(file, index) of files" :key="file.name + file.type + file.size"
-                                                    class="p-5 rounded-border w-full max-w-64 flex flex-col border border-surface items-center gap-4 relative"
+                                                    class="p-5 rounded-border w-full max-w-64 flex flex-col border border-gray-300 dark:border-gray-600 rounded items-center gap-4 relative"
                                                 >
                                                     <div class="absolute top-2 right-2">
                                                         <PrimeButton
@@ -482,7 +482,7 @@ const copyWalletAddress = () => {
                                 </template>
                                 <template #empty>
                                     <div class="flex items-center justify-center flex-col gap-3 mt-3">
-                                        <div class="flex items-center justify-center p-3 text-surface-400 dark:text-surface-600 rounded-full border border-surface-400 dark:border-surface-600">
+                                        <div class="flex items-center justify-center p-3 text-gray-400 dark:text-gray-600 rounded-full border border-gray-400 dark:border-gray-600">
                                             <IconUpload size="24" stroke-width="1.5" />
                                         </div>
                                         <p class="text-sm">{{ $t('public.drag_and_drop_file') }}</p>

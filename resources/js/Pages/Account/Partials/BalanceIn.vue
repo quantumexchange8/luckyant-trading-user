@@ -95,6 +95,14 @@ const toggleFullAmount = () => {
 watch(selectedWallet, (newWallet) => {
     depositAmount.value = null
     form.wallet_id = newWallet.value;
+
+    if (selectedWallet.value.type === 'e_wallet') {
+        maxEWalletAmount.value = selectedWallet.value.balance;
+    } else {
+        eWalletAmount.value = null;
+        minEWalletAmount.value = null;
+        maxEWalletAmount.value = null;
+    }
 })
 
 watch(depositAmount, (newDepositAmount) => {

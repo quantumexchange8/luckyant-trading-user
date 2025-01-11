@@ -59,8 +59,6 @@ class SelectOptionController extends Controller
             $query->whereNot('type', 'e_wallet');
         } elseif ($request->account_type == 'standard_account' || $request->account_type == 'ecn_account') {
             $query->where('type', 'cash_wallet');
-        } else {
-            $query->whereNot('type', 'bonus_wallet');
         }
 
         $wallets = $query->get();

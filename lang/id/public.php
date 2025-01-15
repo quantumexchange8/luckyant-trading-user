@@ -596,4 +596,5 @@ return [
     "filter_date" => "Filter Tanggal",
     "invalid_password" => "Kata Sandi Tidak Valid",
     "min_withdrawal_amount" => "Jumlah penarikan minimum: :amount",
+    "extra_bonus" => "Rabat tambahan",
 ];

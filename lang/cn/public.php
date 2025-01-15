@@ -596,4 +596,5 @@ return [
     "filter_date" => "筛选日期",
     "invalid_password" => "密码错误",
     "min_withdrawal_amount" => "最低提现金额：:amount",
+    "extra_bonus" => "额外返佣",
 ];

@@ -596,4 +596,5 @@ return [
     "filter_date" => "Filter Date",
     "invalid_password" => "Invalid password",
     "min_withdrawal_amount" => "Minimum withdrawal amount: :amount",
+    "extra_bonus" => "Extra Lot Rebate",
 ];

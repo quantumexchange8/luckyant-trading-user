@@ -499,8 +499,6 @@ class WalletController extends Controller
             ]);
         }
 
-        dd(array_filter($withdraw_wallets, fn($amount) => $amount > 0));
-
         $transaction_charges = $request->transaction_charges;
         $transaction_number = RunningNumberService::getID('transaction');
 

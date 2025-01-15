@@ -595,4 +595,5 @@ return [
     "select_type" => "Pilih Jenis",
     "filter_date" => "Filter Tanggal",
     "invalid_password" => "Kata Sandi Tidak Valid",
+    "min_withdrawal_amount" => "Jumlah penarikan minimum: :amount",
 ];

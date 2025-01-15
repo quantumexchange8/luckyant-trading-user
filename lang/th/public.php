@@ -594,4 +594,5 @@ return [
     "select_type" => "เลือกประเภท",
     "filter_date" => "กรองวันที่",
     "invalid_password" => "รหัสผ่านไม่ถูกต้อง",
+    "min_withdrawal_amount" => "จำนวนถอนขั้นต่ำ: :amount",
 ];

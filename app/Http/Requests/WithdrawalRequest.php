@@ -10,7 +10,6 @@ class WithdrawalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'withdraw_wallets.*' => ['required', 'numeric', 'min:10'],
             'payment_account_id' => ['required'],
             'security_pin' => ['required'],
         ];
@@ -36,7 +35,6 @@ class WithdrawalRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'withdraw_wallets.*' => trans('public.amount'),
             'payment_account_id' => trans('public.wallet_address'),
             'security_pin' => trans('public.security_pin'),
         ];

@@ -595,4 +595,5 @@ return [
     "select_type" => "Chọn loại",
     "filter_date" => "Lọc theo ngày",
     "invalid_password" => "Mật khẩu không hợp lệ",
+    "min_withdrawal_amount" => "Số tiền rút tối thiểu: :amount",
 ];

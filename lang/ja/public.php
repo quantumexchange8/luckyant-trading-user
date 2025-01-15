@@ -595,4 +595,5 @@ return [
     "select_type" => "タイプを選択",
     "filter_date" => "日付でフィルター",
     "invalid_password" => "無効なパスワード",
+    "min_withdrawal_amount" => "最低出金額: :amount",
 ];

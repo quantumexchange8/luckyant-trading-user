@@ -595,4 +595,5 @@ return [
     "select_type" => "Select Type",
     "filter_date" => "Filter Date",
     "invalid_password" => "Invalid password",
+    "min_withdrawal_amount" => "Minimum withdrawal amount: :amount",
 ];

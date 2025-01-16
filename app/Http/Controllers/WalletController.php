@@ -479,16 +479,16 @@ class WalletController extends Controller
         foreach ($withdraw_wallets as $withdraw_wallet => $amount) {
             $wallet = Wallet::find($withdraw_wallet);
 
-            if ($amount > 0 && $amount < 50) {
-                throw ValidationException::withMessages(['withdraw_wallets.' . $wallet->id => trans('public.min_withdrawal_amount', ['amount' => '$50.00'])]);
-            }
-
             if ($wallet->balance < $amount) {
                 throw ValidationException::withMessages(['withdraw_wallets.' . $wallet->id => trans('public.insufficient_wallet_balance', ['wallet' => trans("public.$wallet->type")])]);
             }
 
             $total_wallet_balance += $wallet->balance;
             $total_withdraw_amount += $amount;
+        }
+
+        if ($total_withdraw_amount > 0 && $total_withdraw_amount < 50) {
+            throw ValidationException::withMessages(['amount' => trans('public.min_withdrawal_amount', ['amount' => '$50.00'])]);
         }
 
         if ($total_wallet_balance < $total_withdraw_amount) {

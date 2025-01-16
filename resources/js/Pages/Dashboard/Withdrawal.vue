@@ -87,6 +87,7 @@ const form = useForm({
     withdraw_wallets: null,
     transaction_charges: '',
     payment_account_id: '',
+    amount: '',
     security_pin: '',
 });
 
@@ -342,9 +343,12 @@ const inputClasses = ['rounded-lg w-full py-2.5 bg-white dark:bg-gray-800 placeh
 
             <div class="flex flex-col gap-3 border-t border-gray-300 dark:border-gray-700 pt-5">
                 <!-- Withdraw Amount -->
-                <div class="flex items-center justify-between">
-                    <span class="text-sm dark:text-gray-400">{{$t('public.withdrawal_amount')}}</span>
-                    <span class="text-sm dark:text-white font-bold">${{ formatAmount(totalWithdrawalBalance ?? 0) }}</span>
+                <div class="flex flex-col gap-1 self-stretch w-full">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm dark:text-gray-400">{{$t('public.withdrawal_amount')}}</span>
+                        <span class="text-sm dark:text-white font-bold">${{ formatAmount(totalWithdrawalBalance ?? 0) }}</span>
+                    </div>
+                    <InputError :message="form.errors.amount" />
                 </div>
 
                 <!-- Fee -->

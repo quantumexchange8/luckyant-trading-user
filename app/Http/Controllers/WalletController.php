@@ -487,8 +487,8 @@ class WalletController extends Controller
             $total_withdraw_amount += $amount;
         }
 
-        if ($total_withdraw_amount > 0 && $total_withdraw_amount < 50) {
-            throw ValidationException::withMessages(['amount' => trans('public.min_withdrawal_amount', ['amount' => '$50.00'])]);
+        if ($total_withdraw_amount > 0 && $total_withdraw_amount < 10) {
+            throw ValidationException::withMessages(['amount' => trans('public.min_withdrawal_amount', ['amount' => '$10.00'])]);
         }
 
         if ($total_wallet_balance < $total_withdraw_amount) {

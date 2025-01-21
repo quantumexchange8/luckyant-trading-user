@@ -67,9 +67,13 @@ class PammController extends Controller
         $masterQuery = Master::where([
             'category' => 'pamm',
             'type' => 'StandardGroup',
-            'strategy_type' => $strategyType,
             'status' => 'Active',
-        ]);
+        ])
+            ->whereHas('tradingAccount', function ($query) use ($strategyType) {
+                $query->whereHas('accountType', function ($q) use ($strategyType) {
+                    $q->where('slug', $strategyType);
+                });
+            });
 
         $authUser = Auth::user();
         $first_leader = $authUser->getFirstLeader();
@@ -104,9 +108,13 @@ class PammController extends Controller
         $masterQuery = Master::where([
             'category' => 'pamm',
             'type' => 'ESG',
-            'strategy_type' => $strategyType,
             'status' => 'Active',
-        ]);
+        ])
+            ->whereHas('tradingAccount', function ($query) use ($strategyType) {
+                $query->whereHas('accountType', function ($q) use ($strategyType) {
+                    $q->where('slug', $strategyType);
+                });
+            });
 
         $authUser = Auth::user();
         $first_leader = $authUser->getFirstLeader();
@@ -158,10 +166,14 @@ class PammController extends Controller
             ])
             ->where([
                 'category' => 'pamm',
-                'strategy_type' => $strategyType,
                 'type' => $request->pamm_type,
                 'status' => 'Active',
-            ]);
+            ])
+            ->whereHas('tradingUser', function ($query) use ($strategyType) {
+                $query->whereHas('from_account_type', function ($q) use ($strategyType) {
+                    $q->where('slug', $strategyType);
+                });
+            });
 
         $authUser = Auth::user();
         $first_leader = $authUser->getFirstLeader();
@@ -349,7 +361,6 @@ class PammController extends Controller
             'subscription_package_id' => $request->amount_package_id,
             'subscription_package_product' => $masterAccount->type == 'ESG' ? $amount / 1000 . '棵沉香树' : $request->package_product,
             'type' => $masterAccount->type,
-            'strategy_type' => $masterAccount->strategy_type,
             'subscription_number' => RunningNumberService::getID('subscription'),
             'subscription_period' => $masterAccount->join_period,
             'settlement_period' => $masterAccount->roi_period,
@@ -749,7 +760,6 @@ class PammController extends Controller
             'subscription_amount' => $masterAccount->type == 'ESG' ? $amount/2 : $amount,
             'subscription_package_product' => $masterAccount->type == 'ESG' ? $request->top_up_amount / 1000 . '棵沉香树' : null,
             'type' => $masterAccount->type,
-            'strategy_type' => $masterAccount->strategy_type,
             'subscription_number' => RunningNumberService::getID('subscription'),
             'subscription_period' => $masterAccount->join_period,
             'settlement_period' => $masterAccount->roi_period,

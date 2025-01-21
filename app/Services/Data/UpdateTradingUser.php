@@ -2,6 +2,7 @@
 
 namespace App\Services\Data;
 
+use App\Models\AccountType;
 use App\Models\TradingUser;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,8 @@ class UpdateTradingUser
 
     public function updateTradingUser($meta_login, $data): TradingUser
     {
+        $accountType = AccountType::firstWhere('name', $data['group']);
+
         $tradingUser = TradingUser::with('from_account_type')
             ->firstWhere('meta_login', $meta_login);
 
@@ -26,6 +29,8 @@ class UpdateTradingUser
             $tradingUser->balance = $data['balance'];
             $tradingUser->credit = $data['credit'];
             $tradingUser->rights = $data['rights'];
+            $tradingUser->meta_group = $accountType->name;
+            $tradingUser->account_type = $accountType->id;
 
             if ($data['rights'] == 5) {
                 $tradingUser->allow_trade = false;

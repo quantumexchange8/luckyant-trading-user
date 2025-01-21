@@ -41,9 +41,13 @@ class CopyTradingController extends Controller
 
         $masterQuery = Master::where([
             'category' => 'copy_trade',
-            'strategy_type' => $strategyType,
             'status' => 'Active',
-        ]);
+        ])
+            ->whereHas('tradingAccount', function ($query) use ($strategyType) {
+                $query->whereHas('accountType', function ($q) use ($strategyType) {
+                    $q->where('slug', $strategyType);
+                });
+            });
 
         $authUser = Auth::user();
         $first_leader = $authUser->getFirstLeader();
@@ -94,9 +98,13 @@ class CopyTradingController extends Controller
             ])
             ->where([
                 'category' => 'copy_trade',
-                'strategy_type' => $strategyType,
                 'status' => 'Active',
-            ]);
+            ])
+            ->whereHas('tradingUser', function ($query) use ($strategyType) {
+                $query->whereHas('from_account_type', function ($q) use ($strategyType) {
+                    $q->where('slug', $strategyType);
+                });
+            });
 
         $authUser = Auth::user();
         $first_leader = $authUser->getFirstLeader();
@@ -224,8 +232,8 @@ class CopyTradingController extends Controller
     private function getStrategyType(Request $request): string
     {
         $strategyTypeMapping = [
-            'hofi_strategy' => 'HOFI',
-            'alpha_strategy' => 'Alpha',
+            'hofi_strategy' => 'hofi',
+            'alpha_strategy' => 'alpha',
         ];
 
         $routeName = $request->route()->getName();
@@ -409,20 +417,36 @@ class CopyTradingController extends Controller
         $strategyType = $this->getStrategyType($request);
 
         $copyTradesCount = Subscriber::where('user_id', Auth::id())
-            ->whereHas('subscription', function ($query) use ($strategyType) {
-                $query->where('strategy_type', $strategyType);
+            ->whereHas('master', function ($query) use ($strategyType) {
+                $query->whereHas('tradingAccount', function ($query) use ($strategyType) {
+                    $query->whereHas('accountType', function ($query) use ($strategyType) {
+                        $query->where('slug', $strategyType);
+                    });
+                });
             })
             ->count();
 
         $pammsCount = PammSubscription::where('user_id', Auth::id())
+            ->whereHas('master', function ($query) use ($strategyType) {
+                $query->whereHas('tradingAccount', function ($query) use ($strategyType) {
+                    $query->whereHas('accountType', function ($query) use ($strategyType) {
+                        $query->where('slug', $strategyType);
+                    });
+                });
+            })
             ->where('type', 'StandardGroup')
-            ->where('strategy_type', $strategyType)
             ->distinct('meta_login', 'master_id')
             ->count();
 
         $esgsCount = PammSubscription::where('user_id', Auth::id())
+            ->whereHas('master', function ($query) use ($strategyType) {
+                $query->whereHas('tradingAccount', function ($query) use ($strategyType) {
+                    $query->whereHas('accountType', function ($query) use ($strategyType) {
+                        $query->where('slug', $strategyType);
+                    });
+                });
+            })
             ->where('type', 'ESG')
-            ->where('strategy_type', $strategyType)
             ->distinct('meta_login', 'master_id')
             ->count();
 
@@ -443,7 +467,7 @@ class CopyTradingController extends Controller
         $subscriberQuery = Subscriber::query()
             ->with([
                 'tradingUser:id,meta_login,name,company,account_type',
-                'master:id,meta_login,category,type,strategy_type,estimated_monthly_returns,sharing_profit,max_drawdown',
+                'master:id,meta_login,category,type,estimated_monthly_returns,sharing_profit,max_drawdown',
                 'master.masterManagementFee',
                 'master.tradingUser:id,meta_login,name,company,account_type',
                 'subscription'
@@ -484,8 +508,12 @@ class CopyTradingController extends Controller
         $masters = Master::with([
             'tradingUser:id,name,company,meta_login',
         ])
+            ->whereHas('tradingAccount', function ($query) use ($strategyType) {
+                $query->whereHas('accountType', function ($query) use ($strategyType) {
+                    $query->where('slug', $strategyType);
+                });
+            })
             ->whereNot('id', $request->current_master_id)
-            ->where('strategy_type', $strategyType)
             ->where('category', 'copy_trade')
             ->where('status', 'Active')
             ->whereHas('visible_to_leaders', function ($q) use ($first_leader) {

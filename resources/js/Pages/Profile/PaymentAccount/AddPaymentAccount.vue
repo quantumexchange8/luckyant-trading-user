@@ -1,7 +1,7 @@
 <script setup>
 import {ref, watch, computed} from "vue";
 import Modal from "@/Components/Modal.vue";
-import {useForm} from "@inertiajs/vue3";
+import {useForm, usePage} from "@inertiajs/vue3";
 import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
 import Label from "@/Components/Label.vue";
 import Input from "@/Components/Input.vue";
@@ -22,25 +22,25 @@ const openAddAccountModal = () => {
 }
 
 const paymentTypes = computed(() => {
-  if (props.bank_withdraw == 1) {
-    return [
-      {
-        name: 'bank',
-        value: 'Bank',
-      },
-      {
-        name: 'crypto',
-        value: 'Crypto',
-      },
-    ];
-  } else {
-    return [
-        {
-        name: 'crypto',
-        value: 'Crypto',
-      },
-    ];
-  }
+    if (props.bank_withdraw === 1) {
+        return [
+            {
+                name: 'bank',
+                value: 'Bank',
+            },
+            {
+                name: 'crypto',
+                value: 'Crypto',
+            },
+        ];
+    } else {
+        return [
+            {
+                name: 'crypto',
+                value: 'Crypto',
+            },
+        ];
+    }
 });
 
 const selected = ref(paymentTypes.value[0]);
@@ -61,12 +61,19 @@ const form = useForm({
     bank_code_type: '',
 });
 
+if (selected.value.value === 'Bank') {
+    form.payment_account_name = usePage().props.auth.user.name;
+}
+
 watch((selected), (newSelect) => {
     if (newSelect && newSelect.value === selected.value.value)
     {
         form.payment_method = newSelect.value;
         form.payment_account_name = '';
         form.payment_platform_name = '';
+        if (newSelect.value === 'Bank') {
+            form.payment_account_name = usePage().props.auth.user.name;
+        }
     }
 });
 
@@ -89,6 +96,10 @@ const submit = () => {
     form.payment_method = selected.value.value;
     if (form.payment_method === 'Crypto') {
         form.payment_platform_name = cryptoWallet.value
+    }
+
+    if (form.payment_method === 'Bank') {
+        form.payment_account_name = usePage().props.auth.user.name;
     }
 
     form.currency = currency.value
@@ -214,6 +225,7 @@ const closeModal = () => {
                         class="block w-full"
                         v-model="form.payment_account_name"
                         :invalid="form.errors.payment_account_name"
+                        disabled
                     />
                     <InputError :message="form.errors.payment_account_name" />
                 </div>

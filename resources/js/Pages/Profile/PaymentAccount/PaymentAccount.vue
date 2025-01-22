@@ -37,6 +37,10 @@ const openAccountModal = (account) => {
     accountDetail.value = account;
     country.value = parseInt(account.country);
     currency.value = account.currency;
+
+    if (account.payment_platform === 'Bank') {
+        form.payment_account_name = usePage().props.auth.user.name;
+    }
 }
 
 const closeModal = () => {
@@ -82,6 +86,10 @@ const submit = () => {
     form.bank_swift_code = accountDetail.value.bank_swift_code;
     form.bank_code = accountDetail.value.bank_code;
     form.bank_code_type = accountDetail.value.bank_code_type;
+
+    if (form.payment_method === 'Bank') {
+        form.payment_account_name = usePage().props.auth.user.name;
+    }
 
     form.post(route('profile.editPaymentAccount'), {
         onSuccess: () => {
@@ -200,6 +208,7 @@ watchEffect(() => {
                         class="block w-full"
                         v-model="accountDetail.payment_account_name"
                         :invalid="form.errors.payment_account_name"
+                        disabled
                     />
                     <InputError :message="form.errors.payment_account_name" />
                 </div>

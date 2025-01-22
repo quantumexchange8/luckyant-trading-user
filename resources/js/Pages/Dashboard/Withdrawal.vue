@@ -57,6 +57,9 @@ const getWithdrawalWallets = async () => {
         const response = await axios.get('/getWithdrawalWallets');
         wallets.value = response.data.wallets;
         totalBalance.value = response.data.total_balance;
+        wallets.value.forEach(wallet => {
+            withdrawAmounts.value[wallet.id] = 0;
+        });
     } catch (error) {
         console.error('Error fetching withdrawal wallets data:', error);
     } finally {

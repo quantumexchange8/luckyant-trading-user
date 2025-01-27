@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::get('getBalanceInAmount', [SelectOptionController::class, 'getBalanceInAmount']);
     Route::get('getWithdrawalWallets', [SelectOptionController::class, 'getWithdrawalWallets']);
     Route::get('getPaymentAccounts', [SelectOptionController::class, 'getPaymentAccounts']);
+    Route::get('getCountries', [SelectOptionController::class, 'getCountries']);
 
     Route::get('update_transaction', [WalletController::class, 'depositReturn']);
     Route::get('tt_pay_return', [WalletController::class, 'tt_pay_return']);

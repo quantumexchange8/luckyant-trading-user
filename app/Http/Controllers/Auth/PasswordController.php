@@ -100,9 +100,11 @@ class PasswordController extends Controller
                 'security_pin' => Hash::make($request->pin),
             ]);
 
-            return back()
-                ->with('title', trans('public.success_update'))
-                ->with('success', trans('public.successfully_update_pin'));
+            return back()->with('toast', [
+                'title' => trans("public.success_update"),
+                'message' => trans('public.successfully_update_pin'),
+                'type' => 'success',
+            ]);
         }
 
     }

@@ -9,15 +9,17 @@ class PaymentAccountRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'payment_account_name' => ['required'],
             'payment_platform_name' => ['required'],
             'account_no' => ['required'],
             'security_pin' => ['sometimes', 'required'],
         ];
 
-        if ($this->payment_method == 'Bank') {
+        if ($this->payment_method == 'bank') {
+            $rules['payment_account_name'] = ['nullable'];
             $rules['bank_swift_code'] = ['nullable'];
             $rules['bank_sub_branch'] = ['required'];
+        } elseif ($this->payment_method == 'crypto') {
+            $rules['payment_account_name'] = ['required'];
         }
 
         return $rules;
@@ -43,9 +45,9 @@ class PaymentAccountRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'payment_account_name' => trans($this->payment_method == 'Bank' ? 'public.bank_account_name' : 'public.crypto_wallet_name'),
-            'payment_platform_name' => trans($this->payment_method == 'Bank' ? 'public.bank_name' : 'public.payment_service'),
-            'account_no' => trans($this->payment_method == 'Bank' ? 'public.account_number' : 'public.wallet_address'),
+            'payment_account_name' => trans($this->payment_method == 'bank' ? 'public.beneficiary_name' : 'public.crypto_wallet_name'),
+            'payment_platform_name' => trans($this->payment_method == 'bank' ? 'public.bank_name' : 'public.payment_service'),
+            'account_no' => trans($this->payment_method == 'bank' ? 'public.account_number' : 'public.wallet_address'),
             'bank_swift_code' => trans('public.bank_swift_code'),
             'bank_sub_branch' => trans('public.bank_sub_branch'),
             'security_pin' => trans('public.security_pin'),

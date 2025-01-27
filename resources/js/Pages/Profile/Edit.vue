@@ -18,9 +18,7 @@ defineProps({
     nationalities: Array,
     paymentAccounts: Object,
     countries: Array,
-    currencies: Array,
     rank: String,
-    bank_withdraw: Number,
 })
 
 const selectedTab = ref(0);
@@ -122,13 +120,10 @@ onMounted(() => {
                     </TabPanel>
 
                     <TabPanel
-                        class="py-3"
+                        class="py-3 focus-visible:outline-none"
                     >
                         <PaymentAccount
                             :paymentAccounts="paymentAccounts"
-                            :countries="countries"
-                            :currencies="currencies"
-                            :bank_withdraw="bank_withdraw"
                         />
                     </TabPanel>
                 </TabPanels>

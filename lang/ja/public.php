@@ -597,4 +597,7 @@ return [
     "invalid_password" => "無効なパスワード",
     "min_withdrawal_amount" => "最低出金額: :amount",
     "extra_bonus" => "追加リベート",
+    "beneficiary_name" => "受益者名",
+    "select_country" => "国を選択",
+    "select_currency" => "通貨を選択",
 ];

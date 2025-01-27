@@ -597,4 +597,7 @@ return [
     "invalid_password" => "Invalid password",
     "min_withdrawal_amount" => "Minimum withdrawal amount: :amount",
     "extra_bonus" => "Extra Lot Rebate",
+    "beneficiary_name" => "Beneficiary Name",
+    "select_country" => "Select Country",
+    "select_currency" => "Select Currency",
 ];

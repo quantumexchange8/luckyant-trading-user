@@ -597,4 +597,7 @@ return [
     "invalid_password" => "잘못된 비밀번호",
     "min_withdrawal_amount" => "최소 출금 금액: :amount",
     "extra_bonus" => "추가 리베이트",
+    "beneficiary_name" => "수익자 이름",
+    "select_country" => "국가 선택",
+    "select_currency" => "통화 선택",
 ];

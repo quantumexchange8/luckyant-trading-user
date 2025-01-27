@@ -519,6 +519,7 @@ class WalletController extends Controller
                         'from_wallet_id' => $wallet->id,
                         'transaction_number' => $transaction_number,
                         'payment_account_id' => $payment_account->id,
+                        'payment_account_name' => $payment_account->payment_account_name,
                         'payment_method' => $payment_account->payment_platform,
                         'to_wallet_address' => $payment_account->account_no,
                         'transaction_type' => 'Withdrawal',

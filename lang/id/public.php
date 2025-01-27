@@ -597,4 +597,7 @@ return [
     "invalid_password" => "Kata Sandi Tidak Valid",
     "min_withdrawal_amount" => "Jumlah penarikan minimum: :amount",
     "extra_bonus" => "Rabat tambahan",
+    "beneficiary_name" => "Nama Penerima",
+    "select_country" => "Pilih Negara",
+    "select_currency" => "Pilih Mata Uang",
 ];

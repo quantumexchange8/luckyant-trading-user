@@ -47,8 +47,6 @@ class ProfileController extends Controller
             'profileImg' => Auth::user()->getFirstMediaUrl('profile_photo'),
             'paymentAccounts' => PaymentAccount::where('user_id', Auth::id())->latest()->get(),
             'countries' => (new SelectOptionService())->getCountries(),
-            'currencies' => (new SelectOptionService())->getCurrencies(),
-            'bank_withdraw' => Auth::user()->enable_bank_withdrawal,
             'rank' => $translations[$locale] ?? $rank->name,
         ]);
     }
@@ -156,12 +154,12 @@ class ProfileController extends Controller
         $data = [
             'user_id' => $user->id,
             'payment_account_name' => $request->payment_account_name,
-            'payment_platform' => $request->payment_method,
+            'payment_platform' => ucfirst($payment_method),
             'payment_platform_name' => $request->payment_platform_name,
             'account_no' => $request->account_no,
         ];
 
-        if ($payment_method == 'Bank') {
+        if ($payment_method == 'bank') {
             $data['bank_branch_address'] = $request->bank_branch_address;
             $data['bank_sub_branch'] = $request->bank_sub_branch;
             $data['bank_swift_code'] = $request->bank_swift_code;
@@ -169,13 +167,17 @@ class ProfileController extends Controller
             $data['bank_code_type'] = $request->bank_code_type;
             $data['country'] = $request->country;
             $data['currency'] = $request->currency;
-        } elseif ($payment_method == 'Crypto') {
+        } elseif ($payment_method == 'crypto') {
             $data['currency'] = 'USDT';
         }
 
         PaymentAccount::create($data);
 
-        return back()->with('title', trans('public.success_created_account'))->with('success', trans('public.successfully_created_account'));
+        return back()->with('toast', [
+            'title' => trans("public.success_created_account"),
+            'message' => trans('public.successfully_created_account'),
+            'type' => 'success',
+        ]);
     }
 
     public function editPaymentAccount(PaymentAccountRequest $request)
@@ -189,13 +191,6 @@ class ProfileController extends Controller
                 ->with('warning', trans('public.current_pin_invalid'));
         }
 
-        $currency = 'USD';
-        if ($paymentAccount->payment_platform == 'Bank') {
-            $currency = $request->currency;
-        } elseif ($paymentAccount->payment_platform == 'Crypto') {
-            $currency = 'USDT';
-        }
-
         $paymentAccount->update([
             'payment_account_name' => $request->payment_account_name,
             'payment_platform_name' => $request->payment_platform_name,
@@ -206,10 +201,14 @@ class ProfileController extends Controller
             'bank_code' => $request->bank_code,
             'bank_code_type' => $request->bank_code_type,
             'country' => $request->country,
-            'currency' => $currency,
+            'currency' => $request->currency,
         ]);
 
-        return back()->with('title', trans('public.success_update'))->with('success', trans('public.successfully_updated_account'));
+        return back()->with('toast', [
+            'title' => trans("public.success_update"),
+            'message' => trans('public.successfully_updated_account'),
+            'type' => 'success',
+        ]);
     }
 
     public function deletePaymentAccount(Request $request)

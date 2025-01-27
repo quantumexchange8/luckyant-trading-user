@@ -206,7 +206,6 @@ watchEffect(() => {
                             type="text"
                             class="block w-full"
                             v-model="form.name"
-                            autofocus
                             autocomplete="name"
                         />
 

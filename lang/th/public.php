@@ -596,4 +596,7 @@ return [
     "invalid_password" => "รหัสผ่านไม่ถูกต้อง",
     "min_withdrawal_amount" => "จำนวนถอนขั้นต่ำ: :amount",
     "extra_bonus" => "ส่วนลดพิเศษ",
+    "beneficiary_name" => "ชื่อผู้รับผลประโยชน์",
+    "select_country" => "เลือกประเทศ",
+    "select_currency" => "เลือกสกุลเงิน",
 ];

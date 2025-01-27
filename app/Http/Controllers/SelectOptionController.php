@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountType;
 use App\Models\AccountTypeLeverage;
 use App\Models\AccountTypeToLeader;
+use App\Models\Country;
 use App\Models\PaymentAccount;
 use App\Models\SettingLeverage;
 use App\Models\Transaction;
@@ -106,5 +107,22 @@ class SelectOptionController extends Controller
             ->get();
 
         return response()->json($paymentAccounts);
+    }
+
+    public function getCountries()
+    {
+        $countries = Country::select([
+            'id',
+            'name',
+            'iso2',
+            'phone_code',
+            'nationality',
+            'translations',
+            'currency',
+            'currency_symbol'
+        ])
+            ->get();
+
+        return response()->json($countries);
     }
 }

@@ -1,55 +1,73 @@
 <script setup>
 import {ref, watch, computed} from "vue";
-import Modal from "@/Components/Modal.vue";
 import {useForm, usePage} from "@inertiajs/vue3";
-import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
-import Label from "@/Components/Label.vue";
-import Input from "@/Components/Input.vue";
+import Dialog from "primevue/dialog";
+import Select from "primevue/select";
+import InputLabel from "@/Components/Label.vue";
+import InputText from "primevue/inputtext";
 import InputError from "@/Components/InputError.vue";
-import BaseListbox from "@/Components/BaseListbox.vue";
-import Button from "@/Components/Button.vue";
+import Button from "primevue/button";
+import {IconCircleCheckFilled} from "@tabler/icons-vue";
+import {useLangObserver} from "@/Composables/localeObserver.js";
 
-const props = defineProps({
-    countries: Array,
-    currencies: Array,
-    bank_withdraw: Number,
-})
+const visible = ref(false);
+const selectedPaymentMethod = ref('');
+const {locale} = useLangObserver();
 
-const addAccountModal = ref(false);
-
-const openAddAccountModal = () => {
-    addAccountModal.value = true;
+const openDialog = () => {
+    visible.value = true;
+    getCountries();
 }
 
-const paymentTypes = computed(() => {
-    if (props.bank_withdraw === 1) {
-        return [
-            {
-                name: 'bank',
-                value: 'Bank',
-            },
-            {
-                name: 'crypto',
-                value: 'Crypto',
-            },
-        ];
-    } else {
-        return [
-            {
-                name: 'crypto',
-                value: 'Crypto',
-            },
-        ];
-    }
-});
+const paymentMethods = ref([]);
 
-const selected = ref(paymentTypes.value[0]);
+// Conditionally initialize payment methods
+if (usePage().props.auth.user.enable_bank_withdrawal) {
+    paymentMethods.value.push('bank');
+}
+paymentMethods.value.push('crypto');
+
+// Set the initial selectedPaymentMethod to the first item in the array
+if (paymentMethods.value.length > 0) {
+    selectedPaymentMethod.value = paymentMethods.value[0];
+}
+
+const selectPaymentMethod = (newMethod) => {
+    selectedPaymentMethod.value = newMethod;
+};
+
 const cryptoWallet = ref('USDT (TRC20)');
-const country = ref(45);
-const currency = ref('CNY');
+const countries = ref([]);
+const selectedCountry = ref();
+const loadingCountries = ref(false);
+
+const getCountries = async () => {
+    loadingCountries.value = true;
+    try {
+        const response = await axios.get('/getCountries');
+        countries.value = response.data;
+
+        countries.value = response.data.map(country => ({
+            ...country,
+            translations: JSON.parse(country.translations)
+        }))
+
+        const initialCountry = countries.value.find(country => country.id === usePage().props.auth.user.country);
+        if (initialCountry) {
+            selectedCountry.value = initialCountry;
+        } else {
+            console.warn('Country with id 45 not found');
+        }
+    } catch (error) {
+        console.error('Error fetching countries:', error);
+    } finally {
+        loadingCountries.value = false;
+    }
+};
 
 const form = useForm({
     payment_method: '',
+    profile_name: usePage().props.auth.user.name,
     payment_account_name: '',
     payment_platform_name: '',
     account_no: '',
@@ -61,73 +79,40 @@ const form = useForm({
     bank_code_type: '',
 });
 
-if (selected.value.value === 'Bank') {
-    form.payment_account_name = usePage().props.auth.user.name;
-}
-
-watch((selected), (newSelect) => {
-    if (newSelect && newSelect.value === selected.value.value)
-    {
-        form.payment_method = newSelect.value;
-        form.payment_account_name = '';
-        form.payment_platform_name = '';
-        if (newSelect.value === 'Bank') {
-            form.payment_account_name = usePage().props.auth.user.name;
-        }
-    }
-});
-
-watch(country, (newValue) => {
-    if (newValue === 132) {
-        currency.value = 'MYR';
-    }
-    else if (newValue === 45) {
-        currency.value = 'CNY';
-    }
-    else {
-        currency.value = 'USD';
+const submitForm = () => {
+    form.payment_method = selectedPaymentMethod.value;
+    if (form.payment_method === 'bank') {
+        form.country = selectedCountry.value.id;
+        form.currency = selectedCountry.value.currency;
+    } else if (form.payment_method === 'crypto') {
+        form.payment_platform_name = cryptoWallet.value;
     }
 
-    form.country = newValue
-    form.currency = currency.value
-});
-
-const submit = () => {
-    form.payment_method = selected.value.value;
-    if (form.payment_method === 'Crypto') {
-        form.payment_platform_name = cryptoWallet.value
-    }
-
-    if (form.payment_method === 'Bank') {
-        form.payment_account_name = usePage().props.auth.user.name;
-    }
-
-    form.currency = currency.value
     form.post(route('profile.addPaymentAccount'), {
         onSuccess: () => {
-            closeModal();
+            closeDialog();
         },
     })
 }
 
-const closeModal = () => {
-    addAccountModal.value = false;
+const closeDialog = () => {
+    visible.value = false;
 }
 </script>
 
 <template>
     <div
-        class="card text-gray-100 w-full hover:brightness-90 transition-all cursor-pointer group bg-gradient-to-tl from-primary-900 to-primary-950 hover:from-primary-800 hover:to-primary-950 border-r-2 border-t-2 border-primary-900 rounded-lg overflow-hidden relative"
-        @click="openAddAccountModal"
+        class="card text-gray-100 w-full hover:brightness-90 transition-all cursor-pointer group bg-gradient-to-tl from-primary-200 to-primary-600 dark:from-primary-900 dark:to-primary-950 hover:from-primary-600 hover:to-primary-300 dark:hover:from-primary-800 dark:hover:to-primary-950 border-r-2 border-t-2 border-primary-600 dark:border-primary-900 rounded-lg overflow-hidden relative duration-200"
+        @click="openDialog"
     >
         <div class="px-8 py-5">
-            <div class="bg-blue-500 w-10 h-10 rounded-full rounded-tl-none group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-blue-900 transition-all"></div>
+            <div class="bg-primary-700 dark:bg-blue-500 w-10 h-10 rounded-full rounded-tl-none group-hover:-translate-y-1 group-hover:shadow-xl group-hover:bg-primary-500 dark:group-hover:bg-blue-600 group-hover:shadow-blue-900 transition-all duration-200"></div>
 
-            <div class="uppercase font-bold text-xl text-center my-8">
+            <div class="uppercase font-bold text-xl text-center my-8 text-white">
                 {{ $t('public.click_add_account') }}
             </div>
 
-            <div class="text-gray-400">
+            <div class="text-white dark:text-gray-300">
                 <p class="font-bold">{{ $t('public.currency') }}</p>
                 <p>{{ $t('public.account_no') }}</p>
             </div>
@@ -138,235 +123,302 @@ const closeModal = () => {
         <div class="h-0.5 group-hover:w-full bg-gradient-to-l via-sky-600 dark:via-sky-950 group-hover:via-sky-500 w-[70%] m-auto rounded transition-all"></div>
     </div>
 
-    <Modal :show="addAccountModal" :title="$t('public.add_account')" @close="closeModal">
-        <form class="space-y-4">
-            <div class="space-y-2">
-                <Label
-                    for="leverage"
-                    :value="$t('public.payment_methods')"
-                />
-                <RadioGroup v-model="selected">
-                    <RadioGroupLabel class="sr-only">{{ $t('public.signal_status') }}</RadioGroupLabel>
-                    <div class="flex gap-3 items-center self-stretch w-full">
-                        <RadioGroupOption
-                            as="template"
-                            v-for="(plan, index) in paymentTypes"
-                            :key="index"
-                            :value="plan"
-                            v-slot="{ active, checked }"
-                        >
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t('public.add_account')"
+        class="dialog-xs md:dialog-md"
+    >
+        <form>
+            <div class="flex flex-col items-center gap-8 self-stretch">
+                <div class="flex flex-col items-center gap-5 self-stretch">
+                    <div class="flex flex-col items-start gap-1 self-stretch">
+                        <InputLabel
+                            for="accountType"
+                            :value="$t('public.payment_methods')"
+                        />
+                        <div class="grid grid-cols-1 md:grid-cols-2 items-start gap-3 self-stretch">
                             <div
-                                :class="[
-                                        active
-                                            ? 'ring-0 ring-white ring-offset-0'
-                                            : '',
-                                        checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 dark:text-white',
-                                    ]"
-                                class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none w-full"
+                                v-for="method in paymentMethods"
+                                @click="selectPaymentMethod(method)"
+                                class="group flex flex-col items-start py-3 px-4 gap-1 self-stretch rounded-lg border shadow-input transition-colors duration-300 select-none cursor-pointer w-full"
+                                :class="{
+                                    'bg-primary-50 dark:bg-gray-800 border-primary-500': selectedPaymentMethod === method,
+                                    'bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 hover:bg-primary-50 hover:border-primary-500': selectedPaymentMethod !== method,
+                                }"
                             >
-                                <div class="flex items-center w-full">
-                                    <div class="text-sm flex flex-col gap-3 w-full">
-                                        <RadioGroupLabel
-                                            as="div"
-                                            class="font-medium"
-                                        >
-                                            <div class="flex justify-center items-center gap-3">
-                                                {{ $t('public.' + plan.name) }}
-                                            </div>
-                                        </RadioGroupLabel>
-                                    </div>
+                                <div class="flex items-center gap-3 self-stretch">
+                                <span
+                                    class="flex-grow text-sm font-semibold transition-colors duration-300 group-hover:text-primary-700 dark:group-hover:text-primary-500"
+                                    :class="{
+                                        'text-primary-700 dark:text-primary-300': selectedPaymentMethod === method,
+                                        'text-gray-950 dark:text-white': selectedPaymentMethod !== method
+                                    }"
+                                >
+                                    {{ $t(`public.${method}`) }}
+                                </span>
+                                    <IconCircleCheckFilled v-if="selectedPaymentMethod === method" size="20" stroke-width="1.25" color="#2970FF" />
                                 </div>
                             </div>
-                        </RadioGroupOption>
+                        </div>
                     </div>
-                </RadioGroup>
-                <InputError :message="form.errors.payment_method" />
+
+                    <div
+                        v-if="selectedPaymentMethod === 'bank'"
+                        class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
+                    >
+                        <!-- Bank Setting -->
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="bank_name"
+                                :value="$t('public.bank_name')"
+                            />
+                            <InputText
+                                id="payment_platform_name"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.payment_platform_name"
+                                :invalid="!!form.errors.payment_platform_name"
+                            />
+                            <InputError :message="form.errors.payment_platform_name" />
+                        </div>
+
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="bank_sub_branch"
+                                :value="$t('public.bank_sub_branch')"
+                            />
+                            <InputText
+                                id="bank_sub_branch"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.bank_sub_branch"
+                                :invalid="!!form.errors.bank_sub_branch"
+                            />
+                            <InputError :message="form.errors.bank_sub_branch" />
+                        </div>
+
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="bank_account_name"
+                                :value="$t('public.account_name')"
+                            />
+                            <InputText
+                                id="bank_account_name"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.profile_name"
+                                :invalid="!!form.errors.profile_name"
+                                disabled
+                            />
+                            <InputError :message="form.errors.profile_name" />
+                        </div>
+
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="beneficiary_name"
+                                :value="$t('public.beneficiary_name')"
+                            />
+                            <InputText
+                                id="beneficiary_name"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.payment_account_name"
+                                :placeholder="$t('public.optional')"
+                                :invalid="!!form.errors.payment_account_name"
+                            />
+                            <InputError :message="form.errors.payment_account_name" />
+                        </div>
+
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="account_number"
+                                :value="$t('public.account_number')"
+                            />
+                            <InputText
+                                id="account_number"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.account_no"
+                                :invalid="!!form.errors.account_no"
+                            />
+                            <InputError :message="form.errors.account_no" />
+                        </div>
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="bank_swift"
+                                :value="$t('public.bank_swift_code')"
+                            />
+                            <InputText
+                                id="bank_swift"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.bank_swift_code"
+                                :invalid="!!form.errors.bank_swift_code"
+                            />
+                            <InputError :message="form.errors.bank_swift_code" />
+                        </div>
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="bank_code"
+                                :value="$t('public.bank_code')"
+                            />
+                            <InputText
+                                id="bank_code"
+                                type="text"
+                                class="block w-full"
+                                :placeholder="$t('public.optional')"
+                                v-model="form.bank_code"
+                                :invalid="!!form.errors.bank_code"
+                            />
+                            <InputError :message="form.errors.bank_code" />
+                        </div>
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="bank_code_type"
+                                :value="$t('public.bank_code_type')"
+                            />
+                            <InputText
+                                id="bank_code_type"
+                                type="text"
+                                class="block w-full"
+                                :placeholder="$t('public.optional')"
+                                v-model="form.bank_code_type"
+                                :invalid="!!form.errors.bank_code_type"
+                            />
+                            <InputError :message="form.errors.bank_code_type" />
+                        </div>
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="country"
+                                :value="$t('public.country')"
+                            />
+                            <Select
+                                v-model="selectedCountry"
+                                :options="countries"
+                                optionLabel="name"
+                                :placeholder="$t('public.select_country')"
+                                class="w-full"
+                                filter
+                                :filter-fields="['name', 'iso2', 'currency']"
+                                :loading="loadingCountries"
+                            >
+                                <template #value="slotProps">
+                                    <div v-if="slotProps.value" class="flex items-center">
+                                        {{ slotProps.value.translations[locale] ?? slotProps.value.name }}
+                                    </div>
+                                    <span v-else>{{ slotProps.placeholder }}</span>
+                                </template>
+                                <template #option="slotProps">
+                                    <div>{{ slotProps.option.translations[locale] ?? slotProps.option.name }}</div>
+                                </template>
+                            </Select>
+                            <InputError :message="form.errors.country" />
+                        </div>
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="currency"
+                                :value="$t('public.currency')"
+                            />
+                            <Select
+                                v-model="selectedCountry"
+                                :options="countries"
+                                optionLabel="currency"
+                                :placeholder="$t('public.select_currency')"
+                                class="w-full"
+                                filter
+                                :filter-fields="['name', 'iso2', 'currency']"
+                                :loading="loadingCountries"
+                            >
+                                <template #value="slotProps">
+                                    <div v-if="slotProps.value" class="flex items-center gap-1">
+                                        {{ slotProps.value.currency_symbol}} <span class="text-gray-400">({{ slotProps.value.currency }})</span>
+                                    </div>
+                                    <span v-else>{{ slotProps.placeholder }}</span>
+                                </template>
+                                <template #option="slotProps">
+                                    <div>
+                                        {{ slotProps.option.currency_symbol}} <span class="text-gray-400">({{ slotProps.option.currency }})</span>
+                                    </div>
+                                </template>
+                            </Select>
+                            <InputError :message="form.errors.currency" />
+                        </div>
+                    </div>
+
+                    <div
+                        v-else-if="selectedPaymentMethod === 'crypto'"
+                        class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
+                    >
+                        <!-- CryptoSetting -->
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="crypto_name"
+                                :value="$t('public.payment_service')"
+                            />
+                            <InputText
+                                id="crypto_name"
+                                type="text"
+                                class="block w-full"
+                                v-model="cryptoWallet"
+                                readonly
+                                :invalid="!!form.errors.payment_platform_name"
+                            />
+                            <InputError :message="form.errors.payment_platform_name" />
+                        </div>
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="crypto_account_name"
+                                :value="$t('public.crypto_wallet_name')"
+                            />
+                            <InputText
+                                id="crypto_account_name"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.payment_account_name"
+                                :invalid="!!form.errors.payment_account_name"
+                            />
+                            <InputError :message="form.errors.payment_account_name" />
+                        </div>
+                        <div class="flex flex-col items-start gap-1 self-stretch md:col-span-2">
+                            <InputLabel
+                                for="account_number"
+                                :value="$t('public.wallet_address')"
+                            />
+                            <InputText
+                                id="account_number"
+                                type="text"
+                                min="0"
+                                class="block w-full"
+                                v-model="form.account_no"
+                                :invalid="!!form.errors.account_no"
+                            />
+                            <InputError :message="form.errors.account_no" />
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div v-if="selected.name === 'bank'" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <!-- <BankSetting/> -->
-
-                <div class="space-y-2 md:col-span-2">
-                    <Label
-                        for="bank_name"
-                        :value="$t('public.bank_name')"
-                    />
-                    <Input
-                        id="bank_name"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.payment_platform_name"
-                        :invalid="form.errors.payment_platform_name"
-                    />
-                    <InputError :message="form.errors.payment_platform_name" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="bank_sub_branch"
-                        :value="$t('public.bank_sub_branch')"
-                    />
-                    <Input
-                        id="bank_sub_branch"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.bank_sub_branch"
-                        :invalid="form.errors.bank_sub_branch"
-                    />
-                    <InputError :message="form.errors.bank_sub_branch" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="bank_account_name"
-                        :value="$t('public.account_name')"
-                    />
-                    <Input
-                        id="bank_account_name"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.payment_account_name"
-                        :invalid="form.errors.payment_account_name"
-                        disabled
-                    />
-                    <InputError :message="form.errors.payment_account_name" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="account_number"
-                        :value="$t('public.account_number')"
-                    />
-                    <Input
-                        id="account_number"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.account_no"
-                        :invalid="form.errors.account_no"
-                    />
-                    <InputError :message="form.errors.account_no" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="bank_swift"
-                        :value="$t('public.bank_swift_code')"
-                    />
-                    <Input
-                        id="bank_swift"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.bank_swift_code"
-                        :invalid="form.errors.bank_swift_code"
-                    />
-                    <InputError :message="form.errors.bank_swift_code" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="bank_code"
-                        :value="$t('public.bank_code')"
-                    />
-                    <Input
-                        id="bank_code"
-                        type="text"
-                        class="block w-full"
-                        :placeholder="$t('public.optional')"
-                        v-model="form.bank_code"
-                        :invalid="form.errors.bank_code"
-                    />
-                    <InputError :message="form.errors.bank_code" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="bank_code_type"
-                        :value="$t('public.bank_code_type')"
-                    />
-                    <Input
-                        id="bank_code_type"
-                        type="text"
-                        class="block w-full"
-                        :placeholder="$t('public.optional')"
-                        v-model="form.bank_code_type"
-                        :invalid="form.errors.bank_code_type"
-                    />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="country"
-                        :value="$t('public.country')"
-                    />
-                    <BaseListbox
-                        :options="countries"
-                        v-model="country"
-                        :error="!!form.errors.country"
-                    />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="currency"
-                        :value="$t('public.currency')"
-                    />
-                    <BaseListbox
-                        :options="currencies"
-                        v-model="currency"
-                        :error="!!form.errors.currency"
-                    />
-                </div>
-            </div>
-
-            <div v-else-if="selected.name === 'crypto'" class="space-y-2">
-                <!-- <CryptoSetting/> -->
-                <div class="space-y-2">
-                    <Label
-                        for="crypto_name"
-                        :value="$t('public.payment_service')"
-                    />
-                    <Input
-                        id="crypto_name"
-                        type="text"
-                        class="block w-full"
-                        v-model="cryptoWallet"
-                        readonly
-                        :invalid="form.errors.payment_platform_name"
-                    />
-                    <InputError :message="form.errors.payment_platform_name" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="crypto_account_name"
-                        :value="$t('public.crypto_wallet_name')"
-                    />
-                    <Input
-                        id="crypto_account_name"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.payment_account_name"
-                        :invalid="form.errors.payment_account_name"
-                    />
-                    <InputError :message="form.errors.payment_account_name" />
-                </div>
-                <div class="space-y-2">
-                    <Label
-                        for="account_number"
-                        :value="$t('public.wallet_address')"
-                    />
-                    <Input
-                        id="account_number"
-                        type="text"
-                        min="0"
-                        class="block w-full"
-                        v-model="form.account_no"
-                        :invalid="form.errors.account_no"
-                    />
-                    <InputError :message="form.errors.account_no" />
-                </div>
-            </div>
-
-            <div class="pt-5 flex justify-end">
+            <div class="flex w-full justify-end gap-3 mt-5">
                 <Button
-                    class="flex justify-center"
-                    @click="submit"
+                    type="button"
+                    severity="secondary"
+                    text
+                    class="justify-center w-full md:w-auto px-6"
+                    @click="closeDialog"
                     :disabled="form.processing"
                 >
-                    {{ $t('public.save') }}
+                    {{ $t('public.cancel') }}
+                </Button>
+                <Button
+                    type="submit"
+                    class="justify-center w-full md:w-auto px-6"
+                    @click.prevent="submitForm"
+                    :disabled="form.processing"
+                >
+                    {{ $t('public.confirm') }}
                 </Button>
             </div>
         </form>
-    </Modal>
+    </Dialog>
 </template>

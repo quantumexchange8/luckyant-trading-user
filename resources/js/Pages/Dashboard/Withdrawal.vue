@@ -314,7 +314,7 @@ const inputClasses = ['rounded-lg w-full py-2.5 bg-white dark:bg-gray-800 placeh
                 >
                     <template #value="slotProps">
                         <div v-if="slotProps.value">
-                            {{ slotProps.value.payment_platform_name }} ({{ slotProps.value.payment_account_name}})
+                            {{ slotProps.value.payment_platform_name }} ({{ slotProps.value.payment_platform === 'Bank' ? $page.props.auth.user.name : slotProps.value.payment_account_name}})
                         </div>
                         <span v-else>{{ slotProps.placeholder }}</span>
                     </template>

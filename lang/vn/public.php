@@ -597,4 +597,7 @@ return [
     "invalid_password" => "Mật khẩu không hợp lệ",
     "min_withdrawal_amount" => "Số tiền rút tối thiểu: :amount",
     "extra_bonus" => "Giảm thêm",
+    "beneficiary_name" => "Tên Người Thụ Hưởng",
+    "select_country" => "Chọn Quốc Gia",
+    "select_currency" => "Chọn Tiền Tệ",
 ];

@@ -1,27 +1,27 @@
 <script setup>
-import Button from "@/Components/Button.vue";
+import Button from "primevue/button";
 import {ref, watchEffect} from "vue";
-import Modal from "@/Components/Modal.vue";
 import UserPin from "@/Pages/Profile/Partials/UserPin.vue";
 import InputError from "@/Components/InputError.vue";
 import VOtpInput from "vue3-otp-input";
 import {useForm, usePage} from "@inertiajs/vue3";
 import Label from "@/Components/Label.vue";
+import Dialog from "primevue/dialog";
 
 const props = defineProps({
     paymentAccount: Object,
     user: Object,
 })
 
-const deleteAccountModal = ref(false);
+const visible = ref(false);
 const checkCurrentPin = ref(false);
 
 const openDeleteAccountModal = () => {
-    deleteAccountModal.value = true;
+    visible.value = true;
 }
 
 const closeModal = () => {
-    deleteAccountModal.value = false;
+    visible.value = false;
 }
 
 const form = useForm({
@@ -43,11 +43,8 @@ const inputClasses = ['rounded-lg w-full py-2.5 bg-white dark:bg-gray-800 placeh
 const setupSecurityPinModal = ref(false);
 
 const openSetupModal = () => {
+    visible.value = false;
     setupSecurityPinModal.value = true
-}
-
-const closeSetupModal = () => {
-    setupSecurityPinModal.value = false
 }
 
 watchEffect(() => {
@@ -58,14 +55,21 @@ watchEffect(() => {
 </script>
 
 <template>
-    <div
-        class="flex justify-end text-sm text-error-500 hover:cursor-pointer underline"
+    <Button
+        type="button"
+        severity="danger"
         @click="openDeleteAccountModal"
+        class="px-6 w-full md:w-auto text-nowrap text-sm font-semibold"
     >
         {{ $t('public.delete_account') }}?
-    </div>
+    </Button>
 
-    <Modal :show="deleteAccountModal" :title="$t('public.delete_account')" @close="closeModal">
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t('public.delete_account')"
+        class="dialog-xs md:dialog-sm"
+    >
         <form>
             <div class="space-y-2">
                 <div class="text-gray-900 dark:text-gray-50">
@@ -96,6 +100,8 @@ watchEffect(() => {
                     />
                     <Button
                         type="button"
+                        severity="info"
+                        size="small"
                         class="flex justify-center w-full sm:w-fit"
                         @click="openSetupModal"
                     >
@@ -105,31 +111,39 @@ watchEffect(() => {
                     <InputError :message="form.errors.security_pin" />
                 </div>
             </div>
-            <div class="pt-5 grid grid-cols-2 gap-4 w-full md:w-1/3 md:float-right">
+            <div class="pt-5 flex justify-end">
                 <Button
-                    variant="transparent"
                     type="button"
-                    class="justify-center"
-                    @click.prevent="closeModal"
-                >
-                    {{$t('public.cancel')}}
-                </Button>
-                <Button
-                    class="justify-center"
-                    @click="submit"
+                    severity="secondary"
+                    text
+                    class="justify-center w-full md:w-auto px-6"
+                    @click="closeModal"
                     :disabled="form.processing"
                 >
-                    {{$t('public.confirm')}}
+                    {{ $t('public.cancel') }}
+                </Button>
+                <Button
+                    type="submit"
+                    class="justify-center w-full md:w-auto px-6"
+                    @click.prevent="submit"
+                    :disabled="form.processing"
+                >
+                    {{ $t('public.confirm') }}
                 </Button>
             </div>
         </form>
-    </Modal>
+    </Dialog>
 
-    <Modal :show="setupSecurityPinModal" :title="$t('public.setup_security_pin')" @close="closeSetupModal">
+    <Dialog
+        v-model:visible="setupSecurityPinModal"
+        modal
+        :header="$t('public.setup_security_pin')"
+        class="dialog-xs md:dialog-sm"
+    >
         <div class="flex flex-col gap-5">
             <UserPin
                 @update:setupSecurityPinModal="setupSecurityPinModal = $event"
             />
         </div>
-    </Modal>
+    </Dialog>
 </template>

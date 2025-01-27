@@ -379,7 +379,7 @@ watchEffect(() => {
                         <InputError class="mt-2" :message="form.errors.identification_number" />
                     </div>
 
-                    <div v-if="user.enable_bank_withdrawal" class="space-y-1.5">
+                    <div class="space-y-1.5">
                         <Label for="beneficiary_name" :value="$t('public.beneficiary_name')" />
                         <Input
                             id="beneficiary_name"

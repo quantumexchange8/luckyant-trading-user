@@ -597,7 +597,7 @@ return [
     "invalid_password" => "密码错误",
     "min_withdrawal_amount" => "最低提现金额：:amount",
     "extra_bonus" => "额外返佣",
-    "beneficiary_name" => "收款人姓名",
+    "beneficiary_name" => "受益人姓名",
     "select_country" => "选择国家",
     "select_currency" => "选择货币",
 ];

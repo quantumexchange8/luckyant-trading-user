@@ -30,6 +30,10 @@ const checkCurrentPin = ref(false);
 const user = usePage().props.auth.user;
 const {locale} = useLangObserver();
 
+const beneficialNames = ref(
+    [user.name, user?.beneficiary_name].filter(name => name !== null && name !== undefined)
+);
+
 const openDialog = (account) => {
     visible.value = true;
     accountDetail.value = account;
@@ -69,7 +73,6 @@ const form = useForm({
     payment_account_id: '',
     payment_method: '',
     payment_account_name: '',
-    profile_name: usePage().props.auth.user.name,
     payment_platform_name: '',
     account_no: '',
     bank_sub_branch: '',
@@ -83,7 +86,7 @@ const form = useForm({
 
 const submitForm = () => {
     form.payment_account_id = accountDetail.value.id;
-    form.payment_account_name = accountDetail.value.payment_account_name;
+    form.payment_method = accountDetail.value.payment_platform === 'Bank' ? 'bank' : 'crypto';
     form.payment_platform_name = accountDetail.value.payment_platform_name;
     form.account_no = accountDetail.value.account_no;
     form.bank_sub_branch = accountDetail.value.bank_sub_branch;
@@ -138,7 +141,7 @@ watchEffect(() => {
                     {{ paymentAccount.payment_platform_name }}
                 </div>
                 <div class="text-white uppercase tracking-widest">
-                    {{ paymentAccount.payment_platform === 'Bank' ? user.name : paymentAccount.payment_account_name }}
+                    {{ paymentAccount.payment_account_name }}
                 </div>
                 <div class="text-gray-100 mt-6">
                     <p class="font-bold">{{ paymentAccount.currency }}</p>
@@ -165,7 +168,7 @@ watchEffect(() => {
                 class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
             >
                 <!-- Bank Setting -->
-                <div class="flex flex-col items-start gap-1 self-stretch">
+                <div class="flex flex-col items-start gap-1 self-stretch col-span-2">
                     <InputLabel
                         for="bank_name"
                         :value="$t('public.bank_name')"
@@ -197,33 +200,26 @@ watchEffect(() => {
 
                 <div class="flex flex-col items-start gap-1 self-stretch">
                     <InputLabel
-                        for="bank_account_name"
-                        :value="$t('public.account_name')"
-                    />
-                    <InputText
-                        id="bank_account_name"
-                        type="text"
-                        class="block w-full"
-                        v-model="form.profile_name"
-                        :invalid="!!form.errors.profile_name"
-                        disabled
-                    />
-                    <InputError :message="form.errors.profile_name" />
-                </div>
-
-                <div class="flex flex-col items-start gap-1 self-stretch">
-                    <InputLabel
                         for="beneficiary_name"
                         :value="$t('public.beneficiary_name')"
                     />
-                    <InputText
-                        id="beneficiary_name"
-                        type="text"
-                        class="block w-full"
-                        v-model="accountDetail.payment_account_name"
-                        :placeholder="$t('public.optional')"
+                    <Select
+                        v-model="form.payment_account_name"
+                        :options="beneficialNames"
+                        :placeholder="$t('public.select_account')"
+                        class="w-full"
                         :invalid="!!form.errors.payment_account_name"
-                    />
+                    >
+                        <template #value="slotProps">
+                            <div v-if="slotProps.value" class="flex items-center">
+                                {{ slotProps.value }}
+                            </div>
+                            <span v-else class="text-gray-400">{{ slotProps.placeholder }}</span>
+                        </template>
+                        <template #option="slotProps">
+                            <div>{{ slotProps.option }}</div>
+                        </template>
+                    </Select>
                     <InputError :message="form.errors.payment_account_name" />
                 </div>
 
@@ -302,6 +298,7 @@ watchEffect(() => {
                         filter
                         :filter-fields="['name', 'iso2', 'currency']"
                         :loading="loadingCountries"
+                        :invalid="!!form.errors.country"
                     >
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex items-center">
@@ -313,6 +310,7 @@ watchEffect(() => {
                             <div>{{ slotProps.option.translations[locale] ?? slotProps.option.name }}</div>
                         </template>
                     </Select>
+                    <InputError :message="form.errors.country" />
                 </div>
 
                 <div class="flex flex-col items-start gap-1 self-stretch">
@@ -329,6 +327,7 @@ watchEffect(() => {
                         filter
                         :filter-fields="['name', 'iso2', 'currency']"
                         :loading="loadingCountries"
+                        :invalid="!!form.errors.currency"
                     >
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex items-center gap-1">
@@ -342,6 +341,7 @@ watchEffect(() => {
                             </div>
                         </template>
                     </Select>
+                    <InputError :message="form.errors.currency" />
                 </div>
             </div>
 

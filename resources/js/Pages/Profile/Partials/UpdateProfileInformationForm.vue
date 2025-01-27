@@ -39,6 +39,7 @@ const form = useForm({
     country: user.country,
     nationality: user.nationality,
     identification_number: user.identification_number,
+    beneficiary_name: user.beneficiary_name,
     proof_front: null,
     proof_back: null,
     profile_photo: null,
@@ -378,7 +379,20 @@ watchEffect(() => {
                         <InputError class="mt-2" :message="form.errors.identification_number" />
                     </div>
 
-                    <div class="space-y-1.5">
+                    <div v-if="user.enable_bank_withdrawal" class="space-y-1.5">
+                        <Label for="beneficiary_name" :value="$t('public.beneficiary_name')" />
+                        <Input
+                            id="beneficiary_name"
+                            type="text"
+                            class="block w-full"
+                            v-model="form.beneficiary_name"
+                            :invalid="form.errors.beneficiary_name"
+                        />
+                        <InputError class="mt-2" :message="form.errors.beneficiary_name" />
+                    </div>
+                </div>
+                <div class="flex items-start mt-5 gap-3 w-full">
+                    <div class="space-y-1.5 w-full">
                         <Label class="text-sm dark:text-white" for="proof_front" :value="$t('public.proof_of_identity') + ' (' + $t('public.front') + ')'" />
                         <div class="flex gap-3">
                             <input
@@ -426,7 +440,7 @@ watchEffect(() => {
                         </div>
                     </div>
 
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5 w-full">
                         <Label class="text-sm dark:text-white" for="proof_back" :value="$t('public.proof_of_identity') + ' (' + $t('public.back') + ')'" />
                         <div class="flex gap-3">
                             <input

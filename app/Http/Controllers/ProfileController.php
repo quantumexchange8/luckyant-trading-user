@@ -98,6 +98,7 @@ class ProfileController extends Controller
             'gender' => $request->gender,
             'address_1' => $request->address,
             'identification_number' => $request->identification_number,
+            'beneficiary_name' => $request->beneficiary_name,
         ]);
 
         if ($user->getChanges()) {

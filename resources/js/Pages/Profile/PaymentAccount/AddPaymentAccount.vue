@@ -20,6 +20,9 @@ const openDialog = () => {
 }
 
 const paymentMethods = ref([]);
+const beneficialNames = ref(
+    [usePage().props.auth.user.name, usePage().props.auth.user?.beneficiary_name].filter(name => name !== null && name !== undefined)
+);
 
 // Conditionally initialize payment methods
 if (usePage().props.auth.user.enable_bank_withdrawal) {
@@ -67,7 +70,6 @@ const getCountries = async () => {
 
 const form = useForm({
     payment_method: '',
-    profile_name: usePage().props.auth.user.name,
     payment_account_name: '',
     payment_platform_name: '',
     account_no: '',
@@ -168,7 +170,7 @@ const closeDialog = () => {
                         class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
                     >
                         <!-- Bank Setting -->
-                        <div class="flex flex-col items-start gap-1 self-stretch">
+                        <div class="flex flex-col items-start gap-1 self-stretch col-span-2">
                             <InputLabel
                                 for="bank_name"
                                 :value="$t('public.bank_name')"
@@ -200,33 +202,26 @@ const closeDialog = () => {
 
                         <div class="flex flex-col items-start gap-1 self-stretch">
                             <InputLabel
-                                for="bank_account_name"
-                                :value="$t('public.account_name')"
-                            />
-                            <InputText
-                                id="bank_account_name"
-                                type="text"
-                                class="block w-full"
-                                v-model="form.profile_name"
-                                :invalid="!!form.errors.profile_name"
-                                disabled
-                            />
-                            <InputError :message="form.errors.profile_name" />
-                        </div>
-
-                        <div class="flex flex-col items-start gap-1 self-stretch">
-                            <InputLabel
                                 for="beneficiary_name"
                                 :value="$t('public.beneficiary_name')"
                             />
-                            <InputText
-                                id="beneficiary_name"
-                                type="text"
-                                class="block w-full"
+                            <Select
                                 v-model="form.payment_account_name"
-                                :placeholder="$t('public.optional')"
+                                :options="beneficialNames"
+                                :placeholder="$t('public.select_account')"
+                                class="w-full"
                                 :invalid="!!form.errors.payment_account_name"
-                            />
+                            >
+                                <template #value="slotProps">
+                                    <div v-if="slotProps.value" class="flex items-center">
+                                        {{ slotProps.value }}
+                                    </div>
+                                    <span v-else class="text-gray-400">{{ slotProps.placeholder }}</span>
+                                </template>
+                                <template #option="slotProps">
+                                    <div>{{ slotProps.option }}</div>
+                                </template>
+                            </Select>
                             <InputError :message="form.errors.payment_account_name" />
                         </div>
 
@@ -302,6 +297,7 @@ const closeDialog = () => {
                                 filter
                                 :filter-fields="['name', 'iso2', 'currency']"
                                 :loading="loadingCountries"
+                                :invalid="!!form.errors.country"
                             >
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value" class="flex items-center">
@@ -329,6 +325,7 @@ const closeDialog = () => {
                                 filter
                                 :filter-fields="['name', 'iso2', 'currency']"
                                 :loading="loadingCountries"
+                                :invalid="!!form.errors.currency"
                             >
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value" class="flex items-center gap-1">

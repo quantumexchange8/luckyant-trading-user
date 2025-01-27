@@ -9,17 +9,15 @@ class PaymentAccountRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            'payment_account_name' => ['required'],
             'payment_platform_name' => ['required'],
             'account_no' => ['required'],
             'security_pin' => ['sometimes', 'required'],
         ];
 
         if ($this->payment_method == 'bank') {
-            $rules['payment_account_name'] = ['nullable'];
             $rules['bank_swift_code'] = ['nullable'];
             $rules['bank_sub_branch'] = ['required'];
-        } elseif ($this->payment_method == 'crypto') {
-            $rules['payment_account_name'] = ['required'];
         }
 
         return $rules;

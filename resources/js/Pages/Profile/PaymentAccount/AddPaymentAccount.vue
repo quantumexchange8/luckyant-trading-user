@@ -202,8 +202,8 @@ const closeDialog = () => {
 
                         <div class="flex flex-col items-start gap-1 self-stretch">
                             <InputLabel
-                                for="beneficiary_name"
-                                :value="$t('public.beneficiary_name')"
+                                for="payment_account_name"
+                                :value="$t('public.bank_account_name')"
                             />
                             <Select
                                 v-model="form.payment_account_name"

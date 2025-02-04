@@ -982,6 +982,7 @@ class TradingController extends Controller
         $subscriber->save();
 
         $new_subscriber = $subscriber->replicate();
+        $new_subscriber->initial_meta_balance = $subscriber->subscribe_amount;
         $new_subscriber->master_id = $new_master->id;
         $new_subscriber->master_meta_login = $new_master->meta_login;
         $new_subscriber->roi_period = $new_master->roi_period;
@@ -998,23 +999,6 @@ class TradingController extends Controller
             $old_subscription->termination_date = now();
             $old_subscription->save();
 
-            // Create new subscription row
-            $new_subscription = $old_subscription->replicate();
-            $new_subscription->master_id = $new_master->id;
-            $new_subscription->subscription_period = $new_master->roi_period;
-            $new_subscription->status = 'Pending';
-            $new_subscription->auto_renewal = 1;
-            $new_subscription->termination_date = null;
-            $new_subscription->approval_date = null;
-            $new_subscription->next_pay_date = null;
-            $new_subscription->expired_date = null;
-            $new_subscription->subscription_number = RunningNumberService::getID('subscription');
-            $new_subscription->save();
-
-            // Update new subscriber with new subscription id
-            $new_subscriber->subscription_id = $new_subscription->id;
-            $new_subscriber->save();
-
             $batches = $subscriber->subscription_batches;
 
             foreach ($batches as $batch) {
@@ -1023,26 +1007,6 @@ class TradingController extends Controller
                 $batch->termination_date = now();
                 $batch->save();
             }
-
-            // Create a new subscription batch
-            SubscriptionBatch::create([
-                'user_id' => $new_subscription->user_id,
-                'trading_account_id' => $new_subscription->trading_account_id,
-                'meta_login' => $new_subscription->meta_login,
-                'meta_balance' => $new_subscription->meta_balance,
-                'real_fund' => $batches->sum('real_fund'),
-                'demo_fund' => $batches->sum('demo_fund'),
-                'master_id' => $new_subscriber->master_id,
-                'master_meta_login' => $new_subscriber->master_meta_login,
-                'type' => 'CopyTrade',
-                'subscriber_id' => $new_subscriber->id,
-                'subscription_id' => $new_subscription->id,
-                'subscription_number' => $new_subscription->subscription_number,
-                'subscription_period' => $new_subscription->subscription_period,
-                'transaction_id' => $new_subscription->transaction_id,
-                'subscription_fee' => $new_subscription->subscription_fee,
-                'status' => 'Pending',
-            ]);
         }
 
         SwitchMaster::create([

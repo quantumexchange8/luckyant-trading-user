@@ -170,7 +170,7 @@ const closeDialog = () => {
                         class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
                     >
                         <!-- Bank Setting -->
-                        <div class="flex flex-col items-start gap-1 self-stretch col-span-2">
+                        <div class="flex flex-col items-start gap-1 self-stretch sm:col-span-2">
                             <InputLabel
                                 for="bank_name"
                                 :value="$t('public.bank_name')"
@@ -377,7 +377,7 @@ const closeDialog = () => {
                             />
                             <InputError :message="form.errors.payment_account_name" />
                         </div>
-                        <div class="flex flex-col items-start gap-1 self-stretch md:col-span-2">
+                        <div class="flex flex-col items-start gap-1 self-stretch sm:col-span-2">
                             <InputLabel
                                 for="account_number"
                                 :value="$t('public.wallet_address')"

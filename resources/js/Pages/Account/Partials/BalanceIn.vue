@@ -258,7 +258,7 @@ const closeDialog = () => {
                         class="grid grid-cols-1 md:grid-cols-2 gap-5 self-stretch"
                     >
                         <div class="flex flex-col items-start gap-1 self-stretch">
-                            <InputLabel for="amount" :value="$t(`public.${wallets[1].type}`)"/>
+                            <InputLabel for="amount" :value="$t(`public.${selectedWallet.type}`)"/>
                             <InputNumber
                                 v-model="eWalletAmount"
                                 inputId="currency-us"

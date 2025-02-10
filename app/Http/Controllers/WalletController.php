@@ -444,6 +444,14 @@ class WalletController extends Controller
     {
         $user = Auth::user();
 
+        if ($user->tradingAccounts()->sum('demo_fund') > 0) {
+            return back()->with('toast', [
+                'title' => trans("public.warning"),
+                'message' => trans('public.not_allowed_to_withdraw'),
+                'type' => 'warning',
+            ]);
+        }
+
         if (empty($request->withdraw_wallets)) {
             return back()->with('toast', [
                 'title' => trans("public.warning"),

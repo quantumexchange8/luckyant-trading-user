@@ -273,9 +273,7 @@ watchEffect(() => {
                                 <div v-if="subscriber.type === 'ESG'" class="py-1 flex items-center gap-3 self-stretch text-gray-500">
                                     <IconTrees size="20" stroke-width="1.25" />
                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                            <span class="text-primary-500">{{
-                                                    formatAmount((subscriber.subscription_amount * 2 ?? 0) / 1000, 0)
-                                                }}</span> {{ $t('public.agarwood_tree') }}
+                                            <span class="text-primary-500">{{ formatAmount(subscriber.package_amount, 0) }}</span> {{ $t('public.agarwood_tree') }}
                                     </div>
                                 </div>
                             </div>

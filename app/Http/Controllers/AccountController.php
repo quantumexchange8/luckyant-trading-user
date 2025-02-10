@@ -428,6 +428,7 @@ class AccountController extends Controller
                 'amount' => $amount,
                 'transaction_charges' => 0,
                 'transaction_amount' => $amount,
+                'new_wallet_amount' => $wallet->balance - $amount,
             ]);
 
             if ($trading_account->accountType->requires_approval) {
@@ -441,11 +442,10 @@ class AccountController extends Controller
                 $transaction->update([
                     'status' => 'Success',
                     'comment' => $comment,
-                    'new_wallet_amount' => $wallet->balance - $amount,
                 ]);
-
-                $wallet->update(['balance' => $wallet->balance - $amount]);
             }
+
+            $wallet->update(['balance' => $wallet->balance - $amount]);
         }
 
         // check subscriber

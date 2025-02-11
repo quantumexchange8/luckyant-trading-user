@@ -600,4 +600,11 @@ return [
     "beneficiary_name" => "수익자 이름",
     "select_country" => "국가 선택",
     "select_currency" => "통화 선택",
+    "filter_by_referrer" => "추천인으로 필터링",
+    "select_referrer" => "추천인 선택",
+    "filter_by_country" => "국가별 필터링",
+    "filter_by_rank" => "등급별 필터링",
+    "select_rank" => "등급 선택",
+    "filter_by_master" => "마스터로 필터링",
+    "select_master" => "마스터 선택",
 ];

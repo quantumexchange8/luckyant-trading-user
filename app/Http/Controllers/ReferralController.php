@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CopyTradeTransaction;
 use App\Models\Country;
 use App\Models\PammSubscription;
+use App\Models\SubscriptionBatch;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Subscriber;
@@ -147,210 +148,253 @@ class ReferralController extends Controller
 
     public function affiliateSubscription()
     {
-        $locale = app()->getLocale();
-
-        $rankLists = SettingRank::all()->map(function ($rank) use ($locale) {
-            $translations = json_decode($rank->name, true);
-            $label = $translations[$locale] ?? $rank->name;
-            return [
-                'value' => $rank->id,
-                'label' => $label,
-            ];
-        })->prepend(['value' => '', 'label' => trans('public.all')]);
-
-        return Inertia::render('Referral/AffiliateSubscriptions', [
-            'rankLists' => $rankLists,
-            'countries' => (new SelectOptionService())->getCountries(),
-        ]);
+        return Inertia::render('Referral/AffiliateSubscriptions/AffiliateSubscriptions');
     }
 
-    public function affiliateSubscriptionData(Request $request)
+    public function getAffiliateCopyTrade(Request $request)
     {
-        $user = Auth::user();
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
-        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
-        // Decode the JSON
-        $decodedColumnName = json_decode(urldecode($columnName), true);
+            $childrenIds = Auth::user()->getChildrenIds();
 
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
-        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+            $query = SubscriptionBatch::with([
+                'user:id,username,upline_id,hierarchyList',
+                'master',
+                'master.tradingUser'
+            ])
+                ->where('status', 'Active')
+                ->whereIn('user_id', $childrenIds);
 
-        $query = CopyTradeTransaction::query()
-            ->with(['tradingUser:meta_login,name,company', 'master', 'master.tradingUser', 'user:id,username'])
-            ->whereIn('user_id', $user->getChildrenIds());
+            if ($data['filters']['global']['value']) {
+                $keyword = $data['filters']['global']['value'];
 
-        if ($request->filled('search')) {
-            $search = '%' . $request->input('search') . '%';
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('master.tradingUser', function ($user) use ($search) {
-                    $user->where('name', 'like', $search)
-                        ->orWhere('meta_login', 'like', $search)
-                        ->orWhere('company', 'like', $search);
-                })->orWhereHas('tradingUser', function ($to_wallet) use ($search) {
-                        $to_wallet->where('name', 'like', $search)
-                            ->orWhere('company', 'like', $search);
-                    })->orWhereHas('user', function ($to_wallet) use ($search) {
-                        $to_wallet->where('username', 'like', $search);
-                    });
-            })
-                ->orWhere('meta_login', 'like', $search);
+                $query->where(function ($q) use ($keyword) {
+                    $q->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('username', 'like', '%' . $keyword . '%');
+                    })
+                        ->orWhereHas('master', function ($query) use ($keyword) {
+                            $query->whereHas('tradingUser', function ($query) use ($keyword) {
+                                $query->where('name', 'like', '%' . $keyword . '%')
+                                    ->orWhere('company', 'like', '%' . $keyword . '%');
+                            });
+                        })
+                        ->orWhere('meta_login', 'like', '%' . $keyword . '%')
+                        ->orWhere('master_meta_login', 'like', '%' . $keyword . '%');
+                });
+            }
+
+            $leaderId = $data['filters']['leader_id']['value']['id'] ?? null;
+
+            if ($leaderId) {
+                // Load users under the specified leader
+                $usersUnderLeader = User::where('id', $leaderId)
+                    ->orWhere('hierarchyList', 'like', "%-$leaderId-%")
+                    ->pluck('id');
+
+                $query->whereIn('id', $usersUnderLeader);
+            }
+
+            $masterId = $data['filters']['master_id']['value']['id'] ?? null;
+
+            if ($masterId) {
+                $query->where('master_id', $masterId);
+            }
+
+            if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
+                $start_join_date = Carbon::parse($data['filters']['start_join_date']['value'])->addDay()->startOfDay();
+                $end_join_date = \Carbon\Carbon::parse($data['filters']['end_join_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('approval_date', [$start_join_date, $end_join_date]);
+            }
+
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->orderByDesc('approval_date');
+            }
+
+            $activeCopyTrade = (clone $query)->get()->sum('meta_balance');
+            $totalAffiliate = (clone $query)
+                ->distinct('user_id')
+                ->count();
+
+            $affiliates = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $affiliates,
+                'totalAffiliate' => $totalAffiliate,
+                'totalDeposit' => $activeCopyTrade
+            ]);
         }
 
-        if ($request->filled('date')) {
-            $date = $request->input('date');
-            $dateRange = explode(' - ', $date);
-            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
-            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
+        return response()->json(['success' => false, 'data' => []]);
+    }
 
-            $query->whereBetween('created_at', [$start_date, $end_date]);
+    public function getAffiliatePamm(Request $request)
+    {
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
+
+            $childrenIds = Auth::user()->getChildrenIds();
+
+            $query = PammSubscription::with([
+                'user:id,username,upline_id,hierarchyList',
+                'master',
+                'master.tradingUser'
+            ])
+                ->where([
+                    'type' => $data['filters']['pamm_type']['value'],
+                    'status' => 'Active',
+                ])
+                ->whereIn('user_id', $childrenIds);
+
+            if ($data['filters']['global']['value']) {
+                $keyword = $data['filters']['global']['value'];
+
+                $query->where(function ($q) use ($keyword) {
+                    $q->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('username', 'like', '%' . $keyword . '%');
+                    })
+                        ->orWhereHas('master', function ($query) use ($keyword) {
+                            $query->whereHas('tradingUser', function ($query) use ($keyword) {
+                                $query->where('name', 'like', '%' . $keyword . '%')
+                                    ->orWhere('company', 'like', '%' . $keyword . '%');
+                            });
+                        })
+                        ->orWhere('meta_login', 'like', '%' . $keyword . '%')
+                        ->orWhere('master_meta_login', 'like', '%' . $keyword . '%');
+                });
+            }
+
+            $leaderId = $data['filters']['leader_id']['value']['id'] ?? null;
+
+            if ($leaderId) {
+                // Load users under the specified leader
+                $usersUnderLeader = User::where('id', $leaderId)
+                    ->orWhere('hierarchyList', 'like', "%-$leaderId-%")
+                    ->pluck('id');
+
+                $query->whereIn('id', $usersUnderLeader);
+            }
+
+            if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
+                $start_join_date = Carbon::parse($data['filters']['start_join_date']['value'])->addDay()->startOfDay();
+                $end_join_date = \Carbon\Carbon::parse($data['filters']['end_join_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('created_at', [$start_join_date, $end_join_date]);
+            }
+
+            $masterId = $data['filters']['master_id']['value']['id'] ?? null;
+
+            if ($masterId) {
+                $query->where('master_id', $masterId);
+            }
+
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->orderByDesc('created_at');
+            }
+
+            $activePamm = (clone $query)->get()->sum('subscription_amount');
+            $totalAffiliate = (clone $query)
+                ->distinct('user_id')
+                ->count();
+
+            $affiliates = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $affiliates,
+                'totalAffiliate' => $totalAffiliate,
+                'totalDeposit' => $activePamm
+            ]);
         }
 
-        $totalAccounts = Subscriber::whereIn('user_id', $user->getChildrenIds())->where('status', 'Subscribing')->count();
-        $totalAmount = $query->sum('amount');
-
-        if ($column == 'user_username') {
-            $results = $query->join('users', 'copy_trade_transactions.subscription_id', '=', 'users.id')
-                ->orderBy('users.username', $sortOrder)
-                ->paginate($request->input('paginate', 10));
-        } else {
-            $results = $query
-                ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
-                ->paginate($request->input('paginate', 10));
-        }
-
-        return response()->json([
-            'affiliateCopyTradeTransactions' => $results,
-            'totalAccounts' => $totalAccounts,
-            'totalAmount' => $totalAmount,
-        ]);
+        return response()->json(['success' => false, 'data' => []]);
     }
 
     public function affiliateListing()
     {
-        $locale = app()->getLocale();
-
-        $rankLists = SettingRank::all()->map(function ($rank) use ($locale) {
-            $translations = json_decode($rank->name, true);
-            $label = $translations[$locale] ?? $rank->name;
-            return [
-                'value' => $rank->id,
-                'label' => $label,
-            ];
-        })->prepend(['value' => '', 'label' => trans('public.all')]);
-
-        return Inertia::render('Referral/AffiliateListing', [
-            'rankLists' => $rankLists,
-            'countries' => (new SelectOptionService())->getCountries(),
-        ]);
+        return Inertia::render('Referral/AffiliateListing/AffiliateListing');
     }
 
     public function affiliateListingData(Request $request)
     {
-        $user = Auth::user();
-        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
-        // Decode the JSON
-        $decodedColumnName = json_decode(urldecode($columnName), true);
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
-        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+            $childrenIds = Auth::user()->getChildrenIds();
 
-        $downlineIds = $user->getChildrenIds();
+            $query = User::with([
+                'rank',
+                'userCountry'
+            ])
+                ->withSum('active_copy_trade', 'meta_balance')
+                ->withSum('active_pamm', 'subscription_amount')
+                ->whereIn('id', $childrenIds);
 
-        $downlineUsers = User::whereIn('id', $downlineIds)
-            ->with(['rank:id,name', 'userCountry:id,name,translations'])
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->input('search');
-                $query->where(function ($innerQuery) use ($search) {
-                    $innerQuery->where('username', 'like', "%{$search}%");
+            if ($data['filters']['global']['value']) {
+                $keyword = $data['filters']['global']['value'];
+
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('username', 'like', '%' . $keyword . '%');
                 });
-            })
-            ->when($request->filled('date'), function ($query) use ($request) {
-                $date = $request->input('date');
-                $dateRange = explode(' - ', $date);
-                $start_date = Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
-                $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
-                $query->whereBetween('created_at', [$start_date, $end_date]);
-            })
-            ->when($request->filled('rank'), function ($query) use ($request) {
-                $rank_id = $request->input('rank');
-                $query->where(function ($innerQuery) use ($rank_id) {
-                    $innerQuery->where('display_rank_id', $rank_id);
-                });
-            })
-            ->when($request->filled('country'), function ($query) use ($request) {
-                $country_id = $request->input('country');
-                $query->where(function ($innerQuery) use ($country_id) {
-                    $innerQuery->where('country', $country_id);
-                });
-            });
+            }
 
-        $totalAffiliate = $downlineUsers->count();
-        $transactionQueryIds = $downlineUsers->pluck('id');
+            $leaderId = $data['filters']['leader_id']['value']['id'] ?? null;
 
-        $results = $downlineUsers
-            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
-            ->paginate($request->input('paginate', 10));
+            if ($leaderId) {
+                // Load users under the specified leader
+                $usersUnderLeader = User::where('id', $leaderId)
+                    ->orWhere('hierarchyList', 'like', "%-$leaderId-%")
+                    ->pluck('id');
 
-        $locale = app()->getLocale();
+                $query->whereIn('id', $usersUnderLeader);
+            }
 
-        $results->each(function ($downlineUser) use ($locale) {
-            $rank = $downlineUser->rank;
-            $translations = json_decode($rank->name, true);
-            $downlineUser->affiliate_rank = $translations[$locale] ?? $rank->name;
+            if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
+                $start_join_date = Carbon::parse($data['filters']['start_join_date']['value'])->addDay()->startOfDay();
+                $end_join_date = \Carbon\Carbon::parse($data['filters']['end_join_date']['value'])->addDay()->endOfDay();
 
-            $country = $downlineUser->userCountry;
-            $countryName = json_decode($country->translations, true);
-            $downlineUser->affiliate_country = $countryName[$locale] ?? $country->name;
+                $query->whereBetween('created_at', [$start_join_date, $end_join_date]);
+            }
 
-            $subscriptionAmount = Subscription::where('user_id', $downlineUser->id)
-                ->where('status', 'Active')
-                ->sum('meta_balance');
+            if ($data['filters']['country']['value']) {
+                $query->where('country', $data['filters']['country']['value']);
+            }
 
-            $pammAmount = PammSubscription::where('user_id', $downlineUser->id)
-                ->where('status', 'Active')
-                ->sum('subscription_amount');
+            if ($data['filters']['rank']['value']) {
+                $query->where('display_rank_id', $data['filters']['rank']['value']);
+            }
 
-            $downlineUser->subscription_amount = $subscriptionAmount + $pammAmount;
-        });
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->orderByDesc('created_at');
+            }
 
-        $totalDeposit = Subscription::whereIn('user_id', $transactionQueryIds)
-            ->where('status', 'Active')
-            ->sum('meta_balance');
+            $activeCopyTrade = (clone $query)->get()->sum('active_copy_trade_sum_meta_balance');
+            $activePamm = (clone $query)->get()->sum('active_pamm_sum_subscription_amount');
 
-        $totalDeposit += PammSubscription::whereIn('user_id', $transactionQueryIds)
-            ->where('status', 'Active')
-            ->sum('subscription_amount');
+            $affiliates = $query->paginate($data['rows']);
 
-        return response()->json([
-            'downlineUsers' => $results,
-            'totalAffiliate' => $totalAffiliate,
-            'totalDeposit' => $totalDeposit
-        ]);
-    }
+            $totalAffiliate = (clone $query)
+                ->count();
 
-    public function getAllCountries(Request $request)
-    {
-        $locale = app()->getLocale();
+            return response()->json([
+                'success' => true,
+                'data' => $affiliates,
+                'totalAffiliate' => $totalAffiliate,
+                'totalDeposit' => $activeCopyTrade + $activePamm
+            ]);
+        }
 
-        $countries = Country::query()
-            ->when($request->filled('query'), function ($query) use ($request) {
-                $search = $request->input('query');
-                $query->where(function ($innerQuery) use ($search) {
-                    $innerQuery->where('name', 'like', "%{$search}%")
-                        ->orWhere('translations', 'like', "%{$search}%");
-                });
-            })
-            ->select('id', 'name', 'translations')
-            ->get()
-            ->map(function ($country) use ($locale) {
-                $translations = json_decode($country->translations, true);
-                $label = $translations[$locale] ?? $country->name;
-                return [
-                    'id' => $country->id,
-                    'name' => $label,
-                ];
-            });
-
-        return response()->json($countries);
+        return response()->json(['success' => false, 'data' => []]);
     }
 }

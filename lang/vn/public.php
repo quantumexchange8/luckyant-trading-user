@@ -600,4 +600,11 @@ return [
     "beneficiary_name" => "Tên Người Thụ Hưởng",
     "select_country" => "Chọn Quốc Gia",
     "select_currency" => "Chọn Tiền Tệ",
+    "filter_by_referrer" => "Lọc theo Người giới thiệu",
+    "select_referrer" => "Chọn Người giới thiệu",
+    "filter_by_country" => "Lọc theo Quốc gia",
+    "filter_by_rank" => "Lọc theo Cấp bậc",
+    "select_rank" => "Chọn Cấp bậc",
+    "filter_by_master" => "Lọc theo Bậc thầy",
+    "select_master" => "Chọn Bậc thầy",
 ];

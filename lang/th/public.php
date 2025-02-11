@@ -599,4 +599,11 @@ return [
     "beneficiary_name" => "ชื่อผู้รับผลประโยชน์",
     "select_country" => "เลือกประเทศ",
     "select_currency" => "เลือกสกุลเงิน",
+    "filter_by_referrer" => "กรองตามผู้แนะนำ",
+    "select_referrer" => "เลือกผู้แนะนำ",
+    "filter_by_country" => "กรองตามประเทศ",
+    "filter_by_rank" => "กรองตามอันดับ",
+    "select_rank" => "เลือกอันดับ",
+    "filter_by_master" => "กรองตามมาสเตอร์",
+    "select_master" => "เลือกมาสเตอร์",
 ];

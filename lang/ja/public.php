@@ -600,4 +600,11 @@ return [
     "beneficiary_name" => "受益者名",
     "select_country" => "国を選択",
     "select_currency" => "通貨を選択",
+    "filter_by_referrer" => "紹介者でフィルター",
+    "select_referrer" => "紹介者を選択",
+    "filter_by_country" => "国でフィルター",
+    "filter_by_rank" => "ランクでフィルター",
+    "select_rank" => "ランクを選択",
+    "filter_by_master" => "マスターでフィルター",
+    "select_master" => "マスターを選択",
 ];

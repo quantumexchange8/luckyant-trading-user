@@ -152,4 +152,14 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(PaymentAccount::class, 'user_id', 'id');
     }
+
+    public function active_copy_trade(): HasMany
+    {
+        return $this->hasMany(SubscriptionBatch::class, 'user_id', 'id')->where('status', 'Active');
+    }
+
+    public function active_pamm(): HasMany
+    {
+        return $this->hasMany(PammSubscription::class, 'user_id', 'id')->where('status', 'Active');
+    }
 }

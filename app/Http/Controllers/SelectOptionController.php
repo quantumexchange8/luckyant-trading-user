@@ -6,9 +6,15 @@ use App\Models\AccountType;
 use App\Models\AccountTypeLeverage;
 use App\Models\AccountTypeToLeader;
 use App\Models\Country;
+use App\Models\Master;
+use App\Models\MasterToLeader;
+use App\Models\PammSubscription;
 use App\Models\PaymentAccount;
 use App\Models\SettingLeverage;
+use App\Models\SettingRank;
+use App\Models\SubscriptionBatch;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Wallet;
 use Auth;
 use Illuminate\Http\Request;
@@ -124,5 +130,65 @@ class SelectOptionController extends Controller
             ->get();
 
         return response()->json($countries);
+    }
+
+    public function getRanks()
+    {
+        $ranks = SettingRank::select([
+            'id',
+            'name'
+        ])
+            ->get();
+
+        return response()->json($ranks);
+    }
+
+    public function getReferrers(Request $request)
+    {
+        $query = User::whereNotIn('role', [
+            'super-admin',
+            'admin',
+        ])
+            ->whereIn('id', Auth::user()->getChildrenIds())
+            ->select([
+                'id',
+                'name',
+                'username',
+                'email'
+            ]);
+
+        $users = $query->get();
+
+        return response()->json($users);
+    }
+
+    public function getMastersByType(Request $request)
+    {
+        $type = $request->type;
+        $childrenIds = Auth::user()->getChildrenIds();
+
+        if ($type == 'CopyTrade') {
+            $master_ids = SubscriptionBatch::where([
+                'type' => $type,
+                'status' => 'Active'
+            ])
+                ->whereIn('user_id', $childrenIds)
+                ->distinct('master_id')
+                ->pluck('master_id');
+        } else {
+            $master_ids = PammSubscription::where([
+                'type' => $type,
+                'status' => 'Active'
+            ])
+                ->whereIn('user_id', $childrenIds)
+                ->distinct('master_id')
+                ->pluck('master_id');
+        }
+
+        $masters = Master::with('tradingUser')
+            ->whereIn('id', $master_ids)
+            ->get();
+
+        return response()->json($masters);
     }
 }

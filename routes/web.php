@@ -70,6 +70,9 @@ Route::middleware('auth')->group(function () {
     Route::get('getWithdrawalWallets', [SelectOptionController::class, 'getWithdrawalWallets']);
     Route::get('getPaymentAccounts', [SelectOptionController::class, 'getPaymentAccounts']);
     Route::get('getCountries', [SelectOptionController::class, 'getCountries']);
+    Route::get('getReferrers', [SelectOptionController::class, 'getReferrers']);
+    Route::get('getRanks', [SelectOptionController::class, 'getRanks']);
+    Route::get('getMastersByType', [SelectOptionController::class, 'getMastersByType']);
 
     Route::get('update_transaction', [WalletController::class, 'depositReturn']);
     Route::get('tt_pay_return', [WalletController::class, 'tt_pay_return']);
@@ -307,11 +310,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('referral')->group(function () {
         Route::get('/network', [ReferralController::class, 'index'])->name('referral.index');
         Route::get('/getTreeData', [ReferralController::class, 'getTreeData'])->name('referral.getTreeData');
-        Route::get('/affiliateSubscription', [ReferralController::class, 'affiliateSubscription'])->name('referral.affiliateSubscription');
-        Route::get('/affiliateSubscriptionData', [ReferralController::class, 'affiliateSubscriptionData'])->name('referral.affiliateSubscriptionData');
+
+        // Affiliate Listing
         Route::get('/affiliateListing', [ReferralController::class, 'affiliateListing'])->name('referral.affiliateListing');
         Route::get('/affiliateListingData', [ReferralController::class, 'affiliateListingData'])->name('referral.affiliateListingData');
-        Route::get('/getAllCountries', [ReferralController::class, 'getAllCountries'])->name('referral.getAllCountries');
+
+        // Affiliate Subscriptions
+        Route::get('/affiliateSubscription', [ReferralController::class, 'affiliateSubscription'])->name('referral.affiliateSubscription');
+        Route::get('getAffiliateCopyTrade', [ReferralController::class, 'getAffiliateCopyTrade'])->name('referral.getAffiliateCopyTrade');
+        Route::get('getAffiliatePamm', [ReferralController::class, 'getAffiliatePamm'])->name('referral.getAffiliatePamm');
     });
 
     /**

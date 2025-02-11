@@ -600,4 +600,11 @@ return [
     "beneficiary_name" => "受益人姓名",
     "select_country" => "选择国家",
     "select_currency" => "选择货币",
+    "filter_by_referrer" => "按推荐人筛选",
+    "select_referrer" => "选择推荐人",
+    "filter_by_country" => "按国家筛选",
+    "filter_by_rank" => "按等级筛选",
+    "select_rank" => "选择等级",
+    "filter_by_master" => "按主账户筛选",
+    "select_master" => "选择主账户",
 ];

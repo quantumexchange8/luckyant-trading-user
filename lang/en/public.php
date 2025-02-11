@@ -600,4 +600,11 @@ return [
     "beneficiary_name" => "Beneficiary Name",
     "select_country" => "Select Country",
     "select_currency" => "Select Currency",
+    "filter_by_referrer" => "Filter by Referrer",
+    "select_referrer" => "Select Referrer",
+    "filter_by_country" => "Filter by Country",
+    "filter_by_rank" => "Filter by Rank",
+    "select_rank" => "Select Rank",
+    "filter_by_master" => "Filter by Master",
+    "select_master" => "Select Master",
 ];

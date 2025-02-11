@@ -600,4 +600,11 @@ return [
     "beneficiary_name" => "Nama Penerima",
     "select_country" => "Pilih Negara",
     "select_currency" => "Pilih Mata Uang",
+    "filter_by_referrer" => "Saring berdasarkan Perujuk",
+    "select_referrer" => "Pilih Perujuk",
+    "filter_by_country" => "Saring berdasarkan Negara",
+    "filter_by_rank" => "Saring berdasarkan Peringkat",
+    "select_rank" => "Pilih Peringkat",
+    "filter_by_master" => "Saring berdasarkan Master",
+    "select_master" => "Pilih Master",
 ];

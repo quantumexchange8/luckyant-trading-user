@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Translatable\HasTranslations;
 
 class SettingRank extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations;
+
+    public array $translatable = ['name'];
 
     protected $fillable = [
         'name',

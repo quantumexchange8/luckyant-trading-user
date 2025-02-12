@@ -2,6 +2,8 @@
 import {PlusIcon, MinusSmIcon} from "@heroicons/vue/solid";
 import {ref} from "vue";
 import Modal from "@/Components/Modal.vue";
+import {useLangObserver} from "@/Composables/localeObserver.js";
+
 export default {
     name: 'Tree',
     components: { PlusIcon, MinusSmIcon, ref, Modal},
@@ -60,10 +62,12 @@ export default {
         }
         const affiliateModal = ref(false);
         const selectedAffiliate = ref();
+        const {locale} = useLangObserver();
         return {
             formatAmount,
             affiliateModal,
-            selectedAffiliate
+            selectedAffiliate,
+            locale
         };
     },
     emits: ['onClick']
@@ -126,7 +130,7 @@ export default {
                                         {{ node.level }}</span>
                                 </div>
                                 <div class="text-xs font-normal dark:text-gray-400">
-                                    {{$t('public.rank')}}: {{ node.rank }}
+                                    {{$t('public.rank')}}: {{ locale === 'cn' ? node.rank[locale] : node.rank['en'] }}
                                 </div>
                             </div>
                         </div>
@@ -180,7 +184,7 @@ export default {
                             <div class="whitespace-normal">{{ selectedAffiliate.username }}</div>
                             <span class="text-xs px-2 py-0.5 rounded-full text-primary-100 bg-primary-400 dark:bg-primary-600">{{ $t('public.level') }} {{ selectedAffiliate.level }}</span>
                         </div>
-                        <div class="text-xs font-normal dark:text-gray-400"> {{ $t('public.rank') }}: {{ selectedAffiliate.rank }} </div>
+                        <div class="text-xs font-normal dark:text-gray-400"> {{ $t('public.rank') }}: {{ locale === 'cn' ? selectedAffiliate.rank[locale] : selectedAffiliate.rank['en'] }} </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2 items-center">

@@ -27,11 +27,9 @@ class ReferralController extends Controller
 
     public function getTreeData(Request $request)
     {
-        $searchUser = null;
         $searchTerm = $request->input('search');
         $childrenIds = Auth::user()->getChildrenIds();
         $childrenIds[] = Auth::id();
-        $locale = app()->getLocale();
 
         if ($searchTerm) {
             // Search for a user by name or email
@@ -57,11 +55,6 @@ class ReferralController extends Controller
             $query->where('id', $user->id);
         })->whereIn('id', $childrenIds)->get();
 
-        $rank = SettingRank::where('id', $user->display_rank_id)->first();
-
-        // Parse the JSON data in the name column to get translations
-        $translations = json_decode($rank->name, true);
-
         $level = 0;
         $rootNode = [
             'id' => $user->id,
@@ -70,7 +63,7 @@ class ReferralController extends Controller
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level,
-            'rank' => $translations[$locale] ?? '-',
+            'rank' => $user->rank->getTranslations('name'),
             'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
             'self_deposit' => $this->getSelfDeposit($user),
@@ -89,12 +82,6 @@ class ReferralController extends Controller
         $mappedChildren = $children->map(function ($child) use ($level) {
             return $this->mapUser($child, $level + 1);
         });
-        $locale = app()->getLocale();
-
-        $rank = SettingRank::where('id', $user->display_rank_id)->first();
-
-        // Parse the JSON data in the name column to get translations
-        $translations = json_decode($rank->name, true);
 
         $mappedUser = [
             'id' => $user->id,
@@ -103,7 +90,7 @@ class ReferralController extends Controller
             'profile_photo' => $user->getFirstMediaUrl('profile_photo'),
             'email' => $user->email,
             'level' => $level + 1,
-            'rank' => $translations[$locale] ?? '-',
+            'rank' => $user->rank->getTranslations('name'),
             'direct_affiliate' => count($user->children),
             'total_affiliate' => count($user->getChildrenIds()),
             'self_deposit' => $this->getSelfDeposit($user),

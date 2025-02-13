@@ -27,6 +27,7 @@ return [
     'total_rebate_amount' => "総リベート金額",
     'total_trade_volume' => "総取引量",
     'amount_multiples_of_100' => "100の倍数",
+    'amount_multiples_of_10' => "10の倍数",
     'amount_return_cash_wallet' => "キャッシュウォレットに戻る金額",
     'amount_to_follow_master' => "マスターに従う金額",
     'confirm_submit' => "確認して送信",

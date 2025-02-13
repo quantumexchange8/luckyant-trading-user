@@ -27,6 +27,7 @@ return [
     'total_rebate_amount' => "총 환급 금액",
     'total_trade_volume' => "총 거래량",
     'amount_multiples_of_100' => "100의 배수",
+    'amount_multiples_of_10' => "10의 배수",
     'amount_return_cash_wallet' => "현금 지갑에 반환된 금액",
     'amount_to_follow_master' => "마스터를 따라갈 금액",
     'confirm_submit' => "제출 확인",

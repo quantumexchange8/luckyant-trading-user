@@ -27,6 +27,7 @@ return [
     'total_rebate_amount' => "Total Jumlah Rebate",
     'total_trade_volume' => "Total Volume Perdagangan",
     'amount_multiples_of_100' => "Kelipatan seratus",
+    'amount_multiples_of_10' => "Dalam puluhan",
     'amount_return_cash_wallet' => "Jumlah yang dikembalikan ke dompet tunai",
     'amount_to_follow_master' => "Jumlah untuk mengikuti master",
     'confirm_submit' => "Konfirmasikan Kirim",

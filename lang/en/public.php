@@ -27,6 +27,7 @@ return [
     'total_rebate_amount' => "Total Rebate Amount",
     'total_trade_volume' => "Total Trade Volume",
     'amount_multiples_of_100' => "Multiples of one hundred",
+    'amount_multiples_of_10' => "Multiples of 10",
     'amount_return_cash_wallet' => "Amount returned to cash wallet",
     'amount_to_follow_master' => "Amount to follow master",
     'confirm_submit' => "Confirm Submit",

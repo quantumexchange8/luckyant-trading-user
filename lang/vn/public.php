@@ -27,6 +27,7 @@ return [
     'total_rebate_amount' => "Tổng Số tiền Hoàn tiền",
     'total_trade_volume' => "Tổng Khối lượng Giao dịch",
     'amount_multiples_of_100' => "Bội số của một trăm",
+    'amount_multiples_of_10' => "Trong hàng chục",
     'amount_return_cash_wallet' => "Số tiền trả lại cho ví tiền mặt",
     'amount_to_follow_master' => "Số tiền để theo dõi thầy",
     'confirm_submit' => "Xác nhận Gửi",

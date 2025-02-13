@@ -27,6 +27,7 @@ return [
     'total_rebate_amount' => "จำนวนเงินคืนรวม",
     'total_trade_volume' => "ปริมาณการเทรดรวม",
     'amount_multiples_of_100' => "คูณของร้อย",
+    'amount_multiples_of_10' => "ในสิบ",
     'amount_return_cash_wallet' => "จำนวนเงินที่คืนให้กระเป๋าเงินสด",
     'amount_to_follow_master' => "จำนวนเงินที่จะติดตามมาสเตอร์",
     'confirm_submit' => "ยืนยันการส่ง",

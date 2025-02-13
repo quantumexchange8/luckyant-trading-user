@@ -365,6 +365,10 @@ class AccountController extends Controller
             if ($amount < $minAmount) {
                 throw ValidationException::withMessages(['amount' => trans('public.min_amount_error')]);
             }
+
+            if ($amount % 10 != 0) {
+                throw ValidationException::withMessages(['amount' => trans('public.amount_multiples_of_10')]);
+            }
         } else {
             $minAmount = $amount % 100;
             if ($minAmount != 0) {

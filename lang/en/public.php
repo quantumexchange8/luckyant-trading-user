@@ -608,4 +608,6 @@ return [
     "select_rank" => "Select Rank",
     "filter_by_master" => "Filter by Master",
     "select_master" => "Select Master",
+    "alpha_deposit_notice" => "The initial activation amount is a minimum of $100, and subsequent top-ups must be in multiples of $10.",
+    "alpha_notice" => "Notice"
 ];

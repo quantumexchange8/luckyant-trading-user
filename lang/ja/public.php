@@ -608,4 +608,6 @@ return [
     "select_rank" => "ランクを選択",
     "filter_by_master" => "マスターでフィルター",
     "select_master" => "マスターを選択",
+    "alpha_deposit_notice" => "初回のアクティベーション金額は最低 $100 であり、その後のチャージは $10 の倍数で行う必要があります。",
+    "alpha_notice" => "ちゅういじこう"
 ];

@@ -608,4 +608,6 @@ return [
     "select_rank" => "Pilih Peringkat",
     "filter_by_master" => "Saring berdasarkan Master",
     "select_master" => "Pilih Master",
+    "alpha_deposit_notice" => "Jumlah aktivasi awal minimal $100, dan pengisian ulang berikutnya harus dalam kelipatan $10.",
+    "alpha_notice" => "Pemberitahuan"
 ];

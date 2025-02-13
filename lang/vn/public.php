@@ -608,4 +608,6 @@ return [
     "select_rank" => "Chọn Cấp bậc",
     "filter_by_master" => "Lọc theo Bậc thầy",
     "select_master" => "Chọn Bậc thầy",
+    "alpha_deposit_notice" => "Số tiền kích hoạt ban đầu tối thiểu là $100, và các lần nạp tiền sau phải là bội số của $10.",
+    "alpha_notice" => "Lưu ý"
 ];

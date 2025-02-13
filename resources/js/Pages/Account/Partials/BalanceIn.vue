@@ -9,6 +9,7 @@ import InputNumber from "primevue/inputnumber";
 import InputError from "@/Components/InputError.vue";
 import Select from "primevue/select";
 import {useForm} from "@inertiajs/vue3";
+import {IconFileInfo} from "@tabler/icons-vue";
 
 const props = defineProps({
     account: Object,
@@ -251,6 +252,16 @@ const closeDialog = () => {
                             </div>
                         </div>
                         <InputError :message="form.errors.amount"/>
+                    </div>
+
+                    <div
+                        v-if="account.account_type.slug === 'alpha'"
+                        class="flex flex-col mt-3 items-start gap-1 self-stretch"
+                    >
+                        <span class="text-gray-950 dark:text-white text-sm font-bold">{{ $t('public.alpha_notice') }}</span>
+                        <div class="text-xs text-gray-500">
+                            {{ $t('public.alpha_deposit_notice') }}
+                        </div>
                     </div>
 
                     <div

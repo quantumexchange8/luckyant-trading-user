@@ -88,6 +88,7 @@ const submitForm = () => {
     form.payment_account_id = accountDetail.value.id;
     form.payment_method = accountDetail.value.payment_platform === 'Bank' ? 'bank' : 'crypto';
     form.payment_platform_name = accountDetail.value.payment_platform_name;
+    form.payment_account_name = accountDetail.value.payment_account_name;
     form.account_no = accountDetail.value.account_no;
     form.bank_sub_branch = accountDetail.value.bank_sub_branch;
     form.country = selectedCountry.value?.id;

@@ -88,8 +88,8 @@ class RegisteredUserController extends Controller
         } elseif ($request->form_step == 2) {
             // Validation rules for step 2
             $additionalRules = [
-                'name' => 'required|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u|max:255',
-                'chinese_name' => 'nullable|regex:/^[a-zA-Z0-9\p{Han}. ]+$/u',
+                'name' => 'required|regex:/^[\p{L}\p{N}\p{M}. @]+$/u|max:255',
+                'chinese_name' => 'nullable|regex:/^[\p{L}\p{N}\p{M}. @]+$/u',
                 'dob_year' => 'required|numeric|digits:4|min:1900|max:'.date('Y'),
                 'dob_month' => 'required|numeric|min:1',
                 'dob_day' => 'required|numeric|min:1',

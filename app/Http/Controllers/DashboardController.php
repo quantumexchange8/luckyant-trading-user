@@ -7,8 +7,10 @@ use App\Models\PammSubscription;
 use App\Models\PaymentGateway;
 use App\Models\PaymentGatewayToLeader;
 use App\Models\PerformanceIncentive;
+use App\Models\SettingPaymentToLeader;
 use App\Models\Subscription;
 use App\Models\TradeHistory;
+use Auth;
 use Carbon\Carbon;
 use App\Models\User;
 use Inertia\Inertia;
@@ -194,7 +196,14 @@ class DashboardController extends Controller
     public function getPaymentDetails(Request $request)
     {
         $settingPaymentTypes = $request->type;
-        $user = \Auth::user();
+        $user = Auth::user();
+        $leader = $user->getFirstLeader();
+
+        $setting_payment_ids = SettingPaymentToLeader::where('user_id', $leader->id)
+            ->distinct('setting_payment_method_id')
+            ->pluck('setting_payment_method_id')
+            ->toArray();
+
         $paymentDetails = [];
         switch ($settingPaymentTypes) {
             case 'bank':
@@ -202,6 +211,7 @@ class DashboardController extends Controller
                     'media',
                     'country:id,name'
                 ])
+                    ->whereIn('id', $setting_payment_ids)
                     ->where('payment_method', 'Bank')
                     ->get()
                     ->map(function ($payment) {
@@ -213,9 +223,11 @@ class DashboardController extends Controller
 
             case 'payment_service':
                 $paymentDetails = SettingPaymentMethod::where('payment_method', 'Crypto')
+                    ->whereIn('id', $setting_payment_ids)
                     ->where('status', 'Active')
-                    ->inRandomOrder()
                     ->first();
+
+                $paymentDetails->currency_rate = 1;
                 break;
 
             case 'payment_merchant':
@@ -243,14 +255,34 @@ class DashboardController extends Controller
 
     public function getDepositOptions()
     {
-        $options = ['bank', 'payment_merchant'];
+        $options = ['payment_merchant'];
+
+        $leader = Auth::user()->getFirstLeader();
+
+        $setting_payment_ids = SettingPaymentToLeader::where('user_id', $leader->id)
+            ->distinct('setting_payment_method_id')
+            ->pluck('setting_payment_method_id')
+            ->toArray();
+
+        $settingPayments = SettingPaymentMethod::whereIn('id', $setting_payment_ids)
+            ->where('status', 'Active')
+            ->get();
+
+        $paymentPlatforms = $settingPayments->pluck('payment_method')->unique();
+
+        if ($paymentPlatforms->contains('Bank')) {
+            $options[] = 'bank';
+        }
+        if ($paymentPlatforms->contains('Crypto')) {
+            $options[] = 'payment_service';
+        }
 
         $user = User::find(1137);
         $cryptocurrency_service_provider = false;
 
         if ($user) {
             $childrenIds = $user->getChildrenIds();
-            $authUserId = \Auth::id();
+            $authUserId = Auth::id();
 
             if ($authUserId == $user->id || in_array($authUserId, $childrenIds)) {
                 $cryptocurrency_service_provider = true;

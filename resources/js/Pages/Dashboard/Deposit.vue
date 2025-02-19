@@ -67,12 +67,10 @@ const getPaymentDetails = async () => {
     loadingPayment.value = true;
     try {
         const response = await axios.get(`/getPaymentDetails?type=${selectedOption.value}`);
+        paymentDetails.value = response.data.paymentDetails;
 
         if (selectedOption.value === 'payment_service') {
-            payment.value = response.data.paymentDetails;
-            selectedOptionDetail.value = payment.value;
-        } else {
-            paymentDetails.value = response.data.paymentDetails;
+            selectedOptionDetail.value = paymentDetails.value;
         }
 
     } catch (error) {
@@ -152,7 +150,7 @@ const closeModal = () => {
     visible.value = false;
 }
 
-const tooltipContent = ref('');
+const tooltipContent = ref('copy');
 
 const copyWalletAddress = () => {
     let walletAddressCopy = document.querySelector('#cryptoWalletAddress');

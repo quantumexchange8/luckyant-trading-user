@@ -12,6 +12,7 @@ import Badge from "@/Components/Badge.vue";
 import {RadioGroup, RadioGroupLabel, RadioGroupOption} from "@headlessui/vue";
 import AvatarInput from "@/Pages/Profile/Partials/AvatarInput.vue";
 import Modal from "@/Components/Modal.vue";
+import {IconCircleCheckFilled} from "@tabler/icons-vue";
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
@@ -46,8 +47,8 @@ const form = useForm({
 })
 
 const submit = () => {
-    if (selected.value) {
-        form.gender = selected.value.value
+    if (selectedGender.value) {
+        form.gender = selectedGender.value
     }
     form.post(route('profile.update'), {
         onSuccess: () => {
@@ -122,21 +123,16 @@ const statusVariant = (userKyc) => {
     if (userKyc === 'Unverified') return 'danger';
 }
 
-const genders = [
-    {
-        name: 'male',
-        value: 'male',
-    },
-    {
-        name: 'female',
-        value: 'female',
-    },
-]
+const genders = ref([
+    'male', 'female'
+])
 
-const getUserGender = (user_gender) => {
-    return genders.find(gender => gender.value === user_gender);
+const selectedGender = ref(user.gender);
+
+const selectGender = (gender) => {
+    selectedGender.value = gender;
 }
-const selected = ref(getUserGender(user.gender));
+
 const confirmModal = ref(false);
 
 const openConfirmModal = () => {
@@ -194,6 +190,17 @@ watchEffect(() => {
                         }"
                     >
                         <span class="text-sm">{{ $t('public.' + kycApproval.toLowerCase()) }}</span>
+                    </div>
+                </div>
+                <div
+                    v-if="kycApproval === 'Unverified' && user.kyc_approval_description"
+                    class="flex flex-col gap-1 p-5 bg-error-50 dark:bg-error-900/30 border border-error-400 dark:border-error-800 rounded-md w-full"
+                >
+                    <div class="text-xs font-semibold">
+                        {{ $t('public.remarks') }}
+                    </div>
+                    <div class="text-sm text-error-900 dark:text-error-200">
+                        {{ user.kyc_approval_description }}
                     </div>
                 </div>
             </div>
@@ -286,42 +293,33 @@ watchEffect(() => {
                             for="gender"
                             :value="$t('public.gender')"
                         />
-                        <RadioGroup v-model="selected">
-                            <RadioGroupLabel class="sr-only">{{ $t('public.signal_status') }}</RadioGroupLabel>
-                            <div class="flex gap-3 items-center self-stretch w-full">
-                                <RadioGroupOption
-                                    as="template"
-                                    v-for="(gender, index) in genders"
-                                    :key="index"
-                                    :value="gender"
-                                    v-slot="{ active, checked }"
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-2 items-start gap-3 self-stretch"
+                        >
+                            <div
+                                v-for="gender in genders"
+                                @click="selectGender(gender)"
+                                class="group flex flex-col items-start py-3 px-4 gap-1 self-stretch rounded-lg border shadow-input transition-colors duration-300 select-none cursor-pointer w-full"
+                                :class="{
+                                    'bg-primary-50 dark:bg-gray-800 border-primary-500': selectedGender === gender,
+                                    'bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 hover:bg-primary-50 hover:border-primary-500': selectedGender !== gender,
+                                }"
+                            >
+                                <div class="flex items-center gap-3 self-stretch">
+                                <span
+                                    class="flex-grow text-sm font-semibold transition-colors duration-300 group-hover:text-primary-700 dark:group-hover:text-primary-500"
+                                    :class="{
+                                        'text-primary-700 dark:text-primary-300': selectedGender === gender,
+                                        'text-gray-950 dark:text-white': selectedGender !== gender
+                                    }"
                                 >
-                                    <div
-                                        :class="[
-                                    active
-                                      ? 'ring-0 ring-white ring-offset-0'
-                                      : '',
-                                    checked ? 'border-primary-600 dark:border-white bg-primary-500 dark:bg-gray-600 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
-                                ]"
-                                        class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none w-full"
-                                    >
-                                        <div class="flex items-center w-full">
-                                            <div class="text-sm flex flex-col gap-3 w-full">
-                                                <RadioGroupLabel
-                                                    as="div"
-                                                    class="font-medium"
-                                                >
-                                                    <div class="flex justify-center items-center gap-3">
-                                                        {{ $t('public.' + gender.name) }}
-                                                    </div>
-                                                </RadioGroupLabel>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </RadioGroupOption>
+                                    {{ $t(`public.${gender}`) }}
+                                </span>
+                                    <IconCircleCheckFilled v-if="selectedGender === gender" size="20" stroke-width="1.25" color="#2970FF" />
+                                </div>
                             </div>
-                            <InputError :message="form.errors.gender" class="mt-2" />
-                        </RadioGroup>
+                        </div>
+                        <InputError class="mt-2" :message="form.errors.gender" />
                     </div>
 
                     <div class="space-y-1.5">
@@ -420,7 +418,7 @@ watchEffect(() => {
                             :class="[
                                     {
                                           'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.proof_front,
-                                          'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_front,
+                                          'border-gray-300 dark:border-gray-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_front,
                                     }
                                 ]"
                         >
@@ -468,7 +466,7 @@ watchEffect(() => {
                             :class="[
                                 {
                                       'border-error-300 focus-within:ring-error-300 hover:border-error-300 focus-within:border-error-300 focus-within:shadow-error-light dark:border-error-600 dark:focus-within:ring-error-600 dark:hover:border-error-600 dark:focus-within:border-error-600 dark:focus-within:shadow-error-dark': form.errors.proof_back,
-                                      'border-gray-light-300 dark:border-gray-dark-800 focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_back,
+                                      'border-gray-300 dark:border-gray-800  focus:ring-primary-400 hover:border-primary-400 focus-within:border-primary-400 focus-within:shadow-primary-light dark:focus-within:ring-primary-500 dark:hover:border-primary-500 dark:focus-within:border-primary-500 dark:focus-within:shadow-primary-dark': !form.errors.proof_back,
                                 }
                             ]"
                         >

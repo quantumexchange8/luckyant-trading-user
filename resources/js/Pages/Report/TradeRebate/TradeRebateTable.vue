@@ -250,7 +250,7 @@ const exportReport = () => {
                     @page="onPage($event)"
                     @sort="onSort($event)"
                     @filter="onFilter($event)"
-                    :globalFilterFields="['user.name', 'user.email', 'meta_login', 'master_meta_login']"
+                    :globalFilterFields="['user.name', 'user.email', 'user.username', 'upline_meta_login', 'meta_login']"
                 >
                     <template #header>
                         <div class="flex flex-col md:flex-row gap-3 items-center self-stretch md:pb-5">

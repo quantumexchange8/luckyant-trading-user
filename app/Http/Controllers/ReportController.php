@@ -45,13 +45,14 @@ class ReportController extends Controller
 
             if ($data['filters']['global']['value']) {
                 $query->whereHas('ofUser', function($q) use ($data) {
-                    $q->where(function ($query) use ($data) {
-                        $keyword = $data['filters']['global']['value'];
-
+                    $keyword = $data['filters']['global']['value'];
+                    $q->where(function ($query) use ($keyword) {
                         $query->where('name', 'like', '%' . $keyword . '%')
                             ->orWhere('username', 'like', '%' . $keyword . '%')
                             ->orWhere('email', 'like', '%' . $keyword . '%');
-                    });
+                    })
+                        ->orWhere('upline_meta_login', 'like', '%' . $keyword . '%')
+                        ->orWhere('meta_login', 'like', '%' . $keyword . '%');
                 });
             }
 

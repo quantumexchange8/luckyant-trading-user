@@ -303,10 +303,13 @@ const getSeverity = (status) => {
 
                         <Column
                             field="name"
-                            :header="$t('public.username')"
+                            :header="$t('public.affiliate')"
                         >
                             <template #body="{ data }">
-                                {{ data.user.username }}
+                                <div class="flex flex-col">
+                                    <span>{{ data.user.username ?? '-' }}</span>
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ data.user.email }}</span>
+                                </div>
                             </template>
                         </Column>
 

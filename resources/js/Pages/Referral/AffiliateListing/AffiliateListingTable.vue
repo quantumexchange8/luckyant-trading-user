@@ -242,7 +242,7 @@ const getSeverity = (status) => {
                     @page="onPage($event)"
                     @sort="onSort($event)"
                     @filter="onFilter($event)"
-                    :globalFilterFields="['username']"
+                    :globalFilterFields="['username', 'email']"
                 >
                     <template #header>
                         <div class="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto mb-5">
@@ -309,11 +309,14 @@ const getSeverity = (status) => {
 
                         <Column
                             field="name"
-                            :header="$t('public.username')"
+                            :header="$t('public.affiliate')"
                             sortable
                         >
                             <template #body="{ data }">
-                                {{ data.username }}
+                                <div class="flex flex-col">
+                                    <span>{{ data.username ?? '-' }}</span>
+                                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ data.email }}</span>
+                                </div>
                             </template>
                         </Column>
 

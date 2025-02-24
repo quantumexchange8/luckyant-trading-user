@@ -146,7 +146,7 @@ class ReferralController extends Controller
             $childrenIds = Auth::user()->getChildrenIds();
 
             $query = SubscriptionBatch::with([
-                'user:id,username,upline_id,hierarchyList',
+                'user:id,username,email,upline_id,hierarchyList',
                 'master',
                 'master.tradingUser'
             ])
@@ -158,7 +158,8 @@ class ReferralController extends Controller
 
                 $query->where(function ($q) use ($keyword) {
                     $q->whereHas('user', function ($query) use ($keyword) {
-                        $query->where('username', 'like', '%' . $keyword . '%');
+                        $query->where('username', 'like', '%' . $keyword . '%')
+                            ->orWhere('email', 'like', '%' . $keyword . '%');
                     })
                         ->orWhereHas('master', function ($query) use ($keyword) {
                             $query->whereHas('tradingUser', function ($query) use ($keyword) {
@@ -228,7 +229,7 @@ class ReferralController extends Controller
             $childrenIds = Auth::user()->getChildrenIds();
 
             $query = PammSubscription::with([
-                'user:id,username,upline_id,hierarchyList',
+                'user:id,username,email,upline_id,hierarchyList',
                 'master',
                 'master.tradingUser'
             ])
@@ -243,7 +244,8 @@ class ReferralController extends Controller
 
                 $query->where(function ($q) use ($keyword) {
                     $q->whereHas('user', function ($query) use ($keyword) {
-                        $query->where('username', 'like', '%' . $keyword . '%');
+                        $query->where('username', 'like', '%' . $keyword . '%')
+                            ->orWhere('email', 'like', '%' . $keyword . '%');
                     })
                         ->orWhereHas('master', function ($query) use ($keyword) {
                             $query->whereHas('tradingUser', function ($query) use ($keyword) {
@@ -329,7 +331,8 @@ class ReferralController extends Controller
                 $keyword = $data['filters']['global']['value'];
 
                 $query->where(function ($q) use ($keyword) {
-                    $q->where('username', 'like', '%' . $keyword . '%');
+                    $q->where('username', 'like', '%' . $keyword . '%')
+                        ->orWhere('email', 'like', '%' . $keyword . '%');
                 });
             }
 

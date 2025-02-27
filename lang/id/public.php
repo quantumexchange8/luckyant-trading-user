@@ -609,5 +609,8 @@ return [
     "filter_by_master" => "Saring berdasarkan Master",
     "select_master" => "Pilih Master",
     "alpha_deposit_notice" => "Jumlah aktivasi awal minimal $100, dan pengisian ulang berikutnya harus dalam kelipatan $10.",
-    "alpha_notice" => "Pemberitahuan"
+    "alpha_notice" => "Pemberitahuan",
+    "to_cash_wallet" => "Ke dompet tunai",
+    "to_e_wallet" => "Ke dompet elektronik",
+    "returned_amount" => "Jumlah yang dikembalikan",
 ];

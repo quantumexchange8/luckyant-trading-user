@@ -609,5 +609,8 @@ return [
     "filter_by_master" => "Filter by Master",
     "select_master" => "Select Master",
     "alpha_deposit_notice" => "The initial activation amount is a minimum of $100, and subsequent top-ups must be in multiples of $10.",
-    "alpha_notice" => "Notice"
+    "alpha_notice" => "Notice",
+    "to_cash_wallet" => "To Cash Wallet",
+    "to_e_wallet" => "To E-Wallet",
+    "returned_amount" => "Returned Amount",
 ];

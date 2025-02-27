@@ -609,5 +609,8 @@ return [
     "filter_by_master" => "按主账户筛选",
     "select_master" => "选择主账户",
     "alpha_deposit_notice" => "首次激活金额最低为 $100，此后充值须为 $10 的整数倍。",
-    "alpha_notice" => "注意事项"
+    "alpha_notice" => "注意事项",
+    "to_cash_wallet" => "转至现金钱包",
+    "to_e_wallet" => "转至电子钱包",
+    "returned_amount" => "返还金额",
 ];

@@ -609,5 +609,8 @@ return [
     "filter_by_master" => "マスターでフィルター",
     "select_master" => "マスターを選択",
     "alpha_deposit_notice" => "初回のアクティベーション金額は最低 $100 であり、その後のチャージは $10 の倍数で行う必要があります。",
-    "alpha_notice" => "ちゅういじこう"
+    "alpha_notice" => "ちゅういじこう",
+    "to_cash_wallet" => "ウォレットへの現金化",
+    "to_e_wallet" => "電子ウォレットへ",
+    "returned_amount" => "返品金額",
 ];

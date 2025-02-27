@@ -609,5 +609,8 @@ return [
     "filter_by_master" => "마스터로 필터링",
     "select_master" => "마스터 선택",
     "alpha_deposit_notice" => "최초 활성화 금액은 최소 $100이며, 이후 충전은 $10 단위로 이루어져야 합니다.",
-    "alpha_notice" => "공지사항"
+    "alpha_notice" => "공지사항",
+    "to_cash_wallet" => "현금지갑으로",
+    "to_e_wallet" => "전자지갑으로",
+    "returned_amount" => "반품금액",
 ];

@@ -264,7 +264,7 @@ class WalletController extends Controller
             $baseUrl = '';
             switch ($payment_gateway->platform) {
                 case 'ttpay':
-                    $vCode = md5($amount, $payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secondary_key . $payment_gateway->secret_key);
+                    $vCode = md5($amount . $payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secondary_key . $payment_gateway->secret_key);
                     $params = [
                         'userName' => $user->name,
                         'userEmail' => $user->email,

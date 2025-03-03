@@ -200,7 +200,10 @@ class WalletController extends Controller
                 ->toArray();
 
             $payment_gateway = PaymentGateway::whereIn('id', $payment_gateway_ids)
-                ->where('platform', $payment_detail['platform'])
+                ->where([
+                    'platform' => $payment_detail['platform'],
+                    'payment_app_name' => $payment_detail['payment_app_name'],
+                ])
                 ->first();
         } else {
             $payment_gateway = null;
@@ -233,21 +236,31 @@ class WalletController extends Controller
                 ->with('warning', trans('public.please_wait_for_seconds', ['seconds' => $remainingSeconds]));
         }
 
-        $transaction_number = RunningNumberService::getID('transaction');
+        $transaction = Transaction::where('transaction_type', 'Deposit')
+            ->where('to_wallet_id', $request->meta_login)
+            ->whereNull('comment')
+            ->where('status', 'processing')
+            ->first();
 
-        $transaction = Transaction::create([
-            'category' => 'wallet',
-            'user_id' => $user->id,
-            'to_wallet_id' => $wallet->id,
-            'payment_method' => $payment_detail['payment_method'] ?? 'Payment Merchant',
-            'transaction_number' => $transaction_number,
-            'to_wallet_address' => $payment_detail['account_no'] ?? null,
-            'transaction_type' => 'Deposit',
-            'amount' => $amount,
-            'transaction_charges' => 0,
-            'conversion_rate' => $payment_detail['currency_rate'] ?? 0,
-            'status' => 'Processing',
-        ]);
+        if (empty($latest_transaction) && $payment_detail['platform'] === 'ttpay') {
+            $transaction_number = RunningNumberService::getID('transaction');
+
+            $transaction = Transaction::create([
+                'category' => 'wallet',
+                'user_id' => $user->id,
+                'to_wallet_id' => $wallet->id,
+                'payment_method' => $payment_detail['payment_method'] ?? 'Payment Merchant',
+                'transaction_number' => $transaction_number,
+                'to_wallet_address' => $payment_detail['account_no'] ?? null,
+                'transaction_type' => 'Deposit',
+                'amount' => $amount,
+                'transaction_charges' => 0,
+                'conversion_rate' => $payment_detail['currency_rate'] ?? 0,
+                'status' => 'Processing',
+            ]);
+        } else {
+            $transaction_number = $latest_transaction->transaction_number;
+        }
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {

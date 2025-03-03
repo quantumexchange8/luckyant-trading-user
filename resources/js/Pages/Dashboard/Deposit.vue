@@ -1,13 +1,11 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import {CurrencyDollarIcon, DuplicateIcon, XIcon} from "@heroicons/vue/outline";
+import {CurrencyDollarIcon, DuplicateIcon} from "@heroicons/vue/outline";
 import {ref, watch} from "vue";
-import Modal from "@/Components/Modal.vue";
 import {transactionFormat} from "@/Composables/index.js";
 import InputLabel from "@/Components/Label.vue";
-import RadioButton from "primevue/radiobutton";
 import Skeleton from "primevue/skeleton";
-import Dropdown from "primevue/dropdown";
+import Select from "primevue/select";
 import Image from "primevue/image";
 import {useForm} from "@inertiajs/vue3";
 import InputNumber from "primevue/inputnumber";
@@ -17,7 +15,6 @@ import Tooltip from "@/Components/Tooltip.vue"
 import {
     RadioGroup,
     RadioGroupLabel,
-    RadioGroupDescription,
     RadioGroupOption,
 } from '@headlessui/vue'
 import BankImg from "/public/assets/bank.jpg"
@@ -27,10 +24,11 @@ import FileUpload from "primevue/fileupload";
 import {
     IconPhotoPlus,
     IconX,
-    IconUpload
+    IconUpload, IconCircleCheckFilled
 } from "@tabler/icons-vue";
 import { usePrimeVue } from 'primevue/config';
 import PrimeButton from "primevue/button";
+import Dialog from "primevue/dialog";
 
 const props = defineProps({
     wallet: Object
@@ -47,6 +45,10 @@ const selectedOption = ref();
 const openModal = () => {
     visible.value = true;
     getDepositOptions();
+}
+
+const selectPaymentGateway = (paymentGateway) => {
+    selectedOptionDetail.value = paymentGateway;
 }
 
 const getDepositOptions = async () => {
@@ -71,6 +73,8 @@ const getPaymentDetails = async () => {
 
         if (selectedOption.value === 'payment_service') {
             selectedOptionDetail.value = paymentDetails.value;
+        } else if (selectedOption.value === 'payment_merchant') {
+            selectedOptionDetail.value = paymentDetails.value[0];
         }
 
     } catch (error) {
@@ -191,10 +195,11 @@ const copyWalletAddress = () => {
         {{ $t('public.deposit') }}
     </Button>
 
-    <Modal
-        :show="visible"
-        :title="$t('public.deposit')"
-        @close="closeModal"
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t('public.deposit')"
+        class="dialog-xs md:dialog-md"
     >
         <div class="flex flex-col gap-5 self-start">
             <div class="p-6 flex flex-col items-center gap-1 bg-gray-200 dark:bg-gray-800">
@@ -227,7 +232,7 @@ const copyWalletAddress = () => {
                                 active
                                     ? 'ring-0 ring-white ring-offset-0'
                                     : '',
-                                checked ? 'border-primary-600 dark:border-primary-800 bg-primary-500 dark:bg-primary-800 text-white' : 'border-gray-300 bg-white dark:bg-gray-700',
+                                checked ? 'border-primary-600 dark:border-primary-800 bg-primary-500 dark:bg-primary-800 text-white' : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800',
                             ]"
                                         class="relative flex cursor-pointer rounded-xl border p-3 focus:outline-none w-full"
                                     >
@@ -258,7 +263,7 @@ const copyWalletAddress = () => {
 
             <!-- Bank -->
             <template v-if="selectedOption === 'bank'">
-                <Dropdown
+                <Select
                     id="agent"
                     v-model="selectedOptionDetail"
                     :options="paymentDetails"
@@ -284,7 +289,7 @@ const copyWalletAddress = () => {
                         </div>
                         <span v-else class="text-gray-400">{{ slotProps.placeholder }}</span>
                     </template>
-                </Dropdown>
+                </Select>
                 <InputError :message="form.errors.payment_detail"/>
 
                 <div
@@ -338,21 +343,53 @@ const copyWalletAddress = () => {
 
             <!-- Payment Gateway -->
             <template v-if="selectedOption === 'payment_merchant'">
-                <div class="flex flex-col gap-1 items-start self-stretch">
+                <div class="flex flex-col gap-1 items-start self-stretch pb-2">
                     <InputLabel
                         :value="$t('public.platform')"
                     />
-                    <div v-if="!loadingPayment" class="flex flex-wrap gap-4">
-                        <div v-for="option in paymentDetails" class="flex items-center">
-                            <RadioButton
-                                v-model="selectedOptionDetail"
-                                :inputId="option.platform"
-                                :value="option"
-                            />
-                            <InputLabel :for="option.platform" class="ml-2 text-sm uppercase">{{ option.platform }}</InputLabel>
+                    <div
+                        v-if="loadingPayment"
+                        class="grid grid-cols-1 md:grid-cols-2 items-start gap-3 self-stretch"
+                    >
+                        <div
+                            v-for="account in 2"
+                            class="group flex flex-col items-start py-3 px-4 gap-1 self-stretch rounded-lg border shadow-input transition-colors duration-300 select-none cursor-pointer w-full bg-primary-50 dark:bg-gray-800 border-primary-500"
+                        >
+                                <span
+                                    class="flex-grow text-sm font-semibold text-gray-950 dark:text-white"
+                                >
+                                    {{ $t('public.loading') }}
+                                </span>
                         </div>
                     </div>
-                    <Skeleton v-else width="8rem" class="my-1"></Skeleton>
+
+                    <div
+                        v-else
+                        class="flex items-start gap-3 self-stretch w-full overflow-x-auto"
+                    >
+                        <div
+                            v-for="paymentGateway in paymentDetails"
+                            @click="selectPaymentGateway(paymentGateway)"
+                            class="group flex flex-col items-start py-3 px-4 gap-1 self-stretch rounded-lg border shadow-input transition-colors duration-300 select-none cursor-pointer min-w-40"
+                            :class="{
+                                    'bg-primary-50 dark:bg-gray-800 border-primary-500': selectedOptionDetail.payment_app_name === paymentGateway.payment_app_name,
+                                    'bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 hover:bg-primary-50 hover:border-primary-500': selectedOptionDetail.payment_app_name !== paymentGateway.payment_app_name,
+                                }"
+                        >
+                            <div class="flex items-center gap-3 self-stretch">
+                                <span
+                                    class="flex-grow text-sm font-semibold transition-colors duration-300 group-hover:text-primary-700 dark:group-hover:text-primary-500 uppercase"
+                                    :class="{
+                                        'text-primary-700 dark:text-primary-300': selectedOptionDetail.payment_app_name === paymentGateway.payment_app_name,
+                                        'text-gray-950 dark:text-white': selectedOptionDetail.payment_app_name !== paymentGateway.payment_app_name
+                                    }"
+                                >
+                                    {{ paymentGateway.name }}
+                                </span>
+                                <IconCircleCheckFilled v-if="selectedOptionDetail.payment_app_name === paymentGateway.payment_app_name" size="20" stroke-width="1.25" color="#2970FF" />
+                            </div>
+                        </div>
+                    </div>
                     <InputError :message="form.errors.payment_detail"/>
                 </div>
             </template>
@@ -372,7 +409,7 @@ const copyWalletAddress = () => {
 
             <form>
                 <div
-                    v-if="selectedOptionDetail && payment.platform !== 'ttpay'"
+                    v-if="selectedOptionDetail"
                     class="flex flex-col gap-5 items-center self-stretch border-t border-gray-200 dark:border-gray-800"
                 >
                     <div
@@ -504,12 +541,12 @@ const copyWalletAddress = () => {
                 </Button>
                 <Button
                     class="justify-center w-full md:w-auto"
-                    @click="submitForm"
+                    @click.prevent="submitForm"
                     :disabled="form.processing"
                 >
                     {{$t('public.confirm')}}
                 </Button>
             </div>
         </div>
-    </Modal>
+    </Dialog>
 </template>

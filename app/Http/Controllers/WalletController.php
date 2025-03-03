@@ -270,6 +270,7 @@ class WalletController extends Controller
                         'userEmail' => $user->email,
                         'orderNumber' => $transaction_number,
                         'userId' => $user->id,
+                        'amount' => $amount,
                         'merchantId' => $payment_gateway->secondary_key,
                         'vCode' => $vCode,
                         'token' => Str::random(40),

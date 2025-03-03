@@ -112,9 +112,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AccountController::class, 'index'])->name('account_info');
         Route::get('/getTradingAccountsData', [AccountController::class, 'getTradingAccountsData'])->name('account_info.getTradingAccountsData');
         Route::get('/getAccountReport', [AccountController::class, 'getAccountReport'])->name('account_info.getAccountReport');
+        Route::get('/getBalanceOutAmount', [AccountController::class, 'getBalanceOutAmount'])->name('account_info.getBalanceOutAmount');
 
         Route::post('/createAccount', [AccountController::class, 'createAccount'])->name('account_info.createAccount');
         Route::post('/depositBalance', [AccountController::class, 'depositBalance'])->name('account_info.depositBalance');
+        Route::post('/withdrawBalance', [AccountController::class, 'withdrawBalance'])->name('account_info.withdrawBalance');
 //        Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
 
         // after change get master delete

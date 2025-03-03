@@ -206,21 +206,22 @@ class WalletController extends Controller
             $payment_gateway = null;
         }
 
-        if ($request->payment_method == 'payment_merchant' && $payment_gateway->platform == 'spritpayment') {
-            if ($request->amount == 0) {
-                throw ValidationException::withMessages([
-                    'amount' => trans('validation.min.numeric', [
-                        'attribute' => trans('amount'),
-                        'min' => 1
-                    ])
-                ]);
-            }
+//        if ($request->payment_method == 'payment_merchant') {
+//            if ($request->amount == 0) {
+//                throw ValidationException::withMessages([
+//                    'amount' => trans('validation.min.numeric', [
+//                        'attribute' => trans('amount'),
+//                        'min' => 1
+//                    ])
+//                ]);
+//            }
+//
+//            if (empty($request->amount)) {
+//                throw ValidationException::withMessages(['amount' => trans('validation.required', ['attribute' => trans('amount')])]);
+//            }
+//        }
 
-            if (empty($request->amount)) {
-                throw ValidationException::withMessages(['amount' => trans('validation.required', ['attribute' => trans('amount')])]);
-            }
-        }
-        $amount = number_format(floatval($request->amount), 2, '.', '');
+        $amount = $request->amount;
 
         // Check if a latest transaction exists and its created_at time is within the last 30 seconds
         if ($latest_transaction && Carbon::parse($latest_transaction->created_at)->diffInSeconds(Carbon::now()) < 30) {
@@ -263,7 +264,7 @@ class WalletController extends Controller
             $baseUrl = '';
             switch ($payment_gateway->platform) {
                 case 'ttpay':
-                    $vCode = md5($payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secondary_key . $payment_gateway->secret_key);
+                    $vCode = md5($amount, $payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secondary_key . $payment_gateway->secret_key);
                     $params = [
                         'userName' => $user->name,
                         'userEmail' => $user->email,

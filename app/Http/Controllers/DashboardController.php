@@ -240,7 +240,8 @@ class DashboardController extends Controller
                     $paymentDetails = PaymentGateway::select([
                         'id',
                         'name',
-                        'platform'
+                        'platform',
+                        'payment_app_name'
                     ])
                         ->whereIn('id', $payment_gateway_ids)
                         ->get();

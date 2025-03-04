@@ -613,4 +613,5 @@ return [
     "to_cash_wallet" => "转至现金钱包",
     "to_e_wallet" => "转至电子钱包",
     "returned_amount" => "返还金额",
+    "pending_deposit_caption" => "您有一个处理中的存款请求。",
 ];

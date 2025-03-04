@@ -186,12 +186,6 @@ class WalletController extends Controller
         $user = Auth::user();
         $wallet = Wallet::find($request->wallet_id);
         $payment_detail = $request->payment_detail;
-        $latest_transaction = Transaction::where('user_id', $user->id)
-            ->where('category', 'wallet')
-            ->where('transaction_type', 'Deposit')
-            ->where('status', 'Processing')
-            ->latest()
-            ->first();
 
         $leader = $user->getFirstLeader();
         if ($leader && $request->payment_method == 'payment_merchant') {
@@ -209,48 +203,32 @@ class WalletController extends Controller
             $payment_gateway = null;
         }
 
-//        if ($request->payment_method == 'payment_merchant') {
-//            if ($request->amount == 0) {
-//                throw ValidationException::withMessages([
-//                    'amount' => trans('validation.min.numeric', [
-//                        'attribute' => trans('amount'),
-//                        'min' => 1
-//                    ])
-//                ]);
-//            }
-//
-//            if (empty($request->amount)) {
-//                throw ValidationException::withMessages(['amount' => trans('validation.required', ['attribute' => trans('amount')])]);
-//            }
-//        }
-
         $amount = $request->amount;
-
-        // Check if a latest transaction exists and its created_at time is within the last 30 seconds
-        if ($latest_transaction && Carbon::parse($latest_transaction->created_at)->diffInSeconds(Carbon::now()) < 30) {
-
-            $remainingSeconds = 30 - Carbon::parse($latest_transaction->created_at)->diffInSeconds(Carbon::now());
-
-            return redirect()->back()
-                ->with('title', trans('public.invalid_action'))
-                ->with('warning', trans('public.please_wait_for_seconds', ['seconds' => $remainingSeconds]));
-        }
-
-        $transaction = Transaction::where('transaction_type', 'Deposit')
-            ->where('to_wallet_id', $request->meta_login)
-            ->whereNull('comment')
-            ->where('status', 'processing')
+        $latest_transaction = Transaction::where('user_id', $user->id)
+            ->where('category', 'wallet')
+            ->where('transaction_type', 'Deposit')
+            ->where('status', 'Processing')
+            ->latest()
             ->first();
 
-        if (empty($latest_transaction) && $payment_detail['platform'] === 'ttpay') {
-            $transaction_number = RunningNumberService::getID('transaction');
-
+        // Check processing transaction
+        if (!empty($latest_transaction)) {
+            if ($latest_transaction->payment_method == 'Payment Merchant') {
+                $transaction = $latest_transaction;
+            } else {
+                return back()->with('toast', [
+                    'title' => trans("public.warning"),
+                    'message' => trans('public.pending_deposit_caption'),
+                    'type' => 'warning',
+                ]);
+            }
+        } else {
             $transaction = Transaction::create([
                 'category' => 'wallet',
                 'user_id' => $user->id,
                 'to_wallet_id' => $wallet->id,
                 'payment_method' => $payment_detail['payment_method'] ?? 'Payment Merchant',
-                'transaction_number' => $transaction_number,
+                'transaction_number' => RunningNumberService::getID('transaction'),
                 'to_wallet_address' => $payment_detail['account_no'] ?? null,
                 'transaction_type' => 'Deposit',
                 'amount' => $amount,
@@ -258,8 +236,6 @@ class WalletController extends Controller
                 'conversion_rate' => $payment_detail['currency_rate'] ?? 0,
                 'status' => 'Processing',
             ]);
-        } else {
-            $transaction_number = $latest_transaction->transaction_number;
         }
 
         if ($request->hasFile('images')) {
@@ -277,11 +253,11 @@ class WalletController extends Controller
             $baseUrl = '';
             switch ($payment_gateway->platform) {
                 case 'ttpay':
-                    $vCode = md5($amount . $payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secondary_key . $payment_gateway->secret_key);
+                    $vCode = md5($amount . $payment_gateway->payment_app_name . $transaction->transaction_number . $payment_gateway->secondary_key . $payment_gateway->secret_key);
                     $params = [
                         'userName' => $user->name,
                         'userEmail' => $user->email,
-                        'orderNumber' => $transaction_number,
+                        'orderNumber' => $transaction->transaction_number,
                         'userId' => $user->id,
                         'amount' => $amount,
                         'merchantId' => $payment_gateway->secondary_key,
@@ -294,10 +270,10 @@ class WalletController extends Controller
 
                 case 'spritpayment':
                     $intAmount = intval($amount * 100);
-                    $vCode = md5($intAmount . $payment_gateway->payment_app_name . $transaction_number . $payment_gateway->secret_key);
+                    $vCode = md5($intAmount . $payment_gateway->payment_app_name . $transaction->transaction_number . $payment_gateway->secret_key);
                     $params = [
                         'amount' => $intAmount,
-                        'orderNumber' => $transaction_number,
+                        'orderNumber' => $transaction->transaction_number,
                         'userId' => $user->id,
                         'vCode' => $vCode,
                     ];

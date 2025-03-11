@@ -4,20 +4,20 @@ import {DuplicateIcon} from "@heroicons/vue/outline"
 import {usePage} from "@inertiajs/vue3";
 import toast from "@/Composables/toast.js";
 import {trans} from "laravel-vue-i18n";
-import Modal from "@/Components/Modal.vue";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
 import DashboardWallets from "@/Pages/Dashboard/DashboardWallets.vue";
 import QrcodeVue from 'qrcode.vue';
 import Tooltip from "@/Components/Tooltip.vue";
 import {LinkIcon} from "@/Components/Icons/outline.jsx"
 import Tag from "primevue/tag";
+import Announcement from "@/Pages/Dashboard/Announcement.vue";
 
 const user = usePage().props.auth.user
-const { formatDateTime, formatAmount } = transactionFormat();
+const { formatAmount } = transactionFormat();
+
 const props = defineProps({
-    announcement: Object,
-    firstTimeLogin: Number,
+    announcements: Object,
     eWalletSel: Array,
     withdrawalFee: Object,
     withdrawalFeePercentage: Object,
@@ -42,39 +42,12 @@ const copyReferralCode = () => {
     });
 }
 
-const announcementModal = ref(false);
-const firstTimeLogin = ref(props.firstTimeLogin);
 const totalDeposit = ref('0.00');
 const totalWithdrawal = ref('0.00');
 const totalProfit = ref('0.00');
 const performanceIncentive = ref('0.00');
 const totalRebateEarn = ref('0.00');
 const totalProfitLoss = ref('0.00');
-
-const closeModal = () => {
-    announcementModal.value = false;
-    firstTimeLogin.value = 0; // Set the value of firstTimeLogin to 0 when closing the modal
-    setValueInSession(0); // Update the session value to 0
-}
-
-const setValueInSession = async (value) => {
-    await axios.post('/update_session', {firstTimeLogin: value})
-        .then(response => {
-            // Session value has been updated successfully
-            console.log('Session value updated:', value);
-        })
-        .catch(error => {
-            // Handle the error, if any
-            console.error('Error updating session value:', error);
-        });
-};
-
-onMounted(() => {
-    // Check if the modal has been shown already
-    if (firstTimeLogin.value === 1 && props.announcement) {
-        announcementModal.value = true;
-    }
-});
 
 const tooltipContent = ref('copy');
 
@@ -134,6 +107,10 @@ getTotalTransactions();
                 </h2>
             </div>
         </template>
+
+        <Announcement
+            :announcements="announcements"
+        />
 
         <div class="flex flex-col lg:flex-row gap-5">
             <div class="flex flex-col items-stretch gap-5 w-full">
@@ -296,17 +273,5 @@ getTotalTransactions();
                 />
             </div>
         </div>
-
-        <Modal :show="announcementModal" :title="$t('public.details')" @close="closeModal">
-            <div v-if="announcement">
-                <div class="text-xs dark:text-gray-400">{{ formatDateTime(announcement.created_at) }}</div>
-                <div v-if="announcement.image !== ''" class="my-5">
-                    <img class="rounded-lg w-full" :src="announcement.image" alt="announcement image" />
-                </div>
-                <div class="my-5 dark:text-white">{{ announcement.subject }}</div>
-                <div class="dark:text-gray-300 text-sm prose leading-3" v-html="announcement.details"></div>
-            </div>
-        </Modal>
-
     </AuthenticatedLayout>
 </template>

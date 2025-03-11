@@ -614,4 +614,5 @@ return [
     "to_e_wallet" => "전자지갑으로",
     "returned_amount" => "반품금액",
     "pending_deposit_caption" => "입금 요청 처리 중입니다.",
+    "announcement" => "발표",
 ];

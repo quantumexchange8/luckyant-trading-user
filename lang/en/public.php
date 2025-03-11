@@ -614,4 +614,5 @@ return [
     "to_e_wallet" => "To E-Wallet",
     "returned_amount" => "Returned Amount",
     "pending_deposit_caption" => "You have a processing deposit request.",
+    "announcement" => "Announcement",
 ];

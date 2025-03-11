@@ -32,14 +32,14 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $announcement = Announcement::where('type', 'login')->where('status', 'Active')->latest()->first();
-
-        $PaymentBankDetails = SettingPaymentMethod::where('payment_method', 'Bank')
-            ->where('status', 'Active')
-            ->get();
-
-        $PaymentCryptoDetails = SettingPaymentMethod::where('payment_method', 'Bank')
-            ->where('status', 'Active')
+        $announcements = Announcement::with([
+            'leaders',
+            'media'
+        ])->where([
+            'type' => 'login',
+            'status' => 'Active'
+        ])
+            ->latest()
             ->get();
 
         if (!empty($announcement)) {
@@ -65,8 +65,7 @@ class DashboardController extends Controller
         $translations = json_decode($rank->name, true);
 
         return Inertia::render('Dashboard', [
-            'announcement' => $announcement,
-            'firstTimeLogin' => \Session::get('first_time_logged_in'),
+            'announcements' => $announcements,
             'eWalletSel' => (new SelectOptionService())->getInternalTransferWalletSelection(),
             'countries' => $formattedCurrencies,
             'withdrawalFee' => Setting::where('slug', 'withdrawal-fee')->first(),

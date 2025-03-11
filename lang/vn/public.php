@@ -614,4 +614,5 @@ return [
     "to_e_wallet" => "Vào ví điện tử",
     "returned_amount" => "số tiền được trả lại",
     "pending_deposit_caption" => "Bạn có yêu cầu gửi tiền đang xử lý.",
+    "announcement" => "Thông báo",
 ];

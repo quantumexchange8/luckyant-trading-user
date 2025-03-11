@@ -613,4 +613,5 @@ return [
     "to_e_wallet" => "ถึงกระเป๋าเงินอิเล็กทรอนิกส์",
     "returned_amount" => "จำนวนเงินที่คืน",
     "pending_deposit_caption" => "คุณมีคำขอดำเนินการฝากเงิน",
+    "announcement" => "ประกาศ",
 ];

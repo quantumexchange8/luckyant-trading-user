@@ -614,4 +614,5 @@ return [
     "to_e_wallet" => "Ke dompet elektronik",
     "returned_amount" => "Jumlah yang dikembalikan",
     "pending_deposit_caption" => "Anda memiliki permintaan deposit yang sedang diproses.",
+    "announcement" => "Pengumuman",
 ];

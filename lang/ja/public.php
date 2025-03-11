@@ -614,4 +614,5 @@ return [
     "to_e_wallet" => "電子ウォレットへ",
     "returned_amount" => "返品金額",
     "pending_deposit_caption" => "入金リクエストの処理中です。",
+    "announcement" => "発表",
 ];

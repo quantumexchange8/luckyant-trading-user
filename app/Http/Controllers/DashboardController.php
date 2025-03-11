@@ -43,9 +43,16 @@ class DashboardController extends Controller
         $authUser = Auth::user();
         $first_leader = $authUser->getFirstLeader();
 
-        $query->whereHas('leaders', function ($q) use ($first_leader) {
-            $q->where('user_id', $first_leader->id);
-        });
+        if (empty($first_leader)) {
+            $query->whereHas('leaders', function ($q) use ($authUser) {
+                $q->where('user_id', $authUser->id);
+            });
+        } else {
+            $query->whereHas('leaders', function ($q) use ($first_leader) {
+                $q->where('user_id', $first_leader->id);
+            });
+        }
+
 
         $announcements = $query->latest()
             ->get();

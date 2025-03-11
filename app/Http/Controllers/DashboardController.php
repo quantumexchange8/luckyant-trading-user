@@ -32,19 +32,23 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $announcements = Announcement::with([
+        $query = Announcement::with([
             'leaders',
             'media'
         ])->where([
             'type' => 'login',
             'status' => 'Active'
-        ])
-            ->latest()
-            ->get();
+        ]);
 
-        if (!empty($announcement)) {
-            $announcement->image = $announcement->getFirstMediaUrl('announcement');
-        }
+        $authUser = Auth::user();
+        $first_leader = $authUser->getFirstLeader();
+
+        $query->whereHas('leaders', function ($q) use ($first_leader) {
+            $q->where('user_id', $first_leader->id);
+        });
+
+        $announcements = $query->latest()
+            ->get();
 
         $formattedCurrencies = SettingPaymentMethod::whereNotNull('country')->get()->map(function ($country) {
             return [

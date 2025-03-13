@@ -1,7 +1,7 @@
 import './bootstrap'
 import '../css/app.css'
 import Aura from '../css/presets/aura'
-import "vue-scroll-picker/lib/style.css";
+import "vue-scroll-picker/style.css";
 
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'

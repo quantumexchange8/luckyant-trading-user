@@ -75,7 +75,7 @@ watch([currentYear, currentMonth, currentDay], () => {
 
     <Drawer
         v-model:visible="visibility"
-        :header="$t('public.select_dob')"
+        :header="$t('public.date_of_birth')"
         class="w-full md:max-w-[360px] pb-10 !h-2/5"
         position="bottom"
     >

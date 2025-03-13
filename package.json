@@ -37,6 +37,7 @@
         "lodash": "^4.17.21",
         "primevue": "^4.0.5",
         "qrcode.vue": "^3.4.1",
+        "vue-scroll-picker": "^2.0.0",
         "vue-tailwind-datepicker": "^1.6.1",
         "vue3-otp-input": "^0.4.4"
     }

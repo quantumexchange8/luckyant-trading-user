@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             'auth.user.wallets' => fn() => $request->user() ? $request->user()->wallets : null,
             'locale' => session('locale') ? session('locale') : app()->getLocale(),
             'getSidebarContentVisibility' => $request->user() ? $sidebarService->getSidebarContentVisibility() : null,
+            'canAccessApplication' => $request->user() ? $sidebarService->canAccessApplication() : null,
             'firstTimeLogin' => session('first_time_logged_in', 0),
         ];
     }

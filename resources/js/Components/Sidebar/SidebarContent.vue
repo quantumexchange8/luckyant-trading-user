@@ -10,11 +10,13 @@ import {usePage} from "@inertiajs/vue3";
 import {
     IconFileSearch,
     IconAi,
+    IconForms
 } from "@tabler/icons-vue"
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 
 const currentDomain = window.location.hostname;
 const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
+const canAccessApplication = ref(usePage().props.canAccessApplication)
 </script>
 
 <template>
@@ -46,6 +48,17 @@ const contentVisibility = ref(usePage().props.getSidebarContentVisibility)
                     class="flex-shrink-0 w-6 h-6"
                     aria-hidden="true"
                 />
+            </template>
+        </SidebarLink>
+
+        <SidebarLink
+            :title="$t('public.application')"
+            :href="route('application')"
+            :active="route().current('application.*') || route().current('application')"
+            v-if="canAccessApplication"
+        >
+            <template #icon>
+                <IconForms size="24" stroke-width="1.5" />
             </template>
         </SidebarLink>
 

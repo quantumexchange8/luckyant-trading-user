@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\ApplicationForm;
 use App\Models\Master;
 use App\Models\User;
+use Auth;
 
 class SidebarService {
     public function getMasterVisibility(): bool
@@ -51,5 +53,27 @@ class SidebarService {
 
         // Otherwise, return true
         return true;
+    }
+
+    public function canAccessApplication(): bool
+    {
+        $authUser = Auth::user();
+        $first_leader = $authUser->getFirstLeader();
+
+        $query = ApplicationForm::with('leaders')
+            ->where('status', 'Active');
+
+        if (empty($first_leader)) {
+            $query->whereHas('leaders', function ($q) use ($authUser) {
+                $q->where('user_id', $authUser->id);
+            });
+        } else {
+            $query->whereHas('leaders', function ($q) use ($first_leader) {
+                $q->where('user_id', $first_leader->id);
+            });
+        }
+
+        // Return true if any matching application form exists
+        return $query->exists();
     }
 }

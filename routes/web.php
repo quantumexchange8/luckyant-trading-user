@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CopyTradingController;
 use App\Http\Controllers\PammController;
 use App\Http\Controllers\SelectOptionController;
@@ -142,6 +143,22 @@ Route::middleware('auth')->group(function () {
 //        Route::post('change-leverage', [AccountInfoController::class, 'change_leverage'])->name('account_info.change_leverage');
 //
 //        Route::get('/getTradingAccounts', [AccountInfoController::class, 'getTradingAccounts'])->name('account_info.getTradingAccounts');
+    });
+
+    /**
+     * ==============================
+     *          Application
+     * ==============================
+     */
+    Route::prefix('application')->group(function () {
+        Route::get('application_listing', [ApplicationController::class, 'index'])->name('application');
+        Route::get('getApplicationForms', [ApplicationController::class, 'getApplicationForms'])->name('application.getApplicationForms');
+        Route::get('application_form/{id}', [ApplicationController::class, 'application_form'])->name('application.application_form');
+
+        Route::post('submitApplicationForm', [ApplicationController::class, 'submitApplicationForm'])->name('application.submitApplicationForm');
+
+        // Candidate Listing
+        Route::get('candidate_listing', [ApplicationController::class, 'candidate_listing'])->name('application.candidate_listing');
     });
 
     /**

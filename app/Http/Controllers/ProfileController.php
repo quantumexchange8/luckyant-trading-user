@@ -161,6 +161,7 @@ class ProfileController extends Controller
         ];
 
         if ($payment_method == 'bank') {
+            $data['bank_region'] = $request->bank_region;
             $data['bank_branch_address'] = $request->bank_branch_address;
             $data['bank_sub_branch'] = $request->bank_sub_branch;
             $data['bank_swift_code'] = $request->bank_swift_code;

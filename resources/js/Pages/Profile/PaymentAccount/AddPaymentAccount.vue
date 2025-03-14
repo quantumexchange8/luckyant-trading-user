@@ -75,6 +75,7 @@ const form = useForm({
     account_no: '',
     country: null,
     currency: '',
+    bank_region: '',
     bank_sub_branch: '',
     bank_swift_code: '',
     bank_code: '',
@@ -170,7 +171,7 @@ const closeDialog = () => {
                         class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
                     >
                         <!-- Bank Setting -->
-                        <div class="flex flex-col items-start gap-1 self-stretch sm:col-span-2">
+                        <div class="flex flex-col items-start gap-1 self-stretch">
                             <InputLabel
                                 for="bank_name"
                                 :value="$t('public.bank_name')"
@@ -187,17 +188,17 @@ const closeDialog = () => {
 
                         <div class="flex flex-col items-start gap-1 self-stretch">
                             <InputLabel
-                                for="bank_sub_branch"
-                                :value="$t('public.bank_sub_branch')"
+                                for="bank_region"
+                                :value="$t('public.region_of_bank')"
                             />
                             <InputText
-                                id="bank_sub_branch"
+                                id="bank_region"
                                 type="text"
                                 class="block w-full"
-                                v-model="form.bank_sub_branch"
-                                :invalid="!!form.errors.bank_sub_branch"
+                                v-model="form.bank_region"
+                                :invalid="!!form.errors.bank_region"
                             />
-                            <InputError :message="form.errors.bank_sub_branch" />
+                            <InputError :message="form.errors.bank_region" />
                         </div>
 
                         <div class="flex flex-col items-start gap-1 self-stretch">
@@ -228,7 +229,7 @@ const closeDialog = () => {
                         <div class="flex flex-col items-start gap-1 self-stretch">
                             <InputLabel
                                 for="account_number"
-                                :value="$t('public.account_number')"
+                                :value="$t('public.bank_account_number')"
                             />
                             <InputText
                                 id="account_number"
@@ -239,6 +240,22 @@ const closeDialog = () => {
                             />
                             <InputError :message="form.errors.account_no" />
                         </div>
+
+                        <div class="flex flex-col items-start gap-1 self-stretch">
+                            <InputLabel
+                                for="bank_sub_branch"
+                                :value="$t('public.bank_sub_branch')"
+                            />
+                            <InputText
+                                id="bank_sub_branch"
+                                type="text"
+                                class="block w-full"
+                                v-model="form.bank_sub_branch"
+                                :invalid="!!form.errors.bank_sub_branch"
+                            />
+                            <InputError :message="form.errors.bank_sub_branch" />
+                        </div>
+
                         <div class="flex flex-col items-start gap-1 self-stretch">
                             <InputLabel
                                 for="bank_swift"

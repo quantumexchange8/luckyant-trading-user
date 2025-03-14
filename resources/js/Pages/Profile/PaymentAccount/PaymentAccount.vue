@@ -78,6 +78,7 @@ const form = useForm({
     bank_sub_branch: '',
     country: null,
     currency: '',
+    bank_region: '',
     bank_swift_code: '',
     bank_code: '',
     bank_code_type: '',
@@ -93,6 +94,7 @@ const submitForm = () => {
     form.bank_sub_branch = accountDetail.value.bank_sub_branch;
     form.country = selectedCountry.value?.id;
     form.currency = accountDetail.value.payment_platform === 'Bank' ? selectedCountry.value?.currency : 'USDT';
+    form.bank_region = accountDetail.value.bank_region;
     form.bank_swift_code = accountDetail.value.bank_swift_code;
     form.bank_code = accountDetail.value.bank_code;
     form.bank_code_type = accountDetail.value.bank_code_type;
@@ -169,7 +171,7 @@ watchEffect(() => {
                 class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"
             >
                 <!-- Bank Setting -->
-                <div class="flex flex-col items-start gap-1 self-stretch sm:col-span-2">
+                <div class="flex flex-col items-start gap-1 self-stretch">
                     <InputLabel
                         for="bank_name"
                         :value="$t('public.bank_name')"
@@ -185,18 +187,18 @@ watchEffect(() => {
                 </div>
 
                 <div class="flex flex-col items-start gap-1 self-stretch">
-                    <Label
-                        for="bank_sub_branch"
-                        :value="$t('public.bank_sub_branch')"
+                    <InputLabel
+                        for="bank_region"
+                        :value="$t('public.region_of_bank')"
                     />
                     <InputText
-                        id="bank_sub_branch"
+                        id="bank_region"
                         type="text"
                         class="block w-full"
-                        v-model="accountDetail.bank_sub_branch"
-                        :invalid="!!form.errors.bank_sub_branch"
+                        v-model="accountDetail.bank_region"
+                        :invalid="!!form.errors.bank_region"
                     />
-                    <InputError :message="form.errors.bank_sub_branch" />
+                    <InputError :message="form.errors.bank_region" />
                 </div>
 
                 <div class="flex flex-col items-start gap-1 self-stretch">
@@ -205,7 +207,7 @@ watchEffect(() => {
                         :value="$t('public.bank_account_name')"
                     />
                     <Select
-                        v-model="form.payment_account_name"
+                        v-model="accountDetail.payment_account_name"
                         :options="beneficialNames"
                         :placeholder="$t('public.select_account')"
                         class="w-full"
@@ -227,7 +229,7 @@ watchEffect(() => {
                 <div class="flex flex-col items-start gap-1 self-stretch">
                     <Label
                         for="account_number"
-                        :value="$t('public.account_number')"
+                        :value="$t('public.bank_account_number')"
                     />
                     <InputText
                         id="account_number"
@@ -237,6 +239,21 @@ watchEffect(() => {
                         :invalid="!!form.errors.account_no"
                     />
                     <InputError :message="form.errors.account_no" />
+                </div>
+
+                <div class="flex flex-col items-start gap-1 self-stretch">
+                    <Label
+                        for="bank_sub_branch"
+                        :value="$t('public.bank_sub_branch')"
+                    />
+                    <InputText
+                        id="bank_sub_branch"
+                        type="text"
+                        class="block w-full"
+                        v-model="accountDetail.bank_sub_branch"
+                        :invalid="!!form.errors.bank_sub_branch"
+                    />
+                    <InputError :message="form.errors.bank_sub_branch" />
                 </div>
 
                 <div class="flex flex-col items-start gap-1 self-stretch">

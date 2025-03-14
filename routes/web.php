@@ -154,6 +154,7 @@ Route::middleware('auth')->group(function () {
         Route::get('application_listing', [ApplicationController::class, 'index'])->name('application');
         Route::get('getApplicationForms', [ApplicationController::class, 'getApplicationForms'])->name('application.getApplicationForms');
         Route::get('application_form/{id}', [ApplicationController::class, 'application_form'])->name('application.application_form');
+        Route::get('getApplicants', [ApplicationController::class, 'getApplicants'])->name('application.getApplicants');
 
         Route::post('submitApplicationForm', [ApplicationController::class, 'submitApplicationForm'])->name('application.submitApplicationForm');
 

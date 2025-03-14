@@ -236,4 +236,24 @@ class ApplicationController extends Controller
             'type' => 'success',
         ]);
     }
+
+    public function getApplicants(Request $request)
+    {
+        $applicants = Applicant::with([
+            'application_form',
+            'country',
+            'transport_detail',
+            'transport_detail.country'
+        ])
+            ->where([
+                'application_form_id' => $request->application_id,
+                'user_id' => Auth::id(),
+            ])
+            ->get()
+            ->toArray();
+
+        return response()->json([
+            'applicants' => $applicants,
+        ]);
+    }
 }

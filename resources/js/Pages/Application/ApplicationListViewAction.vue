@@ -10,7 +10,7 @@ defineProps({
 
 <template>
     <div
-        v-if="application.user_applications && application.user_applications.some(app => app.status === 'pending')"
+        v-if="application.applicants && application.applicants.some(app => app.status === 'pending')"
         class="flex items-center justify-between gap-3 w-full"
     >
         <Button
@@ -26,7 +26,7 @@ defineProps({
     </div>
 
     <div
-        v-else-if="application.user_applications && application.user_applications.some(app => app.status === 'approved')"
+        v-else-if="application.applicants && application.applicants.some(app => app.status === 'approved')"
         class="flex items-center justify-between gap-3 w-full"
     >
         <Button
@@ -41,7 +41,7 @@ defineProps({
     </div>
 
     <div
-        v-else-if="application.user_applications && application.user_applications.some(app => app.status === 'rejected')"
+        v-else-if="application.applicants && application.applicants.some(app => app.status === 'rejected')"
         class="flex items-center justify-between gap-3 w-full"
     >
         <Button

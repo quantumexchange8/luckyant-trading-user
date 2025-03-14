@@ -4,33 +4,33 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('application_transports', function (Blueprint $table) {
+        Schema::create('applicants', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('application_form_id');
-            $table->unsignedBigInteger('application_candidate_id');
             $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->string('gender');
             $table->unsignedBigInteger('country_id');
-            $table->date('dob');
+            $table->string('email');
             $table->string('phone_number');
             $table->string('identity_number');
-            $table->string('departure_address');
-            $table->string('return_address');
+            $table->boolean('requires_transport')->default(false);
+            $table->boolean('requires_accommodation')->default(false);
+            $table->boolean('requires_ib_training')->default(false);
+            $table->string('status')->default('pending');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('application_form_id')
                 ->references('id')
                 ->on('application_forms')
-                ->onUpdate('cascade');
-
-            $table->foreign('application_candidate_id')
-                ->references('id')
-                ->on('application_candidates')
                 ->onUpdate('cascade');
 
             $table->foreign('user_id')
@@ -45,8 +45,11 @@ return new class extends Migration {
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('application_transports');
+        Schema::dropIfExists('applicants');
     }
 };

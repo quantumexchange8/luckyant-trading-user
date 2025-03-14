@@ -23,8 +23,8 @@ class ApplicationForm extends Model
         return $this->hasMany(ApplicationFormToLeader::class, 'application_form_id', 'id');
     }
 
-    public function user_applications(): HasMany
+    public function applicants(): HasMany
     {
-        return $this->hasMany(ApplicationCandidate::class, 'application_form_id', 'id')->where('user_id', auth()->id());
+        return $this->hasMany(Applicant::class, 'application_form_id', 'id')->where('user_id', auth()->id());
     }
 }

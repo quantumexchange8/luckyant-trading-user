@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ApplicationCandidate;
+use App\Models\Applicant;
 use App\Models\ApplicationForm;
-use App\Models\ApplicationTransport;
+use App\Models\ApplicantTransport;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
@@ -33,7 +33,7 @@ class ApplicationController extends Controller
 
         $query = ApplicationForm::with([
             'leaders',
-            'user_applications'
+            'applicants'
         ]);
 
         if (!empty($search)) {
@@ -67,7 +67,7 @@ class ApplicationController extends Controller
 
     public function application_form($id)
     {
-        $pending_application = ApplicationCandidate::where([
+        $pending_application = Applicant::where([
             'user_id' => Auth::id(),
             'application_form_id' => $id,
             'status' => 'pending'
@@ -89,7 +89,7 @@ class ApplicationController extends Controller
 
     public function submitApplicationForm(Request $request)
     {
-        $pending_application = ApplicationCandidate::where([
+        $pending_application = Applicant::where([
             'user_id' => Auth::id(),
             'application_form_id' => $request->application_form_id,
             'status' => 'pending'
@@ -108,11 +108,11 @@ class ApplicationController extends Controller
 
         $rules = [
             'application_form_id' => ['required'],
-            'candidates_count' => ['required', 'numeric', 'min:1'],
+            'applicants_count' => ['required', 'numeric', 'min:1'],
         ];
 
         $attributeNames = [
-            'candidates_count' => trans('public.candidate_enrollment_count'),
+            'applicants_count' => trans('public.applicant_enrollment_count'),
         ];
 
         switch ($form_step) {
@@ -123,24 +123,24 @@ class ApplicationController extends Controller
                 return back();
 
             case 2:
-                for ($index = 1; $index <= $request->candidates_count; $index++) {
-                    $rules["candidate_details.$index.name"]  = ['required'];
-                    $rules["candidate_details.$index.email"] = ['required', 'email'];
-                    $rules["candidate_details.$index.gender"] = ['required'];
-                    $rules["candidate_details.$index.country"] = ['required'];
-                    $rules["candidate_details.$index.phone_number"] = ['required'];
-                    $rules["candidate_details.$index.identity_number"] = ['required'];
+                for ($index = 1; $index <= $request->applicants_count; $index++) {
+                    $rules["applicant_details.$index.name"]  = ['required', 'regex:/^[\p{L}\p{N}\p{M}. @]+$/u', 'max:255'];
+                    $rules["applicant_details.$index.email"] = ['required', 'email'];
+                    $rules["applicant_details.$index.gender"] = ['required'];
+                    $rules["applicant_details.$index.country"] = ['required'];
+                    $rules["applicant_details.$index.phone_number"] = ['required'];
+                    $rules["applicant_details.$index.identity_number"] = ['required'];
                 }
 
                 // Set friendly attribute names for error messages.
                 $customAttributeNames = [];
-                for ($index = 1; $index <= $request->candidates_count; $index++) {
-                    $customAttributeNames["candidate_details.$index.name"]  = trans('public.name');
-                    $customAttributeNames["candidate_details.$index.email"] = trans('public.email');
-                    $customAttributeNames["candidate_details.$index.gender"] = trans('public.gender');
-                    $customAttributeNames["candidate_details.$index.country"] = trans('public.country');
-                    $customAttributeNames["candidate_details.$index.phone_number"] = trans('public.mobile_phone');
-                    $customAttributeNames["candidate_details.$index.identity_number"] = trans('public.ic_passport_number');
+                for ($index = 1; $index <= $request->applicants_count; $index++) {
+                    $customAttributeNames["applicant_details.$index.name"]  = trans('public.name');
+                    $customAttributeNames["applicant_details.$index.email"] = trans('public.email');
+                    $customAttributeNames["applicant_details.$index.gender"] = trans('public.gender');
+                    $customAttributeNames["applicant_details.$index.country"] = trans('public.country');
+                    $customAttributeNames["applicant_details.$index.phone_number"] = trans('public.mobile_phone');
+                    $customAttributeNames["applicant_details.$index.identity_number"] = trans('public.ic_passport_number');
                 }
 
                 Validator::make($request->all(), $rules)
@@ -152,25 +152,25 @@ class ApplicationController extends Controller
                 $transportRules = [];
                 $customAttributeNames = [];
 
-                for ($i = 1; $i <= $request->candidates_count; $i++) {
-                    if (!empty($request->candidate_details[$i]['requires_transport'])) {
-                        $transportRules["candidate_details.$i.transport_details.name"] = ['required'];
-                        $transportRules["candidate_details.$i.transport_details.gender"] = ['required'];
-                        $transportRules["candidate_details.$i.transport_details.country"] = ['required'];
-                        $transportRules["candidate_details.$i.transport_details.dob"] = ['required'];
-                        $transportRules["candidate_details.$i.transport_details.phone_number"] = ['required'];
-                        $transportRules["candidate_details.$i.transport_details.identity_number"] = ['required'];
-                        $transportRules["candidate_details.$i.transport_details.departure_address"] = ['required'];
-                        $transportRules["candidate_details.$i.transport_details.return_address"] = ['required'];
+                for ($i = 1; $i <= $request->applicants_count; $i++) {
+                    if (!empty($request->applicant_details[$i]['requires_transport'])) {
+                        $transportRules["applicant_details.$i.transport_details.name"] = ['required', 'regex:/^[\p{L}\p{N}\p{M}. @]+$/u', 'max:255'];
+                        $transportRules["applicant_details.$i.transport_details.gender"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.country"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.dob"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.phone_number"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.identity_number"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.departure_address"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.return_address"] = ['required'];
 
-                        $customAttributeNames["candidate_details.$i.transport_details.name"] = trans('public.name_on_ic_passport');
-                        $customAttributeNames["candidate_details.$i.transport_details.gender"] = trans('public.gender');
-                        $customAttributeNames["candidate_details.$i.transport_details.country"] = trans('public.country');
-                        $customAttributeNames["candidate_details.$i.transport_details.dob"] = trans('public.dob');
-                        $customAttributeNames["candidate_details.$i.transport_details.phone_number"] = trans('public.phone_number');
-                        $customAttributeNames["candidate_details.$i.transport_details.identity_number"] = trans('public.ic_passport_number');
-                        $customAttributeNames["candidate_details.$i.transport_details.departure_address"] = trans('public.departure_address');
-                        $customAttributeNames["candidate_details.$i.transport_details.return_address"] = trans('public.return_address');
+                        $customAttributeNames["applicant_details.$i.transport_details.name"] = trans('public.name_on_ic_passport');
+                        $customAttributeNames["applicant_details.$i.transport_details.gender"] = trans('public.gender');
+                        $customAttributeNames["applicant_details.$i.transport_details.country"] = trans('public.country');
+                        $customAttributeNames["applicant_details.$i.transport_details.dob"] = trans('public.dob');
+                        $customAttributeNames["applicant_details.$i.transport_details.phone_number"] = trans('public.phone_number');
+                        $customAttributeNames["applicant_details.$i.transport_details.identity_number"] = trans('public.ic_passport_number');
+                        $customAttributeNames["applicant_details.$i.transport_details.departure_address"] = trans('public.departure_address');
+                        $customAttributeNames["applicant_details.$i.transport_details.return_address"] = trans('public.return_address');
                     }
                 }
 
@@ -190,31 +190,33 @@ class ApplicationController extends Controller
         $application_form = ApplicationForm::find($request->application_form_id);
 
         if ($application_form) {
-            $candidate_details = $request->candidate_details;
+            $applicants = $request->applicant_details;
 
-            foreach ($candidate_details as $candidate) {
-                $application_candidate = ApplicationCandidate::create([
+            foreach ($applicants as $detail) {
+                $applicant = Applicant::create([
                     'application_form_id' => $application_form->id,
                     'user_id' => Auth::id(),
-                    'name' => $candidate['name'],
-                    'gender' => $candidate['gender'],
-                    'country_id' => $candidate['country']['id'],
-                    'email' => $candidate['email'],
-                    'phone_number' => $candidate['phone_number'],
-                    'identity_number' => $candidate['identity_number'],
-                    'requires_transport' => $candidate['requires_transport'],
-                    'requires_accommodation' => $candidate['requires_accommodation'],
-                    'requires_ib_training' => $candidate['requires_ib_training'],
+                    'type' => 'flight',
+                    'name' => $detail['name'],
+                    'gender' => $detail['gender'],
+                    'country_id' => $detail['country']['id'],
+                    'email' => $detail['email'],
+                    'phone_number' => $detail['phone_number'],
+                    'identity_number' => $detail['identity_number'],
+                    'requires_transport' => $detail['requires_transport'],
+                    'requires_accommodation' => $detail['requires_accommodation'],
+                    'requires_ib_training' => $detail['requires_ib_training'],
                     'status' => 'pending',
                 ]);
 
-                if ($application_candidate->requires_transport) {
-                    $transport = $candidate['transport_details'];
+                if ($applicant->requires_transport) {
+                    $transport = $detail['transport_details'];
 
-                    ApplicationTransport::create([
+                    ApplicantTransport::create([
                         'application_form_id' => $application_form->id,
-                        'application_candidate_id' => $application_candidate->id,
+                        'applicant_id' => $applicant->id,
                         'user_id' => Auth::id(),
+                        'type' => 'flight',
                         'name' => $transport['name'],
                         'gender' => $transport['gender'],
                         'country_id' => $transport['country']['id'],

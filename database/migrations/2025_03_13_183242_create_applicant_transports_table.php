@@ -4,29 +4,38 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('application_candidates', function (Blueprint $table) {
+        Schema::create('applicant_transports', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('application_form_id');
+            $table->unsignedBigInteger('applicant_id');
             $table->unsignedBigInteger('user_id');
+            $table->string('type');
             $table->string('name');
             $table->string('gender');
             $table->unsignedBigInteger('country_id');
-            $table->string('email');
+            $table->date('dob');
             $table->string('phone_number');
             $table->string('identity_number');
-            $table->boolean('requires_transport')->default(false);
-            $table->boolean('requires_accommodation')->default(false);
-            $table->boolean('requires_ib_training')->default(false);
-            $table->string('status')->default('pending');
+            $table->string('departure_address');
+            $table->string('return_address');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('application_form_id')
                 ->references('id')
                 ->on('application_forms')
+                ->onUpdate('cascade');
+
+            $table->foreign('applicant_id')
+                ->references('id')
+                ->on('applicants')
                 ->onUpdate('cascade');
 
             $table->foreign('user_id')
@@ -41,8 +50,11 @@ return new class extends Migration {
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('application_candidates');
+        Schema::dropIfExists('applicant_transports');
     }
 };

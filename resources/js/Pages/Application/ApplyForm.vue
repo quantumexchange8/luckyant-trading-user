@@ -36,15 +36,15 @@ const {locale} = useLangObserver();
 const form = useForm({
     step: 1,
     application_form_id: props.application.id,
-    candidates_count: 0,
-    candidate_details: {},
+    applicants_count: 0,
+    applicant_details: {},
 });
 
-watch(() => form.candidates_count, (newCount) => {
-    // Reset candidate_details
-    form.candidate_details = {};
+watch(() => form.applicants_count, (newCount) => {
+    // Reset applicant_details
+    form.applicant_details = {};
     for (let i = 1; i <= newCount; i++) {
-        form.candidate_details[i] = {
+        form.applicant_details[i] = {
             name: '',
             email: '',
             gender: '',
@@ -70,8 +70,8 @@ watch(() => form.candidates_count, (newCount) => {
 
 const transportCandidates = computed(() => {
     const indices = [];
-    for (let i = 1; i <= form.candidates_count; i++) {
-        if (form.candidate_details[i]?.requires_transport) {
+    for (let i = 1; i <= form.applicants_count; i++) {
+        if (form.applicant_details[i]?.requires_transport) {
             indices.push(i);
         }
     }
@@ -136,8 +136,8 @@ const handleContinue = () => {
 
             <Stepper v-model:value="activeStep" linear class="w-full">
                 <StepList>
-                    <Step :value="1">{{ $t('public.candidate_enrollment') }}</Step>
-                    <Step :value="2">{{ $t('public.candidate_detail') }}</Step>
+                    <Step :value="1">{{ $t('public.applicant_enrollment') }}</Step>
+                    <Step :value="2">{{ $t('public.applicant_detail') }}</Step>
                     <Step :value="3">{{ $t('public.transport_information') }}</Step>
                     <Step :value="4">{{ $t('public.final_check') }}</Step>
                 </StepList>
@@ -145,20 +145,20 @@ const handleContinue = () => {
                     <StepPanel :value="1">
                         <div class="flex flex-col gap-1 items-start self-stretch">
                             <InputLabel
-                                for="candidates_count"
-                                :invalid="!!form.errors.candidates_count"
+                                for="applicants_count"
+                                :invalid="!!form.errors.applicants_count"
                             >
-                                {{ $t('public.candidate_enrollment_count') }}
+                                {{ $t('public.applicant_enrollment_count') }}
                             </InputLabel>
                             <InputNumber
-                                v-model="form.candidates_count"
-                                inputId="candidates_count"
+                                v-model="form.applicants_count"
+                                inputId="applicants_count"
                                 fluid
                                 class="w-full"
                                 :min="0"
-                                :invalid="!!form.errors.candidates_count"
+                                :invalid="!!form.errors.applicants_count"
                             />
-                            <InputError :message="form.errors.candidates_count" />
+                            <InputError :message="form.errors.applicants_count" />
                         </div>
 
                         <div class="flex pt-6 justify-end">
@@ -177,28 +177,28 @@ const handleContinue = () => {
                     <StepPanel :value="2">
                         <div class="grid md:grid-cols-2 gap-3 w-full">
                             <Card
-                                v-for="index in form.candidates_count"
+                                v-for="index in form.applicants_count"
                                 :key="'input-' + index"
                             >
                                 <template #content>
                                     <div class="flex flex-col gap-3 items-center self-stretch">
-                                        <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ `${$t('public.candidate')} #${index}` }}</span>
+                                        <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ `${$t('public.applicant')} #${index}` }}</span>
                                         <!-- Candidate Name -->
                                         <div class="flex flex-col items-start gap-1 self-stretch">
                                             <InputLabel
                                                 :for="'candidate_name_' + index"
                                                 :value="`${$t('public.name')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.name`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.name`]"
                                             />
                                             <InputText
                                                 :id="'candidate_name_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].name"
+                                                v-model="form.applicant_details[index].name"
                                                 :placeholder="`${$t('public.name')} #${index}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.name`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.name`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.name`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.name`]" />
                                         </div>
 
                                         <!-- Candidate Email -->
@@ -206,17 +206,17 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'candidate_email_' + index"
                                                 :value="`${$t('public.email')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.email`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.email`]"
                                             />
                                             <InputText
                                                 :id="'candidate_email_' + index"
                                                 type="email"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].email"
+                                                v-model="form.applicant_details[index].email"
                                                 :placeholder="`${$t('public.email')} #${index}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.email`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.email`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.email`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.email`]" />
                                         </div>
 
                                         <!-- Candidate Gender -->
@@ -224,12 +224,12 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'candidate_gender_' + index"
                                                 :value="`${$t('public.gender')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.gender`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.gender`]"
                                             />
                                             <div class="flex flex-wrap gap-5">
                                                 <div class="flex items-center gap-2">
                                                     <RadioButton
-                                                        v-model="form.candidate_details[index].gender"
+                                                        v-model="form.applicant_details[index].gender"
                                                         :inputId="'male_' + index"
                                                         value="male"
                                                     />
@@ -237,14 +237,14 @@ const handleContinue = () => {
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <RadioButton
-                                                        v-model="form.candidate_details[index].gender"
+                                                        v-model="form.applicant_details[index].gender"
                                                         :inputId="'female_' + index"
                                                         value="female"
                                                     />
                                                     <label :for="'female_' + index" class="dark:text-white">{{ $t('public.female') }}</label>
                                                 </div>
                                             </div>
-                                            <InputError :message="form.errors[`candidate_details.${index}.gender`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.gender`]" />
                                         </div>
 
                                         <!-- Candidate Country -->
@@ -252,10 +252,10 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'candidate_country_' + index"
                                                 :value="`${$t('public.country')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.country`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.country`]"
                                             />
                                             <Select
-                                                v-model="form.candidate_details[index].country"
+                                                v-model="form.applicant_details[index].country"
                                                 :options="countries"
                                                 optionLabel="name"
                                                 :placeholder="$t('public.select_country')"
@@ -263,7 +263,7 @@ const handleContinue = () => {
                                                 filter
                                                 :filter-fields="['name', 'iso2', 'currency']"
                                                 :loading="loadingCountries"
-                                                :invalid="!!form.errors[`candidate_details.${index}.country`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.country`]"
                                             >
                                                 <template #value="slotProps">
                                                     <div v-if="slotProps.value" class="flex items-center">
@@ -284,7 +284,7 @@ const handleContinue = () => {
                                                     </div>
                                                 </template>
                                             </Select>
-                                            <InputError :message="form.errors[`candidate_details.${index}.country`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.country`]" />
                                         </div>
 
                                         <!-- Candidate Phone -->
@@ -292,17 +292,17 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'candidate_phone_number_' + index"
                                                 :value="`${$t('public.mobile_phone')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.phone_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.phone_number`]"
                                             />
                                             <InputText
                                                 :id="'candidate_phone_number_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].phone_number"
+                                                v-model="form.applicant_details[index].phone_number"
                                                 :placeholder="`${$t('public.mobile_phone')} #${index}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.phone_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.phone_number`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.phone_number`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.phone_number`]" />
                                         </div>
 
                                         <!-- Candidate ID -->
@@ -310,17 +310,17 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'candidate_identity_number_' + index"
                                                 :value="`${$t('public.ic_passport_number')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.identity_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.identity_number`]"
                                             />
                                             <InputText
                                                 :id="'candidate_identity_number_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].identity_number"
+                                                v-model="form.applicant_details[index].identity_number"
                                                 :placeholder="`${$t('public.ic_passport_number')} #${index}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.identity_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.identity_number`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.identity_number`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.identity_number`]" />
                                         </div>
 
                                         <!-- Candidate Request -->
@@ -328,12 +328,12 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'candidate_request_' + index"
                                                 :value="`${$t('public.request')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.request`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.request`]"
                                             />
                                             <div class="flex flex-col gap-1">
                                                 <div class="flex items-center gap-2">
                                                     <Checkbox
-                                                        v-model="form.candidate_details[index].requires_transport"
+                                                        v-model="form.applicant_details[index].requires_transport"
                                                         :inputId="'transport_' + index"
                                                         value="accept"
                                                         binary
@@ -342,7 +342,7 @@ const handleContinue = () => {
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <Checkbox
-                                                        v-model="form.candidate_details[index].requires_accommodation"
+                                                        v-model="form.applicant_details[index].requires_accommodation"
                                                         :inputId="'accommodation_' + index"
                                                         value="accept"
                                                         binary
@@ -351,7 +351,7 @@ const handleContinue = () => {
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <Checkbox
-                                                        v-model="form.candidate_details[index].requires_ib_training"
+                                                        v-model="form.applicant_details[index].requires_ib_training"
                                                         :inputId="'ib_training_' + index"
                                                         value="accept"
                                                         binary
@@ -359,7 +359,7 @@ const handleContinue = () => {
                                                     <label :for="'ib_training_' + index" class="dark:text-white text-sm">{{ $t('public.ib_training') }}</label>
                                                 </div>
                                             </div>
-                                            <InputError :message="form.errors[`candidate_details.${index}.request`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.request`]" />
                                         </div>
                                     </div>
                                 </template>
@@ -398,24 +398,24 @@ const handleContinue = () => {
                             >
                                 <template #content>
                                     <div class="flex flex-col gap-3 items-start self-stretch">
-                                        <span class="font-bold text-sm text-gray-950 dark:text-white">{{ $t('public.transport_details_for') }} {{ form.candidate_details[index].name ? form.candidate_details[index].name : ($t('public.candidate') + ' #' + index) }}</span>
+                                        <span class="font-bold text-sm text-gray-950 dark:text-white">{{ $t('public.transport_details_for') }} {{ form.applicant_details[index].name ? form.applicant_details[index].name : ($t('public.applicant') + ' #' + index) }}</span>
 
                                         <!-- Transport Name -->
                                         <div class="flex flex-col items-start gap-1 self-stretch">
                                             <InputLabel
                                                 :for="'transport_name_' + index"
                                                 :value="$t('public.name_on_ic_passport')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.name`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.name`]"
                                             />
                                             <InputText
                                                 :id="'transport_name_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].transport_details.name"
+                                                v-model="form.applicant_details[index].transport_details.name"
                                                 :placeholder="$t('public.name_on_ic_passport')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.name`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.name`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.name`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.name`]" />
                                         </div>
 
                                         <!-- Transport Gender -->
@@ -423,12 +423,12 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'transport_gender' + index"
                                                 :value="`${$t('public.gender')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.gender`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.gender`]"
                                             />
                                             <div class="flex flex-wrap gap-5">
                                                 <div class="flex items-center gap-2">
                                                     <RadioButton
-                                                        v-model="form.candidate_details[index].transport_details.gender"
+                                                        v-model="form.applicant_details[index].transport_details.gender"
                                                         :inputId="'transport_male_' + index"
                                                         value="male"
                                                     />
@@ -436,14 +436,14 @@ const handleContinue = () => {
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <RadioButton
-                                                        v-model="form.candidate_details[index].transport_details.gender"
+                                                        v-model="form.applicant_details[index].transport_details.gender"
                                                         :inputId="'transport_female_' + index"
                                                         value="female"
                                                     />
                                                     <label :for="'transport_female_' + index" class="dark:text-white">{{ $t('public.female') }}</label>
                                                 </div>
                                             </div>
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.gender`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.gender`]" />
                                         </div>
 
                                         <!-- Transport Country -->
@@ -451,10 +451,10 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'candidate_country_' + index"
                                                 :value="`${$t('public.country')}`"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.country`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.country`]"
                                             />
                                             <Select
-                                                v-model="form.candidate_details[index].transport_details.country"
+                                                v-model="form.applicant_details[index].transport_details.country"
                                                 :options="countries"
                                                 optionLabel="name"
                                                 :placeholder="$t('public.select_country')"
@@ -462,7 +462,7 @@ const handleContinue = () => {
                                                 filter
                                                 :filter-fields="['name', 'iso2', 'currency']"
                                                 :loading="loadingCountries"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.country`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.country`]"
                                             >
                                                 <template #value="slotProps">
                                                     <div v-if="slotProps.value" class="flex items-center">
@@ -483,7 +483,7 @@ const handleContinue = () => {
                                                     </div>
                                                 </template>
                                             </Select>
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.country`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.country`]" />
                                         </div>
 
                                         <!-- Transport DOB -->
@@ -491,13 +491,13 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'transport_dob_' + index"
                                                 :value="$t('public.date_of_birth')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.dob`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.dob`]"
                                             />
                                             <DatePicker
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.dob`]"
-                                                @update:date="form.candidate_details[index].transport_details.dob = $event"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.dob`]"
+                                                @update:date="form.applicant_details[index].transport_details.dob = $event"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.dob`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.dob`]" />
                                         </div>
 
                                         <!-- Transport Phone Number -->
@@ -505,17 +505,17 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'transport_phone_' + index"
                                                 :value="$t('public.mobile_phone')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.phone_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.phone_number`]"
                                             />
                                             <InputText
                                                 :id="'transport_phone_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].transport_details.phone_number"
+                                                v-model="form.applicant_details[index].transport_details.phone_number"
                                                 :placeholder="$t('public.mobile_phone')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.phone_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.phone_number`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.phone_number`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.phone_number`]" />
                                         </div>
 
                                         <!-- Transport ID Number -->
@@ -523,17 +523,17 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'transport_id_' + index"
                                                 :value="$t('public.ic_passport_number')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.identity_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.identity_number`]"
                                             />
                                             <InputText
                                                 :id="'transport_id_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].transport_details.identity_number"
+                                                v-model="form.applicant_details[index].transport_details.identity_number"
                                                 :placeholder="$t('public.ic_passport_number')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.identity_number`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.identity_number`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.identity_number`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.identity_number`]" />
                                         </div>
 
                                         <!-- Transport Departure -->
@@ -541,17 +541,17 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'transport_departure_address_' + index"
                                                 :value="$t('public.departure_address')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.departure_address`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.departure_address`]"
                                             />
                                             <InputText
                                                 :id="'transport_departure_address_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].transport_details.departure_address"
+                                                v-model="form.applicant_details[index].transport_details.departure_address"
                                                 :placeholder="$t('public.departure_address')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.departure_address`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.departure_address`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.departure_address`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.departure_address`]" />
                                         </div>
 
                                         <!-- Transport Return -->
@@ -559,17 +559,17 @@ const handleContinue = () => {
                                             <InputLabel
                                                 :for="'transport_return_address_' + index"
                                                 :value="$t('public.return_address')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.return_address`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.return_address`]"
                                             />
                                             <InputText
                                                 :id="'transport_return_address_' + index"
                                                 type="text"
                                                 class="block w-full"
-                                                v-model="form.candidate_details[index].transport_details.return_address"
+                                                v-model="form.applicant_details[index].transport_details.return_address"
                                                 :placeholder="$t('public.return_address')"
-                                                :invalid="!!form.errors[`candidate_details.${index}.transport_details.return_address`]"
+                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.return_address`]"
                                             />
-                                            <InputError :message="form.errors[`candidate_details.${index}.transport_details.return_address`]" />
+                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.return_address`]" />
                                         </div>
                                     </div>
                                 </template>
@@ -624,12 +624,12 @@ const handleContinue = () => {
                     <StepPanel :value="4">
                         <div class="grid md:grid-cols-2 gap-3 w-full">
                             <Card
-                                v-for="index in form.candidates_count"
+                                v-for="index in form.applicants_count"
                                 :key="'check-' + index"
                             >
                                 <template #content>
                                     <div class="flex flex-col gap-3 items-center self-stretch">
-                                        <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ `${$t('public.candidate')} #${index}` }}</span>
+                                        <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ `${$t('public.applicant')} #${index}` }}</span>
 
                                         <div class="flex flex-col gap-1 items-start w-full">
                                             <!-- Name -->
@@ -638,7 +638,7 @@ const handleContinue = () => {
                                                     {{ $t('public.name') }}
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                    {{ form.candidate_details[index].name }}
+                                                    {{ form.applicant_details[index].name }}
                                                 </div>
                                             </div>
 
@@ -648,7 +648,7 @@ const handleContinue = () => {
                                                     {{ $t('public.email') }}
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                    {{ form.candidate_details[index].email }}
+                                                    {{ form.applicant_details[index].email }}
                                                 </div>
                                             </div>
 
@@ -658,7 +658,7 @@ const handleContinue = () => {
                                                     {{ $t('public.gender') }}
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                    {{ $t(`public.${form.candidate_details[index].gender}`) }}
+                                                    {{ $t(`public.${form.applicant_details[index].gender}`) }}
                                                 </div>
                                             </div>
 
@@ -669,18 +669,18 @@ const handleContinue = () => {
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
                                                     <div
-                                                        v-if="form.candidate_details[index].country"
+                                                        v-if="form.applicant_details[index].country"
                                                          class="flex items-center gap-1"
                                                     >
                                                         <img
-                                                            v-if="form.candidate_details[index].country.iso2"
-                                                            :src="`https://flagcdn.com/w40/${form.candidate_details[index].country.iso2.toLowerCase()}.png`"
-                                                            :alt="form.candidate_details[index].country.iso2"
+                                                            v-if="form.applicant_details[index].country.iso2"
+                                                            :src="`https://flagcdn.com/w40/${form.applicant_details[index].country.iso2.toLowerCase()}.png`"
+                                                            :alt="form.applicant_details[index].country.iso2"
                                                             width="18"
                                                             height="12"
                                                         />
                                                         <div class="leading-tight">
-                                                            {{ JSON.parse(form.candidate_details[index].country.translations)[locale] || form.candidate_details[index].country.name }}
+                                                            {{ JSON.parse(form.applicant_details[index].country.translations)[locale] || form.applicant_details[index].country.name }}
                                                         </div>
                                                     </div>
                                                     <span v-else class="text-surface-400 dark:text-surface-500">-</span>
@@ -693,7 +693,7 @@ const handleContinue = () => {
                                                     {{ $t('public.mobile_phone') }}
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                    {{ form.candidate_details[index].phone_number }}
+                                                    {{ form.applicant_details[index].phone_number }}
                                                 </div>
                                             </div>
 
@@ -703,7 +703,7 @@ const handleContinue = () => {
                                                     {{ $t('public.ic_passport_number') }}
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                    {{ form.candidate_details[index].identity_number }}
+                                                    {{ form.applicant_details[index].identity_number }}
                                                 </div>
                                             </div>
                                         </div>
@@ -713,7 +713,7 @@ const handleContinue = () => {
 
                                             <!-- Transport details -->
                                             <div
-                                                v-if="form.candidate_details[index].requires_transport"
+                                                v-if="form.applicant_details[index].requires_transport"
                                                 class="flex flex-col items-start gap-1 self-stretch"
                                             >
                                                 <!-- Name -->
@@ -722,7 +722,7 @@ const handleContinue = () => {
                                                         {{ $t('public.name') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.candidate_details[index].transport_details.name }}
+                                                        {{ form.applicant_details[index].transport_details.name }}
                                                     </div>
                                                 </div>
 
@@ -732,7 +732,7 @@ const handleContinue = () => {
                                                         {{ $t('public.gender') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ $t(`public.${form.candidate_details[index].transport_details.gender}`) }}
+                                                        {{ $t(`public.${form.applicant_details[index].transport_details.gender}`) }}
                                                     </div>
                                                 </div>
 
@@ -743,18 +743,18 @@ const handleContinue = () => {
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
                                                         <div
-                                                            v-if="form.candidate_details[index].country"
+                                                            v-if="form.applicant_details[index].country"
                                                             class="flex items-center gap-1"
                                                         >
                                                             <img
-                                                                v-if="form.candidate_details[index].transport_details.country.iso2"
-                                                                :src="`https://flagcdn.com/w40/${form.candidate_details[index].transport_details.country.iso2.toLowerCase()}.png`"
-                                                                :alt="form.candidate_details[index].transport_details.country.iso2"
+                                                                v-if="form.applicant_details[index].transport_details.country.iso2"
+                                                                :src="`https://flagcdn.com/w40/${form.applicant_details[index].transport_details.country.iso2.toLowerCase()}.png`"
+                                                                :alt="form.applicant_details[index].transport_details.country.iso2"
                                                                 width="18"
                                                                 height="12"
                                                             />
                                                             <div class="leading-tight">
-                                                                {{ JSON.parse(form.candidate_details[index].country.translations)[locale] || form.candidate_details[index].country.name }}
+                                                                {{ JSON.parse(form.applicant_details[index].country.translations)[locale] || form.applicant_details[index].country.name }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -766,7 +766,7 @@ const handleContinue = () => {
                                                         {{ $t('public.date_of_birth') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ dayjs(form.candidate_details[index].transport_details.dob).format('YYYY-MM-DD') }}
+                                                        {{ dayjs(form.applicant_details[index].transport_details.dob).format('YYYY-MM-DD') }}
                                                     </div>
                                                 </div>
 
@@ -776,7 +776,7 @@ const handleContinue = () => {
                                                         {{ $t('public.mobile_phone') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.candidate_details[index].transport_details.phone_number }}
+                                                        {{ form.applicant_details[index].transport_details.phone_number }}
                                                     </div>
                                                 </div>
 
@@ -786,7 +786,7 @@ const handleContinue = () => {
                                                         {{ $t('public.ic_passport_number') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.candidate_details[index].transport_details.identity_number }}
+                                                        {{ form.applicant_details[index].transport_details.identity_number }}
                                                     </div>
                                                 </div>
 
@@ -796,7 +796,7 @@ const handleContinue = () => {
                                                         {{ $t('public.departure_address') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.candidate_details[index].transport_details.departure_address }}
+                                                        {{ form.applicant_details[index].transport_details.departure_address }}
                                                     </div>
                                                 </div>
 
@@ -806,7 +806,7 @@ const handleContinue = () => {
                                                         {{ $t('public.return_address') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.candidate_details[index].transport_details.return_address }}
+                                                        {{ form.applicant_details[index].transport_details.return_address }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -831,7 +831,7 @@ const handleContinue = () => {
                                                         {{ $t('public.accommodation') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.candidate_details[index].requires_accommodation ? $t('public.yes') : '-' }}
+                                                        {{ form.applicant_details[index].requires_accommodation ? $t('public.yes') : '-' }}
                                                     </div>
                                                 </div>
 
@@ -841,7 +841,7 @@ const handleContinue = () => {
                                                         {{ $t('public.ib_training') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.candidate_details[index].requires_ib_training ? $t('public.yes') : '-' }}
+                                                        {{ form.applicant_details[index].requires_ib_training ? $t('public.yes') : '-' }}
                                                     </div>
                                                 </div>
                                             </div>

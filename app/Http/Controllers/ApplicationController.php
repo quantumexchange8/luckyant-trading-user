@@ -204,8 +204,8 @@ class ApplicationController extends Controller
                     'phone_number' => $detail['phone_number'],
                     'identity_number' => $detail['identity_number'],
                     'requires_transport' => $detail['requires_transport'],
-                    'requires_accommodation' => $detail['requires_accommodation'],
-                    'requires_ib_training' => $detail['requires_ib_training'],
+                    'requires_accommodation' => $detail['requires_accommodation'] ?? false,
+                    'requires_ib_training' => $detail['requires_ib_training'] ?? false,
                     'status' => 'pending',
                 ]);
 

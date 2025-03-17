@@ -471,6 +471,12 @@ class WalletController extends Controller
         }
 
         $payment_account = PaymentAccount::find($request->payment_account_id);
+
+        // Check payment account (bank) essential fields
+        if (empty($payment_account->bank_region)) {
+            return back()->withErrors(['missing_bank_region' => trans('public.missing_bank_region')]);
+        }
+
         $conversion_rate = CurrencyConversionRate::firstWhere('base_currency', $payment_account->currency);
 
         $withdraw_wallets = $request->withdraw_wallets;

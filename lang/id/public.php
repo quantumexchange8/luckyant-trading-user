@@ -617,4 +617,9 @@ return [
     "returned_amount" => "Jumlah yang dikembalikan",
     "pending_deposit_caption" => "Anda memiliki permintaan deposit yang sedang diproses.",
     "announcement" => "Pengumuman",
+    "update_payment_account" => "Perbarui Akun Pembayaran",
+    "missing_fields" => "Kolom yang hilang",
+    "account_missing_fields" => "Akun Anda memiliki beberapa kolom yang hilang.",
+    "update_payment_account_caption" => "Lanjutkan ke Akun Pembayaran untuk memperbarui kolom pembayaran yang hilang.",
+    "region_of_bank_placeholder" => "Masukkan negara bagian dan kota"
 ];

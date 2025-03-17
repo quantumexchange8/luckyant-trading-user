@@ -617,4 +617,9 @@ return [
     "returned_amount" => "返品金額",
     "pending_deposit_caption" => "入金リクエストの処理中です。",
     "announcement" => "発表",
+    "update_payment_account" => "支払いアカウントを更新します",
+    "missing_fields" => "不足しているフィールドです",
+    "account_missing_fields" => "アカウントに不足しているフィールドがあります。",
+    "update_payment_account_caption" => "支払いアカウントに進み、不足している支払いフィールドを更新します。",
+    "region_of_bank_placeholder" => "州と市を入力してください"
 ];

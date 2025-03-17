@@ -2,7 +2,8 @@
 import ConfirmDialog from 'primevue/confirmdialog';
 import Button from "@/Components/Button.vue";
 import {
-    CreditCardAddIcon
+    CreditCardAddIcon,
+    CreditCardRefreshIcon
 } from "@/Components/Icons/outline.jsx";
 import {
     IconPasswordMobilePhone,
@@ -23,6 +24,10 @@ import {
                             <!-- Conditionally render the icon based on actionType -->
                             <CreditCardAddIcon
                                 v-if="message.actionType === 'add_payment_account'"
+                                class="w-16 h-16 text-primary-700"
+                            />
+                            <CreditCardRefreshIcon
+                                v-if="message.actionType === 'update_payment_account'"
                                 class="w-16 h-16 text-primary-700"
                             />
                             <div

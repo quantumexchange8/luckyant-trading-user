@@ -617,4 +617,9 @@ return [
     "returned_amount" => "số tiền được trả lại",
     "pending_deposit_caption" => "Bạn có yêu cầu gửi tiền đang xử lý.",
     "announcement" => "Thông báo",
+    "update_payment_account" => "Cập nhật tài khoản thanh toán",
+    "missing_fields" => "Thiếu trường",
+    "account_missing_fields" => "Tài khoản của bạn có một số trường bị thiếu.",
+    "update_payment_account_caption" => "Tiến hành đến Tài khoản thanh toán để cập nhật các trường thanh toán bị thiếu.",
+    "region_of_bank_placeholder" => "Nhập tiểu bang và thành phố"
 ];

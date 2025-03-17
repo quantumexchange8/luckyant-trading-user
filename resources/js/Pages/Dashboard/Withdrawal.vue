@@ -129,6 +129,12 @@ const submitForm = () => {
             form.reset();
             withdrawAmounts.value = {};
         },
+        onError: (errors) => {
+            if (errors.missing_bank_region) {
+                closeDialog();
+                withdrawalConfirmation('update_payment_account');
+            }
+        }
     });
 }
 
@@ -150,7 +156,23 @@ const withdrawalConfirmation = (accountType) => {
             cancelButton: trans('public.cancel'),
             acceptButton: trans('public.add_payment_account'),
             action: () => {
-                router.get(route('profile.edit'))
+                router.get(route('profile.edit', {
+                    status: 'paymentAccount'
+                }))
+            }
+        },
+        update_payment_account: {
+            group: 'headless-primary',
+            header: trans('public.missing_fields'),
+            text: trans('public.account_missing_fields'),
+            suffix: trans('public.update_payment_account_caption'),
+            actionType: 'update_payment_account',
+            cancelButton: trans('public.cancel'),
+            acceptButton: trans('public.update_payment_account'),
+            action: () => {
+                router.get(route('profile.edit', {
+                    status: 'paymentAccount'
+                }))
             }
         },
         add_security_pin: {

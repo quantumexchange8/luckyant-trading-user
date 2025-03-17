@@ -616,4 +616,9 @@ return [
     "returned_amount" => "จำนวนเงินที่คืน",
     "pending_deposit_caption" => "คุณมีคำขอดำเนินการฝากเงิน",
     "announcement" => "ประกาศ",
+    "update_payment_account" => "อัปเดตบัญชีการชำระเงิน",
+    "missing_fields" => "ขาดข้อมูลบางส่วน",
+    "account_missing_fields" => "บัญชีของคุณมีข้อมูลบางส่วนขาดหายไป",
+    "update_payment_account_caption" => "ดำเนินการไปยังบัญชีการชำระเงินเพื่ออัปเดตข้อมูลการชำระเงินที่ขาดหายไป",
+    "region_of_bank_placeholder" => "ป้อนรัฐและเมือง"
 ];

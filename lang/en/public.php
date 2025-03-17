@@ -617,4 +617,9 @@ return [
     "returned_amount" => "Returned Amount",
     "pending_deposit_caption" => "You have a processing deposit request.",
     "announcement" => "Announcement",
+    "update_payment_account" => "Update Payment Account",
+    "missing_fields" => "Missing fields",
+    "account_missing_fields" => "Your account have some missing fields.",
+    "update_payment_account_caption" => "Proceed to Payment Account to update payment missing fields.",
+    "region_of_bank_placeholder" => "Enter state and city"
 ];

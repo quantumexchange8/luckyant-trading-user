@@ -181,6 +181,7 @@ watchEffect(() => {
                         type="text"
                         class="block w-full"
                         v-model="accountDetail.payment_platform_name"
+                        :placeholder="$t('public.bank_name')"
                         :invalid="!!form.errors.payment_platform_name"
                     />
                     <InputError :message="form.errors.payment_platform_name" />
@@ -196,6 +197,7 @@ watchEffect(() => {
                         type="text"
                         class="block w-full"
                         v-model="accountDetail.bank_region"
+                        :placeholder="$t('public.region_of_bank_placeholder')"
                         :invalid="!!form.errors.bank_region"
                     />
                     <InputError :message="form.errors.bank_region" />
@@ -236,6 +238,7 @@ watchEffect(() => {
                         type="text"
                         class="block w-full"
                         v-model="accountDetail.account_no"
+                        :placeholder="$t('public.bank_account_number')"
                         :invalid="!!form.errors.account_no"
                     />
                     <InputError :message="form.errors.account_no" />
@@ -251,6 +254,7 @@ watchEffect(() => {
                         type="text"
                         class="block w-full"
                         v-model="accountDetail.bank_sub_branch"
+                        :placeholder="$t('public.bank_sub_branch')"
                         :invalid="!!form.errors.bank_sub_branch"
                     />
                     <InputError :message="form.errors.bank_sub_branch" />
@@ -266,6 +270,7 @@ watchEffect(() => {
                         type="text"
                         class="block w-full"
                         v-model="accountDetail.bank_swift_code"
+                        :placeholder="$t('public.bank_swift_code')"
                         :invalid="!!form.errors.bank_swift_code"
                     />
                     <InputError :message="form.errors.bank_swift_code" />

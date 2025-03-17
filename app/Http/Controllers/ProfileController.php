@@ -197,6 +197,7 @@ class ProfileController extends Controller
             'payment_account_name' => $request->payment_account_name,
             'payment_platform_name' => $request->payment_platform_name,
             'account_no' => $request->account_no,
+            'bank_region' => $request->bank_region,
             'bank_sub_branch' => $request->bank_sub_branch,
             'bank_branch_address' => $request->bank_branch_address,
             'bank_swift_code' => $request->bank_swift_code,

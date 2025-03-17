@@ -473,7 +473,7 @@ class WalletController extends Controller
         $payment_account = PaymentAccount::find($request->payment_account_id);
 
         // Check payment account (bank) essential fields
-        if (empty($payment_account->bank_region)) {
+        if ($payment_account->payment_platform == 'Bank' && empty($payment_account->bank_region)) {
             return back()->withErrors(['missing_bank_region' => trans('public.missing_bank_region')]);
         }
 

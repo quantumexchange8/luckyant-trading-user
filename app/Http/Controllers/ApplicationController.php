@@ -10,6 +10,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class ApplicationController extends Controller
@@ -157,7 +158,9 @@ class ApplicationController extends Controller
                         $transportRules["applicant_details.$i.transport_details.name"] = ['required', 'regex:/^[\p{L}\p{N}\p{M}. @]+$/u', 'max:255'];
                         $transportRules["applicant_details.$i.transport_details.gender"] = ['required'];
                         $transportRules["applicant_details.$i.transport_details.country"] = ['required'];
-                        $transportRules["applicant_details.$i.transport_details.dob"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.dob.year"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.dob.month"] = ['required'];
+                        $transportRules["applicant_details.$i.transport_details.dob.day"] = ['required'];
                         $transportRules["applicant_details.$i.transport_details.phone_number"] = ['required'];
                         $transportRules["applicant_details.$i.transport_details.identity_number"] = ['required'];
                         $transportRules["applicant_details.$i.transport_details.departure_address"] = ['required'];
@@ -166,11 +169,27 @@ class ApplicationController extends Controller
                         $customAttributeNames["applicant_details.$i.transport_details.name"] = trans('public.name_on_ic_passport');
                         $customAttributeNames["applicant_details.$i.transport_details.gender"] = trans('public.gender');
                         $customAttributeNames["applicant_details.$i.transport_details.country"] = trans('public.country');
-                        $customAttributeNames["applicant_details.$i.transport_details.dob"] = trans('public.dob');
-                        $customAttributeNames["applicant_details.$i.transport_details.phone_number"] = trans('public.phone_number');
+                        $customAttributeNames["applicant_details.$i.transport_details.dob.year"] = trans('public.year');
+                        $customAttributeNames["applicant_details.$i.transport_details.dob.month"] = trans('public.month');
+                        $customAttributeNames["applicant_details.$i.transport_details.dob.day"] = trans('public.day');
+                        $customAttributeNames["applicant_details.$i.transport_details.phone_number"] = trans('public.mobile_phone');
                         $customAttributeNames["applicant_details.$i.transport_details.identity_number"] = trans('public.ic_passport_number');
                         $customAttributeNames["applicant_details.$i.transport_details.departure_address"] = trans('public.departure_address');
                         $customAttributeNames["applicant_details.$i.transport_details.return_address"] = trans('public.return_address');
+
+                        // Get the DOB values from the request
+                        $year = $request->applicant_details[$i]['transport_details']['dob']['year'] ?? null;
+                        $month = $request->applicant_details[$i]['transport_details']['dob']['month'] ?? null;
+                        $day = $request->applicant_details[$i]['transport_details']['dob']['day'] ?? null;
+
+                        // Validate date if all components are present
+                        if ($year && $month && $day) {
+                            if (!checkdate($month, $day, $year)) {
+                                throw ValidationException::withMessages([
+                                    "applicant_details.$i.transport_details.dob.year" => trans('public.invalid_date')
+                                ]);
+                            }
+                        }
                     }
                 }
 
@@ -212,6 +231,8 @@ class ApplicationController extends Controller
                 if ($applicant->requires_transport) {
                     $transport = $detail['transport_details'];
 
+                    $dob = $transport['dob']['year'] . '-' . $transport['dob']['month'] . '-' . $transport['dob']['day'];
+
                     ApplicantTransport::create([
                         'application_form_id' => $application_form->id,
                         'applicant_id' => $applicant->id,
@@ -220,7 +241,7 @@ class ApplicationController extends Controller
                         'name' => $transport['name'],
                         'gender' => $transport['gender'],
                         'country_id' => $transport['country']['id'],
-                        'dob' => $transport['dob'],
+                        'dob' => $dob,
                         'phone_number' => $transport['phone_number'],
                         'identity_number' => $transport['identity_number'],
                         'departure_address' => $transport['departure_address'],

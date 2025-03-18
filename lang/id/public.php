@@ -645,4 +645,12 @@ return [
     "name_on_ic_passport" => "Nama pada KTP/Paspor",
     "toast_warning_pending_application" => "Anda memiliki aplikasi yang tertunda untuk disetujui.",
     "toast_success_submit_application" => "Anda telah berhasil mengirim aplikasi.",
+    "please_choose" => "Silakan Pilih",
+    "is_applicant_gold_team" => "Apakah pelamar merupakan anggota Tim Emas?",
+    "is_applicant_attend_training" => "Apakah pelamar ingin menghadiri sesi pelatihan internal San Tong?",
+    "no" => "Tidak",
+    "flight_information" => "Informasi Penerbangan",
+    "flight_details_for" => "Rincian Penerbangan Untuk",
+    "flight" => "Penerbangan",
+    "santong_training" => "Pelatihan Internal Santong",
 ];

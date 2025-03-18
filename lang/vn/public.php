@@ -645,4 +645,12 @@ return [
     "name_on_ic_passport" => "Tên trên CMND/Hộ chiếu",
     "toast_warning_pending_application" => "Bạn có một đơn đăng ký đang chờ phê duyệt.",
     "toast_success_submit_application" => "Bạn đã nộp đơn đăng ký thành công.",
+    "please_choose" => "Vui lòng chọn",
+    "is_applicant_gold_team" => "Ứng viên có phải là thành viên của Đội Vàng không?",
+    "is_applicant_attend_training" => "Ứng viên có muốn tham dự buổi đào tạo nội bộ của San Tong không?",
+    "no" => "Không",
+    "flight_information" => "Thông tin chuyến bay",
+    "flight_details_for" => "Chi tiết chuyến bay cho",
+    "flight" => "Chuyến bay",
+    "santong_training" => "Đào tạo nội bộ của San Tong",
 ];

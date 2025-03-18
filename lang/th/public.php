@@ -644,4 +644,12 @@ return [
     "name_on_ic_passport" => "ชื่อบนบัตรประชาชน/หนังสือเดินทาง",
     "toast_warning_pending_application" => "คุณมีใบสมัครที่รอการอนุมัติ",
     "toast_success_submit_application" => "คุณได้ส่งใบสมัครเรียบร้อยแล้ว",
+    "please_choose" => "กรุณาเลือก",
+    "is_applicant_gold_team" => "ผู้สมัครเป็นสมาชิกของ Gold Team หรือไม่",
+    "is_applicant_attend_training" => "ผู้สมัครต้องการเข้าร่วมการฝึกอบรมภายในของ San Tong หรือไม่",
+    "no" => "No",
+    "flight_information" => "Flight Information",
+    "flight_details_for" => "Flight Details For",
+    "flight" => "Flight",
+    "santong_training" => "Santong Internal Training",
 ];

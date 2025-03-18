@@ -645,4 +645,12 @@ return [
     "name_on_ic_passport" => "IC/パスポート上の氏名",
     "toast_warning_pending_application" => "承認待ちの申請があります。",
     "toast_success_submit_application" => "申請が正常に送信されました。",
+    "please_choose" => "選択してください",
+    "is_applicant_gold_team" => "申請者はゴールド チームのメンバーですか?",
+    "is_applicant_attend_training" => "申請者は San Tong 社内トレーニング セッションに参加しますか?",
+    "no" => "いいえ",
+    "flight_information" => "フライト情報",
+    "flight_details_for" => "フライトの詳細",
+    "flight" => "フライト",
+    "santong_training" => "Santong 社内トレーニング",
 ];

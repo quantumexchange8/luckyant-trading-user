@@ -645,4 +645,12 @@ return [
     "name_on_ic_passport" => "Name On IC/Passport",
     "toast_warning_pending_application" => "You have a pending application for approval.",
     "toast_success_submit_application" => "You have successfully submitted application.",
+    "please_choose" => "Please Choose",
+    "is_applicant_gold_team" => "Is applicant a member of the Gold Team?",
+    "is_applicant_attend_training" => "Does applicant want to attend the San Tong internal training session?",
+    "no" => "No",
+    "flight_information" => "Flight Information",
+    "flight_details_for" => "Flight Details For",
+    "flight" => "Flight",
+    "santong_training" => "Santong Internal Training",
 ];

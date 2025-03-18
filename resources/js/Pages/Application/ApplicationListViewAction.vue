@@ -4,6 +4,7 @@ import Tag from "primevue/tag";
 import {IconHandClick} from "@tabler/icons-vue";
 import {ref} from "vue";
 import Dialog from "primevue/dialog";
+import Skeleton from "primevue/skeleton";
 import dayjs from "dayjs";
 import {useLangObserver} from "@/Composables/localeObserver.js";
 
@@ -37,6 +38,19 @@ const openDialog = () => {
 const closeDialog = () => {
     visible.value = false;
 }
+
+const getSeverity = (status) => {
+    switch (status) {
+        case 'approved':
+            return 'success';
+
+        case 'rejected':
+            return 'danger';
+
+        case 'pending':
+            return 'info';
+    }
+}
 </script>
 
 <template>
@@ -52,7 +66,7 @@ const closeDialog = () => {
         />
 
         <Tag
-            severity="warn"
+            severity="info"
             :value="$t('public.pending')"
         />
     </div>
@@ -107,8 +121,12 @@ const closeDialog = () => {
         :header="$t('public.view_details')"
         class="dialog-xs md:dialog-lg"
     >
-        <div v-if="isLoading">
-
+        <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="flex flex-col mb-4">
+                <Skeleton width="10rem" class="mb-2"></Skeleton>
+                <Skeleton width="5rem" class="mb-2"></Skeleton>
+                <Skeleton height=".5rem"></Skeleton>
+            </div>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -198,7 +216,7 @@ const closeDialog = () => {
                     </div>
 
                     <div class="flex flex-col gap-3 items-center self-stretch w-full pt-3">
-                        <span class="font-medium text-sm text-gray-600 dark:text-gray-400 w-full text-left">{{ $t('public.transport_information') }}</span>
+                        <span class="font-medium text-sm text-gray-600 dark:text-gray-400 w-full text-left">{{ $t('public.flight_information') }}</span>
 
                         <!-- Transport details -->
                         <div
@@ -301,10 +319,10 @@ const closeDialog = () => {
                         </div>
                         <div v-else class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                             <div class="w-[140px] text-gray-500 text-xs font-medium">
-                                {{ $t('public.transport') }}
+                                {{ $t('public.flight') }}
                             </div>
                             <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                -
+                                {{ $t('public.no') }}
                             </div>
                         </div>
 
@@ -314,23 +332,14 @@ const closeDialog = () => {
                         <span class="font-medium text-sm text-gray-600 dark:text-gray-400 w-full text-left">{{ $t('public.additional_information') }}</span>
 
                         <div class="flex flex-col gap-1 items-start w-full">
-                            <!-- Accommodation details -->
-                            <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                                <div class="w-[140px] text-gray-500 text-xs font-medium">
-                                    {{ $t('public.accommodation') }}
-                                </div>
-                                <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                    {{ applicant.requires_accommodation ? $t('public.yes') : '-' }}
-                                </div>
-                            </div>
 
                             <!-- IB Training details -->
                             <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                                 <div class="w-[140px] text-gray-500 text-xs font-medium">
-                                    {{ $t('public.ib_training') }}
+                                    {{ $t('public.santong_training') }}
                                 </div>
                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                    {{ applicant.requires_ib_training ? $t('public.yes') : '-' }}
+                                    {{ applicant.requires_ib_training ? $t('public.yes') : $t('public.no') }}
                                 </div>
                             </div>
 
@@ -340,7 +349,7 @@ const closeDialog = () => {
                                     {{ $t('public.status') }}
                                 </div>
                                 <Tag
-                                    :severity="applicant.status === 'approved' ? 'success' : 'danger'"
+                                    :severity="getSeverity(applicant.status)"
                                     :value="$t(`public.${applicant.status}`)"
                                 />
                             </div>

@@ -645,4 +645,12 @@ return [
     "name_on_ic_passport" => "신분증/여권 상의 이름",
     "toast_warning_pending_application" => "승인 대기 중인 신청이 있습니다.",
     "toast_success_submit_application" => "신청서가 성공적으로 제출되었습니다.",
+    "please_choose" => "선택해 주세요",
+    "is_applicant_gold_team" => "지원자가 Gold Team의 멤버입니까?",
+    "is_applicant_attend_training" => "지원자가 San Tong 내부 교육 세션에 참석하고 싶습니까?",
+    "no" => "아니요",
+    "flight_information" => "항공편 정보",
+    "flight_details_for" => "항공편 세부 정보",
+    "flight" => "항공편",
+    "santong_training" => "Santong 내부 교육",
 ];

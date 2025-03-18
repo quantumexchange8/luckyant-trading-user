@@ -9,21 +9,20 @@ import StepPanels from 'primevue/steppanels';
 import Step from 'primevue/step';
 import StepPanel from 'primevue/steppanel';
 import {computed, ref, watch} from "vue";
-import {useForm, usePage} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import InputLabel from "@/Components/Label.vue";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import RadioButton from "primevue/radiobutton";
-import Checkbox from "primevue/checkbox";
 import Select from "primevue/select";
 import InputError from "@/Components/InputError.vue";
 import {
     IconArrowNarrowRight,
     IconArrowNarrowLeft,
-    IconPlaneOff
+    IconPlaneOff,
+    IconTransfer
 } from "@tabler/icons-vue";
 import {useLangObserver} from "@/Composables/localeObserver.js";
-import DatePicker from "@/Components/DatePicker.vue";
 
 const props = defineProps({
     application: Object
@@ -58,7 +57,11 @@ watch(() => form.applicants_count, (newCount) => {
                 name: '',
                 gender: '',
                 country: '',
-                dob: '',
+                dob: {
+                    year: null,
+                    month: null,
+                    day: null,
+                },
                 phone_number: '',
                 identity_number: '',
                 departure_address: '',
@@ -107,6 +110,46 @@ const handleContinue = () => {
         preserveState: true,
     });
 };
+
+const getMaxDaysInMonth = (year, month) => {
+    return new Date(year, month, 0).getDate(); // Get last day of the month
+};
+
+const currentYear = new Date().getFullYear();
+const minYear = 1900;
+const maxYear = currentYear - 18;
+
+// **Watch DOB fields and validate inputs**
+const validateDOB = (index) => {
+    const dob = form.applicant_details[index].transport_details.dob;
+
+    // Validate year
+    if (dob.year && (dob.year < minYear || dob.year > maxYear)) {
+        form.errors[`applicant_details.${index}.transport_details.dob.year`] = `Year must be between ${minYear} and ${maxYear}`;
+    } else {
+        form.errors[`applicant_details.${index}.transport_details.dob.year`] = '';
+    }
+
+    // Validate month
+    if (dob.month && (dob.month < 1 || dob.month > 12)) {
+        form.errors[`applicant_details.${index}.transport_details.dob.month`] = 'Month must be between 1 and 12';
+    } else {
+        form.errors[`applicant_details.${index}.transport_details.dob.month`] = '';
+    }
+
+    // Validate day based on month & year
+    const maxDays = getMaxDaysInMonth(dob.year, dob.month);
+    if (dob.day && (dob.day < 1 || dob.day > maxDays)) {
+        form.errors[`applicant_details.${index}.transport_details.dob.day`] = `Invalid day for selected month`;
+    } else {
+        form.errors[`applicant_details.${index}.transport_details.dob.day`] = '';
+    }
+};
+
+// **Watch each DOB field for changes**
+watch(() => form.applicant_details, (newDetails) => {
+    Object.keys(newDetails).forEach(index => validateDOB(index));
+}, { deep: true });
 </script>
 
 <template>
@@ -138,7 +181,7 @@ const handleContinue = () => {
                 <StepList>
                     <Step :value="1">{{ $t('public.applicant_enrollment') }}</Step>
                     <Step :value="2">{{ $t('public.applicant_detail') }}</Step>
-                    <Step :value="3">{{ $t('public.transport_information') }}</Step>
+                    <Step :value="3">{{ $t('public.flight_information') }}</Step>
                     <Step :value="4">{{ $t('public.final_check') }}</Step>
                 </StepList>
                 <StepPanels>
@@ -325,41 +368,62 @@ const handleContinue = () => {
 
                                         <!-- Candidate Request -->
                                         <div class="flex flex-col items-start gap-1 self-stretch">
-                                            <InputLabel
-                                                :for="'candidate_request_' + index"
-                                                :value="`${$t('public.request')}`"
-                                                :invalid="!!form.errors[`applicant_details.${index}.request`]"
-                                            />
-                                            <div class="flex flex-col gap-1">
-                                                <div class="flex items-center gap-2">
-                                                    <Checkbox
-                                                        v-model="form.applicant_details[index].requires_transport"
-                                                        :inputId="'transport_' + index"
-                                                        value="accept"
-                                                        binary
+                                            <span class="text-sm font-semibold text-gray-950 dark:text-white w-full">{{ $t('public.please_choose')}}</span>
+                                            <div class="flex flex-col gap-3 items-start self-stretch">
+                                                <div class="flex flex-col items-start gap-1 self-stretch">
+                                                    <InputLabel
+                                                        :for="'applicant_requires_transport_' + index"
+                                                        :value="`${$t('public.is_applicant_gold_team')}`"
+                                                        :invalid="!!form.errors[`applicant_details.${index}.requires_transport`]"
                                                     />
-                                                    <label :for="'transport_' + index" class="dark:text-white text-sm">{{ $t('public.transport') }}</label>
+                                                    <div class="flex flex-wrap gap-5">
+                                                        <div class="flex items-center gap-2">
+                                                            <RadioButton
+                                                                v-model="form.applicant_details[index].requires_transport"
+                                                                :inputId="'transport_yes_' + index"
+                                                                :value="false"
+                                                            />
+                                                            <label :for="'transport_yes_' + index" class="dark:text-white">{{ $t('public.yes') }}</label>
+                                                        </div>
+                                                        <div class="flex items-center gap-2">
+                                                            <RadioButton
+                                                                v-model="form.applicant_details[index].requires_transport"
+                                                                :inputId="'transport_no_' + index"
+                                                                :value="true"
+                                                            />
+                                                            <label :for="'transport_no_' + index" class="dark:text-white">{{ $t('public.no') }}</label>
+                                                        </div>
+                                                    </div>
+                                                    <InputError :message="form.errors[`applicant_details.${index}.requires_transport`]" />
                                                 </div>
-                                                <div class="flex items-center gap-2">
-                                                    <Checkbox
-                                                        v-model="form.applicant_details[index].requires_accommodation"
-                                                        :inputId="'accommodation_' + index"
-                                                        value="accept"
-                                                        binary
+
+                                                <div class="flex flex-col items-start gap-1 self-stretch">
+                                                    <InputLabel
+                                                        :for="'applicant_requires_ib_training_' + index"
+                                                        :value="`${$t('public.is_applicant_attend_training')}`"
+                                                        :invalid="!!form.errors[`applicant_details.${index}.requires_ib_training`]"
                                                     />
-                                                    <label :for="'accommodation_' + index" class="dark:text-white text-sm">{{ $t('public.accommodation') }}</label>
-                                                </div>
-                                                <div class="flex items-center gap-2">
-                                                    <Checkbox
-                                                        v-model="form.applicant_details[index].requires_ib_training"
-                                                        :inputId="'ib_training_' + index"
-                                                        value="accept"
-                                                        binary
-                                                    />
-                                                    <label :for="'ib_training_' + index" class="dark:text-white text-sm">{{ $t('public.ib_training') }}</label>
+                                                    <div class="flex flex-wrap gap-5">
+                                                        <div class="flex items-center gap-2">
+                                                            <RadioButton
+                                                                v-model="form.applicant_details[index].requires_ib_training"
+                                                                :inputId="'ib_training_yes_' + index"
+                                                                :value="true"
+                                                            />
+                                                            <label :for="'ib_training_yes_' + index" class="dark:text-white">{{ $t('public.yes') }}</label>
+                                                        </div>
+                                                        <div class="flex items-center gap-2">
+                                                            <RadioButton
+                                                                v-model="form.applicant_details[index].requires_ib_training"
+                                                                :inputId="'ib_training_no_' + index"
+                                                                :value="false"
+                                                            />
+                                                            <label :for="'ib_training_no_' + index" class="dark:text-white">{{ $t('public.no') }}</label>
+                                                        </div>
+                                                    </div>
+                                                    <InputError :message="form.errors[`applicant_details.${index}.requires_ib_training`]" />
                                                 </div>
                                             </div>
-                                            <InputError :message="form.errors[`applicant_details.${index}.request`]" />
                                         </div>
                                     </div>
                                 </template>
@@ -375,7 +439,7 @@ const handleContinue = () => {
                                 @click="activeStep = 1"
                             >
                                 <IconArrowNarrowLeft size="20" stroke-witdth="1.5" />
-                                {{ $t('public.back') }}
+                                {{ $t('public.previous') }}
                             </Button>
 
                             <Button
@@ -398,7 +462,7 @@ const handleContinue = () => {
                             >
                                 <template #content>
                                     <div class="flex flex-col gap-3 items-start self-stretch">
-                                        <span class="font-bold text-sm text-gray-950 dark:text-white">{{ $t('public.transport_details_for') }} {{ form.applicant_details[index].name ? form.applicant_details[index].name : ($t('public.applicant') + ' #' + index) }}</span>
+                                        <span class="font-bold text-sm text-gray-950 dark:text-white">{{ $t('public.flight_details_for') }} {{ form.applicant_details[index].name ? form.applicant_details[index].name : ($t('public.applicant') + ' #' + index) }}</span>
 
                                         <!-- Transport Name -->
                                         <div class="flex flex-col items-start gap-1 self-stretch">
@@ -493,11 +557,46 @@ const handleContinue = () => {
                                                 :value="$t('public.date_of_birth')"
                                                 :invalid="!!form.errors[`applicant_details.${index}.transport_details.dob`]"
                                             />
-                                            <DatePicker
-                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.dob`]"
-                                                @update:date="form.applicant_details[index].transport_details.dob = $event"
-                                            />
-                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.dob`]" />
+                                            <div class="flex gap-2 items-center">
+                                                <div class="flex flex-col gap-1 items-start self-stretch">
+                                                    <InputNumber
+                                                        :id="'dob_year_' + index"
+                                                        :min="0"
+                                                        v-model="form.applicant_details[index].transport_details.dob.year"
+                                                        :useGrouping="false"
+                                                        :placeholder="$t('public.year')"
+                                                        :invalid="!!form.errors[`applicant_details.${index}.transport_details.dob.year`]"
+                                                        fluid
+                                                    />
+                                                    <InputError :message="form.errors[`applicant_details.${index}.transport_details.dob.year`]" />
+                                                </div>
+                                                <span class="dark:text-white">-</span>
+                                                <div class="flex flex-col gap-1 items-start self-stretch">
+                                                    <InputNumber
+                                                        :id="'dob_month_' + index"
+                                                        :min="0"
+                                                        v-model="form.applicant_details[index].transport_details.dob.month"
+                                                        :placeholder="$t('public.month')"
+                                                        :invalid="!!form.errors[`applicant_details.${index}.transport_details.dob.month`]"
+                                                        fluid
+                                                        :disabled="!form.applicant_details[index].transport_details.dob.year"
+                                                    />
+                                                    <InputError :message="form.errors[`applicant_details.${index}.transport_details.dob.month`]" />
+                                                </div>
+                                                <span class="dark:text-white">-</span>
+                                                <div class="flex flex-col gap-1 items-start self-stretch">
+                                                    <InputNumber
+                                                        :id="'dob_day_' + index"
+                                                        :min="0"
+                                                        v-model="form.applicant_details[index].transport_details.dob.day"
+                                                        :placeholder="$t('public.day')"
+                                                        :invalid="!!form.errors[`applicant_details.${index}.transport_details.dob.day`]"
+                                                        fluid
+                                                        :disabled="!form.applicant_details[index].transport_details.dob.year || !form.applicant_details[index].transport_details.dob.month"
+                                                    />
+                                                    <InputError :message="form.errors[`applicant_details.${index}.transport_details.dob.day`]" />
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Transport Phone Number -->
@@ -537,39 +636,42 @@ const handleContinue = () => {
                                         </div>
 
                                         <!-- Transport Departure -->
-                                        <div class="flex flex-col items-start gap-1 self-stretch">
-                                            <InputLabel
-                                                :for="'transport_departure_address_' + index"
-                                                :value="$t('public.departure_address')"
-                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.departure_address`]"
-                                            />
-                                            <InputText
-                                                :id="'transport_departure_address_' + index"
-                                                type="text"
-                                                class="block w-full"
-                                                v-model="form.applicant_details[index].transport_details.departure_address"
-                                                :placeholder="$t('public.departure_address')"
-                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.departure_address`]"
-                                            />
-                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.departure_address`]" />
-                                        </div>
-
-                                        <!-- Transport Return -->
-                                        <div class="flex flex-col items-start gap-1 self-stretch">
-                                            <InputLabel
-                                                :for="'transport_return_address_' + index"
-                                                :value="$t('public.return_address')"
-                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.return_address`]"
-                                            />
-                                            <InputText
-                                                :id="'transport_return_address_' + index"
-                                                type="text"
-                                                class="block w-full"
-                                                v-model="form.applicant_details[index].transport_details.return_address"
-                                                :placeholder="$t('public.return_address')"
-                                                :invalid="!!form.errors[`applicant_details.${index}.transport_details.return_address`]"
-                                            />
-                                            <InputError :message="form.errors[`applicant_details.${index}.transport_details.return_address`]" />
+                                        <div class="flex flex-col md:flex-row gap-2 items-center self-stretch">
+                                            <div class="flex flex-col items-start gap-1 self-stretch w-full">
+                                                <InputLabel
+                                                    :for="'transport_departure_address_' + index"
+                                                    :value="$t('public.departure_address')"
+                                                    :invalid="!!form.errors[`applicant_details.${index}.transport_details.departure_address`]"
+                                                />
+                                                <InputText
+                                                    :id="'transport_departure_address_' + index"
+                                                    type="text"
+                                                    class="block w-full"
+                                                    v-model="form.applicant_details[index].transport_details.departure_address"
+                                                    :placeholder="$t('public.departure_address')"
+                                                    :invalid="!!form.errors[`applicant_details.${index}.transport_details.departure_address`]"
+                                                />
+                                                <InputError :message="form.errors[`applicant_details.${index}.transport_details.departure_address`]" />
+                                            </div>
+                                            <div class="dark:text-white rotate-90 md:rotate-0">
+                                                <IconTransfer size="24" stroke-width="1.5" />
+                                            </div>
+                                            <div class="flex flex-col items-start gap-1 self-stretch w-full">
+                                                <InputLabel
+                                                    :for="'transport_return_address_' + index"
+                                                    :value="$t('public.return_address')"
+                                                    :invalid="!!form.errors[`applicant_details.${index}.transport_details.return_address`]"
+                                                />
+                                                <InputText
+                                                    :id="'transport_return_address_' + index"
+                                                    type="text"
+                                                    class="block w-full"
+                                                    v-model="form.applicant_details[index].transport_details.return_address"
+                                                    :placeholder="$t('public.return_address')"
+                                                    :invalid="!!form.errors[`applicant_details.${index}.transport_details.return_address`]"
+                                                />
+                                                <InputError :message="form.errors[`applicant_details.${index}.transport_details.return_address`]" />
+                                            </div>
                                         </div>
                                     </div>
                                 </template>
@@ -605,7 +707,7 @@ const handleContinue = () => {
                                 @click="activeStep = 2"
                             >
                                 <IconArrowNarrowLeft size="20" stroke-witdth="1.5" />
-                                {{ $t('public.back') }}
+                                {{ $t('public.previous') }}
                             </Button>
 
                             <Button
@@ -709,7 +811,7 @@ const handleContinue = () => {
                                         </div>
 
                                         <div class="flex flex-col gap-3 items-center self-stretch w-full pt-3">
-                                            <span class="font-medium text-sm text-gray-600 dark:text-gray-400 w-full text-left">{{ $t('public.transport_information') }}</span>
+                                            <span class="font-medium text-sm text-gray-600 dark:text-gray-400 w-full text-left">{{ $t('public.flight_information') }}</span>
 
                                             <!-- Transport details -->
                                             <div
@@ -766,7 +868,7 @@ const handleContinue = () => {
                                                         {{ $t('public.date_of_birth') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ dayjs(form.applicant_details[index].transport_details.dob).format('YYYY-MM-DD') }}
+                                                        {{ `${form.applicant_details[index].transport_details.dob.year}-${form.applicant_details[index].transport_details.dob.month}-${form.applicant_details[index].transport_details.dob.day}` }}
                                                     </div>
                                                 </div>
 
@@ -812,7 +914,7 @@ const handleContinue = () => {
                                             </div>
                                             <div v-else class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                                                 <div class="w-[140px] text-gray-500 text-xs font-medium">
-                                                    {{ $t('public.transport') }}
+                                                    {{ $t('public.flight') }}
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
                                                     -
@@ -825,23 +927,14 @@ const handleContinue = () => {
                                             <span class="font-medium text-sm text-gray-600 dark:text-gray-400 w-full text-left">{{ $t('public.additional_information') }}</span>
 
                                             <div class="flex flex-col gap-1 items-start w-full">
-                                                <!-- Accommodation details -->
-                                                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                                                    <div class="w-[140px] text-gray-500 text-xs font-medium">
-                                                        {{ $t('public.accommodation') }}
-                                                    </div>
-                                                    <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.applicant_details[index].requires_accommodation ? $t('public.yes') : '-' }}
-                                                    </div>
-                                                </div>
 
                                                 <!-- Accommodation details -->
                                                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                                                     <div class="w-[140px] text-gray-500 text-xs font-medium">
-                                                        {{ $t('public.ib_training') }}
+                                                        {{ $t('public.santong_training') }}
                                                     </div>
                                                     <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.applicant_details[index].requires_ib_training ? $t('public.yes') : '-' }}
+                                                        {{ form.applicant_details[index].requires_ib_training ? $t('public.yes') : $t('public.no') }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -860,7 +953,7 @@ const handleContinue = () => {
                                 @click="activeStep = 3"
                             >
                                 <IconArrowNarrowLeft size="20" stroke-witdth="1.5" />
-                                {{ $t('public.back') }}
+                                {{ $t('public.previous') }}
                             </Button>
 
                             <Button

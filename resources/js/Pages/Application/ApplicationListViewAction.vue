@@ -7,6 +7,7 @@ import Dialog from "primevue/dialog";
 import Skeleton from "primevue/skeleton";
 import dayjs from "dayjs";
 import {useLangObserver} from "@/Composables/localeObserver.js";
+import NoData from "@/Components/NoData.vue";
 
 const props = defineProps({
     application: Object
@@ -54,66 +55,27 @@ const getSeverity = (status) => {
 </script>
 
 <template>
-    <div
-        v-if="application.applicants && application.applicants.some(app => app.status === 'pending')"
-        class="flex items-center justify-between gap-3 w-full"
-    >
+    <div class="flex items-center justify-between gap-3 w-full">
         <Button
             severity="secondary"
             size="small"
             :label="$t('public.view_details')"
+            class="w-full"
             @click="openDialog"
         />
 
-        <Tag
-            severity="info"
-            :value="$t('public.pending')"
-        />
-    </div>
-
-    <div
-        v-else-if="application.applicants && application.applicants.some(app => app.status === 'approved')"
-        class="flex items-center justify-between gap-3 w-full"
-    >
         <Button
-            severity="secondary"
+            v-if="application.applicants && !application.applicants.some(app => app.status === 'pending')"
+            as="a"
+            :href="route('application.application_form', { id: application.id })"
+            type="button"
             size="small"
-            :label="$t('public.view_details')"
-            @click="openDialog"
-        />
-        <Tag
-            severity="success"
-            :value="$t('public.approved')"
-        />
+            class="flex gap-2 w-full"
+        >
+            <IconHandClick size="20" stroke-width="1.5" />
+            {{ $t('public.apply_form') }}
+        </Button>
     </div>
-
-    <div
-        v-else-if="application.applicants && application.applicants.some(app => app.status === 'rejected')"
-        class="flex items-center justify-between gap-3 w-full"
-    >
-        <Button
-            severity="secondary"
-            size="small"
-            :label="$t('public.view_details')"
-            @click="openDialog"
-        />
-        <Tag
-            severity="danger"
-            :value="$t('public.rejected')"
-        />
-    </div>
-
-    <Button
-        v-else
-        as="a"
-        :href="route('application.application_form', { id: application.id })"
-        type="button"
-        size="small"
-        class="flex gap-2 w-full"
-    >
-        <IconHandClick size="20" stroke-width="1.5" />
-        {{ $t('public.apply_form') }}
-    </Button>
 
     <Dialog
         v-model:visible="visible"
@@ -368,6 +330,9 @@ const getSeverity = (status) => {
                 </div>
             </div>
 
+            <div v-if="!applicants.length" class="flex justify-center items-center md:col-span-2">
+                <NoData />
+            </div>
         </div>
     </Dialog>
 </template>

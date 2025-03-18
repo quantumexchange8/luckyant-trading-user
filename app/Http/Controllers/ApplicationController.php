@@ -17,8 +17,22 @@ class ApplicationController extends Controller
 {
     public function index()
     {
+        $query = ApplicationForm::where('status', 'Active');
+        $authUser = Auth::user();
+        $first_leader = $authUser->getFirstLeader();
+
+        if (empty($first_leader)) {
+            $query->whereHas('leaders', function ($q) use ($authUser) {
+                $q->where('user_id', $authUser->id);
+            });
+        } else {
+            $query->whereHas('leaders', function ($q) use ($first_leader) {
+                $q->where('user_id', $first_leader->id);
+            });
+        }
+
         return Inertia::render('Application/ApplicationListing', [
-            'applicationsCount' => ApplicationForm::where('status', 'Active')->count()
+            'applicationsCount' => $query->count()
         ]);
     }
 
@@ -36,6 +50,19 @@ class ApplicationController extends Controller
             'leaders',
             'applicants'
         ]);
+
+        $authUser = Auth::user();
+        $first_leader = $authUser->getFirstLeader();
+
+        if (empty($first_leader)) {
+            $query->whereHas('leaders', function ($q) use ($authUser) {
+                $q->where('user_id', $authUser->id);
+            });
+        } else {
+            $query->whereHas('leaders', function ($q) use ($first_leader) {
+                $q->where('user_id', $first_leader->id);
+            });
+        }
 
         if (!empty($search)) {
             $keyword = '%' . $search . '%';

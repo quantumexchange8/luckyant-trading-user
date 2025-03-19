@@ -148,7 +148,7 @@ const clearSearch = () => {
                                     </div>
                                 </div>
 
-                                <div class="text-sm dark:text-white line-clamp-4 w-full prose dark:prose-invert" v-html="application.content"></div>
+                                <div class="text-sm dark:text-white line-clamp-4 w-full prose dark:prose-invert h-20" v-html="application.content"></div>
 
                                 <ApplicationListViewAction
                                     :application="application"

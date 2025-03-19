@@ -49,7 +49,7 @@ class ApplicationController extends Controller
         $query = ApplicationForm::with([
             'leaders',
             'applicants'
-        ]);
+        ])->where('status', 'Active');
 
         $authUser = Auth::user();
         $first_leader = $authUser->getFirstLeader();

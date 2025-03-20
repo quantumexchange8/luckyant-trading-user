@@ -393,37 +393,10 @@ watch(() => form.applicant_details, (newDetails) => {
                                                                 :inputId="`${ticket.key}_${index}`"
                                                                 :value="ticket.value"
                                                             />
-                                                            <label :for="`${ticket.key}_${index}`" class="dark:text-white text-sm text-sm">{{ $t(`public.${ticket.value}`) }}</label>
+                                                            <label :for="`${ticket.key}_${index}`" class="dark:text-white text-sm">{{ $t(`public.${ticket.value}`) }}</label>
                                                         </div>
                                                     </div>
                                                     <InputError :message="form.errors[`applicant_details.${index}.requires_transport`]" />
-                                                </div>
-
-                                                <div class="flex flex-col items-start gap-1 self-stretch">
-                                                    <InputLabel
-                                                        :for="'applicant_requires_ib_training_' + index"
-                                                        :value="`${$t('public.is_applicant_attend_training')}`"
-                                                        :invalid="!!form.errors[`applicant_details.${index}.requires_ib_training`]"
-                                                    />
-                                                    <div class="flex flex-wrap gap-5">
-                                                        <div class="flex items-center gap-2">
-                                                            <RadioButton
-                                                                v-model="form.applicant_details[index].requires_ib_training"
-                                                                :inputId="'ib_training_yes_' + index"
-                                                                :value="true"
-                                                            />
-                                                            <label :for="'ib_training_yes_' + index" class="dark:text-white text-sm">{{ $t('public.yes') }}</label>
-                                                        </div>
-                                                        <div class="flex items-center gap-2">
-                                                            <RadioButton
-                                                                v-model="form.applicant_details[index].requires_ib_training"
-                                                                :inputId="'ib_training_no_' + index"
-                                                                :value="false"
-                                                            />
-                                                            <label :for="'ib_training_no_' + index" class="dark:text-white text-sm">{{ $t('public.no') }}</label>
-                                                        </div>
-                                                    </div>
-                                                    <InputError :message="form.errors[`applicant_details.${index}.requires_ib_training`]" />
                                                 </div>
                                             </div>
                                         </div>
@@ -930,24 +903,6 @@ watch(() => form.applicant_details, (newDetails) => {
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
                                                     -
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="flex flex-col gap-3 items-center self-stretch w-full pt-3">
-                                            <span class="font-medium text-sm text-gray-600 dark:text-gray-400 w-full text-left">{{ $t('public.additional_information') }}</span>
-
-                                            <div class="flex flex-col gap-1 items-start w-full">
-
-                                                <!-- Accommodation details -->
-                                                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                                                    <div class="w-[140px] text-gray-500 text-xs font-medium">
-                                                        {{ $t('public.santong_training') }}
-                                                    </div>
-                                                    <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                                        {{ form.applicant_details[index].requires_ib_training ? $t('public.yes') : $t('public.no') }}
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

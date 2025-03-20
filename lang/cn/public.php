@@ -653,4 +653,10 @@ return [
     "flight_details_for" => "航班详情",
     "flight" => "航班",
     "santong_training" => "三同内训会",
+    "ticket_type" => "门票类型",
+    "old_membership_program" => "旧会员计划",
+    "new_membership_program" => "新会员计划",
+    "referral_program" => "推荐人计划",
+    "gold_squad_program" => "黄金战队计划",
+    "ticket_gift_pack" => "门票礼包",
 ];

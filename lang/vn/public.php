@@ -653,4 +653,10 @@ return [
     "flight_details_for" => "Chi tiết chuyến bay cho",
     "flight" => "Chuyến bay",
     "santong_training" => "Đào tạo nội bộ của San Tong",
+    "ticket_type" => "Loại vé",
+    "old_membership_program" => "Chương trình thành viên cũ",
+    "new_membership_program" => "Chương trình thành viên mới",
+    "referral_program" => "Chương trình giới thiệu",
+    "gold_squad_program" => "Chương trình Gold Squad",
+    "ticket_gift_pack" => "Gói quà tặng vé",
 ];

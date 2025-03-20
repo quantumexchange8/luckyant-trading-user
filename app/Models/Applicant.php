@@ -21,6 +21,7 @@ class Applicant extends Model
         'email',
         'phone_number',
         'identity_number',
+        'ticket_type',
         'requires_transport',
         'requires_accommodation',
         'requires_ib_training',

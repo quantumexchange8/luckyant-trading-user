@@ -653,4 +653,10 @@ return [
     "flight_details_for" => "フライトの詳細",
     "flight" => "フライト",
     "santong_training" => "Santong 社内トレーニング",
+    "ticket_type" => "チケットタイプ",
+    "old_membership_program" => "旧メンバーシッププログラム",
+    "new_membership_program" => "新メンバーシッププログラム",
+    "referral_program" => "紹介プログラム",
+    "gold_squad_program" => "ゴールド スクワッド プログラム",
+    "ticket_gift_pack" => "チケット ギフト パック",
 ];

@@ -653,4 +653,10 @@ return [
     "flight_details_for" => "Rincian Penerbangan Untuk",
     "flight" => "Penerbangan",
     "santong_training" => "Pelatihan Internal Santong",
+    "ticket_type" => "Jenis Tiket",
+    "old_membership_program" => "Program Keanggotaan Lama",
+    "new_membership_program" => "Program Keanggotaan Baru",
+    "referral_program" => "Program Rujukan",
+    "gold_squad_program" => "Program Gold Squad",
+    "ticket_gift_pack" => "Paket Hadiah Tiket",
 ];

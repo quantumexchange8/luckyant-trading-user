@@ -32,6 +32,14 @@ const activeStep = ref(1);
 const totalSteps = 4;
 const {locale} = useLangObserver();
 
+const ticketTypes = ref([
+    { value: 'old_membership_program', key: 'ticket_omp' },
+    { value: 'new_membership_program', key: 'ticket_nmp' },
+    { value: 'referral_program', key: 'ticket_rp' },
+    { value: 'gold_squad_program', key: 'ticket_gqp' },
+    { value: 'ticket_gift_pack', key: 'ticket_gp' }
+]);
+
 const form = useForm({
     step: 1,
     application_form_id: props.application.id,
@@ -50,6 +58,7 @@ watch(() => form.applicants_count, (newCount) => {
             country: '',
             phone_number: '',
             identity_number: '',
+            ticket_type: '',
             requires_transport: '',
             requires_accommodation: '',
             requires_ib_training: '',
@@ -74,6 +83,7 @@ watch(() => form.applicants_count, (newCount) => {
 const transportCandidates = computed(() => {
     const indices = [];
     for (let i = 1; i <= form.applicants_count; i++) {
+        form.applicant_details[i].requires_transport = form.applicant_details[i].ticket_type !== 'gold_squad_program';
         if (form.applicant_details[i]?.requires_transport) {
             indices.push(i);
         }
@@ -276,7 +286,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                         :inputId="'male_' + index"
                                                         value="male"
                                                     />
-                                                    <label :for="'male_' + index" class="dark:text-white">{{ $t('public.male') }}</label>
+                                                    <label :for="'male_' + index" class="dark:text-white text-sm">{{ $t('public.male') }}</label>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <RadioButton
@@ -284,7 +294,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                         :inputId="'female_' + index"
                                                         value="female"
                                                     />
-                                                    <label :for="'female_' + index" class="dark:text-white">{{ $t('public.female') }}</label>
+                                                    <label :for="'female_' + index" class="dark:text-white text-sm">{{ $t('public.female') }}</label>
                                                 </div>
                                             </div>
                                             <InputError :message="form.errors[`applicant_details.${index}.gender`]" />
@@ -368,7 +378,7 @@ watch(() => form.applicant_details, (newDetails) => {
 
                                         <!-- Candidate Request -->
                                         <div class="flex flex-col items-start gap-1 self-stretch">
-                                            <span class="text-sm font-semibold text-gray-950 dark:text-white w-full">{{ $t('public.please_choose')}}</span>
+                                            <span class="text-sm font-semibold text-gray-950 dark:text-white w-full">{{ $t('public.ticket_type')}}</span>
                                             <div class="flex flex-col gap-3 items-start self-stretch">
                                                 <div class="flex flex-col items-start gap-1 self-stretch">
                                                     <InputLabel
@@ -376,22 +386,14 @@ watch(() => form.applicant_details, (newDetails) => {
                                                         :value="`${$t('public.is_applicant_gold_team')}`"
                                                         :invalid="!!form.errors[`applicant_details.${index}.requires_transport`]"
                                                     />
-                                                    <div class="flex flex-wrap gap-5">
-                                                        <div class="flex items-center gap-2">
+                                                    <div class="flex flex-col gap-1">
+                                                        <div v-for="ticket in ticketTypes" :key="ticket.key" class="flex items-center gap-2">
                                                             <RadioButton
-                                                                v-model="form.applicant_details[index].requires_transport"
-                                                                :inputId="'transport_yes_' + index"
-                                                                :value="false"
+                                                                v-model="form.applicant_details[index].ticket_type"
+                                                                :inputId="`${ticket.key}_${index}`"
+                                                                :value="ticket.value"
                                                             />
-                                                            <label :for="'transport_yes_' + index" class="dark:text-white">{{ $t('public.yes') }}</label>
-                                                        </div>
-                                                        <div class="flex items-center gap-2">
-                                                            <RadioButton
-                                                                v-model="form.applicant_details[index].requires_transport"
-                                                                :inputId="'transport_no_' + index"
-                                                                :value="true"
-                                                            />
-                                                            <label :for="'transport_no_' + index" class="dark:text-white">{{ $t('public.no') }}</label>
+                                                            <label :for="`${ticket.key}_${index}`" class="dark:text-white text-sm text-sm">{{ $t(`public.${ticket.value}`) }}</label>
                                                         </div>
                                                     </div>
                                                     <InputError :message="form.errors[`applicant_details.${index}.requires_transport`]" />
@@ -410,7 +412,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                                 :inputId="'ib_training_yes_' + index"
                                                                 :value="true"
                                                             />
-                                                            <label :for="'ib_training_yes_' + index" class="dark:text-white">{{ $t('public.yes') }}</label>
+                                                            <label :for="'ib_training_yes_' + index" class="dark:text-white text-sm">{{ $t('public.yes') }}</label>
                                                         </div>
                                                         <div class="flex items-center gap-2">
                                                             <RadioButton
@@ -418,7 +420,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                                 :inputId="'ib_training_no_' + index"
                                                                 :value="false"
                                                             />
-                                                            <label :for="'ib_training_no_' + index" class="dark:text-white">{{ $t('public.no') }}</label>
+                                                            <label :for="'ib_training_no_' + index" class="dark:text-white text-sm">{{ $t('public.no') }}</label>
                                                         </div>
                                                     </div>
                                                     <InputError :message="form.errors[`applicant_details.${index}.requires_ib_training`]" />
@@ -496,7 +498,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                         :inputId="'transport_male_' + index"
                                                         value="male"
                                                     />
-                                                    <label :for="'transport_male_' + index" class="dark:text-white">{{ $t('public.male') }}</label>
+                                                    <label :for="'transport_male_' + index" class="dark:text-white text-sm">{{ $t('public.male') }}</label>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <RadioButton
@@ -504,7 +506,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                         :inputId="'transport_female_' + index"
                                                         value="female"
                                                     />
-                                                    <label :for="'transport_female_' + index" class="dark:text-white">{{ $t('public.female') }}</label>
+                                                    <label :for="'transport_female_' + index" class="dark:text-white text-sm">{{ $t('public.female') }}</label>
                                                 </div>
                                             </div>
                                             <InputError :message="form.errors[`applicant_details.${index}.transport_details.gender`]" />
@@ -806,6 +808,16 @@ watch(() => form.applicant_details, (newDetails) => {
                                                 </div>
                                                 <div class="text-gray-950 dark:text-white text-sm font-medium">
                                                     {{ form.applicant_details[index].identity_number }}
+                                                </div>
+                                            </div>
+
+                                            <!-- Ticket Type -->
+                                            <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                                                <div class="w-[140px] text-gray-500 text-xs font-medium">
+                                                    {{ $t('public.ticket_type') }}
+                                                </div>
+                                                <div class="text-gray-950 dark:text-white text-sm font-medium">
+                                                    {{ $t(`public.${form.applicant_details[index].ticket_type}`) }}
                                                 </div>
                                             </div>
                                         </div>

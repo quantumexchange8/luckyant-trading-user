@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone_number');
             $table->string('identity_number');
+            $table->string('ticket_type');
             $table->boolean('requires_transport')->default(false);
             $table->boolean('requires_accommodation')->default(false);
             $table->boolean('requires_ib_training')->default(false);

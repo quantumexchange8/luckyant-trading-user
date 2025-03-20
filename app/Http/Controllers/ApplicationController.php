@@ -158,6 +158,7 @@ class ApplicationController extends Controller
                     $rules["applicant_details.$index.country"] = ['required'];
                     $rules["applicant_details.$index.phone_number"] = ['required'];
                     $rules["applicant_details.$index.identity_number"] = ['required'];
+                    $rules["applicant_details.$index.ticket_type"] = ['required'];
                 }
 
                 // Set friendly attribute names for error messages.
@@ -169,6 +170,7 @@ class ApplicationController extends Controller
                     $customAttributeNames["applicant_details.$index.country"] = trans('public.country');
                     $customAttributeNames["applicant_details.$index.phone_number"] = trans('public.mobile_phone');
                     $customAttributeNames["applicant_details.$index.identity_number"] = trans('public.ic_passport_number');
+                    $customAttributeNames["applicant_details.$index.ticket_type"] = trans('public.ticket_type');
                 }
 
                 Validator::make($request->all(), $rules)
@@ -249,6 +251,7 @@ class ApplicationController extends Controller
                     'email' => $detail['email'],
                     'phone_number' => $detail['phone_number'],
                     'identity_number' => $detail['identity_number'],
+                    'ticket_type' => $detail['ticket_type'],
                     'requires_transport' => $detail['requires_transport'],
                     'requires_accommodation' => $detail['requires_accommodation'] ?? false,
                     'requires_ib_training' => $detail['requires_ib_training'] ?? false,

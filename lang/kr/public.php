@@ -653,4 +653,10 @@ return [
     "flight_details_for" => "항공편 세부 정보",
     "flight" => "항공편",
     "santong_training" => "Santong 내부 교육",
+    "ticket_type" => "티켓 유형",
+    "old_membership_program" => "이전 멤버십 프로그램",
+    "new_membership_program" => "새로운 멤버십 프로그램",
+    "referral_program" => "추천 프로그램",
+    "gold_squad_program" => "골드 스쿼드 프로그램",
+    "ticket_gift_pack" => "티켓 기프트 팩",
 ];

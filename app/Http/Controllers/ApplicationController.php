@@ -95,21 +95,6 @@ class ApplicationController extends Controller
 
     public function application_form($id)
     {
-        $pending_application = Applicant::where([
-            'user_id' => Auth::id(),
-            'application_form_id' => $id,
-            'status' => 'pending'
-        ])
-            ->get();
-
-        if ($pending_application->isNotEmpty()) {
-            return to_route('application')->with('toast', [
-                'title' => trans("public.warning"),
-                'message' => trans('public.toast_warning_pending_application'),
-                'type' => 'warning',
-            ]);
-        }
-
         return Inertia::render('Application/ApplyForm', [
             'application' => ApplicationForm::find($id)
         ]);
@@ -117,21 +102,6 @@ class ApplicationController extends Controller
 
     public function submitApplicationForm(Request $request)
     {
-        $pending_application = Applicant::where([
-            'user_id' => Auth::id(),
-            'application_form_id' => $request->application_form_id,
-            'status' => 'pending'
-        ])
-            ->get();
-
-        if ($pending_application->isNotEmpty()) {
-            return to_route('application')->withErrors('count', 'count')->with('toast', [
-                'title' => trans("public.warning"),
-                'message' => trans('public.toast_warning_pending_application'),
-                'type' => 'warning',
-            ]);
-        }
-
         $form_step = $request->step;
 
         $rules = [

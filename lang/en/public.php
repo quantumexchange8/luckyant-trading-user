@@ -659,4 +659,5 @@ return [
     "referral_program" => "Referral Program",
     "gold_squad_program" => "Gold Squad Program",
     "ticket_gift_pack" => "Ticket Gift Pack",
+    "choose_via_condition" => "Please choose according to your own conditions.",
 ];

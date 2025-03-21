@@ -659,4 +659,5 @@ return [
     "referral_program" => "推荐人计划",
     "gold_squad_program" => "黄金战队计划",
     "ticket_gift_pack" => "门票礼包",
+    "choose_via_condition" => "必须依照自身达标的条件进行选择",
 ];

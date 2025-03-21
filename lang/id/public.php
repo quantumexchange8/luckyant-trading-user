@@ -659,4 +659,5 @@ return [
     "referral_program" => "Program Rujukan",
     "gold_squad_program" => "Program Gold Squad",
     "ticket_gift_pack" => "Paket Hadiah Tiket",
+    "choose_via_condition" => "Anda harus memilih sesuai dengan kondisi Anda sendiri.",
 ];

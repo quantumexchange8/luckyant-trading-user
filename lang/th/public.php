@@ -658,4 +658,5 @@ return [
     "referral_program" => "โปรแกรมการแนะนำผลิตภัณฑ์",
     "gold_squad_program" => "โปรแกรมทีมโกลด์",
     "ticket_gift_pack" => "ชุดของขวัญตั๋ว",
+    "choose_via_condition" => "คุณต้องเลือกตามเงื่อนไขของคุณเอง",
 ];

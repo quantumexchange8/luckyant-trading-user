@@ -383,7 +383,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                 <div class="flex flex-col items-start gap-1 self-stretch">
                                                     <InputLabel
                                                         :for="'applicant_requires_transport_' + index"
-                                                        :value="`${$t('public.is_applicant_gold_team')}`"
+                                                        :value="`${$t('public.choose_via_condition')}`"
                                                         :invalid="!!form.errors[`applicant_details.${index}.requires_transport`]"
                                                     />
                                                     <div class="flex flex-col gap-1">

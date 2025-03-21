@@ -659,4 +659,5 @@ return [
     "referral_program" => "추천 프로그램",
     "gold_squad_program" => "골드 스쿼드 프로그램",
     "ticket_gift_pack" => "티켓 기프트 팩",
+    "choose_via_condition" => "본인의 조건에 따라 선택하셔야 합니다.",
 ];

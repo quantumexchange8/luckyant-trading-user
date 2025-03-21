@@ -659,4 +659,5 @@ return [
     "referral_program" => "紹介プログラム",
     "gold_squad_program" => "ゴールド スクワッド プログラム",
     "ticket_gift_pack" => "チケット ギフト パック",
+    "choose_via_condition" => "独自の条件に従って選択する必要があります。",
 ];

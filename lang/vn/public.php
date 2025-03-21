@@ -659,4 +659,5 @@ return [
     "referral_program" => "Chương trình giới thiệu",
     "gold_squad_program" => "Chương trình Gold Squad",
     "ticket_gift_pack" => "Gói quà tặng vé",
+    "choose_via_condition" => "Bạn phải lựa chọn theo điều kiện của chính mình.",
 ];

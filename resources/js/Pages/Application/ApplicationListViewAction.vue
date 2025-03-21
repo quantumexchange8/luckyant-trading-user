@@ -65,7 +65,6 @@ const getSeverity = (status) => {
         />
 
         <Button
-            v-if="application.applicants && !application.applicants.some(app => app.status === 'pending')"
             as="a"
             :href="route('application.application_form', { id: application.id })"
             type="button"
@@ -305,7 +304,7 @@ const getSeverity = (status) => {
 
                         <div class="flex flex-col gap-1 items-start w-full">
                             <!-- Status -->
-                            <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-1 self-stretch">
                                 <div class="w-[140px] text-gray-500 text-xs font-medium">
                                     {{ $t('public.status') }}
                                 </div>

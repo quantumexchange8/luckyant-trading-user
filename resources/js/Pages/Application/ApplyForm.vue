@@ -384,7 +384,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                     <InputLabel
                                                         :for="'applicant_requires_transport_' + index"
                                                         :value="`${$t('public.choose_via_condition')}`"
-                                                        :invalid="!!form.errors[`applicant_details.${index}.requires_transport`]"
+                                                        :invalid="!!form.errors[`applicant_details.${index}.ticket_type`]"
                                                     />
                                                     <div class="flex flex-col gap-1">
                                                         <div v-for="ticket in ticketTypes" :key="ticket.key" class="flex items-center gap-2">
@@ -396,7 +396,7 @@ watch(() => form.applicant_details, (newDetails) => {
                                                             <label :for="`${ticket.key}_${index}`" class="dark:text-white text-sm">{{ $t(`public.${ticket.value}`) }}</label>
                                                         </div>
                                                     </div>
-                                                    <InputError :message="form.errors[`applicant_details.${index}.requires_transport`]" />
+                                                    <InputError :message="form.errors[`applicant_details.${index}.ticket_type`]" />
                                                 </div>
                                             </div>
                                         </div>

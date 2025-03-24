@@ -926,50 +926,55 @@ class WalletController extends Controller
         ];
 
         $transaction = Transaction::query()
-            ->where('transaction_number', $result['transaction_number'])
+            ->where([
+                'transaction_number' => $result['transaction_number'],
+                'status' => 'Processing'
+            ])
             ->first();
 
         $selectedPayout = PaymentGateway::find($transaction->payment_gateway_id);
 
-        $dataToHash = md5($transaction->transaction_number . $selectedPayout->payment_app_name . $selectedPayout->secondary_key);
-        $status = $result['status'] == 'success' ? 'Success' : 'Rejected';
+        if ($transaction) {
+            $dataToHash = md5($transaction->transaction_number . $selectedPayout->payment_app_name . $selectedPayout->secondary_key);
+            $status = $result['status'] == 'success' ? 'Success' : 'Rejected';
 
-        if ($result['token'] === $dataToHash) {
-            $transaction->update([
-                'to_wallet_address' => $result['to_wallet_address'],
-                'txn_hash' => $result['txn_hash'],
-                'transaction_charges' => 0,
-                'status' => $status,
-                'remarks' => $result['remarks'],
-                'approved_at' => now()
-            ]);
-
-            if ($result['transfer_amount_type'] == 'invalid') {
+            if ($result['token'] === $dataToHash) {
                 $transaction->update([
-                    'transaction_amount' => $result['amount'],
-                    'status' => 'Processing',
-                ]);
-            } else {
-                $transaction->update([
-                    'amount' => $result['amount'],
-                    'transaction_amount' => $result['amount'],
+                    'to_wallet_address' => $result['to_wallet_address'],
+                    'txn_hash' => $result['txn_hash'],
+                    'transaction_charges' => 0,
                     'status' => $status,
                     'remarks' => $result['remarks'],
-                    'approved_at' => now()
+                    'approval_at' => now()
                 ]);
-            }
 
-            if ($transaction->status == 'Success') {
-                if ($transaction->transaction_type == 'Deposit') {
-                    $wallet = Wallet::find($transaction->to_wallet_id);
-                    $wallet->balance += $result['amount'];
-                    $wallet->save();
-
+                if ($result['transfer_amount_type'] == 'invalid') {
                     $transaction->update([
-                        'new_wallet_amount' => $wallet->balance
+                        'transaction_amount' => $result['amount'],
+                        'status' => 'Processing',
                     ]);
+                } else {
+                    $transaction->update([
+                        'amount' => $result['amount'],
+                        'transaction_amount' => $result['amount'],
+                        'status' => $status,
+                        'remarks' => $result['remarks'],
+                        'approval_at' => now()
+                    ]);
+                }
 
-                    Notification::route('mail', $transaction->user->email)->notify(new DepositConfirmationNotification($transaction));
+                if ($transaction->status == 'Success') {
+                    if ($transaction->transaction_type == 'Deposit') {
+                        $wallet = Wallet::find($transaction->to_wallet_id);
+                        $wallet->balance += $result['amount'];
+                        $wallet->save();
+
+                        $transaction->update([
+                            'new_wallet_amount' => $wallet->balance
+                        ]);
+
+                        Notification::route('mail', $transaction->user->email)->notify(new DepositConfirmationNotification($transaction));
+                    }
                 }
             }
         }

@@ -53,7 +53,7 @@ class AlphaFundService
             'status' => 'Success',
             'transaction_type' => 'BalanceIn',
         ])
-            ->whereHas('to_meta_login', function ($query) use ($user) {
+            ->whereHas('to_account', function ($query) use ($user) {
                 $query->where([
                     'user_id' => $user->id,
                 ])->whereHas('accountType', function ($q) {

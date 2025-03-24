@@ -32,8 +32,8 @@ class TransactionController extends Controller
         $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
 
         $query = Transaction::with([
-            'from_meta_login:id,meta_login',
-            'to_meta_login:id,meta_login',
+            'from_account:id,meta_login',
+            'to_account:id,meta_login',
             'from_wallet',
             'to_wallet'
         ])
@@ -44,9 +44,9 @@ class TransactionController extends Controller
         if ($request->filled('search')) {
             $search = '%' . $request->input('search') . '%';
             $query->where(function ($query) use ($search) {
-                $query->whereHas('from_meta_login', function ($subQuery) use ($search) {
+                $query->whereHas('from_account', function ($subQuery) use ($search) {
                     $subQuery->where('meta_login', 'like', $search);
-                })->orWhereHas('to_meta_login', function ($subQuery) use ($search) {
+                })->orWhereHas('to_account', function ($subQuery) use ($search) {
                     $subQuery->where('meta_login', 'like', $search);
                 });
             });

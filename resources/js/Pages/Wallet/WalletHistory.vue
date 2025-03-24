@@ -110,12 +110,12 @@ const columns = [
         cell: info => trans('public.' + info.getValue().replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, ''))
     },
     {
-        accessorFn: row => row.from_wallet?.type || row.from_meta_login?.meta_login,
+        accessorFn: row => row.from_wallet?.type || row.from_account?.meta_login,
         header: 'from',
         enableSorting: false,
         cell: info => {
             const fromWallet = info.row.original.from_wallet;
-            const fromMetaLogin = info.row.original.from_meta_login;
+            const fromMetaLogin = info.row.original.from_account;
             const isTransfer = info.row.original.transaction_type === 'Transfer';
             const isPerformanceIncentive = info.row.original.transaction_type === 'PerformanceIncentive';
 
@@ -130,13 +130,13 @@ const columns = [
         }
     },
     {
-        accessorFn: row => row.to_wallet?.type || row.to_meta_login?.meta_login,
+        accessorFn: row => row.to_wallet?.type || row.to_account?.meta_login,
         header: 'to',
         enableSorting: false,
         cell: info => {
             const isTransfer = info.row.original.transaction_type === 'Transfer';
             const toWallet = info.row.original.to_wallet;
-            const toMetaLogin = info.row.original.to_meta_login;
+            const toMetaLogin = info.row.original.to_account;
             const isWalletWithdrawal = info.row.original.category === 'wallet' && info.row.original.transaction_type === 'Withdrawal';
 
             if (isWalletWithdrawal) {

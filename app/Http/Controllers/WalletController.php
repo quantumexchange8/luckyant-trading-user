@@ -80,8 +80,8 @@ class WalletController extends Controller
             'user:id,name,email',
             'from_wallet:id,name,type,balance,wallet_address',
             'to_wallet:id,name,type,balance,wallet_address',
-            'from_meta_login:id,meta_login',
-            'to_meta_login:id,meta_login',
+            'from_account:id,meta_login',
+            'to_account:id,meta_login',
         ])
         ->where('to_wallet_id', $wallet_id)
         ->orWhere('from_wallet_id', $wallet_id);
@@ -143,8 +143,8 @@ class WalletController extends Controller
             'user:id,name,email',
             'from_wallet:id,name,type,balance,wallet_address',
             'to_wallet:id,name,type,balance,wallet_address',
-            'from_meta_login:id,meta_login',
-            'to_meta_login:id,meta_login',
+            'from_account:id,meta_login',
+            'to_account:id,meta_login',
         ]);
 
         if ($request->filled('search')) {
@@ -800,8 +800,8 @@ class WalletController extends Controller
         $walletHistoriesQuery = Transaction::with([
             'from_wallet.user',
             'to_wallet.user',
-            'from_meta_login',
-            'to_meta_login',
+            'from_account',
+            'to_account',
             'payment_account'
         ])
             ->where(function ($query) use ($walletIds) {

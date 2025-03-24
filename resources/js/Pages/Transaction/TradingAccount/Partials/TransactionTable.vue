@@ -174,13 +174,13 @@ const statusVariant = (transactionStatus) => {
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.to_wallet') }}</span>
             <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.to_wallet.wallet_address }}</span>
         </div>
-        <div v-if="transactionDetails.from_meta_login != null" class="grid grid-cols-3 items-center gap-2">
+        <div v-if="transactionDetails.from_account != null" class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.from_account') }}</span>
-            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.from_meta_login.meta_login }}</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.from_account.meta_login }}</span>
         </div>
-        <div v-if="transactionDetails.to_meta_login != null" class="grid grid-cols-3 items-center gap-2">
+        <div v-if="transactionDetails.to_account != null" class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.to_account') }}</span>
-            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.to_meta_login.meta_login }}</span>
+            <span class="col-span-2 text-black dark:text-white py-2">{{ transactionDetails.to_account.meta_login }}</span>
         </div>
         <div class="grid grid-cols-3 items-center gap-2">
             <span class="col-span-1 text-sm font-semibold dark:text-gray-400">{{ $t('public.ticket_number') }}</span>

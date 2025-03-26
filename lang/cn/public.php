@@ -642,7 +642,7 @@ return [
     "departure_address" => "出发城市",
     "return_address" => "返回城市",
     "yes" => "是",
-    "name_on_ic_passport" => "身份证/护照上的姓名",
+    "name_on_ic_passport" => "全名（如身份证上所示）",
     "toast_warning_pending_application" => "您有待批准的申请。",
     "toast_success_submit_application" => "您已成功提交申请。",
     "please_choose" => "请选择",

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\PammController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MasterController;
@@ -57,4 +58,9 @@ Route::prefix('pamm')->group(function () {
     Route::post('withdrawStrategyProfit', [PammController::class, 'withdrawStrategyProfit']);
     Route::post('withdraw_balance', [PammController::class, 'withdrawBalance']);
     Route::post('terminate_investment_strategy', [PammController::class, 'terminate_investment_strategy']);
+});
+
+// New Routes with Token
+Route::middleware('api.token')->group(function () {
+    Route::post('sync_user_account', [UserController::class, 'sync_user_account']);
 });

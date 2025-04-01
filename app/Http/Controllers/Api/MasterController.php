@@ -6,6 +6,7 @@ use App\Models\Master;
 use App\Models\TradingUser;
 use App\Models\Transaction;
 use App\Models\TradeHistory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\TradingAccount;
 use Illuminate\Support\Carbon;
@@ -104,15 +105,15 @@ class MasterController extends Controller
             //     // Convert "time" to date
             //     $deal['time'] = date('Y-m-d H:i:s', $deal['time']);
             // }
-            
+
             // // Filter deal histories with profit less than 0
             // $filteredDealHistories = array_filter($dealHistories, function($deal) {
             //     return $deal['action'] === 2 && $deal['profit'] < 0;
             // });
-            
+
             // // Display filtered deal histories
             // dd($filteredDealHistories);
-            
+
             // Initialize $earliestDate as empty
             $earliestDate = '';
 
@@ -234,7 +235,7 @@ class MasterController extends Controller
                 $trade->time_close = date('Y-m-d', strtotime($trade->time_close));
                 return $trade;
             });
-            
+
             $initialInvestment = $initialCapital;
 
             // Calculate trade profit percentage for each trade
@@ -301,7 +302,7 @@ class MasterController extends Controller
 
             return $metaAccount;
         });
-    
+
         // $metaAccount = $metaService->getMetaUser($master->meta_login);
 
         return response()->json([
@@ -314,7 +315,7 @@ class MasterController extends Controller
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
-    
+
         if ($connection != 0) {
             return response()->json([
                 'status' => 'failed',
@@ -322,7 +323,7 @@ class MasterController extends Controller
                 'warning' => trans('public.try_again_later'),
             ]);
         }
-    
+
         // Get the earliest and latest dates for the meta_login
         $earliestDate = TradeHistory::where('meta_login', $request->meta_login)
             ->where('trade_status', 'Closed')
@@ -431,7 +432,7 @@ class MasterController extends Controller
             $initialInvestment += $trade->trade_profit;
 
         }
-        
+
         $tradeProfitPct = [];
 
         // Iterate over the interval dates to calculate cumulative trade profit percentages
@@ -445,7 +446,7 @@ class MasterController extends Controller
             // Add the sum to the array
             $tradeProfitPct[] = round($profitUntilDate, 2);
         }
-                            
+
         // Return the response with the interval dates and cumulative trade profit percentages
         return response()->json([
             'status' => 'success',
@@ -453,9 +454,9 @@ class MasterController extends Controller
             'trade_profit_pct' => $tradeProfitPct,
         ]);
     }
-        
+
     public function getMasterLatestTrades(Request $request)
-    {    
+    {
         // Retrieve the latest 5 distinct created_at dates
         $distinctDates = TradeHistory::selectRaw('DATE(created_at) as date')
             ->where('meta_login', $request->meta_login)
@@ -464,12 +465,12 @@ class MasterController extends Controller
             ->orderByRaw('MAX(created_at) DESC') // Order by the maximum created_at value for each date
             ->limit(5)
             ->pluck('date');
-                    
+
         // Initialize arrays to store results
         $dateArray = [];
         $longTrades = [];
         $shortTrades = [];
-        
+
         // Loop through distinct dates
         foreach ($distinctDates as $date) {
             // Retrieve the count of long (BUY) winning trades for this date
@@ -478,20 +479,20 @@ class MasterController extends Controller
                 ->where('trade_status', 'Closed')
                 ->whereDate('created_at', $date)
                 ->count();
-    
+
             // Retrieve the count of short (SELL) winning trades for this date
             $shortCount = TradeHistory::where('meta_login', $request->meta_login)
                 ->where('trade_type', 'SELL')
                 ->where('trade_status', 'Closed')
                 ->whereDate('created_at', $date)
                 ->count();
-    
+
             // Store the counts for this date
             $dateArray[] = $date;
             $longTrades[] = $longCount;
             $shortTrades[] = $shortCount;
         }
-    
+
             // Reverse the arrays
             $dateArray = array_reverse($dateArray);
             $longTrades = array_reverse($longTrades);
@@ -503,7 +504,7 @@ class MasterController extends Controller
             'shortTrades' => $shortTrades,
         ]);
     }
-    
+
     public function getMasterCurrency(Request $request)
     {
         // Retrieve all distinct symbols
@@ -512,15 +513,15 @@ class MasterController extends Controller
             ->where('trade_status', 'Closed')
             ->distinct()
             ->pluck('symbol');
-    
+
         // Get the total count of all symbols
         $totalCount = TradeHistory::where('meta_login', $request->meta_login)
             ->where('trade_status', 'Closed')
             ->count();
-    
+
         // Initialize an array to store the formatted data
         $currency = [];
-    
+
         // Loop through distinct symbols
         foreach ($distinctSymbols as $symbol) {
             // Retrieve the count of trades for this symbol
@@ -528,27 +529,27 @@ class MasterController extends Controller
                 ->where('symbol', $symbol)
                 ->where('trade_status', 'Closed')
                 ->count();
-    
+
             // Calculate the percentage of trades for this symbol
             $percentage = ($symbolCount / $totalCount) * 100;
-    
+
             // Format the data for this symbol
             $currency[] = [
                 'label' => $symbol,
                 'percentage' => round($percentage, 2) // Round to 2 decimal places
             ];
         }
-    
+
         return response()->json($currency);
     }
-        
+
     public function getMasterOpenTrade(Request $request)
     {
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
         $userTrade = $metaService->userTrade($request->meta_login);
         // $userTrade = CopyTradeHistory::where('user_type', 'master')->where('meta_login', $request->meta_login)->where('status', 'open')->whereDate('time_open', '>','2024-04-15')->latest()->get();
-    
+
         if ($connection != 0) {
             return response()->json([
                 'status' => 'failed',
@@ -556,12 +557,12 @@ class MasterController extends Controller
                 'warning' => trans('public.try_again_later'),
             ]);
         }
-        
+
         // Ensure $userTrade is an array
         if (!is_array($userTrade)) {
             $userTrade = []; // Convert to empty array if null or not an array
         }
-        
+
         if (is_array($userTrade)) {
             // Format the timeCreated attribute, set the action attribute, and divide the volume in $userTrade data
             foreach ($userTrade as &$trade) {
@@ -575,10 +576,58 @@ class MasterController extends Controller
             // This could involve setting $userTrade to an empty array, logging an error, etc.
             $userTrade = []; // or handle as needed
         }
-            
+
         return response()->json([
             'status' => 'success',
             'openTrade' => $userTrade
+        ]);
+    }
+
+    // Mall Api
+    public function sync_trading_master(Request $request)
+    {
+        $data = $request->all();
+
+        if (!empty($data)) {
+            $user = User::firstWhere([
+                'username' => $data['username'],
+            ]);
+
+            $master_data = $data['master'];
+
+            $master = Master::create([
+                'user_id' => $user->id,
+                'meta_login' => $master_data['meta_login'],
+                'category' => 'pamm',
+                'type' => $master_data['type'] ?? 'CopyTrade',
+                'min_join_equity' => $master_data['min_investment'],
+                'sharing_profit' => $master_data['sharing_profit'],
+                'market_profit' => $master_data['market_profit'],
+                'company_profit' => $master_data['sa_profit'],
+                'subscription_fee' => $master_data['subscription_fee'] ?? 0,
+                'signal_status' => 1,
+                'estimated_monthly_returns' => $master_data['estimated_monthly_returns'],
+                'estimated_lot_size' => $master_data['estimated_lot_size'],
+                'join_period' => $master_data['join_period'],
+                'roi_period' => $master_data['settlement_period'],
+                'total_subscribers' => 0,
+                'total_fund' => 0,
+                'is_public' => 0,
+                'can_top_up' => 0,
+                'can_revoke' => 0,
+                'status' => 'Inactive',
+            ]);
+
+            $master->delete();
+
+            return response()->json([
+                'success' => true,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'No data found'
         ]);
     }
 }

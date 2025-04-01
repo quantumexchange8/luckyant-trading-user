@@ -39,6 +39,10 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.store');
+
+    // Sign up via username
+    Route::get('authorize_user_account', [AuthenticatedSessionController::class, 'authorize_user_account']);
+    Route::post('authorize-account', [AuthenticatedSessionController::class, 'authorize_account'])->name('authorize_account');
 });
 
 Route::middleware('auth')->group(function () {

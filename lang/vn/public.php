@@ -660,4 +660,8 @@ return [
     "gold_squad_program" => "Chương trình Gold Squad",
     "ticket_gift_pack" => "Gói quà tặng vé",
     "choose_via_condition" => "Bạn phải lựa chọn theo điều kiện của chính mình.",
+    "authorize_account" => "Ủy quyền tài khoản",
+    "proceed" => "Tiếp tục",
+    "authorize_account_caption" => "Ủy quyền tài khoản của bạn",
+    "authorize_account_message" => "Bạn chỉ còn một bước nữa là có thể đăng nhập vào Luckyant Mall. Hãy bắt đầu nào!",
 ];

@@ -660,4 +660,8 @@ return [
     "gold_squad_program" => "Gold Squad Program",
     "ticket_gift_pack" => "Ticket Gift Pack",
     "choose_via_condition" => "Please choose according to your own conditions.",
+    "authorize_account" => "Authorize Account",
+    "proceed" => "Proceed",
+    "authorize_account_caption" => "Authorize Your Account",
+    "authorize_account_message" => "You’re one step away from signing in to Luckyant Mall. Let’s get started!",
 ];

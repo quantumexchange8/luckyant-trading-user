@@ -659,4 +659,8 @@ return [
     "gold_squad_program" => "โปรแกรมทีมโกลด์",
     "ticket_gift_pack" => "ชุดของขวัญตั๋ว",
     "choose_via_condition" => "คุณต้องเลือกตามเงื่อนไขของคุณเอง",
+    "authorize_account" => "อนุญาตบัญชี",
+    "ดำเนินการต่อ" => "ดำเนินการต่อ",
+    "authorize_account_caption" => "อนุญาตบัญชีของคุณ",
+    "authorize_account_message" => "คุณเหลืออีกเพียงหนึ่งขั้นตอนในการลงชื่อเข้าใช้ Luckyant Mall เริ่มกันเลย!"
 ];

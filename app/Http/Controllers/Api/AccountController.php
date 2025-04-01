@@ -7,6 +7,8 @@ use App\Models\TradingAccount;
 use App\Models\TradingUser;
 use App\Models\User;
 use App\Notifications\AddTradingAccountNotification;
+use App\Services\Data\CreateTradingAccount;
+use App\Services\Data\CreateTradingUser;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use Illuminate\Http\Request;
@@ -112,6 +114,31 @@ class AccountController extends Controller
         return response()->json([
             'status' => 'success',
             'deal' => $deal,
+        ]);
+    }
+
+    // New API
+    public function sync_trading_account(Request $request)
+    {
+        $data = $request->all();
+
+        if (!empty($data)) {
+            $user = User::firstWhere([
+                'username' => $data['username'],
+            ]);
+
+            $meta_account = $data['meta_account'];
+            (new CreateTradingAccount)->execute($user, $meta_account, 'JS');
+            (new CreateTradingUser)->execute($user, $meta_account, 'JS');
+
+            return response()->json([
+                'success' => true,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'No data found'
         ]);
     }
 }

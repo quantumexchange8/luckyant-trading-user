@@ -660,4 +660,8 @@ return [
     "gold_squad_program" => "ゴールド スクワッド プログラム",
     "ticket_gift_pack" => "チケット ギフト パック",
     "choose_via_condition" => "独自の条件に従って選択する必要があります。",
+    "authorize_account" => "アカウントを承認",
+    "proceed" => "続行",
+    "authorize_account_caption" => "アカウントを承認",
+    "authorize_account_message" => "あと一歩でLuckyant Mallにサインインできます。さあ始めましょう！",
 ];

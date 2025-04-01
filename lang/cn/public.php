@@ -660,4 +660,8 @@ return [
     "gold_squad_program" => "黄金战队计划",
     "ticket_gift_pack" => "门票礼包",
     "choose_via_condition" => "必须依照自身达标的条件进行选择",
+    "authorize_account" => "授权账户",
+    "proceed" => "继续",
+    "authorize_account_caption" => "授权您的账户",
+    "authorize_account_message" => "您即将登录 Luckyant Mall。输入密码继续！",
 ];

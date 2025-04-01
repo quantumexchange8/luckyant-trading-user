@@ -660,4 +660,8 @@ return [
     "gold_squad_program" => "Program Gold Squad",
     "ticket_gift_pack" => "Paket Hadiah Tiket",
     "choose_via_condition" => "Anda harus memilih sesuai dengan kondisi Anda sendiri.",
+    "authorize_account" => "Otorisasi Akun",
+    "proceed" => "Lanjutkan",
+    "authorize_account_caption" => "Otorisasi Akun Anda",
+    "authorize_account_message" => "Anda tinggal selangkah lagi untuk masuk ke Luckyant Mall. Mari kita mulai!",
 ];

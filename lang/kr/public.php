@@ -660,4 +660,8 @@ return [
     "gold_squad_program" => "골드 스쿼드 프로그램",
     "ticket_gift_pack" => "티켓 기프트 팩",
     "choose_via_condition" => "본인의 조건에 따라 선택하셔야 합니다.",
+    "authorize_account" => "계정 승인",
+    "proceed" => "진행",
+    "authorize_account_caption" => "계정 승인",
+    "authorize_account_message" => "Luckyant Mall에 로그인하기까지 한 단계 남았습니다. 시작해 볼까요!",
 ];

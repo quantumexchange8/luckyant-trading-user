@@ -62,5 +62,33 @@ Route::prefix('pamm')->group(function () {
 
 // New Routes with Token
 Route::middleware('api.token')->group(function () {
+    /**
+     * ==============================
+     *             User
+     * ==============================
+     */
+    Route::post('authorize_user_account', [UserController::class, 'authorize_user_account']);
     Route::post('sync_user_account', [UserController::class, 'sync_user_account']);
+
+    /**
+     * ==============================
+     *        Trading Account
+     * ==============================
+     */
+    Route::post('sync_trading_account', [AccountController::class, 'sync_trading_account']);
+
+    /**
+     * ==============================
+     *            Master
+     * ==============================
+     */
+    Route::post('sync_trading_master', [MasterController::class, 'sync_trading_master']);
+
+    /**
+     * ==============================
+     *            PAMM
+     * ==============================
+     */
+    Route::post('sync_trading_subscription', [PammController::class,
+        'sync_trading_subscription']);
 });

@@ -9,6 +9,7 @@ use App\Models\Subscription;
 use App\Models\TradePammInvestorAllocate;
 use App\Models\TradingAccount;
 use App\Models\TradingUser;
+use App\Models\User;
 use App\Services\dealAction;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
@@ -491,6 +492,55 @@ class PammController extends Controller
         return response()->json([
             'status' => 'success',
             'pamm_subscription' => $subscription_batch,
+        ]);
+    }
+
+    // New Api
+    public function sync_trading_subscription(Request $request)
+    {
+        $data = $request->all();
+
+        if (!empty($data)) {
+            $user = User::firstWhere([
+                'username' => $data['username'],
+            ]);
+
+            $subscription_data = $data['subscription'];
+            $masterAccount = Master::withTrashed()
+                ->where('meta_login', $subscription_data['master_meta_login'])
+                ->first();
+
+            $pamm_subscription = PammSubscription::create([
+                'user_id' => $user->id,
+                'meta_login' => $subscription_data['meta_login'],
+                'master_id' => $masterAccount->id,
+                'master_meta_login' => $masterAccount->meta_login,
+                'subscription_amount' => $subscription_data['subscription_amount'],
+                'type' => $masterAccount->type,
+                'subscription_number' => RunningNumberService::getID('subscription'),
+                'subscription_period' => $masterAccount->join_period,
+                'settlement_period' => $masterAccount->roi_period,
+                'settlement_date' => $subscription_data['settlement_at'],
+                'expired_date' => $subscription_data['expired_at'],
+                'approval_date' => now(),
+                'max_out_amount' => $masterAccount->max_out_amount,
+                'status' => 'Active',
+                'remarks' => 'China PAMM',
+            ]);
+
+            $subscription_number = $pamm_subscription->subscription_number;
+
+            $pamm_subscription->delete();
+
+            return response()->json([
+                'success' => true,
+                'subscription_number' => $subscription_number,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'No data found'
         ]);
     }
 }

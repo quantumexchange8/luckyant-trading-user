@@ -280,7 +280,7 @@ const filterTreeMedia = (media) => {
                         {{ $t('public.agreement') }}
                         <TermsAndCondition
                             :termsLabel="$t('public.terms_and_conditions')"
-                            :terms="terms"
+                            :terms="master.master_term"
                             :managementFee="master.master_management_fee"
                         />
                     </label>

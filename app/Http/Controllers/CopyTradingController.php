@@ -81,7 +81,8 @@ class CopyTradingController extends Controller
             ->with([
                 'tradingUser:id,meta_login,name,company,account_type',
                 'media',
-                'masterManagementFee'
+                'masterManagementFee',
+                'master_term'
             ])
             ->withCount([
                 'active_copy_trades',
@@ -470,6 +471,7 @@ class CopyTradingController extends Controller
                 'master:id,meta_login,category,type,estimated_monthly_returns,sharing_profit,max_drawdown',
                 'master.masterManagementFee',
                 'master.tradingUser:id,meta_login,name,company,account_type',
+                'master.master_term',
                 'subscription'
             ])
             ->where('user_id', $user->id)
@@ -529,7 +531,8 @@ class CopyTradingController extends Controller
         $query = SubscriptionBatch::with([
             'master',
             'master.tradingUser',
-            'master.masterManagementFee'
+            'master.masterManagementFee',
+            'master.master_term'
         ])
             ->where('user_id', Auth::id())
             ->where('meta_login', $request->meta_login);

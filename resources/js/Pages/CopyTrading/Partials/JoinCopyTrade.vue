@@ -20,7 +20,6 @@ const props = defineProps({
 const visible = ref(false);
 const accountLoading = ref(false);
 const accounts = ref([]);
-const terms = ref();
 const selectedAccount = ref(null);
 const {formatAmount} = transactionFormat();
 const {locale} = useLangObserver();
@@ -29,7 +28,6 @@ const openDialog = () => {
     visible.value = true;
     selectedAccount.value = null;
     getAvailableAccounts();
-    getTerms();
 }
 
 const getAvailableAccounts = async () => {
@@ -37,19 +35,6 @@ const getAvailableAccounts = async () => {
     try {
         const response = await axios.get(`/${props.strategy}_strategy/getAvailableAccounts?master_login=${props.master.meta_login}&account_type=${props.master.trading_user.account_type}`);
         accounts.value = response.data;
-
-    } catch (error) {
-        console.error('Error fetching trading accounts data:', error);
-    } finally {
-        accountLoading.value = false;
-    }
-};
-
-const getTerms = async () => {
-    accountLoading.value = true;
-    try {
-        const response = await axios.get(`/${props.strategy}_strategy/getTerms`);
-        terms.value = response.data;
 
     } catch (error) {
         console.error('Error fetching trading accounts data:', error);
@@ -210,11 +195,11 @@ const closeDialog = () => {
                         binary
                         :invalid="!!form.errors.terms"
                     />
-                    <label for="terms" class="flex text-gray-600 dark:text-gray-400 text-xs">
+                    <label for="terms" class="text-gray-600 dark:text-gray-400 text-xs">
                         {{ $t('public.agreement') }}
                         <TermsAndCondition
                             :termsLabel="$t('public.terms_and_conditions')"
-                            :terms="terms"
+                            :terms="master.master_term"
                             :managementFee="master.master_management_fee"
                         />
                     </label>

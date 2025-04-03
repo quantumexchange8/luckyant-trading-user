@@ -17,25 +17,12 @@ const props = defineProps({
 
 const {locale} = useLangObserver();
 const {formatAmount} = transactionFormat();
-const terms = ref();
 const emit = defineEmits(['update:visible']);
 
 const form = useForm({
     subscription_id: props.subscription.id,
     terms: false,
 })
-
-const getTerms = async () => {
-    try {
-        const response = await axios.get(`/${props.strategyType}_strategy/getTerms`);
-        terms.value = response.data;
-
-    } catch (error) {
-        console.error('Error fetching trading accounts data:', error);
-    }
-};
-
-getTerms();
 
 const submitForm = () => {
     form.post(route('trading.terminateSubscription'), {
@@ -168,7 +155,7 @@ const calculateManagementFee = (data) => {
                     {{ $t('public.agreement') }}
                     <TermsAndCondition
                         :termsLabel="$t('public.terms_and_conditions')"
-                        :terms="terms"
+                        :terms="subscriber.master.master_term"
                         :managementFee="subscriber.master.master_management_fee"
                     />
                 </label>

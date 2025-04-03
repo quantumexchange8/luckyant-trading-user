@@ -2,7 +2,6 @@
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Card from "primevue/card";
 import Button from "primevue/button";
-import dayjs from "dayjs";
 import Stepper from 'primevue/stepper';
 import StepList from 'primevue/steplist';
 import StepPanels from 'primevue/steppanels';
@@ -56,7 +55,7 @@ watch(() => form.applicants_count, (newCount) => {
             email: '',
             gender: '',
             country: '',
-            phone_number: '',
+            phone_number: null,
             identity_number: '',
             ticket_type: '',
             requires_transport: '',
@@ -71,7 +70,7 @@ watch(() => form.applicants_count, (newCount) => {
                     month: null,
                     day: null,
                 },
-                phone_number: '',
+                phone_number: null,
                 identity_number: '',
                 departure_address: '',
                 return_address: '',
@@ -347,13 +346,14 @@ watch(() => form.applicant_details, (newDetails) => {
                                                 :value="`${$t('public.mobile_phone')}`"
                                                 :invalid="!!form.errors[`applicant_details.${index}.phone_number`]"
                                             />
-                                            <InputText
+                                            <InputNumber
                                                 :id="'candidate_phone_number_' + index"
-                                                type="text"
-                                                class="block w-full"
+                                                :min="0"
                                                 v-model="form.applicant_details[index].phone_number"
+                                                :useGrouping="false"
                                                 :placeholder="`${$t('public.mobile_phone')} #${index}`"
                                                 :invalid="!!form.errors[`applicant_details.${index}.phone_number`]"
+                                                fluid
                                             />
                                             <InputError :message="form.errors[`applicant_details.${index}.phone_number`]" />
                                         </div>
@@ -581,13 +581,14 @@ watch(() => form.applicant_details, (newDetails) => {
                                                 :value="$t('public.mobile_phone')"
                                                 :invalid="!!form.errors[`applicant_details.${index}.transport_details.phone_number`]"
                                             />
-                                            <InputText
+                                            <InputNumber
                                                 :id="'transport_phone_' + index"
-                                                type="text"
-                                                class="block w-full"
+                                                :min="0"
                                                 v-model="form.applicant_details[index].transport_details.phone_number"
                                                 :placeholder="$t('public.mobile_phone')"
                                                 :invalid="!!form.errors[`applicant_details.${index}.transport_details.phone_number`]"
+                                                :useGrouping="false"
+                                                fluid
                                             />
                                             <InputError :message="form.errors[`applicant_details.${index}.transport_details.phone_number`]" />
                                         </div>

@@ -149,7 +149,8 @@ class PammController extends Controller
             ->with([
                 'tradingUser:id,meta_login,name,account_type',
                 'media',
-                'masterManagementFee'
+                'masterManagementFee',
+                'master_term'
             ])
             ->withCount([
                 'active_copy_trades',
@@ -406,6 +407,7 @@ class PammController extends Controller
             'master.user',
             'master.tradingUser',
             'master.masterManagementFee',
+            'master.master_term',
             'tradingUser:id,name,meta_login',
             'package'
         ])
@@ -594,7 +596,8 @@ class PammController extends Controller
         $query = PammSubscription::with([
             'master',
             'master.tradingUser',
-            'master.masterManagementFee'
+            'master.masterManagementFee',
+            'master.master_term'
         ])
             ->where('user_id', Auth::id())
             ->where('meta_login', $request->meta_login);

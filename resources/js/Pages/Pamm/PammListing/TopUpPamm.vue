@@ -27,7 +27,6 @@ const cashWalletAmount = ref(null);
 const maxEWalletAmount = ref(null);
 const minEWalletAmount = ref(null);
 const selectedWallet = ref(props.walletSel[0]);
-const terms = ref();
 const emit = defineEmits(['update:visible']);
 
 const form = useForm({
@@ -40,18 +39,6 @@ const form = useForm({
     minEWalletAmount: 0,
     terms: ''
 })
-
-const getTerms = async () => {
-    try {
-        const response = await axios.get(`/${props.strategyType}_strategy/getTerms?type=pamm_esg`);
-        terms.value = response.data;
-
-    } catch (error) {
-        console.error('Error fetching trading accounts data:', error);
-    }
-};
-
-getTerms();
 
 watch(selectedWallet, (newWallet) => {
     top_up_amount.value = null
@@ -266,7 +253,7 @@ const closeDialog = () => {
                         {{ $t('public.agreement') }}
                         <TermsAndCondition
                             :termsLabel="$t('public.terms_and_conditions')"
-                            :terms="terms"
+                            :terms="subscriber.master.master_term"
                         />
                     </label>
                 </div>

@@ -17,7 +17,6 @@ const props = defineProps({
 const terminationModal = ref(false);
 const { formatAmount } = transactionFormat();
 const {locale} = useLangObserver();
-const terms = ref();
 const emit = defineEmits(['update:visible']);
 
 const closeModal = () => {
@@ -29,18 +28,6 @@ const form = useForm({
     master_meta_login: props.subscriber.master_meta_login,
     terms: false,
 })
-
-const getTerms = async () => {
-    try {
-        const response = await axios.get(`/${props.strategyType}_strategy/getTerms?type=pamm_esg`);
-        terms.value = response.data;
-
-    } catch (error) {
-        console.error('Error fetching trading accounts data:', error);
-    }
-};
-
-getTerms();
 
 const submitForm = () => {
     form.post(route('pamm.revokePamm'), {
@@ -151,7 +138,7 @@ const calculateManagementFee = (data) => {
                     {{ $t('public.agreement') }}
                     <TermsAndCondition
                         :termsLabel="$t('public.terms_and_conditions')"
-                        :terms="terms"
+                        :terms="subscriber.master.master_term"
                     />
                 </label>
             </div>

@@ -95,4 +95,9 @@ class Master extends Model implements HasMedia
         return $this->hasMany(PammSubscription::class, 'master_id', 'id')
             ->where('status', 'Active');
     }
+
+    public function master_term(): HasOne
+    {
+        return $this->hasOne(MasterTerms::class, 'master_id', 'id');
+    }
 }

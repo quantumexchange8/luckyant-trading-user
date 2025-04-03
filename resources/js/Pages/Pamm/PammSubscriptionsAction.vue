@@ -22,11 +22,9 @@ const props = defineProps({
 const visible = ref(false);
 const {locale} = useLangObserver();
 const {formatAmount} = transactionFormat();
-const terms = ref();
 
 const openDialog = () => {
     visible.value = true;
-    getTerms();
 }
 
 const getJoinedDays = (data) => {
@@ -75,16 +73,6 @@ const getSeverity = (status) => {
             return 'warning';
     }
 }
-
-const getTerms = async () => {
-    try {
-        const response = await axios.get(`/${props.strategyType}_strategy/getTerms?type=pamm_esg`);
-        terms.value = response.data;
-
-    } catch (error) {
-        console.error('Error fetching trading accounts data:', error);
-    }
-};
 
 const form = useForm({
     id: props.subscription.id,
@@ -214,7 +202,7 @@ const closeDialog = () => {
                             {{ $t('public.agreement') }}
                             <TermsAndCondition
                                 :termsLabel="$t('public.terms_and_conditions')"
-                                :terms="terms"
+                                :terms="subscription.master.master_term"
                                 :managementFee="subscription.master.master_management_fee"
                             />
                         </label>

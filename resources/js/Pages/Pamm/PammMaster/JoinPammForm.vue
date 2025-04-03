@@ -239,7 +239,7 @@ const filterTreeMedia = (media) => {
             </div>
 
             <!-- ESG Tree notice -->
-            <div class="flex flex-col items-start gap-3 self-stretch">
+            <div v-if="master.media.length > 0" class="flex flex-col items-start gap-3 self-stretch">
                 <span class="text-gray-950 dark:text-white text-sm font-bold">{{ $t('public.notice') }}</span>
                 <div v-if="master.type === 'ESG'" class="text-sm text-gray-500">
                     {{ $t('public.purchase_product_desc') }}
@@ -280,7 +280,7 @@ const filterTreeMedia = (media) => {
                         {{ $t('public.agreement') }}
                         <TermsAndCondition
                             :termsLabel="$t('public.terms_and_conditions')"
-                            :terms="terms"
+                            :terms="master.master_term"
                             :managementFee="master.master_management_fee"
                         />
                     </label>

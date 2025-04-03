@@ -67,10 +67,10 @@ onMounted(() => {
     <Dialog
         v-model:visible="visible"
         modal
-        :header="currentTerms.title"
+        :header="terms?.title ?? termsLabel"
         class="dialog-xs md:dialog-lg"
     >
-        <div class="prose dark:text-white w-full" v-html="currentTerms.contents"></div>
+        <div class="prose dark:text-white w-full" v-html="terms.term_contents"></div>
         <div
             v-if="managementFee"
         >

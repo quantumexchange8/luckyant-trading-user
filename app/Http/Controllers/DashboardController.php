@@ -10,6 +10,7 @@ use App\Models\PerformanceIncentive;
 use App\Models\SettingPaymentToLeader;
 use App\Models\Subscription;
 use App\Models\TradeHistory;
+use App\Models\WorldPoolAllocation;
 use Auth;
 use Carbon\Carbon;
 use App\Models\User;
@@ -75,6 +76,25 @@ class DashboardController extends Controller
         // Parse the JSON data in the name column to get translations
         $translations = json_decode($rank->name, true);
 
+        $world_pool_ranks = SettingRank::where('position', '>', 4)
+            ->limit(2)
+            ->get()
+            ->pluck('name')
+            ->toArray();
+
+        $allocation_amount = WorldPoolAllocation::whereDate('allocation_date', '<=', Carbon::now())
+            ->sum('allocation_amount');
+
+        $world_pool = [];
+
+        foreach ($world_pool_ranks as $index => $pool_rank) {
+            if ($index === 0) {
+                $world_pool[$pool_rank] = $allocation_amount;
+            } else {
+                $world_pool[$pool_rank] = $allocation_amount * 2;
+            }
+        }
+
         return Inertia::render('Dashboard', [
             'announcements' => $announcements,
             'eWalletSel' => (new SelectOptionService())->getInternalTransferWalletSelection(),
@@ -84,6 +104,7 @@ class DashboardController extends Controller
             'registerLink' => $registerLink,
             'rank' => $translations[$locale] ?? $rank->name,
             'total_global_trading_lot_size' => Setting::where('slug', 'total-global-trading-lot-size')->first(),
+            'world_pool' => $world_pool
         ]);
     }
 

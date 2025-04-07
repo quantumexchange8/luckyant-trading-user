@@ -64,16 +64,16 @@ const getSeverity = (status) => {
             @click="openDialog"
         />
 
-        <Button
-            as="a"
-            :href="route('application.application_form', { id: application.id })"
-            type="button"
-            size="small"
-            class="flex gap-2 w-full"
-        >
-            <IconHandClick size="20" stroke-width="1.5" />
-            {{ $t('public.apply_form') }}
-        </Button>
+<!--        <Button-->
+<!--            as="a"-->
+<!--            :href="route('application.application_form', { id: application.id })"-->
+<!--            type="button"-->
+<!--            size="small"-->
+<!--            class="flex gap-2 w-full"-->
+<!--        >-->
+<!--            <IconHandClick size="20" stroke-width="1.5" />-->
+<!--            {{ $t('public.apply_form') }}-->
+<!--        </Button>-->
     </div>
 
     <Dialog

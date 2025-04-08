@@ -38,11 +38,13 @@ const currentLocale = ref(usePage().props.locale);
 const localeTextMap = {
     en: 'EN',
     cn: '中文',
+    tw: '繁体',
     kr: '한국어',
     vn: 'tiếng Việt',
     ja: '日本語',
     th: 'ไทย',
     id: 'Bahasa Indonesia',
+    mm: 'မြန်မာ',
 };
 
 const currentLocaleText = computed(() => {

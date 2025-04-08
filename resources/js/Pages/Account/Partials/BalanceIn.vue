@@ -113,7 +113,7 @@ watch(depositAmount, (newDepositAmount) => {
         eWalletAmount.value = newDepositAmount * percentage;
         cashWalletAmount.value = newDepositAmount - eWalletAmount.value;
         maxEWalletAmount.value = eWalletAmount.value;
-        minEWalletAmount.value = maxEWalletAmount.value * 0.05;
+        minEWalletAmount.value = 0.01;
     } else {
         cashWalletAmount.value = newDepositAmount;
     }

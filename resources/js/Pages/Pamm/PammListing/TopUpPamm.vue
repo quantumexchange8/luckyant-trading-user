@@ -61,7 +61,7 @@ watch(top_up_amount, (newTopupAmount) => {
         eWalletAmount.value = newTopupAmount * percentage;
         cashWalletAmount.value = newTopupAmount - eWalletAmount.value;
         maxEWalletAmount.value = eWalletAmount.value;
-        minEWalletAmount.value = maxEWalletAmount.value * 0.05;
+        minEWalletAmount.value = 0.01;
     } else {
         cashWalletAmount.value = newTopupAmount;
     }

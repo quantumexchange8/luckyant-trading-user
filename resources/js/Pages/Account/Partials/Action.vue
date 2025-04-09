@@ -1,7 +1,6 @@
 <script setup>
 import {DotsHorizontalIcon} from "@heroicons/vue/outline";
 import Button from "@/Components/Button.vue";
-import Modal from "@/Components/Modal.vue";
 import TieredMenu from "primevue/tieredmenu";
 import {computed, h, ref} from "vue";
 import {
@@ -17,6 +16,7 @@ import ChangePassword from "@/Pages/AccountInfo/TradingAccount/ChangePassword.vu
 import InternalTransferBalance from "@/Pages/AccountInfo/TradingAccount/InternalTransferBalance.vue";
 import AccountReport from "@/Pages/Account/Partials/AccountReport.vue";
 import {usePage} from "@inertiajs/vue3";
+import Dialog from "primevue/dialog";
 
 const props = defineProps({
     activeAccountCounts: Number,
@@ -123,10 +123,11 @@ const closeModal = () => {
         </template>
     </TieredMenu>
 
-    <Modal
-        :show="visible"
-        :title="$t(`public.${dialogType}`)"
-        @close="closeModal"
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t(`public.${dialogType}`)"
+        class="dialog-xs md:dialog-md"
     >
         <template v-if="dialogType === 'balance_out'">
             <WithdrawBalance
@@ -164,5 +165,5 @@ const closeModal = () => {
                 @update:accountActionModal="visible = $event"
             />
         </template>
-    </Modal>
+    </Dialog>
 </template>

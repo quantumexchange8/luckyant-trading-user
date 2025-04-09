@@ -603,10 +603,10 @@ class AccountInfoController extends Controller
     {
         $user = Auth::user();
         $from_trading_account = TradingAccount::where('meta_login', $request->from_meta_login)->first();
-        $to_trading_account = TradingAccount::where('meta_login', $request->to_meta_login)->first();
+        $to_trading_account = TradingAccount::where('meta_login', $request->to_meta_login['value'])->first();
         $amount = $request->amount;
-        $type = $request->type;
-        $to_type = $request->to_type;
+        $type = $from_trading_account->accountType->id;
+        $to_type = $to_trading_account->accountType->id;
 
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
@@ -745,9 +745,11 @@ class AccountInfoController extends Controller
             }
         }
 
-        return redirect()->back()
-            ->with('title', trans('public.success_internal_transaction'))
-            ->with('success', trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $request->from_meta_login . ' ' . trans('public.to_login') . ': ' . $request->to_meta_login);
+        return back()->with('toast', [
+            'title' => trans("public.success_internal_transaction"),
+            'message' => trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $request->from_meta_login . ' ' . trans('public.to_login') . ': ' . $request->to_meta_login['value'],
+            'type' => 'success',
+        ]);
     }
 
     public function getTradingAccounts(Request $request)

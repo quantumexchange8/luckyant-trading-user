@@ -33,6 +33,7 @@ class Master extends Model implements HasMedia
         'join_period',
         'signal_status',
         'is_public',
+        'project_based',
         'status',
         'total_subscribers',
         'max_drawdown',

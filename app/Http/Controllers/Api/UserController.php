@@ -54,7 +54,7 @@ class UserController extends Controller
                     'phone' => '+' . $data['phone_number'],
                     'dob' => $data['dob'] ?? '1990-01-01',
                     'remark' => 'luckymall',
-                    'status' => 'Inactive',
+                    'status' => 'Active',
                 ]);
 
                 Wallet::create([

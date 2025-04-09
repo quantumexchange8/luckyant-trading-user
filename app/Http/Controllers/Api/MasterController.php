@@ -613,6 +613,7 @@ class MasterController extends Controller
                 'total_subscribers' => 0,
                 'total_fund' => 0,
                 'is_public' => 0,
+                'project_based' => 'CH',
                 'can_top_up' => 0,
                 'can_revoke' => 0,
                 'status' => 'Inactive',

@@ -34,6 +34,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && $user->sync_mall) {
+            return back()->with('toast', [
+                'title' => trans("public.warning"),
+                'message' => trans('public.invalid_action'),
+                'type' => 'warning',
+            ]);
+        }
+
         $request->authenticate();
 
         $request->session()->regenerate();

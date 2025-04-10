@@ -1,13 +1,9 @@
 <script setup>
-import BaseListbox from "@/Components/BaseListbox.vue";
 import {useForm} from "@inertiajs/vue3";
-import Label from "@/Components/Label.vue";
-import Input from "@/Components/Input.vue";
 import InputError from "@/Components/InputError.vue";
 import Button from "primevue/button";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {transactionFormat} from "@/Composables/index.js";
-import { trans } from "laravel-vue-i18n";
 import Select from "primevue/select";
 import InputNumber from "primevue/inputnumber";
 import InputLabel from "@/Components/Label.vue";

@@ -28,13 +28,11 @@ const form = useForm({
 const openDialog = () => {
     visible.value = true;
     getAccountTypes();
-    getLeverages();
 }
 
-const selectedAccountType = ref('hofi');
+const selectedAccountType = ref('');
 const selectAccount = (type) => {
     selectedAccountType.value = type.slug;
-    getLeverages();
 }
 
 const loadingAccountTypes = ref(false);
@@ -47,6 +45,9 @@ const getAccountTypes = async () => {
         accountTypes.value = props.enableVirtualAccount
             ? response.data
             : response.data.filter(account => account.slug !== 'virtual');
+
+        selectedAccountType.value = accountTypes.value[0].slug;
+        await getLeverages();
     } catch (error) {
         console.error('Error fetching account types:', error);
     } finally {

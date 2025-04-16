@@ -86,12 +86,14 @@ class DashboardController extends Controller
             ->sum('allocation_amount');
 
         $world_pool = [];
+        $active_subscriptions_capital = Subscription::where('status', 'active')
+            ->sum('meta_balance');
 
         foreach ($world_pool_ranks as $index => $pool_rank) {
             if ($index === 0) {
-                $world_pool[$pool_rank] = $allocation_amount;
+                $world_pool[$pool_rank] = $active_subscriptions_capital + $allocation_amount;
             } else {
-                $world_pool[$pool_rank] = $allocation_amount * 2;
+                $world_pool[$pool_rank] = ($active_subscriptions_capital + $allocation_amount) * 2;
             }
         }
 

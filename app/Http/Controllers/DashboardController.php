@@ -83,25 +83,15 @@ class DashboardController extends Controller
             ->toArray();
 
         $allocation_amount = WorldPoolAllocation::whereDate('allocation_date', '<=', Carbon::now())
-            ->sum('allocation_amount');
+            ->sum('world_pool_amount');
 
         $world_pool = [];
-        $active_subscriptions_capital = Subscription::where('status', 'Active')
-            ->sum('meta_balance');
-
-        $active_pamm_capital = PammSubscription::with('master:id,involves_world_pool')
-            ->where('status', 'Active')
-            ->whereHas('master', function ($q) {
-                $q->where('involves_world_pool', 1);
-            })
-            ->sum('subscription_amount');
 
         foreach ($world_pool_ranks as $index => $pool_rank) {
-            $world_pool_amount = ($active_subscriptions_capital + $active_pamm_capital + $allocation_amount) / 10000 * 0.4;
             if ($index === 0) {
-                $world_pool[$pool_rank] = $world_pool_amount;
+                $world_pool[$pool_rank] = $allocation_amount;
             } else {
-                $world_pool[$pool_rank] = $world_pool_amount * 2;
+                $world_pool[$pool_rank] = $allocation_amount * 2;
             }
         }
 

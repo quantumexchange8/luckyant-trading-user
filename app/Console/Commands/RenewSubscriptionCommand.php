@@ -29,7 +29,9 @@ class RenewSubscriptionCommand extends Command
 
         foreach ($subscriptions as $subscription) {
             $user = User::find($subscription->user_id);
-            $subscriber = Subscriber::where('meta_login', $subscription->meta_login)->first();
+            $subscriber = Subscriber::where('meta_login', $subscription->meta_login)
+                ->whereNull('unsubscribe_date')
+                ->first();
             $subscription_batches = SubscriptionBatch::where('subscription_id', $subscription->id)->get();
 
             $subscription->update([

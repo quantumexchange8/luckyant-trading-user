@@ -841,26 +841,27 @@ class WalletController extends Controller
             // Calculate the amount received by the wallet
             $amountTo = (clone $amountQuery)->where('to_wallet_id', $walletId)
                 ->whereNot('status', 'Rejected')
-                ->whereNotIn('transaction_type', ['WalletAdjustment'])
+                ->whereNotIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
                 ->sum('amount');
 
             // Calculate the positive adjustments received by the wallet
             $amountAdjustmentTo = (clone $amountQuery)->where('from_wallet_id', $walletId)
                 ->whereNot('status', 'Rejected')
-                ->where('transaction_type', 'WalletAdjustment')
+                ->whereIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
                 ->sum('amount');
 
             // Calculate the amount sent from the wallet
             $amountFrom = (clone $amountQuery)->where('from_wallet_id', $walletId)
                 ->whereNot('status', 'Rejected')
-                ->whereNotIn('transaction_type', ['WalletAdjustment'])
+                ->whereNotIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
                 ->sum('amount');
 
             // Calculate the positive adjustments sent from the wallet
             $amountAdjustmentFrom = (clone $amountQuery)->where('to_wallet_id', $walletId)
                 ->whereNot('status', 'Rejected')
-                ->where('transaction_type', 'WalletAdjustment')
+                ->whereIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
                 ->sum('amount');
+
             // Return both amounts
             return [
                 'to' => $amountTo + $amountAdjustmentTo,

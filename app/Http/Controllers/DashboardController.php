@@ -191,7 +191,11 @@ class DashboardController extends Controller
             ->where('status', 'Active')
             ->sum('meta_balance');
 
-        $totalPamm = PammSubscription::where('user_id',$user->id)
+        $totalPamm = PammSubscription::with('master')
+            ->whereHas('master', function ($q) {
+                $q->where('involves_world_pool', 1);
+            })
+            ->where('user_id',$user->id)
             ->where('status', 'Active')
             ->sum('subscription_amount');
 

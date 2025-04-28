@@ -111,7 +111,11 @@ class ReferralController extends Controller
             ->where('status', 'Active')
             ->sum('meta_balance');
 
-        $pamm = PammSubscription::where('user_id', $user->id)
+        $pamm = PammSubscription::with('master')
+            ->whereHas('master', function ($q) {
+                $q->where('involves_world_pool', 1);
+            })
+            ->where('user_id',$user->id)
             ->where('status', 'Active')
             ->sum('subscription_amount');
 
@@ -324,7 +328,6 @@ class ReferralController extends Controller
                 'userCountry'
             ])
                 ->withSum('active_copy_trade', 'meta_balance')
-                ->withSum('active_pamm', 'subscription_amount')
                 ->whereIn('id', $childrenIds);
 
             if ($data['filters']['global']['value']) {

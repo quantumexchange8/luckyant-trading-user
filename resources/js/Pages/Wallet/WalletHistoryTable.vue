@@ -353,8 +353,8 @@ const openDialog = (data) => {
                                         {{ $t(`public.${data.from_wallet?.type}`) }}
                                     </div>
                                 </div>
-                                <div v-else-if="data.from_meta_login && data.transaction_type === 'BalanceOut'">
-                                    {{ data.from_meta_login ?? '-' }}
+                                <div v-else-if="data.from_meta_login && ['BalanceOut', 'ProfitSharing', 'TerminationReturn'].includes(data.transaction_type)">
+                                    <span class="font-medium">{{ data.from_meta_login ?? '-' }}</span>
                                 </div>
                                 <div v-else>
                                     -
@@ -387,7 +387,7 @@ const openDialog = (data) => {
                                     {{ data.to_meta_login ?? '-' }}
                                 </div>
                                 <div v-else>
-                                    -
+                                    {{ $t(`public.${formatType(data.payment_method).toLowerCase().replace(/\s+/g, '_')}`) ?? '-' }}
                                 </div>
                             </template>
                         </Column>
@@ -623,7 +623,7 @@ const openDialog = (data) => {
                                 />
                             </div>
                         </div>
-                        <div v-else-if="transactionData.from_meta_login && transactionData.transaction_type === 'BalanceOut'">
+                        <div v-else-if="transactionData.from_meta_login && ['BalanceOut', 'ProfitSharing', 'TerminationReturn'].includes(transactionData.transaction_type)">
                             {{ transactionData.from_meta_login ?? '-' }}
                         </div>
                         <div v-else>
@@ -659,7 +659,7 @@ const openDialog = (data) => {
                             {{ transactionData.to_meta_login ?? '-' }}
                         </div>
                         <div v-else>
-                            -
+                            {{ $t(`public.${formatType(transactionData.payment_method).toLowerCase().replace(/\s+/g, '_')}`) ?? '-' }}
                         </div>
                     </div>
                 </div>

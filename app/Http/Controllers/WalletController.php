@@ -768,141 +768,98 @@ class WalletController extends Controller
     public function wallet_history()
     {
         return Inertia::render('Wallet/WalletHistory', [
-            'wallets' => Wallet::where('user_id', \Auth::id())->get(),
-            'transactionTypeSel' => (new SelectOptionService())->getTransactionType(),
-            'walletsSel' => (new SelectOptionService())->getAllWallets(),
+            'transactionTypeSel' => Transaction::where('user_id', Auth::id())->distinct('transaction_type')->pluck('transaction_type')->toArray(),
         ]);
     }
 
     public function getWalletHistories(Request $request)
     {
-        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
-        // Decode the JSON
-        $decodedColumnName = json_decode(urldecode($columnName), true);
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
-        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+            $walletTypes = ['cash_wallet', 'bonus_wallet', 'e_wallet'];
+            $walletIds = Wallet::where('user_id', Auth::id())
+                ->whereIn('type', $walletTypes)
+                ->pluck('id', 'type');
 
-        // Get the IDs of the user's wallets
-        $userId = Auth::id();
+            $query = Transaction::with([
+                'from_wallet.user',
+                'to_wallet.user',
+                'from_account',
+                'to_account',
+                'payment_account'
+            ])
+                ->where(function ($query) use ($walletIds) {
+                    $query->whereIn('from_wallet_id', $walletIds)
+                        ->orWhereIn('to_wallet_id', $walletIds);
+                })
+                ->whereIn('category', ['wallet', 'trading_account']);
 
-        // Get the IDs of the user's wallets
-        $walletIds = Wallet::where('user_id', $userId)
-            ->whereIn('type', ['cash_wallet', 'bonus_wallet', 'e_wallet'])
-            ->pluck('id');
+            if (!empty($data['filters']['types']['value'])) {
+                $query->whereIn('transaction_type', $data['filters']['types']['value']);
+            }
 
-        // Retrieve individual wallet IDs for each type
-        $cashWalletId = Wallet::where('user_id', $userId)->where('type', 'cash_wallet')->value('id');
-        $bonusWalletId = Wallet::where('user_id', $userId)->where('type', 'bonus_wallet')->value('id');
-        $eWalletId = Wallet::where('user_id', $userId)->where('type', 'e_wallet')->value('id');
+            if (!empty($data['filters']['start_date']['value']) && !empty($data['filters']['end_date']['value'])) {
+                $start_date = Carbon::parse($data['filters']['start_date']['value'])->startOfDay()->addDay();
+                $end_date   = Carbon::parse($data['filters']['end_date']['value'])->endOfDay()->addDay();
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            }
 
-        // Base query for wallet histories
-        $walletHistoriesQuery = Transaction::with([
-            'from_wallet.user',
-            'to_wallet.user',
-            'from_account',
-            'to_account',
-            'payment_account'
-        ])
-            ->where(function ($query) use ($walletIds) {
-                $query->whereIn('from_wallet_id', $walletIds)
-                    ->orWhereIn('to_wallet_id', $walletIds);
-            })
-            ->whereIn('category', ['wallet', 'trading_account']);
+            if (!empty($data['filters']['wallet_type']['value'])) {
+                $wallet_type = $data['filters']['wallet_type']['value'];
+                $query->where(function ($query) use ($wallet_type) {
+                    $query->whereHas('from_wallet', function ($query) use ($wallet_type) {
+                        $query->where('type', $wallet_type);
+                    })
+                        ->orWhereHas('to_wallet', function ($query) use ($wallet_type) {
+                            $query->where('type', $wallet_type);
+                        });
+                });
+            }
 
-        // Apply search filter if provided
-        if ($request->filled('search')) {
-            $search = '%' . $request->input('search') . '%';
-            $walletHistoriesQuery->where(function ($query) use ($search) {
-                $query->where('transaction_number', 'like', $search)
-                    ->orWhere('amount', 'like', $search);
-            });
+            if (!empty($data['filters']['status']['value'])) {
+                $query->where('status', [$data['filters']['status']['value']]);
+            }
+
+            $walletAmounts = [];
+            foreach ($walletTypes as $type) {
+                $walletId = $walletIds[$type] ?? null;
+                if ($walletId) {
+                    $fromAmount = (clone $query)
+                        ->where('from_wallet_id', $walletId)
+                        ->whereNot('status', 'Rejected')
+                        ->sum('amount');
+
+                    $toAmount = (clone $query)
+                        ->where('to_wallet_id', $walletId)
+                        ->whereNot('status', 'Rejected')
+                        ->sum('amount');
+
+                    $walletAmounts[$type] = $toAmount - $fromAmount;
+                } else {
+                    $walletAmounts[$type] = 0;
+                }
+            }
+
+            if (!empty($data['sortField']) && !empty($data['sortOrder'])) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->orderByDesc('created_at');
+            }
+
+            $rebateHistories = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $rebateHistories,
+                'cashWalletAmount'  => $walletAmounts['cash_wallet'],
+                'bonusWalletAmount' => $walletAmounts['bonus_wallet'],
+                'eWalletAmount'     => $walletAmounts['e_wallet'],
+            ]);
         }
 
-        // Apply transaction type filter if provided
-        if ($request->filled('type')) {
-            $type = $request->input('type');
-            $walletHistoriesQuery->where('transaction_type', $type);
-        }
-
-        // Apply date range filter if provided
-        if ($request->filled('date')) {
-            $dateRange = explode(' - ', $request->input('date'));
-            $startDate = Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
-            $endDate = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
-            $walletHistoriesQuery->whereBetween('created_at', [$startDate, $endDate]);
-        }
-
-        // Clone the query for amount calculations
-        $amountQuery = clone $walletHistoriesQuery;
-
-        // Function to calculate wallet amounts
-        function calculateWalletAmounts($walletId, $amountQuery) {
-            // Calculate the amount received by the wallet
-            $amountTo = (clone $amountQuery)->where('to_wallet_id', $walletId)
-                ->whereNot('status', 'Rejected')
-                ->whereNotIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
-                ->sum('amount');
-
-            // Calculate the positive adjustments received by the wallet
-            $amountAdjustmentTo = (clone $amountQuery)->where('from_wallet_id', $walletId)
-                ->whereNot('status', 'Rejected')
-                ->whereIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
-                ->sum('amount');
-
-            // Calculate the amount sent from the wallet
-            $amountFrom = (clone $amountQuery)->where('from_wallet_id', $walletId)
-                ->whereNot('status', 'Rejected')
-                ->whereNotIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
-                ->sum('amount');
-
-            // Calculate the positive adjustments sent from the wallet
-            $amountAdjustmentFrom = (clone $amountQuery)->where('to_wallet_id', $walletId)
-                ->whereNot('status', 'Rejected')
-                ->whereIn('transaction_type', ['WalletAdjustment', 'WalletRedemption', 'ReturnedAmount'])
-                ->sum('amount');
-
-            // Return both amounts
-            return [
-                'to' => $amountTo + $amountAdjustmentTo,
-                'from' => $amountFrom + $amountAdjustmentFrom
-            ];
-        }
-
-        // Calculate wallet amounts separately
-        $cashWalletAmounts = calculateWalletAmounts($cashWalletId, $amountQuery);
-        $bonusWalletAmounts = calculateWalletAmounts($bonusWalletId, $amountQuery);
-        $eWalletAmounts = calculateWalletAmounts($eWalletId, $amountQuery);
-
-        // Apply additional wallet ID filter if provided
-        if ($request->filled('wallet_id')) {
-            $walletId = $request->input('wallet_id');
-            $walletHistoriesQuery->where(function ($query) use ($walletId) {
-                $query->where('from_wallet_id', $walletId)
-                    ->orWhere('to_wallet_id', $walletId);
-            });
-        }
-
-        // Retrieve the results with ordering and pagination
-        $results = $walletHistoriesQuery
-            ->orderBy($column ?? 'created_at', $sortOrder)
-            ->paginate($request->input('paginate', 10));
-
-        $cashWalletAmountTo = $cashWalletAmounts['to'];
-        $cashWalletAmountFrom = $cashWalletAmounts['from'];
-
-        $bonusWalletAmountTo = $bonusWalletAmounts['to'];
-        $bonusWalletAmountFrom = $bonusWalletAmounts['from'];
-
-        $eWalletAmountTo = $eWalletAmounts['to'];
-        $eWalletAmountFrom = $eWalletAmounts['from'];
-
-        return response()->json([
-            'walletHistories' => $results,
-            'cashWalletAmount' => $cashWalletAmountTo - $cashWalletAmountFrom,
-            'bonusWalletAmount' => $bonusWalletAmountTo - $bonusWalletAmountFrom,
-            'ewalletAmount' => $eWalletAmountTo - $eWalletAmountFrom,
-        ]);
+        return response()->json(['success' => false, 'data' => []]);
     }
 
     public function tt_pay_return()

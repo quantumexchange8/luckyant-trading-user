@@ -213,7 +213,7 @@ class DashboardController extends Controller
             ->where('trade_status', 'Closed')
             ->sum('trade_profit');
 
-        $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', auth()->user()->id)
+        $tradeRebateSummary = TradeRebateSummary::where('upline_user_id', $user->id)
             ->where('status', 'Approved');
 
         $performanceIncentive = PerformanceIncentive::where('user_id', $user->id)->sum('personal_bonus_amt');

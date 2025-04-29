@@ -115,7 +115,7 @@ class ReferralController extends Controller
             ->whereHas('master', function ($q) {
                 $q->where('involves_world_pool', 1);
             })
-            ->where('user_id',$user->id)
+            ->where('user_id', $user->id)
             ->where('status', 'Active')
             ->sum('subscription_amount');
 
@@ -130,7 +130,11 @@ class ReferralController extends Controller
             ->where('status', 'Active')
             ->sum('meta_balance');
 
-        $pamm = PammSubscription::whereIn('user_id', $ids)
+        $pamm = PammSubscription::with('master')
+            ->whereHas('master', function ($q) {
+                $q->where('involves_world_pool', 1);
+            })
+            ->whereIn('user_id', $ids)
             ->where('status', 'Active')
             ->sum('subscription_amount');
 
@@ -293,7 +297,12 @@ class ReferralController extends Controller
                 $query->orderByDesc('created_at');
             }
 
-            $activePamm = (clone $query)->get()->sum('subscription_amount');
+            $activePamm = (clone $query)
+                ->whereHas('master', function ($q) {
+                    $q->where('involves_world_pool', 1);
+                })
+                ->get()
+                ->sum('subscription_amount');
             $totalAffiliate = (clone $query)
                 ->distinct('user_id')
                 ->count();
@@ -328,6 +337,7 @@ class ReferralController extends Controller
                 'userCountry'
             ])
                 ->withSum('active_copy_trade', 'meta_balance')
+                ->withSum('active_pamm', 'subscription_amount')
                 ->whereIn('id', $childrenIds);
 
             if ($data['filters']['global']['value']) {

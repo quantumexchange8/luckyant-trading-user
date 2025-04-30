@@ -27,17 +27,17 @@ export default {
             // Shape
             'border',
             'rounded-md',
-            'border-surface-200 dark:border-surface-700',
+            'border-gray-200 dark:border-gray-700',
             // Color
             {
-                'text-surface-600 dark:text-white/80': !context?.selected,
-                'bg-surface-0 dark:bg-surface-900': !context?.selected,
+                'text-gray-600 dark:text-white/80': !context?.selected,
+                'bg-white dark:bg-gray-900': !context?.selected,
                 'bg-highlight': context?.selected
             },
 
             // States
             {
-                'hover:bg-surface-100 dark:hover:bg-surface-800': context?.selectable && !context?.selected,
+                'hover:bg-gray-100 dark:hover:bg-gray-800': context?.selectable && !context?.selected,
                 'hover:bg-highlight-emphasis': context?.selectable && context?.selected
             },
 
@@ -62,7 +62,7 @@ export default {
             'w-px h-[20px]',
 
             // Color
-            'bg-surface-200 dark:bg-surface-700'
+            'bg-gray-200 dark:bg-gray-700'
         ]
     },
     connectorLeft: ({ context }) => ({
@@ -78,7 +78,7 @@ export default {
             { 'border-t': context.lineTop },
 
             // Color
-            'border-surface-200 dark:border-surface-700'
+            'border-gray-200 dark:border-gray-700'
         ]
     }),
     connectorRight: ({ context }) => ({
@@ -93,7 +93,7 @@ export default {
             'rounded-none',
 
             // Color
-            { 'border-t border-surface-200 dark:border-surface-700': context.lineTop }
+            { 'border-t border-gray-200 dark:border-gray-700': context.lineTop }
         ]
     }),
     nodeCell: {
@@ -113,7 +113,7 @@ export default {
 
             // Shape
             'rounded-full',
-            'border border-surface-200 dark:border-surface-700',
+            'border border-gray-200 dark:border-gray-700',
 
             // Color
             'bg-inherit text-inherit',

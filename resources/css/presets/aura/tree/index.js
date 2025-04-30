@@ -9,8 +9,8 @@ export default {
             'border-none',
 
             // Color
-            'bg-surface-0 dark:bg-surface-900',
-            'text-surface-700 dark:text-white/80',
+            'bg-white dark:bg-gray-900',
+            'text-gray-700 dark:text-white/80',
             '[&_[data-pc-name=pcfilter]]:w-full'
         ]
     },
@@ -41,10 +41,10 @@ export default {
             'py-1 px-2 gap-2',
 
             // Colors
-            context.selected ? 'bg-highlight text-primary-600 dark:text-white' : 'bg-transparent text-surface-600 dark:text-white/70',
+            context.selected ? 'bg-highlight text-primary-600 dark:text-white' : 'bg-transparent text-gray-600 dark:text-white/70',
 
             // States
-            { 'hover:bg-surface-50 dark:hover:bg-[rgba(255,255,255,0.03)]': (props.selectionMode == 'single' || props.selectionMode == 'multiple') && !context.selected },
+            { 'hover:bg-gray-50 dark:hover:bg-[rgba(255,255,255,0.03)]': (props.selectionMode == 'single' || props.selectionMode == 'multiple') && !context.selected },
 
             // Transition
             'transition-shadow duration-200',
@@ -66,13 +66,13 @@ export default {
             // Colors
             'bg-transparent',
             {
-                'text-surface-600 dark:text-white/70': !context.selected,
+                'text-gray-600 dark:text-white/70': !context.selected,
                 'text-primary-600 dark:text-white': context.selected,
                 invisible: context.leaf
             },
 
             // States
-            'hover:bg-surface-200/20 dark:hover:bg-surface-500/20',
+            'hover:bg-gray-200/20 dark:hover:bg-gray-500/20',
             'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400',
 
             // Transition
@@ -89,7 +89,7 @@ export default {
 
             // Color
             {
-                'text-surface-600 dark:text-white/70': !context.selected,
+                'text-gray-600 dark:text-white/70': !context.selected,
                 'text-primary-600 dark:text-white': context.selected
             }
         ]
@@ -97,7 +97,7 @@ export default {
     nodeLabel: ({ context }) => ({
         class: [
             {
-                'text-surface-600 dark:text-white/70': !context.selected,
+                'text-gray-600 dark:text-white/70': !context.selected,
                 'text-primary-600 dark:text-white': context.selected
             }
         ]
@@ -106,7 +106,7 @@ export default {
         class: ['m-0 list-none p-0 pl-4 [&:not(ul)]:pl-0 [&:not(ul)]:my-[2px]']
     },
     loadingIcon: {
-        class: ['text-surface-500 dark:text-surface-0/70', 'absolute top-[50%] right-[50%] -mt-2 -mr-2 animate-spin']
+        class: ['text-gray-500 dark:text-white/70', 'absolute top-[50%] right-[50%] -mt-2 -mr-2 animate-spin']
     }
     // pcFilterContainer: {
     //     root: {

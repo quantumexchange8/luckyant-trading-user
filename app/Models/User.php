@@ -160,6 +160,10 @@ class User extends Authenticatable implements HasMedia
 
     public function active_pamm(): HasMany
     {
-        return $this->hasMany(PammSubscription::class, 'user_id', 'id')->where('status', 'Active');
+        return $this->hasMany(PammSubscription::class, 'user_id', 'id')
+            ->where('status', 'Active')
+            ->whereHas('master', function ($query) {
+                $query->where('involves_world_pool', true);
+            });
     }
 }

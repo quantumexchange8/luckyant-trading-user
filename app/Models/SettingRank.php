@@ -8,9 +8,7 @@ use Spatie\Translatable\HasTranslations;
 
 class SettingRank extends Model
 {
-    use SoftDeletes, HasTranslations;
-
-    public array $translatable = ['name'];
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

@@ -325,10 +325,11 @@ const getSeverity = (status) => {
                             :header="$t('public.rank')"
                         >
                             <template #body="{ data }">
-                                <Tag
-                                    severity="secondary"
-                                    :value="locale === 'cn' ? data.rank.name[locale] : data.rank.name['en']"
-                                />
+                                <Tag severity="secondary">
+                                <span class="truncate max-w-36">{{ locale !== 'en'
+                                    ? JSON.parse(data.rank.name ?? "{}")[locale] ?? JSON.parse(data.rank.name ?? "{}")['en']
+                                    : JSON.parse(data.rank.name ?? "{}")['en'] }}</span>
+                                </Tag>
                             </template>
                         </Column>
 

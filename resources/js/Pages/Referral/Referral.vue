@@ -1,66 +1,45 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
-import Input from "@/Components/Input.vue";
-import InputIconWrapper from "@/Components/InputIconWrapper.vue";
-import Button from "@/Components/Button.vue";
-import ReferralChild from "@/Pages/Referral/ReferralChild.vue";
 import {ref, watch} from "vue";
+import {
+    IconCircleXFilled,
+    IconSearch,
+} from "@tabler/icons-vue";
+import ReferralChild from "@/Pages/Referral/ReferralChild.vue";
+import InputText from "primevue/inputtext";
 import debounce from "lodash/debounce.js";
-import {router} from "@inertiajs/vue3";
-import Loading from "@/Components/Loading.vue";
-import {SearchIcon} from "@heroicons/vue/outline";
 
-function nodeWasClicked(node) {
-    console.log('Last Node');
+const props = defineProps({
+    root: Object,
+});
+
+const search = ref('');
+const rootNode = ref(props.root);
+
+const clearSearch = () => {
+    search.value = '';
+    rootNode.value = props.root;
 }
 
-let search = ref(null);
-let root = ref({});
-const isLoading = ref(false);
+const searchUser = async (keyword) => {
+    try {
+        if (keyword) {
+            const response = await axios.get(`/referral/getTreeData?search=${keyword}`);
+            if (response.data.success) {
+                rootNode.value = response.data.data;
+            } else {
+                rootNode.value = props.root;
+            }
+        }
+    } catch (e) {
+        console.error('Search failed:', e);
+        rootNode.value = props.root;
+    }
+};
 
 watch(search, debounce(function() {
-    isLoading.value = true;
-    getResults(search.value);
+    searchUser(search.value);
 }, 300));
-
-const getResults = async (search = '') => {
-    isLoading.value = true;
-    try {
-        let url = `/referral/getTreeData`;
-
-        if (search) {
-            url += `?search=${search}`;
-        }
-
-        const response = await axios.get(url);
-        root.value = response.data;
-    } catch (error) {
-        console.error(error);
-    } finally {
-        isLoading.value = false;
-    }
-}
-
-getResults();
-
-function resetField() {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('search');
-
-    // Navigate to the updated URL without the search parameter
-    window.location.href = url.href;
-}
-
-function clearField() {
-    search.value = '';
-}
-
-function handleKeyDown(event) {
-    if (event.keyCode === 27) {
-        clearField();
-    }
-}
-
 </script>
 
 <template>
@@ -73,40 +52,31 @@ function handleKeyDown(event) {
             </div>
         </template>
 
-        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="col-span-2 flex justify-between">
-                <div class="relative w-full mr-4">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                        </svg>
+        <div class="flex flex-col gap-5 items-center self-stretch">
+            <div class="flex self-stretch w-full">
+                <div class="relative w-full md:w-60">
+                    <div class="absolute top-2/4 -mt-[9px] left-4 text-gray-400">
+                        <IconSearch size="20" stroke-width="1.5"/>
                     </div>
-                    <InputIconWrapper>
-                        <template #icon>
-                            <SearchIcon aria-hidden="true" class="w-5 h-5" />
-                        </template>
-                        <Input
-                            withIcon
-                            id="search"
-                            type="text"
-                            class="block border-transparent w-full md:w-1/3"
-                            :placeholder="$t('public.search_name_and_email_placeholder')"
-                            v-model="search"
-                        />
-                    </InputIconWrapper>
+                    <InputText
+                        v-model="search"
+                        :placeholder="$t('public.search')"
+                        class="font-normal pl-12 w-full md:w-60"
+                    />
+                    <div
+                        v-if="search"
+                        class="absolute top-2/4 -mt-2 right-4 text-gray-300 hover:text-gray-400 select-none cursor-pointer"
+                        @click="clearSearch"
+                    >
+                        <IconCircleXFilled size="16"/>
+                    </div>
                 </div>
+
             </div>
+
+            <ReferralChild
+                :node="rootNode"
+            />
         </div>
-
-        <div v-if="isLoading" class="w-full flex justify-center mt-8">
-            <Loading />
-        </div>
-        <ReferralChild
-            v-else
-            :node="root"
-            @onClick="nodeWasClicked"
-        />
-
-
     </AuthenticatedLayout>
 </template>

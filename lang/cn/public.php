@@ -664,4 +664,5 @@ return [
     "proceed" => "继续",
     "authorize_account_caption" => "授权您的账户",
     "authorize_account_message" => "您即将登录 Luckyant Mall。输入密码继续！",
+    "incorrect_bonus_correction" => "纠正奖金",
 ];

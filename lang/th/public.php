@@ -662,5 +662,6 @@ return [
     "authorize_account" => "อนุญาตบัญชี",
     "ดำเนินการต่อ" => "ดำเนินการต่อ",
     "authorize_account_caption" => "อนุญาตบัญชีของคุณ",
-    "authorize_account_message" => "คุณเหลืออีกเพียงหนึ่งขั้นตอนในการลงชื่อเข้าใช้ Luckyant Mall เริ่มกันเลย!"
+    "authorize_account_message" => "คุณเหลืออีกเพียงหนึ่งขั้นตอนในการลงชื่อเข้าใช้ Luckyant Mall เริ่มกันเลย!",
+    "incorrect_bonus_correction" => "การแก้ไขโบนัสที่ไม่ถูกต้อง"
 ];

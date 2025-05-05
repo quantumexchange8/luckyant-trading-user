@@ -664,4 +664,5 @@ return [
     "proceed" => "続行",
     "authorize_account_caption" => "アカウントを承認",
     "authorize_account_message" => "あと一歩でLuckyant Mallにサインインできます。さあ始めましょう！",
+    "incorrect_bonus_correction" => "誤ったボーナス修正",
 ];

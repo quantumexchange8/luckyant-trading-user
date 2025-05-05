@@ -664,4 +664,5 @@ return [
     "proceed" => "Proceed",
     "authorize_account_caption" => "Authorize Your Account",
     "authorize_account_message" => "You’re one step away from signing in to Luckyant Mall. Let’s get started!",
+    "incorrect_bonus_correction" => "Incorrect Bonus Correction",
 ];

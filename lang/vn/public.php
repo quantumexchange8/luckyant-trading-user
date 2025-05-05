@@ -664,4 +664,5 @@ return [
     "proceed" => "Tiếp tục",
     "authorize_account_caption" => "Ủy quyền tài khoản của bạn",
     "authorize_account_message" => "Bạn chỉ còn một bước nữa là có thể đăng nhập vào Luckyant Mall. Hãy bắt đầu nào!",
+    "incorrect_bonus_correction" => "Sửa lỗi tiền thưởng không đúng",
 ];

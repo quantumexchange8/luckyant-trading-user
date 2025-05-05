@@ -660,4 +660,5 @@ return [
     "gold_squad_program" => "黃金戰隊計劃",
     "ticket_gift_pack" => "門票禮包",
     "choose_via_condition" => "必須依照自身達標的條件進行選擇",
+    "incorrect_bonus_correction" => "糾正獎金",
 ];

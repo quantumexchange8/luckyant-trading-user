@@ -664,4 +664,5 @@ return [
     "proceed" => "Lanjutkan",
     "authorize_account_caption" => "Otorisasi Akun Anda",
     "authorize_account_message" => "Anda tinggal selangkah lagi untuk masuk ke Luckyant Mall. Mari kita mulai!",
+    "incorrect_bonus_correction" => "Koreksi Bonus Salah",
 ];

@@ -795,6 +795,22 @@ class WalletController extends Controller
                 })
                 ->whereIn('category', ['wallet', 'trading_account']);
 
+            if ($data['filters']['global']['value']) {
+                $keyword = $data['filters']['global']['value'];
+
+                $query->where(function ($outer) use ($keyword) {
+                    $outer->whereHas('from_wallet', function ($q) use ($keyword) {
+                        $q->where('wallet_address', 'like', "%{$keyword}%");
+                    })
+                        ->orWhereHas('to_wallet', function ($q) use ($keyword) {
+                            $q->where('wallet_address', 'like', "%{$keyword}%");
+                        })
+                        ->orWhere('from_meta_login', 'like', "%{$keyword}%")
+                        ->orWhere('to_meta_login', 'like', "%{$keyword}%")
+                        ->orWhere('transaction_number', 'like', "%{$keyword}%");
+                });
+            }
+
             if (!empty($data['filters']['types']['value'])) {
                 $query->whereIn('transaction_type', $data['filters']['types']['value']);
             }

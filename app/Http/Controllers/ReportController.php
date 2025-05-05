@@ -253,71 +253,85 @@ class ReportController extends Controller
 
     public function performance_incentive()
     {
-        $rebateTypes = [
-            ['value' => '', 'label' => trans('public.all')],
-            ['value' => 'affiliate', 'label' => trans('public.affiliate')],
-            ['value' => 'personal', 'label' => trans('public.personal')],
-        ];
-
-        return Inertia::render('Report/PerformanceIncentive/PerformanceIncentive', [
-            'rebateTypes' => $rebateTypes
-        ]);
+        return Inertia::render('Report/PerformanceIncentive/PerformanceIncentive');
     }
 
     public function getPerformanceIncentive(Request $request)
     {
-        $columnName = $request->input('columnName'); // Retrieve encoded JSON string
-        // Decode the JSON
-        $decodedColumnName = json_decode(urldecode($columnName), true);
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
-        $column = $decodedColumnName ? $decodedColumnName['id'] : 'created_at';
-        $sortOrder = $decodedColumnName ? ($decodedColumnName['desc'] ? 'desc' : 'asc') : 'desc';
+            $user = Auth::user();
+            $type = $data['filters']['type']['value'];
+            $meta_logins = TradingAccount::where('user_id', $user->id)
+                ->get()
+                ->pluck('meta_login')
+                ->toArray();
 
-        $query = PerformanceIncentive::with('user')
-            ->where('user_id', \Auth::id());
+            $query = PerformanceIncentive::with([
+                'user',
+                'subscription',
+                'subscription.user'
+            ])
+                ->where('user_id', $user->id);
 
-        if ($request->filled('search')) {
-            $search = '%' . $request->input('search') . '%';
-            $query->where(function ($query) use ($search) {
-                $query->whereHas('user', function ($subQuery) use ($search) {
-                        $subQuery->where('name', 'like', $search)
-                            ->orWhere('email', 'like', $search)
-                            ->orWhere('username', 'like', $search);
-                    });
-            });
-        }
-
-        if ($request->filled('date')) {
-            $date = $request->input('date');
-            $dateRange = explode(' - ', $date);
-            $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $dateRange[0])->startOfDay();
-            $end_date = Carbon::createFromFormat('Y-m-d', $dateRange[1])->endOfDay();
-
-            $query->whereBetween('created_at', [$start_date, $end_date]);
-        }
-
-        $totalPerformanceQuery = clone $query;
-        $totalAffiliateQuery = clone $totalPerformanceQuery;
-        $totalPersonalQuery = clone $totalPerformanceQuery;
-        $meta_logins = TradingAccount::query()->where('user_id', \Auth::id())->get()->pluck('meta_login')->toArray();
-
-        if ($request->filled('type')) {
-            if ($request->type == 'affiliate') {
-                $query->whereNull('meta_login');
-            } elseif ($request->type == 'personal') {
-                $query->whereIn('meta_login', $meta_logins);
+            if ($type !== 'all') {
+                if ($type == 'affiliate') {
+                    $query->whereNull('meta_login');
+                } elseif ($type == 'personal') {
+                    $query->whereIn('meta_login', $meta_logins);
+                }
             }
+
+            if ($data['filters']['global']['value']) {
+                $keyword = $data['filters']['global']['value'];
+
+                $query->where(function ($outer) use ($keyword) {
+                    $outer->whereHas('user', function ($q) use ($keyword) {
+                        $q->where('username', 'like', "%{$keyword}%")
+                            ->orWhere('email', 'like', "%{$keyword}%");
+                    })
+                        ->orWhereHas('subscription.user', function ($q) use ($keyword) {
+                            $q->where('username', 'like', "%{$keyword}%")
+                                ->orWhere('email', 'like', "%{$keyword}%");
+                        })
+                        ->orWhere('meta_login', 'like', "%{$keyword}%")
+                        ->orWhereHas('subscription', function ($q) use ($keyword) {
+                            $q->where('meta_login', 'like', "%{$keyword}%");
+                        });
+                });
+            }
+
+            if (!empty($data['filters']['start_date']['value']) && !empty($data['filters']['end_date']['value'])) {
+                $start_date = Carbon::parse($data['filters']['start_date']['value'])->addDay()->startOfDay();
+                $end_date = Carbon::parse($data['filters']['end_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            }
+
+            //sort field/order
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->orderByDesc('created_at');
+            }
+
+            $totalPerformanceIncentive = (clone $query)->sum('personal_bonus_amt');
+            $totalAffiliateAmount = (clone $query)->whereNull('meta_login')->sum('personal_bonus_amt');
+            $totalPersonalAmount = (clone $query)->whereIn('meta_login', $meta_logins)->sum('personal_bonus_amt');
+
+            $tradeHistories = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $tradeHistories,
+                'totalPerformanceIncentive' => (float) $totalPerformanceIncentive,
+                'totalAffiliateAmount' => (float) $totalAffiliateAmount,
+                'totalPersonalAmount' => (float) $totalPersonalAmount,
+            ]);
         }
 
-        $results = $query
-            ->orderBy($column == null ? 'created_at' : $column, $sortOrder)
-            ->paginate($request->input('paginate', 10));
-
-        return response()->json([
-            'performanceIncentives' => $results,
-            'totalPerformanceIncentive' => $totalPerformanceQuery->sum('personal_bonus_amt'),
-            'totalAffiliateAmount' => $totalAffiliateQuery->whereNull('meta_login')->sum('personal_bonus_amt'),
-            'totalPersonalAmount' => $totalPersonalQuery->whereIn('meta_login', $meta_logins)->sum('personal_bonus_amt'),
-        ]);
+        return response()->json(['success' => false, 'data' => []]);
     }
 }

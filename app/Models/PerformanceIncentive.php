@@ -16,4 +16,9 @@ class PerformanceIncentive extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function subscription(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class, 'subscription_id', 'id');
+    }
 }

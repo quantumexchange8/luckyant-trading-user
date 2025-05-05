@@ -296,7 +296,7 @@ const openDialog = (data) => {
                                     @click="toggle"
                                 >
                                     <IconAdjustments size="16" stroke-width="1.5"/>
-                                    <div class="text-sm font-medium">
+                                    <div class="font-medium">
                                         {{ $t('public.filter') }}
                                     </div>
                                 </Button>

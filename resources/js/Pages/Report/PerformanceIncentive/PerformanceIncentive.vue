@@ -1,134 +1,48 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
-import VueTailwindDatepicker from "vue-tailwind-datepicker";
-import BaseListbox from "@/Components/BaseListbox.vue";
-import {h, ref, watch} from "vue";
-import { transactionFormat } from "@/Composables/index.js";
-import debounce from "lodash/debounce.js";
-import NoData from "@/Components/NoData.vue";
-import TanStackTable from "@/Components/TanStackTable.vue";
-import {CurrencyDollarCircleIcon} from "@/Components/Icons/outline.jsx";
-import { CoinsHandIcon } from '@/Components/Icons/outline'
-import {SearchIcon} from "@heroicons/vue/outline";
-import InputIconWrapper from "@/Components/InputIconWrapper.vue";
-import Input from "@/Components/Input.vue";
-import StatusBadge from "@/Components/StatusBadge.vue";
-
-const props = defineProps({
-    rebateTypes: Array
-})
-
-const { formatDateTime, formatAmount } = transactionFormat();
-const formatter = ref({
-    date: 'YYYY-MM-DD',
-    month: 'MM'
-});
+import PerformanceOverview from "@/Pages/Report/PerformanceIncentive/PerformanceOverview.vue";
+import PerformanceTable from "@/Pages/Report/PerformanceIncentive/PerformanceTable.vue";
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import {ref, watch} from "vue";
+import WalletHistoryOverview from "@/Pages/Wallet/WalletHistoryOverview.vue";
 
 const totalPerformanceIncentive = ref(null);
 const totalAffiliateAmount = ref(null);
 const totalPersonalAmount = ref(null);
-const performanceIncentives = ref({data: []});
-const sorting = ref();
-const search = ref('');
-const type = ref('affiliate');
-const date = ref('');
-const pageSize = ref(10);
-const action = ref('');
-const currentPage = ref(1);
 
-const pageSizes = [
-    { value: 5, label: 5 },
-    { value: 10, label: 10 },
-    { value: 20, label: 20 },
-    { value: 50, label: 50 },
-    { value: 100, label: 100 },
-];
+const tabs = ref([
+    {
+        type: 'all',
+        value: '0',
+    },
+    {
+        type: 'affiliate',
+        value: '1',
+    },
+    {
+        type: 'personal',
+        value: '2',
+    },
+]);
 
-watch([currentPage, action], ([currentPageValue, newAction]) => {
-    if (newAction === 'goToFirstPage' || newAction === 'goToLastPage') {
-        getResults(currentPageValue, pageSize.value);
-    } else {
-        getResults(currentPageValue, pageSize.value);
+const selectedType = ref('all_trades');
+const activeIndex = ref('0');
+
+// Watch for changes in selectedType and update the activeIndex accordingly
+watch(activeIndex, (newIndex) => {
+    const activeTab = tabs.value.find(tab => tab.value === newIndex);
+    if (activeTab) {
+        selectedType.value = activeTab.type;
     }
 });
 
-watch(
-    [sorting, pageSize],
-    ([sortingValue, pageSizeValue]) => {
-        getResults(1, pageSizeValue, search.value, type.value, date.value, sortingValue);
-    }
-);
-
-watch(
-    [search, type, date],
-    debounce(([searchValue, typeValue, dateValue]) => {
-        getResults(1, pageSize.value, searchValue, typeValue, dateValue, sorting.value);
-    }, 300)
-);
-
-const getResults = async (page = 1, paginate = 10, filterSearch = search.value, filterType = type.value, filterDate = date.value, columnName = sorting.value) => {
-    // isLoading.value = true
-    try {
-        let url = `/report/getPerformanceIncentive?page=${page}`;
-
-        if (paginate) {
-            url += `&paginate=${paginate}`;
-        }
-
-        if (filterSearch) {
-            url += `&search=${filterSearch}`;
-        }
-
-        if (filterType) {
-            url += `&type=${filterType}`;
-        }
-
-        if (filterDate) {
-            url += `&date=${filterDate}`;
-        }
-
-        if (columnName) {
-            // Convert the object to JSON and encode it to send as a query parameter
-            const encodedColumnName = encodeURIComponent(JSON.stringify(columnName));
-            url += `&columnName=${encodedColumnName}`;
-        }
-
-        const response = await axios.get(url);
-        performanceIncentives.value = response.data.performanceIncentives;
-        totalPerformanceIncentive.value = response.data.totalPerformanceIncentive;
-        totalPersonalAmount.value = response.data.totalPersonalAmount;
-        totalAffiliateAmount.value = response.data.totalAffiliateAmount;
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-getResults()
-
-const columns = [
-    {
-        accessorKey: 'created_at',
-        header: 'date',
-        cell: info => formatDateTime(info.getValue()),
-    },
-    {
-        accessorKey: 'subscription_profit_amt',
-        header: 'profit',
-        cell: info => '$ ' + formatAmount(info.getValue()),
-    },
-    {
-        accessorKey: 'personal_bonus_amt',
-        header: 'performance_incentive',
-        cell: info => '$ ' + formatAmount(info.getValue()),
-    },
-];
-
-// const clearFilter = () => {
-//     tradingAccount.value = props.tradingAccounts[0].value;
-//     type.value = '';
-//     tradeType.value = '';
-//     date.value = '';
-// }
+const handleUpdateTotals = (data) => {
+    totalPerformanceIncentive.value = data.totalPerformanceIncentive;
+    totalAffiliateAmount.value = data.totalAffiliateAmount;
+    totalPersonalAmount.value = data.totalPersonalAmount;
+};
 </script>
 
 <template>
@@ -141,139 +55,29 @@ const columns = [
             </div>
         </template>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 w-full gap-4">
-            <div
-                class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                <div class="flex flex-col gap-4">
-                    <div>
-                        {{ $t('public.total_performance_incentive') }}
-                    </div>
-                    <div class="text-2xl font-bold">
-                        <span v-if="totalPerformanceIncentive !== null">
-                            $ {{ totalPerformanceIncentive !== '' ? formatAmount(totalPerformanceIncentive) : '0' }}
-                        </span>
-                        <span v-else>
-                            {{ $t('public.loading') }}
-                        </span>
-                    </div>
-                </div>
-                <div class="rounded-full flex items-center justify-center w-14 h-14 bg-success-200">
-                    <CurrencyDollarCircleIcon class="text-success-500 w-8 h-8"/>
-                </div>
-            </div>
-            <div
-                class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                <div class="flex flex-col gap-4">
-                    <div>
-                        {{ $t('public.affiliate') }}
-                    </div>
-                    <div class="text-2xl font-bold">
-                        <span v-if="totalAffiliateAmount !== null">
-                            $ {{ totalAffiliateAmount !== '' ? formatAmount(totalAffiliateAmount) : '0' }}
-                        </span>
-                        <span v-else>
-                            {{ $t('public.loading') }}
-                        </span>
-                    </div>
-                </div>
-                <div class="rounded-full flex items-center justify-center w-14 h-14 bg-purple-200">
-                    <CurrencyDollarCircleIcon class="text-purple-500 w-8 h-8"/>
-                </div>
-            </div>
-            <div
-                class="flex justify-between items-center p-6 overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-900">
-                <div class="flex flex-col gap-4">
-                    <div>
-                        {{ $t('public.personal') }}
-                    </div>
-                    <div class="text-2xl font-bold">
-                        <span v-if="totalPersonalAmount !== null">
-                            $ {{ totalPersonalAmount !== '' ? formatAmount(totalPersonalAmount) : '0' }}
-                        </span>
-                        <span v-else>
-                            {{ $t('public.loading') }}
-                        </span>
-                    </div>
-                </div>
-                <div class="rounded-full flex items-center justify-center w-14 h-14 bg-gray-200">
-                    <CurrencyDollarCircleIcon class="text-gray-500 w-8 h-8"/>
-                </div>
-            </div>
-        </div>
+        <div class="flex flex-col gap-5 items-center self-stretch">
+            <PerformanceOverview
+                :totalPerformanceIncentive="totalPerformanceIncentive"
+                :totalAffiliateAmount="totalAffiliateAmount"
+                :totalPersonalAmount="totalPersonalAmount"
+            />
 
-        <div class="flex flex-col gap-5 items-start self-stretch my-8">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-                <div class="w-full">
-                    <InputIconWrapper class="w-full">
-                        <template #icon>
-                            <SearchIcon aria-hidden="true" class="w-5 h-5"/>
-                        </template>
-                        <Input
-                            withIcon
-                            id="search"
-                            type="text"
-                            class="block w-full"
-                            :placeholder="$t('public.search')"
-                            v-model="search"
-                        />
-                    </InputIconWrapper>
-                </div>
-                <div class="w-full">
-                    <BaseListbox
-                        v-model="type"
-                        :options="rebateTypes"
-                        :placeholder="$t('public.filters_placeholder')"
-                        class="rounded-lg text-base text-black w-full dark:text-white dark:bg-gray-800"
-                    />
-                </div>
-                <div class="w-full">
-                    <vue-tailwind-datepicker
-                        :placeholder="$t('public.date')"
-                        :formatter="formatter"
-                        separator=" - "
-                        v-model="date"
-                        input-classes="py-2.5 w-full rounded-lg dark:placeholder:text-gray-500 focus:ring-primary-400 hover:border-primary-400 focus:border-primary-400 dark:focus:ring-primary-500 dark:hover:border-primary-500 dark:focus:border-primary-500 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-800"
-                    />
-                </div>
-            </div>
-            <!-- <div class="flex justify-end gap-4 items-center w-full">
-                <Button
-                    type="button"
-                    variant="secondary"
-                    @click="clearFilter"
-                >
-                    {{ $t('public.clear') }}
-                </Button>
-            </div> -->
-        </div>
+            <Tabs v-model:value="activeIndex" class="w-full">
+                <TabList>
+                    <Tab
+                        v-for="tab in tabs"
+                        :key="tab.type"
+                        :value="tab.value"
+                    >
+                        {{ $t(`public.${tab.type}`) }}
+                    </Tab>
+                </TabList>
+            </Tabs>
 
-        <div class="p-5 my-8 bg-white overflow-hidden md:overflow-visible rounded-xl shadow-md dark:bg-gray-900">
-            <div class="flex justify-end items-center gap-2">
-                <div class="text-sm">
-                    {{ $t('public.size') }}
-                </div>
-                <div>
-                    <BaseListbox
-                        :options="pageSizes"
-                        v-model="pageSize"
-                    />
-                </div>
-            </div>
-            <div
-                v-if="performanceIncentives.data.length === 0"
-                class="w-full flex items-center justify-center"
-            >
-                <NoData/>
-            </div>
-            <div v-else>
-                <TanStackTable
-                    :data="performanceIncentives"
-                    :columns="columns"
-                    @update:sorting="sorting = $event"
-                    @update:action="action = $event"
-                    @update:currentPage="currentPage = $event"
-                />
-            </div>
+            <PerformanceTable
+                :selectedType="selectedType"
+                @update-totals="handleUpdateTotals"
+            />
         </div>
     </AuthenticatedLayout>
 </template>

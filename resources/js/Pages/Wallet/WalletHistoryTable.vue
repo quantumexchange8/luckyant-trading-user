@@ -387,7 +387,7 @@ const openDialog = (data) => {
                                     {{ data.to_meta_login ?? '-' }}
                                 </div>
                                 <div v-else>
-                                    {{ $t(`public.${formatType(data.payment_method).toLowerCase().replace(/\s+/g, '_')}`) ?? '-' }}
+                                    {{ data.payment_method ? $t(`public.${formatType(data.payment_method).toLowerCase().replace(/\s+/g, '_')}`) : '-' }}
                                 </div>
                             </template>
                         </Column>
@@ -659,7 +659,7 @@ const openDialog = (data) => {
                             {{ transactionData.to_meta_login ?? '-' }}
                         </div>
                         <div v-else>
-                            {{ $t(`public.${formatType(transactionData.payment_method).toLowerCase().replace(/\s+/g, '_')}`) ?? '-' }}
+                            {{ transactionData.payment_method ? $t(`public.${formatType(transactionData.payment_method).toLowerCase().replace(/\s+/g, '_')}`) : '-' }}
                         </div>
                     </div>
                 </div>

@@ -376,6 +376,19 @@ class AccountController extends Controller
             }
         }
 
+        // pamm subscriptions exist
+        $pamm_subscription_exist = PammSubscription::where('meta_login', $meta_login)
+            ->whereIn('status', ['Pending', 'Active'])
+            ->exists();
+
+        if ($pamm_subscription_exist) {
+            return back()->with('toast', [
+                'title' => trans("public.invalid_action"),
+                'message' => trans('public.try_again_later'),
+                'type' => 'warning',
+            ]);
+        }
+
         // conduct deal and transaction record
         $deal = [];
 

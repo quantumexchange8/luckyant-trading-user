@@ -21,4 +21,9 @@ class PerformanceIncentive extends Model
     {
         return $this->belongsTo(Subscription::class, 'subscription_id', 'id');
     }
+
+    public function pamm_subscription(): BelongsTo
+    {
+        return $this->belongsTo(PammSubscription::class, 'subscription_id', 'id');
+    }
 }

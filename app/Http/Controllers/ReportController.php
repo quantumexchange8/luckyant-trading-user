@@ -271,7 +271,9 @@ class ReportController extends Controller
             $query = PerformanceIncentive::with([
                 'user',
                 'subscription',
-                'subscription.user'
+                'subscription.user',
+                'pamm_subscription',
+                'pamm_subscription.user',
             ])
                 ->where('user_id', $user->id);
 

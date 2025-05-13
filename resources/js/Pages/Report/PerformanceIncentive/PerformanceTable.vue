@@ -255,9 +255,15 @@ watch([totalPerformanceIncentive, totalAffiliateAmount, totalPersonalAmount], ()
                                     <span>{{ data.user.username ?? '-' }}</span>
                                     <span class="text-xs text-gray-400 dark:text-gray-500">{{ data.user.email }}</span>
                                 </div>
-                                <div v-else class="flex flex-col">
-                                    <span>{{ data.subscription.user.username ?? '-' }}</span>
-                                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ data.subscription.user.email }}</span>
+                                <div v-else>
+                                    <div v-if="data.category === 'pamm'" class="flex flex-col">
+                                        <span>{{ data.pamm_subscription.user.username ?? '-' }}</span>
+                                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ data.pamm_subscription.user.email }}</span>
+                                    </div>
+                                    <div v-else class="flex flex-col">
+                                        <span>{{ data.subscription.user.username ?? '-' }}</span>
+                                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ data.subscription.user.email }}</span>
+                                    </div>
                                 </div>
                             </template>
                         </Column>

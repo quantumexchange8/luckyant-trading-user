@@ -277,8 +277,13 @@ watch([totalPerformanceIncentive, totalAffiliateAmount, totalPersonalAmount], ()
                                 <div v-if="data.meta_login" class="flex flex-col">
                                     <span>{{ data.meta_login }}</span>
                                 </div>
-                                <div v-else class="flex flex-col">
-                                    <span>{{ data.subscription.meta_login ?? '-' }}</span>
+                                <div v-else>
+                                    <div v-if="data.category === 'pamm'" class="flex flex-col">
+                                        <span>{{ data.pamm_subscription.meta_login ?? '-' }}</span>
+                                    </div>
+                                    <div v-else class="flex flex-col">
+                                        <span>{{ data.subscription.meta_login ?? '-' }}</span>
+                                    </div>
                                 </div>
                             </template>
                         </Column>

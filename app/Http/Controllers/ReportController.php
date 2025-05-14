@@ -300,6 +300,13 @@ class ReportController extends Controller
                         ->orWhere('meta_login', 'like', "%{$keyword}%")
                         ->orWhereHas('subscription', function ($q) use ($keyword) {
                             $q->where('meta_login', 'like', "%{$keyword}%");
+                        })
+                        ->orWhereHas('pamm_subscription', function ($q) use ($keyword) {
+                            $q->where('meta_login', 'like', "%{$keyword}%");
+                        })
+                        ->orWhereHas('pamm_subscription.user', function ($q) use ($keyword) {
+                            $q->where('username', 'like', "%{$keyword}%")
+                                ->orWhere('email', 'like', "%{$keyword}%");
                         });
                 });
             }

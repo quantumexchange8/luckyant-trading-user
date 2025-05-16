@@ -294,7 +294,12 @@ watch([totalPerformanceIncentive, totalAffiliateAmount, totalPersonalAmount], ()
                             :header="$t('public.fund')"
                         >
                             <template #body="{ data }">
-                                <span class="font-medium">${{ formatAmount(data.subscription.meta_balance) }}</span>
+                                <div v-if="data.category === 'pamm'">
+                                    <span class="font-medium">${{ formatAmount(data.pamm_subscription.subscription_amount) }}</span>
+                                </div>
+                                <div v-else class="flex flex-col">
+                                    <span class="font-medium">${{ formatAmount(data.subscription.meta_balance) }}</span>
+                                </div>
                             </template>
                         </Column>
 

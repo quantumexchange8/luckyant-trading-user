@@ -193,7 +193,7 @@ const transactionClass = (data) => {
 
     const positiveTypes = [
         'Deposit', 'LotSizeRebate', 'SameLevelRewards', 'PerformanceIncentive',
-        'BalanceOut', 'ProfitSharing', 'TerminationReturn'
+        'BalanceOut', 'TerminationReturn'
     ];
 
     const negativeTypes = [
@@ -201,7 +201,7 @@ const transactionClass = (data) => {
     ];
 
     const adjustmentTypes = [
-        'Transfer', 'WalletRedemption', 'WalletAdjustment', 'ReturnedAmount'
+        'Transfer', 'WalletRedemption', 'WalletAdjustment', 'ReturnedAmount', 'ProfitSharing'
     ];
 
     if (

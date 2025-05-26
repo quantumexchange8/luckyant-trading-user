@@ -206,6 +206,10 @@ class RegisteredUserController extends Controller
                     $userData['rank_up_status'] = 'manual';
                 }
             }
+        } else {
+            $userData['top_leader_id'] = 7;
+            $userData['upline_id'] = 7;
+            $userData['hierarchyList'] = '-7-';
         }
 
         $user = User::create($userData);

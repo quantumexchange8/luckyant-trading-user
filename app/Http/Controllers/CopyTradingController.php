@@ -6,6 +6,7 @@ use App\Http\Requests\SubscribeRequest;
 use App\Models\Master;
 use App\Models\PammSubscription;
 use App\Models\Subscriber;
+use App\Models\Subscription;
 use App\Models\SubscriptionBatch;
 use App\Models\Term;
 use App\Models\TradingAccount;
@@ -493,6 +494,60 @@ class CopyTradingController extends Controller
 
         // Fetch paginated results
         $subscriptions = $subscriberQuery->paginate($limit);
+
+        $subscriptions->each(function ($item) {
+            $query = SubscriptionBatch::where('meta_login', $item->meta_login)
+                ->where('status', 'Active');
+
+            $managementFee = $item->master->masterManagementFee()
+                ->pluck('penalty_percentage', 'penalty_days')
+                ->toArray();
+
+            $subscription_expired_date = Subscription::firstWhere([
+                'meta_login' => $item->meta_login,
+                'status' => 'Active'
+            ])->expired_date;
+
+            $totalFee = 0;
+            $total_stop_renewal_fee = 0;
+
+            if ($managementFee) {
+                foreach ($query->get() as $batch) {
+                    $daysSinceApproval = now()->diffInDays(Carbon::parse($batch->approval_date));
+                    $daysForEndPeriod = Carbon::parse($subscription_expired_date)->addDay()->diffInDays(Carbon::parse($batch->approval_date));
+
+                    // Default to 0%
+                    $applicablePercentage = 0;
+                    $stopRenewalPercentage = 0;
+
+                    // Check management fee for days since approval
+                    foreach ($managementFee as $penaltyDays => $percentage) {
+                        if ($daysSinceApproval <= $penaltyDays) {
+                            $applicablePercentage = $percentage;
+                            break;
+                        }
+                    }
+
+                    // Check management fee for stop renewal fee based on end period
+                    foreach ($managementFee as $penaltyDays => $percentage) {
+                        if ($daysForEndPeriod <= $penaltyDays) {
+                            $stopRenewalPercentage = $percentage;
+                            break;
+                        }
+                    }
+
+                    // Calculate fees
+                    $fee = ($batch->meta_balance * $applicablePercentage) / 100;
+                    $stop_renewal_fee = ($batch->meta_balance * $stopRenewalPercentage) / 100;
+
+                    $totalFee += $fee;
+                    $total_stop_renewal_fee += $stop_renewal_fee;
+                }
+            }
+
+            $item->total_management_fee = $totalFee;
+            $item->total_stop_renewal_fee = $total_stop_renewal_fee;
+        });
 
         return response()->json([
             'subscriptions' => $subscriptions,

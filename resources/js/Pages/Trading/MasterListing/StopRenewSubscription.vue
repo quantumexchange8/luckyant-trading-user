@@ -41,34 +41,6 @@ const submitForm = () => {
 const closeDialog = () => {
     emit("update:visible", false);
 }
-
-const getJoinedDays = (data) => {
-    const approvalDate = dayjs(data.approval_date);
-    const endDate =
-        data.status === 'Terminated'
-            ? dayjs(data.termination_date)
-            : dayjs(); // Use today's date if not terminated
-
-    return endDate.diff(approvalDate, 'day'); // Calculate the difference in days
-};
-
-const calculateManagementFee = (data) => {
-    const joinedDays = getJoinedDays(data);
-
-    let managementFee = 0;
-
-    // Sort the management_fee array to ensure rules are applied in order of penalty_days
-    const sortedFees = [...data.master.master_management_fee].sort((a, b) => a.penalty_days - b.penalty_days);
-
-    for (const feeRule of sortedFees) {
-        if (joinedDays <= feeRule.penalty_days) {
-            managementFee = feeRule.penalty_percentage;
-            break;
-        }
-    }
-
-    return data.subscription.meta_balance * (managementFee / 100);
-};
 </script>
 
 <template>
@@ -133,13 +105,13 @@ const calculateManagementFee = (data) => {
                     <div class="flex py-1 gap-3 items-start self-stretch">
                         <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.management_fee') }}</span>
                         <span class="w-full text-error-500 font-semibold text-sm">$ {{
-                                formatAmount(calculateManagementFee(subscriber))
+                                formatAmount(subscriber.total_stop_renewal_fee)
                             }}</span>
                     </div>
                     <div class="flex py-1 gap-3 items-start self-stretch">
                         <span class="w-full text-gray-500 font-medium text-xs">{{ $t('public.return_amount') }}</span>
                         <span class="w-full text-success-500 font-semibold text-sm">$ {{
-                                formatAmount(subscription.meta_balance - calculateManagementFee(subscriber))
+                                formatAmount(subscription.meta_balance - Number(subscriber.total_stop_renewal_fee))
                             }}</span>
                     </div>
                     <div class="flex py-1 gap-3 items-start self-stretch">

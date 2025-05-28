@@ -506,7 +506,7 @@ class CopyTradingController extends Controller
             $subscription_expired_date = Subscription::firstWhere([
                 'meta_login' => $item->meta_login,
                 'status' => 'Active'
-            ])->expired_date;
+            ])?->expired_date;
 
             $totalFee = 0;
             $total_stop_renewal_fee = 0;

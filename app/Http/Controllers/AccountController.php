@@ -27,6 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -246,7 +247,7 @@ class AccountController extends Controller
         }
 
         if ($startDate && $endDate) {
-            $start_date = \Illuminate\Support\Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
+            $start_date = Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay();
             $end_date = Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay();
 
             $query->whereBetween('created_at', [$start_date, $end_date]);
@@ -550,6 +551,194 @@ class AccountController extends Controller
             'status' => 'Success',
             'comment' => $comment,
             'new_wallet_amount' => $newWalletAmount,
+        ]);
+    }
+
+    public function withdrawBalance(Request $request)
+    {
+        Validator::make($request->all(), [
+            'amount' => ['required', 'numeric', ],
+            'from_meta_login' => ['required'],
+        ])->setAttributeNames([
+            'amount' => trans('public.amount'),
+            'from_meta_login' => trans('public.meta_login'),
+        ])->validate();
+
+        $user = Auth::user();
+        $user->load(['wallets' => function ($query) {
+            $query->whereIn('type', ['cash_wallet', 'e_wallet']);
+        }]);
+
+        $cash_wallet = $user->wallets->firstWhere('type', 'cash_wallet');
+        $e_wallet = $user->wallets->firstWhere('type', 'e_wallet');
+        $amount = $request->amount;
+        $trading_account = TradingAccount::with([
+            'subscriber',
+            'pamm_subscription',
+            'accountType'
+        ])->firstWhere('meta_login', $request->from_meta_login);
+
+        // Check balance
+        if ($trading_account->balance < $amount || $amount <= 0) {
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
+        }
+
+        // Check pending subscription
+        $pending_subscriber = $trading_account->subscriber()->where('status', 'Pending')
+            ->exists();
+
+        $pending_pamm = $trading_account->pamm_subscription()->where('status', 'Pending')
+            ->exists();
+
+        if ($pending_subscriber || $pending_pamm) {
+            throw ValidationException::withMessages(['amount' => trans('public.pending_subscription_approval')]);
+        }
+
+        // Check last subscription
+        $last_terminated_copy_trade = $trading_account->subscriber()
+            ->where('status', 'Unsubscribed')
+            ->latest()
+            ->first();
+
+        $last_terminated_pamm = $trading_account->pamm_subscription()
+            ->whereIn('status', ['Terminated', 'Revoked'])
+            ->latest()
+            ->first();
+
+        if ($last_terminated_copy_trade) {
+            if (Carbon::parse($last_terminated_copy_trade->unsubscribe_date)->greaterThan(Carbon::now()->subHours(24))) {
+                throw ValidationException::withMessages(['amount' => trans('public.termination_within_one_day')]);
+            }
+        }
+
+        if ($last_terminated_pamm) {
+            if (Carbon::parse($last_terminated_pamm->termination_date)->greaterThan(Carbon::now()->subHours(24))) {
+                throw ValidationException::withMessages(['amount' => trans('public.termination_within_one_day')]);
+            }
+        }
+
+        // Check active subscription
+        $active_subscriber = $trading_account->subscriber()->where('status', 'Subscribing')->exists();
+        $active_pamm = $trading_account->pamm_subscription()->where('status', 'Active')->exists();
+
+        if ($active_subscriber) {
+            throw ValidationException::withMessages(['amount' => trans('public.account_have_subscription')]);
+        }
+
+        if ($active_pamm) {
+            throw ValidationException::withMessages(['amount' => trans('public.account_have_subscription')]);
+        }
+
+        $metaService = new MetaFiveService();
+        $connection = $metaService->getConnectionStatus();
+
+        if ($connection != 0) {
+            return back()->with('toast', [
+                'title' => trans("public.server_under_maintenance"),
+                'message' => trans('public.try_again_later'),
+                'type' => 'warning',
+            ]);
+        }
+
+        $dealId = null;
+        $account_type = $trading_account->accountType->slug;
+        $comment = 'Withdraw from trading account';
+
+        if ($account_type != 'virtual') {
+            try {
+                $metaService->getUserInfo(collect([$trading_account]));
+                $deal = $metaService->createDeal($trading_account->meta_login, $amount, $comment, dealAction::WITHDRAW);
+                $dealId = $deal['deal_Id'] ?? null;
+                $comment = $deal['conduct_Deal']['comment'] ?? 'Withdraw from trading account';
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts or creating deal: ' . $e->getMessage());
+            }
+        } else {
+            $trading_account->update([
+                'balance' => $trading_account->balance - $amount
+            ]);
+        }
+
+        $amount_remain = $amount;
+
+        // Only if $e_wallet exists and has positive remaining allocation
+        if ($e_wallet) {
+            $lastTerminationReturn = Transaction::where('from_meta_login', $trading_account->meta_login)
+                ->where('transaction_type', 'TerminationReturn')
+                ->where('status', 'Success')
+                ->latest()
+                ->first();
+
+            $eWalletBalanceInQuery = Transaction::where('from_wallet_id', $e_wallet->id)
+                ->where('to_meta_login', $trading_account->meta_login)
+                ->where('transaction_type', 'BalanceIn')
+                ->where('status', 'Success');
+
+            $eWalletBalanceOutQuery = Transaction::where('to_wallet_id', $e_wallet->id)
+                ->where('from_meta_login', $trading_account->meta_login)
+                ->where('transaction_type', 'BalanceOut')
+                ->where('status', 'Success');
+
+            if ($lastTerminationReturn) {
+                $eWalletBalanceInQuery->where('created_at', '>', $lastTerminationReturn->created_at);
+                $eWalletBalanceOutQuery->where('created_at', '>', $lastTerminationReturn->created_at);
+            }
+
+            $eWalletBalanceIn = $eWalletBalanceInQuery->sum('transaction_amount');
+            $eWalletBalanceOut = $eWalletBalanceOutQuery->sum('transaction_amount');
+
+            $remainingBalance = $eWalletBalanceIn - $eWalletBalanceOut;
+
+            if ($remainingBalance > 0) {
+                $transferAmount = min($remainingBalance, $amount_remain);
+
+                $e_wallet->increment('balance', $transferAmount);
+
+                Transaction::create([
+                    'category' => 'trading_account',
+                    'user_id' => $user->id,
+                    'to_wallet_id' => $e_wallet->id,
+                    'from_meta_login' => $trading_account->meta_login,
+                    'ticket' => $dealId,
+                    'transaction_number' => RunningNumberService::getID('transaction'),
+                    'transaction_type' => 'BalanceOut',
+                    'amount' => $transferAmount,
+                    'transaction_charges' => 0,
+                    'transaction_amount' => $transferAmount,
+                    'status' => 'Success',
+                    'comment' => $comment,
+                    'new_wallet_amount' => $e_wallet->balance,
+                ]);
+
+                $amount_remain -= $transferAmount;
+            }
+        }
+
+        // If any remaining, transfer to cash wallet
+        if ($amount_remain > 0 && $cash_wallet) {
+            $cash_wallet->increment('balance', $amount_remain);
+
+            Transaction::create([
+                'category' => 'trading_account',
+                'user_id' => $user->id,
+                'to_wallet_id' => $cash_wallet->id,
+                'from_meta_login' => $trading_account->meta_login,
+                'ticket' => $dealId,
+                'transaction_number' => RunningNumberService::getID('transaction'),
+                'transaction_type' => 'BalanceOut',
+                'amount' => $amount_remain,
+                'transaction_charges' => 0,
+                'transaction_amount' => $amount_remain,
+                'status' => 'Success',
+                'comment' => $comment,
+                'new_wallet_amount' => $cash_wallet->balance,
+            ]);
+        }
+
+        return back()->with('toast', [
+            'title' => trans("public.success_withdraw"),
+            'message' => trans('public.successfully_withdraw') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $trading_account->meta_login,
+            'type' => 'success',
         ]);
     }
 }

@@ -665,4 +665,7 @@ return [
     "authorize_account_caption" => "계정 승인",
     "authorize_account_message" => "Luckyant Mall에 로그인하기까지 한 단계 남았습니다. 시작해 볼까요!",
     "incorrect_bonus_correction" => "잘못된 보너스 수정",
+    "pending_subscription_approval" => "구독 승인이 보류 중입니다.",
+    "termination_within_one_day" => "구독 해지 후 1일 이내에는 잔액을 이체할 수 없습니다.",
+    "account_have_subscription" => "이 계정에는 활성 구독이 있습니다.",
 ];

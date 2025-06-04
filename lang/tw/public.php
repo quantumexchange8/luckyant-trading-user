@@ -661,4 +661,7 @@ return [
     "ticket_gift_pack" => "門票禮包",
     "choose_via_condition" => "必須依照自身達標的條件進行選擇",
     "incorrect_bonus_correction" => "糾正獎金",
+    "pending_subscription_approval" => "您有一個待批准的訂閱。",
+    "termination_within_one_day" => "您不能在終止後的一天內結餘轉出。",
+    "account_have_subscription" => "此帳號有一個有效訂閱。",
 ];

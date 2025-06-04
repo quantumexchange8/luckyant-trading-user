@@ -14,10 +14,8 @@ const props = defineProps({
 const emit = defineEmits(['update:accountActionModal']);
 const { formatAmount } = transactionFormat();
 const form = useForm({
-    to_wallet_id: props.walletSel[0].value,
     amount: null,
     from_meta_login: props.account.meta_login,
-    type: props.account.account_type.id,
 });
 
 const toggleFullAmount = () => {
@@ -33,7 +31,7 @@ const closeDialog = () => {
 }
 
 const submitForm = () => {
-    form.post(route('account_info.withdrawTradingAccount'), {
+    form.post(route('account_info.withdrawBalance'), {
         onSuccess: () => {
             closeDialog();
             form.reset();

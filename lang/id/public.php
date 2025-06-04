@@ -665,4 +665,7 @@ return [
     "authorize_account_caption" => "Otorisasi Akun Anda",
     "authorize_account_message" => "Anda tinggal selangkah lagi untuk masuk ke Luckyant Mall. Mari kita mulai!",
     "incorrect_bonus_correction" => "Koreksi Bonus Salah",
+    "pending_subscription_approval" => "Anda memiliki persetujuan langganan yang tertunda.",
+    "termination_within_one_day" => "Anda tidak dapat mentransfer saldo dalam waktu satu hari setelah penghentian.",
+    "account_have_subscription" => "Akun ini memiliki langganan yang aktif.",
 ];

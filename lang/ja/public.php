@@ -665,4 +665,7 @@ return [
     "authorize_account_caption" => "アカウントを承認",
     "authorize_account_message" => "あと一歩でLuckyant Mallにサインインできます。さあ始めましょう！",
     "incorrect_bonus_correction" => "誤ったボーナス修正",
+    "pending_subscription_approval" => "サブスクリプションの承認が保留中です。",
+    "termination_within_one_day" => "解約後1日以内に残高を移行することはできません。",
+    "account_have_subscription" => "このアカウントには有効なサブスクリプションがあります。",
 ];

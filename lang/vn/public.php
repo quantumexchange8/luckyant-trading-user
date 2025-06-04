@@ -665,4 +665,7 @@ return [
     "authorize_account_caption" => "Ủy quyền tài khoản của bạn",
     "authorize_account_message" => "Bạn chỉ còn một bước nữa là có thể đăng nhập vào Luckyant Mall. Hãy bắt đầu nào!",
     "incorrect_bonus_correction" => "Sửa lỗi tiền thưởng không đúng",
+    "pending_subscription_approval" => "Bạn có một đăng ký đang chờ phê duyệt.",
+    "termination_within_one_day" => "Bạn không thể chuyển số dư trong vòng một ngày kể từ ngày chấm dứt.",
+    "account_have_subscription" => "Tài khoản này có đăng ký đang hoạt động.",
 ];

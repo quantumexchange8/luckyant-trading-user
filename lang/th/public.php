@@ -663,5 +663,8 @@ return [
     "ดำเนินการต่อ" => "ดำเนินการต่อ",
     "authorize_account_caption" => "อนุญาตบัญชีของคุณ",
     "authorize_account_message" => "คุณเหลืออีกเพียงหนึ่งขั้นตอนในการลงชื่อเข้าใช้ Luckyant Mall เริ่มกันเลย!",
-    "incorrect_bonus_correction" => "การแก้ไขโบนัสที่ไม่ถูกต้อง"
+    "incorrect_bonus_correction" => "การแก้ไขโบนัสที่ไม่ถูกต้อง",
+    "pending_subscription_approval" => "คุณอยู่ระหว่างการอนุมัติการสมัครรับข้อมูล",
+    "termination_within_one_day" => "คุณไม่สามารถโอนยอดคงเหลือได้ภายในหนึ่งวันหลังจากการยกเลิก",
+    "account_have_subscription" => "บัญชีนี้มีการสมัครสมาชิกที่ใช้งานอยู่",
 ];

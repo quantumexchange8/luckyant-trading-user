@@ -32,7 +32,7 @@ const props = defineProps({
 
 const isLoading = ref(false);
 const subscriptions = ref([]);
-const {formatAmount} = transactionFormat();
+const {formatAmount, formatType} = transactionFormat();
 const meta_login = ref('');
 const master_id = ref('');
 const joinDatePicker = ref([]);
@@ -315,10 +315,11 @@ const getSeverity = (status) => {
                                 <template #header>
                                     <span class="block">{{ $t('public.status') }}</span>
                                 </template>
-                                <template #body="slotProps">
-                                    <Tag :severity="getSeverity(slotProps.data.status)">
-                                        {{ slotProps.data.status }}
-                                    </Tag>
+                                <template #body="{data}">
+                                    <Tag
+                                        :severity="getSeverity(data.status)"
+                                        :value="$t(`public.${formatType(data.status).toLowerCase().replace(/\s+/g, '_')}`)"
+                                    />
                                 </template>
                             </Column>
                             <Column

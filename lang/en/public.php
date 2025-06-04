@@ -665,4 +665,7 @@ return [
     "authorize_account_caption" => "Authorize Your Account",
     "authorize_account_message" => "You’re one step away from signing in to Luckyant Mall. Let’s get started!",
     "incorrect_bonus_correction" => "Incorrect Bonus Correction",
+    "pending_subscription_approval" => "You have a pending subscription approval.",
+    "termination_within_one_day" => "You are not allowed to BALANCE OUT within one day after termination.",
+    "account_have_subscription" => "This account have an active subscription.",
 ];

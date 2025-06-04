@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
     Route::get('getReferrers', [SelectOptionController::class, 'getReferrers']);
     Route::get('getRanks', [SelectOptionController::class, 'getRanks']);
     Route::get('getMastersByType', [SelectOptionController::class, 'getMastersByType']);
+    Route::get('getInternalTransferAccounts', [SelectOptionController::class, 'getInternalTransferAccounts']);
 
     Route::get('update_transaction', [WalletController::class, 'depositReturn']);
     Route::get('tt_pay_return', [WalletController::class, 'tt_pay_return']);
@@ -118,7 +119,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/createAccount', [AccountController::class, 'createAccount'])->name('account_info.createAccount');
         Route::post('/depositBalance', [AccountController::class, 'depositBalance'])->name('account_info.depositBalance');
         Route::post('/withdrawBalance', [AccountController::class, 'withdrawBalance'])->name('account_info.withdrawBalance');
-//        Route::get('/account_listing', [AccountInfoController::class, 'index'])->name('account_info.account_info');
+        Route::post('/accountInternalTransfer', [AccountController::class, 'accountInternalTransfer'])->name('account_info.accountInternalTransfer');
 
         // after change get master delete
         Route::get('/refreshTradingAccountsData', [AccountInfoController::class, 'refreshTradingAccountsData'])->name('account_info.refreshTradingAccountsData');
@@ -133,8 +134,6 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/add-trading-account', [AccountInfoController::class, 'add_trading_account'])->name('account_info.add_trading_account');
         Route::post('/depositTradingAccount', [AccountInfoController::class, 'depositTradingAccount'])->name('account_info.depositTradingAccount');
-        Route::post('/withdrawTradingAccount', [AccountInfoController::class, 'withdrawTradingAccount'])->name('account_info.withdrawTradingAccount');
-        Route::post('/internalTransferTradingAccount', [AccountInfoController::class, 'internalTransferTradingAccount'])->name('account_info.internalTransferTradingAccount');
         Route::post('/becomeMaster', [AccountInfoController::class, 'becomeMaster'])->name('account_info.becomeMaster');
         Route::post('/updateMasterConfiguration', [AccountInfoController::class, 'updateMasterConfiguration'])->name('account_info.updateMasterConfiguration');
         Route::post('/updateLeverage', [AccountInfoController::class, 'updateLeverage'])->name('account_info.updateLeverage');

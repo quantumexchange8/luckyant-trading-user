@@ -664,4 +664,6 @@ return [
     "pending_subscription_approval" => "您有一個待批准的訂閱。",
     "termination_within_one_day" => "您不能在終止後的一天內結餘轉出。",
     "account_have_subscription" => "此帳號有一個有效訂閱。",
+    "account_master_cannot_top_up" => "您嘗試轉帳的目標帳戶無法儲值。",
+    "invalid_top_up_amount" => "您轉帳的金額必須是 $100 的倍數。",
 ];

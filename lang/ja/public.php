@@ -668,4 +668,6 @@ return [
     "pending_subscription_approval" => "サブスクリプションの承認が保留中です。",
     "termination_within_one_day" => "解約後1日以内に残高を移行することはできません。",
     "account_have_subscription" => "このアカウントには有効なサブスクリプションがあります。",
+    "account_master_cannot_top_up" => "送金しようとしている対象口座にトップアップできません。",
+    "invalid_top_up_amount" => "送金金額は100ドルの倍数である必要があります。",
 ];

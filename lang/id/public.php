@@ -668,4 +668,6 @@ return [
     "pending_subscription_approval" => "Anda memiliki persetujuan langganan yang tertunda.",
     "termination_within_one_day" => "Anda tidak dapat mentransfer saldo dalam waktu satu hari setelah penghentian.",
     "account_have_subscription" => "Akun ini memiliki langganan yang aktif.",
+    "account_master_cannot_top_up" => "Akun target yang ingin Anda transfer tidak dapat diisi ulang.",
+    "invalid_top_up_amount" => "Jumlah yang Anda transfer harus kelipatan $100.",
 ];

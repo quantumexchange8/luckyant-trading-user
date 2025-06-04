@@ -668,4 +668,6 @@ return [
     "pending_subscription_approval" => "Bạn có một đăng ký đang chờ phê duyệt.",
     "termination_within_one_day" => "Bạn không thể chuyển số dư trong vòng một ngày kể từ ngày chấm dứt.",
     "account_have_subscription" => "Tài khoản này có đăng ký đang hoạt động.",
+    "account_master_cannot_top_up" => "Không thể nạp tiền vào tài khoản mục tiêu mà bạn đang cố gắng chuyển.",
+    "invalid_top_up_amount" => "Số tiền bạn chuyển phải là bội số của $100.",
 ];

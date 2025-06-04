@@ -668,4 +668,6 @@ return [
     "pending_subscription_approval" => "구독 승인이 보류 중입니다.",
     "termination_within_one_day" => "구독 해지 후 1일 이내에는 잔액을 이체할 수 없습니다.",
     "account_have_subscription" => "이 계정에는 활성 구독이 있습니다.",
+    "account_master_cannot_top_up" => "이체하려는 대상 계좌는 충전할 수 없습니다.",
+    "invalid_top_up_amount" => "이체 금액은 $100의 배수여야 합니다.",
 ];

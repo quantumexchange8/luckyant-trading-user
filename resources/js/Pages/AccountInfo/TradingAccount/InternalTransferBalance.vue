@@ -1,5 +1,5 @@
 <script setup>
-import {useForm} from "@inertiajs/vue3";
+import {useForm, usePage} from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import Button from "primevue/button";
 import {ref} from "vue";
@@ -12,7 +12,6 @@ const props = defineProps({
     account: Object,
 })
 const emit = defineEmits(['update:accountActionModal']);
-const tradingAccountsSel = ref();
 const { formatAmount } = transactionFormat();
 
 const form = useForm({
@@ -26,7 +25,9 @@ const closeDialog = () => {
 }
 
 const submitForm = () => {
-    form.post(route('account_info.internalTransferTradingAccount'), {
+    form.to_meta_login = selectedAccount.value?.meta_login;
+
+    form.post(route('account_info.accountInternalTransfer'), {
         onSuccess: () => {
             closeDialog();
             form.reset();
@@ -38,21 +39,23 @@ const submitForm = () => {
 }
 
 const isLoading = ref(false);
+const accounts = ref([]);
+const selectedAccount = ref();
 
-const getTradingAccounts = async () => {
+const getInternalTransferAccounts = async () => {
     isLoading.value = true;
     try {
-        const response = await axios.get('/account_info/getTradingAccounts?type=internal_transfer&meta_login=' + props.account.meta_login);
-        tradingAccountsSel.value = response.data;
-        form.to_meta_login = tradingAccountsSel.value.length > 0 ? tradingAccountsSel.value[0] : null;
+        const response = await axios.get(`/getInternalTransferAccounts?meta_login=${props.account.meta_login}`);
+        accounts.value = response.data;
+        selectedAccount.value = accounts.value[0];
     } catch (error) {
-        console.error('Error refreshing trading accounts data:', error);
+        console.error('Error fetching countries:', error);
     } finally {
         isLoading.value = false;
     }
 };
 
-getTradingAccounts();
+getInternalTransferAccounts();
 </script>
 
 <template>
@@ -73,21 +76,22 @@ getTradingAccounts();
             />
             <Select
                 input-id="to_meta_login"
-                v-model="form.to_meta_login"
-                :options="tradingAccountsSel"
+                v-model="selectedAccount"
+                :options="accounts"
                 :placeholder="$t('public.select_account')"
                 class="w-full"
                 :invalid="!!form.errors.to_meta_login"
                 :loading="isLoading"
+                :disabled="accounts.length === 0"
             >
-                <template #value="slotProps">
-                    <div v-if="slotProps.value" class="flex items-center">
-                        {{ slotProps.value.label }}
+                <template #value="{value, placeholder}">
+                    <div v-if="value" class="flex items-center">
+                        {{ value.meta_login }} <span class="text-gray-500">(${{ formatAmount(value.balance) }})</span>
                     </div>
-                    <span v-else class="text-gray-500">{{ slotProps.placeholder }}</span>
+                    <span v-else class="text-gray-500">{{ placeholder }}</span>
                 </template>
-                <template #option="slotProps">
-                    {{ slotProps.option.label }}
+                <template #option="{option}">
+                    {{ option.meta_login }} <span class="text-gray-500">(${{ formatAmount(option.balance) }})</span>
                 </template>
             </Select>
             <InputError :message="form.errors.to_meta_login"/>
@@ -108,6 +112,7 @@ getTradingAccounts();
                 placeholder="$0.00"
                 fluid
                 :invalid="!!form.errors.amount"
+                :disabled="accounts.length === 0"
             />
             <InputError :message="form.errors.amount"/>
         </div>
@@ -127,7 +132,7 @@ getTradingAccounts();
                 type="submit"
                 class="justify-center w-full md:w-auto px-6"
                 @click.prevent="submitForm"
-                :disabled="form.processing"
+                :disabled="form.processing || accounts.length === 0"
             >
                 {{ $t('public.confirm') }}
             </Button>

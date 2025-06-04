@@ -557,7 +557,7 @@ class AccountController extends Controller
     public function withdrawBalance(Request $request)
     {
         Validator::make($request->all(), [
-            'amount' => ['required', 'numeric', ],
+            'amount' => ['required', 'numeric', 'min:1'],
             'from_meta_login' => ['required'],
         ])->setAttributeNames([
             'amount' => trans('public.amount'),
@@ -739,6 +739,210 @@ class AccountController extends Controller
             'title' => trans("public.success_withdraw"),
             'message' => trans('public.successfully_withdraw') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $trading_account->meta_login,
             'type' => 'success',
+        ]);
+    }
+
+    public function accountInternalTransfer(Request $request)
+    {
+        Validator::make($request->all(), [
+            'amount' => ['required', 'numeric', 'min:1'],
+            'to_meta_login' => ['required'],
+            'from_meta_login' => ['required'],
+        ])->setAttributeNames([
+            'amount' => trans('public.amount'),
+            'to_meta_login' => trans('public.transfer_to'),
+            'from_meta_login' => trans('public.meta_login'),
+        ])->validate();
+
+        $user = Auth::user();
+        $from_trading_account = TradingAccount::with('accountType')
+            ->where('meta_login', $request->from_meta_login)
+            ->first();
+        $to_trading_account = TradingAccount::with([
+            'accountType',
+            'subscription.master',
+            'pamm_subscription.master'
+        ])
+            ->where('meta_login', $request->to_meta_login)
+            ->first();
+        $amount = $request->amount;
+        $from_account_type = $from_trading_account->accountType->slug;
+        $to_account_type = $to_trading_account->accountType->slug;
+
+        $subscriptionCanTopUp = $to_trading_account->subscription?->master?->can_top_up == 1;
+        $pammCanTopUp = $to_trading_account->pamm_subscription?->master?->can_top_up == 1;
+
+        if (!$subscriptionCanTopUp && !$pammCanTopUp) {
+            // No restriction — proceed
+        } else {
+            // Restriction applies — amount must be multiple of 100 and integer
+            if ($amount % 100 != 0 || floor($amount) != $amount) {
+                throw ValidationException::withMessages(['amount' => trans('public.invalid_top_up_amount')]);
+            }
+        }
+
+        $metaService = new MetaFiveService();
+        $connection = $metaService->getConnectionStatus();
+
+        if ($connection != 0) {
+            return back()->with('toast', [
+                'title' => trans("public.server_under_maintenance"),
+                'message' => trans('public.try_again_later'),
+                'type' => 'warning',
+            ]);
+        }
+
+        if ($from_account_type != 'virtual') {
+            try {
+                $metaService->getUserInfo(collect([$from_trading_account]));
+            } catch (\Exception $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
+        }
+
+        // Check if balance is sufficient
+        if ($from_trading_account->balance < $amount || $amount <= 0) {
+            throw ValidationException::withMessages(['amount' => trans('public.insufficient_balance')]);
+        }
+
+        $deal_1 = [];
+        $deal_2 = [];
+
+        if ($from_account_type != 'virtual') {
+            try {
+                $deal_1 = $metaService->createDeal($from_trading_account->meta_login, $amount, "To #$to_trading_account->meta_login", dealAction::WITHDRAW);
+            } catch (\Throwable $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
+        } else {
+            $from_trading_account->update(['balance' => $from_trading_account->balance - $amount]);
+        }
+
+        $dealId_1 = $deal_1['deal_Id'] ?? '0';
+
+        if ($to_account_type != 'virtual') {
+            try {
+                $deal_2 = $metaService->createDeal($to_trading_account->meta_login, $amount, "From #$from_trading_account->meta_login", dealAction::DEPOSIT);
+            } catch (\Throwable $e) {
+                \Log::error('Error fetching trading accounts: '. $e->getMessage());
+            }
+        } else {
+            $to_trading_account->update(['balance' => $to_trading_account->balance + $amount]);
+        }
+
+        $dealId_2 = $deal_2['deal_Id'] ?? '0';
+
+        $ticket = $dealId_1 . ', ' . $dealId_2;
+
+        // Create transaction
+        Transaction::create([
+            'category' => 'trading_account',
+            'user_id' => $user->id,
+            'from_meta_login' => $from_trading_account->meta_login,
+            'to_meta_login' => $to_trading_account->meta_login,
+            'ticket' => $ticket,
+            'transaction_number' => RunningNumberService::getID('transaction'),
+            'transaction_type' => 'InternalTransfer',
+            'amount' => $amount,
+            'transaction_charges' => 0,
+            'transaction_amount' => $amount,
+            'status' => 'Success',
+            'comment' => "From #$from_trading_account->meta_login To #$to_trading_account->meta_login",
+        ]);
+
+        // Check subscription
+        if ($subscriptionCanTopUp) {
+            $subscriber = Subscriber::with(['master:id,meta_login', 'tradingAccount'])
+                ->where('user_id', $user->id)
+                ->where('meta_login', $to_trading_account->meta_login)
+                ->whereIn('status', ['Pending', 'Subscribing'])
+                ->first();
+
+            if ($subscriber && $subscriber->status == 'Pending') {
+                $subscriber->initial_meta_balance += $amount;
+                $subscriber->save();
+            } elseif ($subscriber && $subscriber->status == 'Subscribing') {
+                $subscriber->subscribe_amount += $amount;
+                $subscriber->save();
+
+                $subscriptions = Subscription::with(['master:id,meta_login', 'tradingAccount'])
+                    ->where('user_id', $user->id)
+                    ->where('meta_login', $to_trading_account->meta_login)
+                    ->whereIn('status', ['Pending', 'Active'])
+                    ->get();
+
+                if ($subscriptions) {
+                    foreach ($subscriptions as $subscription) {
+                        $subscription->meta_balance += $amount;
+                        $subscription->save();
+                        if ($subscription->status == 'Active') {
+                            CopyTradeTransaction::create([
+                                'user_id' => $user->id,
+                                'trading_account_id' => $subscription->tradingAccount->id,
+                                'meta_login' => $subscription->tradingAccount->meta_login,
+                                'subscription_id' => $subscription->id,
+                                'master_id' => $subscription->master->id,
+                                'master_meta_login' => $subscription->master->meta_login,
+                                'amount' => $amount,
+                                'real_fund' => $amount,
+                                'demo_fund' => 0,
+                                'type' => 'Deposit',
+                                'status' => 'Success',
+                            ]);
+
+                            SubscriptionBatch::create([
+                                'user_id' => $user->id,
+                                'trading_account_id' => $subscriber->trading_account_id,
+                                'meta_login' => $to_trading_account->meta_login,
+                                'meta_balance' => $amount,
+                                'real_fund' => $amount,
+                                'demo_fund' => 0,
+                                'master_id' => $subscriber->master_id,
+                                'master_meta_login' => $subscriber->master_meta_login,
+                                'type' => 'CopyTrade',
+                                'subscriber_id' => $subscriber->id,
+                                'subscription_id' => $subscription->id,
+                                'subscription_number' => $subscription->subscription_number,
+                                'subscription_period' => $subscriber->roi_period,
+                                'transaction_id' => $subscriber->transaction_id,
+                                'subscription_fee' => $subscriber->initial_subscription_fee,
+                                'settlement_start_date' => now(),
+                                'settlement_date' => now()->addDays($subscriber->roi_period)->endOfDay(),
+                                'status' => 'Active',
+                                'approval_date' => now(),
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($pammCanTopUp) {
+            $master = $to_trading_account->pamm_subscription->master;
+
+            PammSubscription::create([
+                'user_id' => $user->id,
+                'meta_login' => $to_trading_account->meta_login,
+                'master_id' => $master->id,
+                'master_meta_login' => $master->meta_login,
+                'subscription_amount' => $master->type == 'ESG' ? $amount/2 : $amount,
+                'subscription_package_product' => $master->type == 'ESG' ? $request->top_up_amount / 1000 . '棵沉香树' : null,
+                'type' => $master->type,
+                'subscription_number' => RunningNumberService::getID('subscription'),
+                'subscription_period' => $master->join_period,
+                'settlement_period' => $master->roi_period,
+                'settlement_date' => now()->addDays($master->roi_period)->endOfDay(),
+                'expired_date' => $master->join_period > 0 ? now()->addDays($master->join_period)->endOfDay() : null,
+                'approval_date' => now(),
+                'status' => 'Active',
+                'remarks' => 'Top Up'
+            ]);
+        }
+
+        return back()->with('toast', [
+            'title' => trans("public.successfully_transfer"),
+            'message' => trans('public.successfully_transfer') . ' $' . number_format($amount, 2) . trans('public.from_login') . ': ' . $from_trading_account->meta_login . ' ' . trans('public.to_login') . ': ' . $to_trading_account->meta_login,
+            'type' => 'success'
         ]);
     }
 }

@@ -668,4 +668,6 @@ return [
     "pending_subscription_approval" => "您有一个待批准的订阅。",
     "termination_within_one_day" => "您不能在终止后的一天内结余转出。",
     "account_have_subscription" => "此帐户有一个有效订阅。",
+    "account_master_cannot_top_up" => "您尝试转账的目标账户无法充值。",
+    "invalid_top_up_amount" => "您转账的金额必须是 $100 的倍数。",
 ];

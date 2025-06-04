@@ -13,6 +13,7 @@ use App\Models\PaymentAccount;
 use App\Models\SettingLeverage;
 use App\Models\SettingRank;
 use App\Models\SubscriptionBatch;
+use App\Models\TradingAccount;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
@@ -190,5 +191,34 @@ class SelectOptionController extends Controller
             ->get();
 
         return response()->json($masters);
+    }
+
+    public function getInternalTransferAccounts(Request $request)
+    {
+        $trading_accounts = TradingAccount::with([
+            'subscription.master',
+            'pamm_subscription.master'
+        ])
+            ->where('user_id', Auth::id())
+            ->whereNot('meta_login', $request->meta_login)
+            ->get()
+            ->filter(function ($a) {
+                if (!$a->subscription && !$a->pamm_subscription) {
+                    return true;
+                }
+
+                if ($a->subscription) {
+                    return $a->subscription->master?->can_top_up == 1;
+                }
+
+                if ($a->pamm_subscription) {
+                    return $a->pamm_subscription->master?->can_top_up == 1;
+                }
+
+                return false;
+            })
+            ->values();
+
+        return response()->json($trading_accounts);
     }
 }

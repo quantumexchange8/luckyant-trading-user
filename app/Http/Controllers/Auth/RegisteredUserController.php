@@ -48,7 +48,7 @@ class RegisteredUserController extends Controller
         $rules = [
             'email' => 'required|string|email|max:255|unique:' . User::class,
             'username' => 'required|string|max:255|unique:' . User::class,
-            'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:8|unique:' . User::class,
+            'phone' => 'required',
             'password' => ['required', 'confirmed', Password::min(6)->letters()->symbols()->numbers()->mixedCase()],
         ];
 

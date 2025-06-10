@@ -75,17 +75,6 @@ class ProfileController extends Controller
             $phone_number = '+' . $phone;
         }
 
-        $users = User::where('dial_code', $request->dial_code)
-            ->whereNot('id', $user->id)
-            ->where('status', 'Active')
-            ->get();
-
-        foreach ($users as $user_phone) {
-            if ($user_phone->phone == $phone_number) {
-                throw ValidationException::withMessages(['phone' => trans('public.invalid_mobile_phone')]);
-            }
-        }
-
         $user->update([
             'name' => $request->name,
             'username' => $request->username,

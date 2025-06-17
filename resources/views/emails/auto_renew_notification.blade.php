@@ -8,7 +8,7 @@ Your Copy Trading period is nearing its end, and our system is set to automatica
 Thank you for choosing our service. Should you have any questions or require assistance, please feel free to contact our customer service team. We are here to assist you.
 
 Best Regards,
-Lucky Ant Trading Team
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 "Disclaimer - Despite thorough research to compile the above content, it serves purely as informational and educational material. None of the content provided should be construed as investment advice in any form."
@@ -30,7 +30,8 @@ Lucky Ant Trading Team
 
 感谢您选择我们的服务。如果您有任何疑问或需要帮助，请随时联系我们的客服团队。我们将竭诚为您提供支持。
 
-此致敬礼, 蚂蚁科技团队
+此致敬礼,<br>
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 “免责声明 - 尽管经过深入研究编制了上述内容，但它纯粹作为信息和教育材料提供。所提供的任何内容都不应被解释为任何形式的投资建议。”

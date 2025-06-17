@@ -5,7 +5,7 @@ Dear **{{ $user->name }}**,
 
 Presented below is the daily profit report for your PAMM subscriptions.
 
-**Date**: {{ $pamm['date'] }} 
+**Date**: {{ $pamm['date'] }}
 
 @foreach($pamm['master_group'] as $pammData)
 **Master Info**<br>
@@ -58,7 +58,7 @@ Important note: Please report to us within 24 hours if this statement is incorre
 
 下面显示的是您的PAMM订阅的每日利润报告。
 
-**日期**: {{ $pamm['date'] }} 
+**日期**: {{ $pamm['date'] }}
 
 @foreach($pamm['master_group'] as $pammData)
 **交易者信息**<br>
@@ -92,7 +92,8 @@ Important note: Please report to us within 24 hours if this statement is incorre
 
 重要提示：如果此声明有误，请在 24 小时内向我们举报。否则本声明将被视为您已确认。
 
-此致敬礼, 蚂蚁科技团队
+此致敬礼,<br>
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 “免责声明 - 尽管经过深入研究编制了上述内容，但它纯粹作为信息和教育材料提供。所提供的任何内容都不应被解释为任何形式的投资建议。”

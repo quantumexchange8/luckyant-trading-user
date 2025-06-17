@@ -14,7 +14,7 @@ Here are the details of your deposit:
 If you have any questions regarding your deposit or need assistance with anything else, please feel free to contact our customer support team. We are here to help you. Thank you for choosing Lucky Ant Trading. We appreciate your trust and look forward to serving you.
 
 Best Regards ,
-Lucky Ant Trading Team
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 "Disclaimer - Despite thorough research to compile the above content, it serves purely as informational and educational material. None of the content provided should be construed as investment advice in any form."
@@ -43,7 +43,7 @@ Lucky Ant Trading Team
 如果您对存款有任何疑问或需要帮助,请随时联系我们的客户支持团队。我们在这里为您提供帮助。感谢您选择蚂蚁科技。我们感谢您的信任,期待为您服务。
 
 此致敬礼,<br>
-蚂蚁科技团队
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 "免责声明 - 尽管经过深入研究编制了上述内容,但它纯粹作为信息和教育材料提供。所提供的任何内容都不应被解释为任何形式的投资建议。"

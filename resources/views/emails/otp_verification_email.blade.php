@@ -1,14 +1,14 @@
 @component('mail::message')
 # One - Time Password Notification
 
-Hello , 
+Hello ,
 
 Verification Code : **{{ $otp }}**,
 
 We noticed that you started the registration process for a forex trading account with Lucky Ant Trading. By opening a real forex trading account with Lucky Ant Trading, you'll have access to a wide range of forex pairs, as well as tools and resources to help you make informed trades. Plus, our experienced team is always available to support and guide you(support@luckyantfxasia.com).
 
 Best Regards ,<br>
-Lucky Ant Trading Team
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 "Disclaimer - Despite thorough research to compile the above content, it serves purely as informational and educational material. None of the content provided should be construed as investment advice in any form."
@@ -32,7 +32,7 @@ Lucky Ant Trading Team
 我们注意到您已经开始了在蚂蚁科技进行外汇交易账户注册的过程。通过在蚂蚁科技开设真实的外汇交易账户,您将能够访问各种外汇交易对,以及有助于您做出明智交易的工具和资源。此外,我们经验丰富的团队随时可为您提供支持和指导 (support@luckyantfxasia.com)。
 
 此致敬礼,<br>
-蚂蚁科技团队
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 "免责声明 - 尽管经过深入研究编制了上述内容,但它纯粹作为信息和教育材料提供。所提供的任何内容都不应被解释为任何形式的投资建议。"

@@ -19,7 +19,7 @@ Here are the details of your MT5 trading account:
 You can use the above login credentials to access our trading platform and begin trading. If you have any questions about the MT5 trading platform or need assistance, please feel free to contact our customer service team. Our staff is dedicated to providing you with support and assistance.
 
 Best Regards,
-Lucky Ant Trading Team
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 "Disclaimer - Despite thorough research to compile the above content, it serves purely as informational and educational material. None of the content provided should be construed as investment advice in any form."
@@ -52,7 +52,8 @@ Lucky Ant Trading Team
 
 您可以使用以上登录凭据访问我们的交易平台并开始交易。如果您对MT5交易平台有任何疑问或需要帮助,请随时联系我们的客户服务团队。我们的工作人员致力于为您提供支持和协助。
 
-此致敬礼, 蚂蚁科技团队
+此致敬礼,<br>
+Lucky Ant Trading Ltd Team
 
 @component('mail::subcopy')
 “免责声明 - 尽管经过深入研究编制了上述内容,但它纯粹作为信息和教育材料提供。所提供的任何内容都不应被解释为任何形式的投资建议。”

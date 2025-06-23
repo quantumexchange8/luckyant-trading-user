@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Services\MetaFiveService;
 use App\Services\RunningNumberService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class RenewSubscriptionCommand extends Command
@@ -38,7 +39,7 @@ class RenewSubscriptionCommand extends Command
                 'status' => 'Expired'
             ]);
             $expiredDate = $subscription->expired_date;
-            $carbonExpiredDate = \Carbon\Carbon::parse($expiredDate);
+            $carbonExpiredDate = Carbon::parse($expiredDate);
             $calculatedDay = $carbonExpiredDate->addDays($subscription->subscription_period)->endOfDay();
 
             $newSubscription = null;
@@ -57,7 +58,7 @@ class RenewSubscriptionCommand extends Command
                     'next_pay_date' => $calculatedDay,
                     'expired_date' => $calculatedDay,
                     'status' => 'Active',
-                    'approval_date' => $subscription->expired_date,
+                    'approval_date' => Carbon::now()->startOfDay(),
                     'handle_by' => 1
                 ]);
 

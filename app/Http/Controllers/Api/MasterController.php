@@ -18,10 +18,20 @@ class MasterController extends Controller
 {
     public function getMaster()
     {
+        $orderedMetaLogins = [
+            457285,
+            457286,
+            457312,
+            459189,
+            460257,
+            458213,
+        ];
+
         $master = Master::query()
-            ->with('subscribers','tradingAccount','tradingUser')
+            ->with(['subscribers', 'tradingAccount', 'tradingUser'])
             ->where('status', 'Active')
-            ->limit(6)
+            ->whereIn('meta_login', $orderedMetaLogins)
+            ->orderByRaw('FIELD(meta_login, ' . implode(',', $orderedMetaLogins) . ')')
             ->get();
 
         $metaService = new MetaFiveService();
@@ -61,10 +71,20 @@ class MasterController extends Controller
 
     public function getLiveAccount()
     {
+        $orderedMetaLogins = [
+            457285,
+            457286,
+            457312,
+            459189,
+            460257,
+            458213,
+        ];
+
         $master = Master::query()
-            ->with('subscribers','tradingAccount','tradingUser')
+            ->with(['subscribers', 'tradingAccount', 'tradingUser'])
             ->where('status', 'Active')
-            ->limit(6)
+            ->whereIn('meta_login', $orderedMetaLogins)
+            ->orderByRaw('FIELD(meta_login, ' . implode(',', $orderedMetaLogins) . ')')
             ->get();
 
         $metaService = new MetaFiveService();

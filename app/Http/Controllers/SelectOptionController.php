@@ -61,15 +61,10 @@ class SelectOptionController extends Controller
 
     public function getDepositWallets(Request $request)
     {
-        $query = Wallet::where('user_id', Auth::id());
-
-        if ($request->account_type == 'alpha') {
-            $query->whereNot('type', 'e_wallet');
-        } elseif ($request->account_type == 'standard_account' || $request->account_type == 'ecn_account') {
-            $query->where('type', 'cash_wallet');
-        }
-
-        $wallets = $query->get();
+        $wallets = Wallet::where([
+            'user_id' => Auth::id(),
+            'type' => 'cash_wallet'
+        ])->get();
 
         return response()->json($wallets);
     }

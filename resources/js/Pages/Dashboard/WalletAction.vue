@@ -39,9 +39,6 @@ const props = defineProps({
             />
         </template>
         <template v-else-if="wallet.type === 'e_wallet'">
-            <DepositToMeta
-                :wallet="wallet"
-            />
             <Transfer
                 :eWalletSel="eWalletSel"
                 :wallet="wallet"

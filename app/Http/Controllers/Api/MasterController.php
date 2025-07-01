@@ -18,12 +18,24 @@ class MasterController extends Controller
 {
     public function getMaster()
     {
-        $master = Master::query()
-            ->with('subscribers','tradingAccount','tradingUser')
-            ->where('status', 'Active')
-            ->limit(6)
-            ->get();
+        $orderedMetaLogins = [
+            457285,
+            457286,
+            457312,
+            459189,
+            460257,
+            458213,
+        ];
 
+        $master = Master::query()
+            ->with(['subscribers', 'tradingAccount', 'tradingUser'])
+            ->where('status', 'Active')
+            ->whereIn('meta_login', $orderedMetaLogins)
+            ->orderByRaw('FIELD(meta_login, ' . implode(',', $orderedMetaLogins) . ')')
+            ->get()
+            ->unique('meta_login')
+            ->values();
+        
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
 
@@ -61,12 +73,24 @@ class MasterController extends Controller
 
     public function getLiveAccount()
     {
+        $orderedMetaLogins = [
+            457285,
+            457286,
+            457312,
+            459189,
+            460257,
+            458213,
+        ];
+        
         $master = Master::query()
-            ->with('subscribers','tradingAccount','tradingUser')
+            ->with(['subscribers', 'tradingAccount', 'tradingUser'])
             ->where('status', 'Active')
-            ->limit(6)
-            ->get();
-
+            ->whereIn('meta_login', $orderedMetaLogins)
+            ->orderByRaw('FIELD(meta_login, ' . implode(',', $orderedMetaLogins) . ')')
+            ->get()
+            ->unique('meta_login')
+            ->values();
+        
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
 

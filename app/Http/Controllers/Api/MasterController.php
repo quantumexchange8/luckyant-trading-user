@@ -32,8 +32,10 @@ class MasterController extends Controller
             ->where('status', 'Active')
             ->whereIn('meta_login', $orderedMetaLogins)
             ->orderByRaw('FIELD(meta_login, ' . implode(',', $orderedMetaLogins) . ')')
-            ->get();
-
+            ->get()
+            ->unique('meta_login')
+            ->values();
+        
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
 
@@ -79,14 +81,16 @@ class MasterController extends Controller
             460257,
             458213,
         ];
-
+        
         $master = Master::query()
             ->with(['subscribers', 'tradingAccount', 'tradingUser'])
             ->where('status', 'Active')
             ->whereIn('meta_login', $orderedMetaLogins)
             ->orderByRaw('FIELD(meta_login, ' . implode(',', $orderedMetaLogins) . ')')
-            ->get();
-
+            ->get()
+            ->unique('meta_login')
+            ->values();
+        
         $metaService = new MetaFiveService();
         $connection = $metaService->getConnectionStatus();
 

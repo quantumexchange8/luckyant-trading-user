@@ -670,4 +670,5 @@ return [
     "account_have_subscription" => "此帐户有一个有效订阅。",
     "account_master_cannot_top_up" => "您尝试转账的目标账户无法充值。",
     "invalid_top_up_amount" => "您转账的金额必须是 $100 的倍数。",
+    "product_redemption_list" => "产品兑换列表",
 ];

@@ -670,4 +670,5 @@ return [
     "account_have_subscription" => "Akun ini memiliki langganan yang aktif.",
     "account_master_cannot_top_up" => "Akun target yang ingin Anda transfer tidak dapat diisi ulang.",
     "invalid_top_up_amount" => "Jumlah yang Anda transfer harus kelipatan $100.",
+    "product_redemption_list" => "Daftar Penukaran Produk",
 ];

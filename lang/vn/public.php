@@ -670,4 +670,5 @@ return [
     "account_have_subscription" => "Tài khoản này có đăng ký đang hoạt động.",
     "account_master_cannot_top_up" => "Không thể nạp tiền vào tài khoản mục tiêu mà bạn đang cố gắng chuyển.",
     "invalid_top_up_amount" => "Số tiền bạn chuyển phải là bội số của $100.",
+    "product_redemption_list" => "Danh sách đổi sản phẩm",
 ];

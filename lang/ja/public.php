@@ -670,4 +670,5 @@ return [
     "account_have_subscription" => "このアカウントには有効なサブスクリプションがあります。",
     "account_master_cannot_top_up" => "送金しようとしている対象口座にトップアップできません。",
     "invalid_top_up_amount" => "送金金額は100ドルの倍数である必要があります。",
+    "product_redemption_list" => "商品引き換えリスト",
 ];

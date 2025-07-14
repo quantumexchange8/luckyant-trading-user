@@ -670,4 +670,5 @@ return [
     "account_have_subscription" => "This account have an active subscription.",
     "account_master_cannot_top_up" => "The target account you are trying to transfer cannot be top up.",
     "invalid_top_up_amount" => "The amount you transferred is must be multiple of $100.",
+    "product_redemption_list" => "Product Redemption List",
 ];

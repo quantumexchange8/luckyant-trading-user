@@ -670,4 +670,5 @@ return [
     "account_have_subscription" => "이 계정에는 활성 구독이 있습니다.",
     "account_master_cannot_top_up" => "이체하려는 대상 계좌는 충전할 수 없습니다.",
     "invalid_top_up_amount" => "이체 금액은 $100의 배수여야 합니다.",
+    "product_redemption_list" => "제품 교환 목록",
 ];

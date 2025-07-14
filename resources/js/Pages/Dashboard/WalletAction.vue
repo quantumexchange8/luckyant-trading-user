@@ -4,6 +4,7 @@ import InternalTransfer from "@/Pages/Dashboard/InternalTransfer.vue";
 import DepositToMeta from "@/Pages/Dashboard/DepositToMeta.vue";
 import Transfer from "@/Pages/Dashboard/Transfer.vue"
 import Withdrawal from "@/Pages/Dashboard/Withdrawal.vue";
+import {Link} from "@inertiajs/vue3";
 
 const props = defineProps({
     wallet: Object,
@@ -43,6 +44,14 @@ const props = defineProps({
                 :eWalletSel="eWalletSel"
                 :wallet="wallet"
             />
+            <a
+                class="flex items-center justify-center w-full text-xs hover:text-primary-500"
+                href="/data/product-redemption-list.pdf"
+                target="_blank"
+                rel="noopener"
+            >
+                {{ $t('public.product_redemption_list') }}
+            </a>
         </template>
     </div>
 </template>

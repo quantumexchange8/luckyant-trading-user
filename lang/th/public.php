@@ -669,4 +669,5 @@ return [
     "account_have_subscription" => "บัญชีนี้มีการสมัครสมาชิกที่ใช้งานอยู่",
     "account_master_cannot_top_up" => "บัญชีเป้าหมายที่คุณพยายามโอนไม่สามารถเติมเงินได้",
     "invalid_top_up_amount" => "จำนวนเงินที่คุณโอนต้องเป็นทวีคูณของ $100",
+    "product_redemption_list" => "รายการแลกรับสินค้า"
 ];

@@ -44,14 +44,14 @@ const props = defineProps({
                 :eWalletSel="eWalletSel"
                 :wallet="wallet"
             />
-            <a
-                class="flex items-center justify-center w-full text-xs hover:text-primary-500"
-                href="/data/product-redemption-list.pdf"
-                target="_blank"
-                rel="noopener"
-            >
-                {{ $t('public.product_redemption_list') }}
-            </a>
+<!--            <a-->
+<!--                class="flex items-center justify-center w-full text-xs hover:text-primary-500"-->
+<!--                href="/data/product-redemption-list.pdf"-->
+<!--                target="_blank"-->
+<!--                rel="noopener"-->
+<!--            >-->
+<!--                {{ $t('public.product_redemption_list') }}-->
+<!--            </a>-->
         </template>
     </div>
 </template>

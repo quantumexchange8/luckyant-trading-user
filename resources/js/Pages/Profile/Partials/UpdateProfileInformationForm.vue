@@ -214,7 +214,6 @@ watchEffect(() => {
                             type="text"
                             class="block w-full"
                             v-model="form.name"
-                            autocomplete="name"
                         />
 
                         <InputError class="mt-2" :message="form.errors.name" />
@@ -228,7 +227,6 @@ watchEffect(() => {
                             type="text"
                             class="block w-full"
                             v-model="form.username"
-                            autocomplete="username"
                         />
 
                         <InputError class="mt-2" :message="form.errors.username" />
@@ -242,7 +240,7 @@ watchEffect(() => {
                             type="email"
                             class="block w-full"
                             v-model="form.email"
-                            autocomplete="email"
+                            disabled
                         />
 
                         <InputError class="mt-2" :message="form.errors.email" />
@@ -282,7 +280,6 @@ watchEffect(() => {
                             type="text"
                             class="block w-full"
                             v-model="form.dob"
-                            autocomplete="dob"
                         />
 
                         <InputError class="mt-2" :message="form.errors.dob" />

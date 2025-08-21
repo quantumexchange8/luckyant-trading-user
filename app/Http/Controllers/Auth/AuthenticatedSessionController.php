@@ -54,7 +54,7 @@ class AuthenticatedSessionController extends Controller
         $agent = new Agent();
         $agent->setUserAgent($request->userAgent());
 
-        $ip = $this->getClientIPv4($request);
+        $ip = $this->getClientIP($request);
 
         LoginActivity::create([
             'user_id'    => auth()->id(),
@@ -142,7 +142,7 @@ class AuthenticatedSessionController extends Controller
                 $agent = new Agent();
                 $agent->setUserAgent($request->userAgent());
 
-                $ip = $this->getClientIPv4($request);
+                $ip = $this->getClientIP($request);
 
                 LoginActivity::create([
                     'user_id'    => auth()->id(),
@@ -163,18 +163,37 @@ class AuthenticatedSessionController extends Controller
     /**
      * Extract IPv4 address, handle Cloudflare proxy.
      */
-    protected function getClientIPv4($request): ?string
+    protected function getClientIP($request): string
     {
-        // Prefer Cloudflare header if available
-        $ip = $request->header('CF-Connecting-IP') ?? $request->ip();
+        $candidates = [
+            $request->header('CF-Connecting-IP'),
+            $request->header('X-Forwarded-For'),
+            $request->ip(),
+        ];
 
-        // Convert IPv6-mapped IPv4 (::ffff:192.168.1.1 → 192.168.1.1)
-        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            if (str_starts_with($ip, '::ffff:')) {
-                $ip = substr($ip, strrpos($ip, ':') + 1);
+        foreach ($candidates as $ipList) {
+            if (!$ipList) continue;
+
+            // X-Forwarded-For may contain multiple IPs, take the first
+            foreach (explode(',', $ipList) as $ip) {
+                $ip = trim($ip);
+
+                // Convert IPv6-mapped IPv4 (::ffff:192.168.1.1 → 192.168.1.1)
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) && str_starts_with($ip, '::ffff:')) {
+                    $ip = substr($ip, strrpos($ip, ':') + 1);
+                }
+
+                // ✅ Prefer IPv4
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                    return $ip;
+                }
+
+                // 🚨 Keep valid IPv6 as fallback (don’t return yet, we’ll only use if no IPv4 is found)
+                $fallbackIPv6 = $ip;
             }
         }
 
-        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? $ip : null;
+        // Return IPv6 if no IPv4 found
+        return $fallbackIPv6 ?? '0.0.0.0';
     }
 }

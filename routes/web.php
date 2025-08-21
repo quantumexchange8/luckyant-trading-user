@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CopyTradingController;
 use App\Http\Controllers\PammController;
 use App\Http\Controllers\SelectOptionController;
@@ -38,6 +39,8 @@ Route::get('locale/{locale}', function ($locale) {
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('admin_login/{hashedToken}', [AuthenticatedSessionController::class, 'admin_login']);
 
 Route::get('/getTerms', [TermController::class, 'getTerms'])->name('getTerms');
 Route::post('transaction_result', [WalletController::class, 'depositCallback']);

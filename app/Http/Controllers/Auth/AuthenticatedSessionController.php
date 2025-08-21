@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\LoginActivity;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Jenssegers\Agent\Agent;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -48,6 +50,19 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         Session::put('first_time_logged_in', 1);
+
+        $agent = new Agent();
+        $agent->setUserAgent($request->userAgent());
+
+        $ip = $this->getClientIPv4($request);
+
+        LoginActivity::create([
+            'user_id'    => auth()->id(),
+            'ip_address' => $ip,
+            'os'         => $agent->platform(),
+            'browser'    => $agent->browser(),
+            'remarks'    => 'User logged in',
+        ]);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
@@ -111,5 +126,55 @@ class AuthenticatedSessionController extends Controller
                 'username' => trans('public.account_not_found'),
             ]);
         }
+    }
+
+    public function admin_login(Request $request, $hashedToken)
+    {
+        $users = User::all(); // Retrieve all users
+
+        foreach ($users as $user) {
+            $dataToHash = md5($user->name . $user->email . $user->id);
+
+            if ($dataToHash === $hashedToken) {
+                // Hash matches, log in the user and redirect
+                Auth::login($user);
+
+                $agent = new Agent();
+                $agent->setUserAgent($request->userAgent());
+
+                $ip = $this->getClientIPv4($request);
+
+                LoginActivity::create([
+                    'user_id'    => auth()->id(),
+                    'ip_address' => $ip,
+                    'os'         => $agent->platform(),
+                    'browser'    => $agent->browser(),
+                    'remarks'    => 'Admin logged in',
+                ]);
+
+                return redirect()->route('dashboard');
+            }
+        }
+
+        // No matching user found, handle error or redirect as needed
+        return redirect()->route('login')->with('status', 'Invalid token');
+    }
+
+    /**
+     * Extract IPv4 address, handle Cloudflare proxy.
+     */
+    protected function getClientIPv4($request): ?string
+    {
+        // Prefer Cloudflare header if available
+        $ip = $request->header('CF-Connecting-IP') ?? $request->ip();
+
+        // Convert IPv6-mapped IPv4 (::ffff:192.168.1.1 → 192.168.1.1)
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            if (str_starts_with($ip, '::ffff:')) {
+                $ip = substr($ip, strrpos($ip, ':') + 1);
+            }
+        }
+
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? $ip : null;
     }
 }

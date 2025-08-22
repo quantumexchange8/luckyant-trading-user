@@ -10,6 +10,10 @@ import Button from "primevue/button";
 import {IconCircleCheckFilled} from "@tabler/icons-vue";
 import {useLangObserver} from "@/Composables/localeObserver.js";
 
+const props = defineProps({
+    paymentAccounts: Array,
+})
+
 const visible = ref(false);
 const selectedPaymentMethod = ref('');
 const {locale} = useLangObserver();
@@ -26,13 +30,17 @@ const beneficialNames = ref(
 
 // Conditionally initialize payment methods
 if (usePage().props.auth.user.enable_bank_withdrawal) {
-    paymentMethods.value.push('bank');
+    paymentMethods.value.push('bank')
 }
-paymentMethods.value.push('crypto');
 
-// Set the initial selectedPaymentMethod to the first item in the array
+// Conditionally add Crypto (only if user doesn’t already have one)
+if (!props.paymentAccounts.some(acc => acc.payment_platform === 'Crypto')) {
+    paymentMethods.value.push('crypto')
+}
+
+// Set initial selection
 if (paymentMethods.value.length > 0) {
-    selectedPaymentMethod.value = paymentMethods.value[0];
+    selectedPaymentMethod.value = paymentMethods.value[0]
 }
 
 const selectPaymentMethod = (newMethod) => {
@@ -105,6 +113,14 @@ const closeDialog = () => {
 
 <template>
     <div
+        v-if="
+            // allow if no accounts
+            paymentAccounts.length === 0 ||
+            // allow if not already has a crypto account
+            !paymentAccounts.some(acc => acc.payment_platform === 'Crypto') ||
+            // allow if it's bank and user has permission
+            (usePage().props.auth.user.enable_bank_withdrawal)
+        "
         class="card text-gray-100 w-full hover:brightness-90 transition-all cursor-pointer group bg-gradient-to-tl from-primary-200 to-primary-600 dark:from-primary-900 dark:to-primary-950 hover:from-primary-600 hover:to-primary-300 dark:hover:from-primary-800 dark:hover:to-primary-950 border-r-2 border-t-2 border-primary-600 dark:border-primary-900 rounded-lg overflow-hidden relative duration-200"
         @click="openDialog"
     >
@@ -164,6 +180,8 @@ const closeDialog = () => {
                                 </div>
                             </div>
                         </div>
+
+                        <InputError :message="form.errors.payment_method" />
                     </div>
 
                     <div

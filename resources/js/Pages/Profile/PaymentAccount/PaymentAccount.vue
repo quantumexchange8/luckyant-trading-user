@@ -156,7 +156,9 @@ watchEffect(() => {
             <div class="h-2 w-full bg-gradient-to-l via-yellow-500 group-hover:blur-xl blur-2xl m-auto rounded transition-all absolute bottom-0"></div>
             <div class="h-0.5 group-hover:w-full bg-gradient-to-l  via-yellow-400 dark:via-yellow-950 group-hover:via-yellow-500 w-[70%] m-auto rounded transition-all"></div>
         </div>
-        <AddPaymentAccount />
+        <AddPaymentAccount
+            :paymentAccounts="paymentAccounts"
+        />
     </div>
 
     <Dialog

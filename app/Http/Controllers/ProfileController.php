@@ -159,6 +159,10 @@ class ProfileController extends Controller
             $data['country'] = $request->country;
             $data['currency'] = $request->currency;
         } elseif ($payment_method == 'crypto') {
+            if ($user->payment_accounts()->where('payment_platform', 'Crypto')->exists()) {
+                throw ValidationException::withMessages(['payment_method' => trans('public.invalid_action')]);
+            }
+
             $data['currency'] = 'USDT';
         }
 

@@ -343,10 +343,10 @@ const openDetails = (masterAccountID) => {
 
                             <!-- Actions -->
                             <div class="flex w-full gap-2 items-center">
-                                <JoinPammForm
-                                    :master="master"
-                                    :strategy="strategy"
-                                />
+<!--                                <JoinPammForm-->
+<!--                                    :master="master"-->
+<!--                                    :strategy="strategy"-->
+<!--                                />-->
                                 <Button
                                     type="button"
                                     severity="secondary"

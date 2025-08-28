@@ -142,19 +142,19 @@ const closeModal = () => {
                     />
                 </div>
 
-                <div>
-                    <Label for="pin_confirmation" :value="$t('public.confirm_pin')" />
-                    <VOtpInput
-                        :input-classes="inputClasses"
-                        class="flex gap-2"
-                        separator=""
-                        inputType="password"
-                        :num-inputs="6"
-                        v-model:value="form.pin_confirmation"
-                        :should-auto-focus="false"
-                        :should-focus-order="true"
-                    />
-                </div>
+<!--                <div>-->
+<!--                    <Label for="pin_confirmation" :value="$t('public.confirm_pin')" />-->
+<!--                    <VOtpInput-->
+<!--                        :input-classes="inputClasses"-->
+<!--                        class="flex gap-2"-->
+<!--                        separator=""-->
+<!--                        inputType="password"-->
+<!--                        :num-inputs="6"-->
+<!--                        v-model:value="form.pin_confirmation"-->
+<!--                        :should-auto-focus="false"-->
+<!--                        :should-focus-order="true"-->
+<!--                    />-->
+<!--                </div>-->
             </div>
         </div>
         <div class="w-full flex justify-between mt-8">
@@ -165,9 +165,9 @@ const closeModal = () => {
             >
                 {{ $t('public.forgot_security_pin') }}
             </div>
-            <div class="flex w-full justify-end items-center gap-4">
-                <Button :disabled="form.processing" @click.prevent="updatePassword">{{ $t('public.save') }}</Button>
-            </div>
+<!--            <div class="flex w-full justify-end items-center gap-4">-->
+<!--                <Button :disabled="form.processing" @click.prevent="updatePassword">{{ $t('public.save') }}</Button>-->
+<!--            </div>-->
         </div>
 
         <Modal :show="resetPinModal" :title="$t('public.reset_security_pin')" @close="closeModal">

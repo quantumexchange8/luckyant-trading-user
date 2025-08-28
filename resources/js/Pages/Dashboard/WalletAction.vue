@@ -18,32 +18,32 @@ const props = defineProps({
     <div class="flex flex-col gap-2">
         <template v-if="wallet.type === 'cash_wallet'">
             <div class="flex justify-between w-full gap-2">
-                <Deposit
-                    :wallet="wallet"
-                />
-                <Withdrawal
-                    :withdrawalFee="withdrawalFee"
-                    :withdrawalFeePercentage="withdrawalFeePercentage"
-                />
+<!--                <Deposit-->
+<!--                    :wallet="wallet"-->
+<!--                />-->
+<!--                <Withdrawal-->
+<!--                    :withdrawalFee="withdrawalFee"-->
+<!--                    :withdrawalFeePercentage="withdrawalFeePercentage"-->
+<!--                />-->
             </div>
             <div class="flex items-center justify-center w-full">
-                <InternalTransfer
-                    :eWalletSel="eWalletSel"
-                    :wallet="wallet"
-                />
+<!--                <InternalTransfer-->
+<!--                    :eWalletSel="eWalletSel"-->
+<!--                    :wallet="wallet"-->
+<!--                />-->
             </div>
         </template>
         <template v-else-if="wallet.type === 'bonus_wallet'">
-            <InternalTransfer
-                :eWalletSel="eWalletSel"
-                :wallet="wallet"
-            />
+<!--            <InternalTransfer-->
+<!--                :eWalletSel="eWalletSel"-->
+<!--                :wallet="wallet"-->
+<!--            />-->
         </template>
         <template v-else-if="wallet.type === 'e_wallet'">
-            <Transfer
-                :eWalletSel="eWalletSel"
-                :wallet="wallet"
-            />
+<!--            <Transfer-->
+<!--                :eWalletSel="eWalletSel"-->
+<!--                :wallet="wallet"-->
+<!--            />-->
 <!--            <a-->
 <!--                class="flex items-center justify-center w-full text-xs hover:text-primary-500"-->
 <!--                href="/data/product-redemption-list.pdf"-->

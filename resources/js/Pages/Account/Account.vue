@@ -32,11 +32,11 @@ const totalBalance = ref(null);
                     {{ $t('public.sidebar.account_info') }}
                 </h2>
 
-                <CreateAccount
-                    :activeAccountCounts="activeAccountCounts"
-                    :liveAccountQuota="liveAccountQuota"
-                    :enableVirtualAccount="enableVirtualAccount"
-                />
+<!--                <CreateAccount-->
+<!--                    :activeAccountCounts="activeAccountCounts"-->
+<!--                    :liveAccountQuota="liveAccountQuota"-->
+<!--                    :enableVirtualAccount="enableVirtualAccount"-->
+<!--                />-->
             </div>
         </template>
 

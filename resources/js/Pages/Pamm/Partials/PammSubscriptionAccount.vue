@@ -280,11 +280,11 @@ watchEffect(() => {
                         </div>
 
                         <!-- Actions -->
-                        <PammSubscriptionAccountAction
-                            :strategyType="strategyType"
-                            :subscriber="subscriber"
-                            :walletSel="walletSel"
-                        />
+<!--                        <PammSubscriptionAccountAction-->
+<!--                            :strategyType="strategyType"-->
+<!--                            :subscriber="subscriber"-->
+<!--                            :walletSel="walletSel"-->
+<!--                        />-->
                     </div>
                 </template>
             </Card>

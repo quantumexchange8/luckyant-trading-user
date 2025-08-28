@@ -175,32 +175,32 @@ const startCountdown = () => {
                     />
                 </div>
 
-                <div>
-                    <Label for="otp" :value="$t('public.otp_verification')" />
-                    <div class="flex justify-start items-center gap-4 mt-1">
-                        <Button size="sm" v-if="!otpRequested" :disabled="form.processing" @click.prevent="requestOTP">{{ $t('public.request_otp') }}</Button>
-                    </div>
+<!--                <div>-->
+<!--                    <Label for="otp" :value="$t('public.otp_verification')" />-->
+<!--                    <div class="flex justify-start items-center gap-4 mt-1">-->
+<!--                        <Button size="sm" v-if="!otpRequested" :disabled="form.processing" @click.prevent="requestOTP">{{ $t('public.request_otp') }}</Button>-->
+<!--                    </div>-->
 
-                    <VOtpInput v-if="otpRequested"
-                            :input-classes="inputClasses"
-                            class="flex gap-2"
-                            separator=""
-                            inputType="password"
-                            :num-inputs="6"
-                            v-model:value="form.otp"
-                            :should-auto-focus="false"
-                            :should-focus-order="true"
-                    />
-                    <InputError :message="form.errors.otp" class="mt-2" />
-                    <div class="flex justify-end items-center gap-4 my-1 text-sm" v-if="otpRequested && countdown > 0">
-                        {{ $t('public.remaining_time') }} {{ countdown }}s
-                    </div>
-                    <div class="flex justify-end items-center gap-4 my-1" v-if="otpRequested && countdown <= 0">
-                        <span class="text-sm text-primary-500 dark:text-primary-600 underline cursor-pointer" @click="resendOTP()">
-                            {{ $t('public.resend_otp_request') }}
-                        </span>
-                    </div>
-                </div>
+<!--                    <VOtpInput v-if="otpRequested"-->
+<!--                            :input-classes="inputClasses"-->
+<!--                            class="flex gap-2"-->
+<!--                            separator=""-->
+<!--                            inputType="password"-->
+<!--                            :num-inputs="6"-->
+<!--                            v-model:value="form.otp"-->
+<!--                            :should-auto-focus="false"-->
+<!--                            :should-focus-order="true"-->
+<!--                    />-->
+<!--                    <InputError :message="form.errors.otp" class="mt-2" />-->
+<!--                    <div class="flex justify-end items-center gap-4 my-1 text-sm" v-if="otpRequested && countdown > 0">-->
+<!--                        {{ $t('public.remaining_time') }} {{ countdown }}s-->
+<!--                    </div>-->
+<!--                    <div class="flex justify-end items-center gap-4 my-1" v-if="otpRequested && countdown <= 0">-->
+<!--                        <span class="text-sm text-primary-500 dark:text-primary-600 underline cursor-pointer" @click="resendOTP()">-->
+<!--                            {{ $t('public.resend_otp_request') }}-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
             </div>
 
             <div class="flex flex-col items-start gap-3 self-stretch">
@@ -227,10 +227,10 @@ const startCountdown = () => {
             </div>
         </div>
 
-        <div class="w-full mt-8">
-            <div class="flex justify-end items-center gap-4">
-                <Button :disabled="form.processing" @click.prevent="updatePassword">{{ $t('public.save') }}</Button>
-            </div>
-        </div>
+<!--        <div class="w-full mt-8">-->
+<!--            <div class="flex justify-end items-center gap-4">-->
+<!--                <Button :disabled="form.processing" @click.prevent="updatePassword">{{ $t('public.save') }}</Button>-->
+<!--            </div>-->
+<!--        </div>-->
     </form>
 </template>

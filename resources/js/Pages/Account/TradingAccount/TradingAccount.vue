@@ -173,12 +173,12 @@ watchEffect(() => {
                         </div>
                     </div>
                     <div class="flex justify-end" v-if="account.trading_user.acc_status === 'Active'">
-                        <Action
-                            :activeAccountCounts="activeAccountCounts"
-                            :account="account"
-                            :walletSel="walletSel"
-                            :leverageSel="leverageSel"
-                        />
+<!--                        <Action-->
+<!--                            :activeAccountCounts="activeAccountCounts"-->
+<!--                            :account="account"-->
+<!--                            :walletSel="walletSel"-->
+<!--                            :leverageSel="leverageSel"-->
+<!--                        />-->
                     </div>
                 </div>
                 <div class="flex justify-between items-center self-stretch">
@@ -255,11 +255,11 @@ watchEffect(() => {
                 <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 w-full"
                      v-if="account.trading_user.acc_status === 'Active'">
                     <div class="flex items-center gap-3 w-full">
-                        <BalanceIn
-                            :account="account"
-                            :alphaDepositMax="alphaDepositMax"
-                            :alphaDepositQuota="alphaDepositQuota"
-                        />
+<!--                        <BalanceIn-->
+<!--                            :account="account"-->
+<!--                            :alphaDepositMax="alphaDepositMax"-->
+<!--                            :alphaDepositQuota="alphaDepositQuota"-->
+<!--                        />-->
                     </div>
                     <div class="flex items-center gap-2 justify-end w-full">
                         <Loading class="w-5 h-5"/>

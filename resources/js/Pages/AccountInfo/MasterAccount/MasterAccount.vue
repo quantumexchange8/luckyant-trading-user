@@ -141,14 +141,14 @@ const currentLocale = ref(usePage().props.locale);
                     </div>
                 </div>
                 <div class="flex justify-end">
-                    <Action
-                        :account="account.trading_account"
-                        :walletSel="walletSel"
-                        :leverageSel="leverageSel"
-                        :accountCounts="accountCounts"
-                        :masterAccountLogin="masterAccountLogin"
-                        type="Edit"
-                    />
+<!--                    <Action-->
+<!--                        :account="account.trading_account"-->
+<!--                        :walletSel="walletSel"-->
+<!--                        :leverageSel="leverageSel"-->
+<!--                        :accountCounts="accountCounts"-->
+<!--                        :masterAccountLogin="masterAccountLogin"-->
+<!--                        type="Edit"-->
+<!--                    />-->
                 </div>
             </div>
             <div class="flex justify-between items-center self-stretch">

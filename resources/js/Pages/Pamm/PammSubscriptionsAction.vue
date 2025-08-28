@@ -163,74 +163,74 @@ const closeDialog = () => {
             </div>
 
             <!-- Terminate details -->
-            <div
-                v-if="subscription.status === 'Active' && subscription.master.can_revoke"
-                class="flex flex-col gap-3 items-center self-stretch"
-            >
-                <div class="text-gray-600 dark:text-gray-400 w-full text-sm font-semibold">
-                    {{ $t('public.terminate_details') }}
-                </div>
-                <div class="flex flex-col gap-1 items-start self-stretch">
-                    <div class="flex items-start justify-between gap-2 text-xs self-stretch">
-                        <div class="font-semibold text-gray-500 dark:text-gray-400">
-                            {{$t('public.management_fee')}}
-                        </div>
-                        <div class="text-error-500 font-bold">
-                            $ {{ formatAmount(calculateManagementFee(subscription)) }}
-                        </div>
-                    </div>
-                    <div class="flex items-start justify-between gap-2 text-xs self-stretch">
-                        <div class="font-semibold text-gray-500 dark:text-gray-400">
-                            {{$t('public.return_amount')}}
-                        </div>
-                        <div class="text-success-500 font-bold">
-                            $ {{ formatAmount(subscription.subscription_amount - calculateManagementFee(subscription)) }}
-                        </div>
-                    </div>
-                </div>
+<!--            <div-->
+<!--                v-if="subscription.status === 'Active' && subscription.master.can_revoke"-->
+<!--                class="flex flex-col gap-3 items-center self-stretch"-->
+<!--            >-->
+<!--                <div class="text-gray-600 dark:text-gray-400 w-full text-sm font-semibold">-->
+<!--                    {{ $t('public.terminate_details') }}-->
+<!--                </div>-->
+<!--                <div class="flex flex-col gap-1 items-start self-stretch">-->
+<!--                    <div class="flex items-start justify-between gap-2 text-xs self-stretch">-->
+<!--                        <div class="font-semibold text-gray-500 dark:text-gray-400">-->
+<!--                            {{$t('public.management_fee')}}-->
+<!--                        </div>-->
+<!--                        <div class="text-error-500 font-bold">-->
+<!--                            $ {{ formatAmount(calculateManagementFee(subscription)) }}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="flex items-start justify-between gap-2 text-xs self-stretch">-->
+<!--                        <div class="font-semibold text-gray-500 dark:text-gray-400">-->
+<!--                            {{$t('public.return_amount')}}-->
+<!--                        </div>-->
+<!--                        <div class="text-success-500 font-bold">-->
+<!--                            $ {{ formatAmount(subscription.subscription_amount - calculateManagementFee(subscription)) }}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
 
-                <!-- t&c -->
-                <div class="flex flex-col gap-1 items-start self-stretch">
-                    <div class="flex items-start gap-2 self-stretch w-full">
-                        <Checkbox
-                            v-model="form.terms"
-                            inputId="terms"
-                            binary
-                            :invalid="!!form.errors.terms"
-                        />
-                        <label for="terms" class="text-gray-600 dark:text-gray-400 text-xs">
-                            {{ $t('public.agreement') }}
-                            <TermsAndCondition
-                                :termsLabel="$t('public.terms_and_conditions')"
-                                :terms="subscription.master.master_term"
-                                :managementFee="subscription.master.master_management_fee"
-                            />
-                        </label>
-                    </div>
-                    <InputError :message="form.errors.terms"/>
-                </div>
+<!--                &lt;!&ndash; t&c &ndash;&gt;-->
+<!--                <div class="flex flex-col gap-1 items-start self-stretch">-->
+<!--                    <div class="flex items-start gap-2 self-stretch w-full">-->
+<!--                        <Checkbox-->
+<!--                            v-model="form.terms"-->
+<!--                            inputId="terms"-->
+<!--                            binary-->
+<!--                            :invalid="!!form.errors.terms"-->
+<!--                        />-->
+<!--                        <label for="terms" class="text-gray-600 dark:text-gray-400 text-xs">-->
+<!--                            {{ $t('public.agreement') }}-->
+<!--                            <TermsAndCondition-->
+<!--                                :termsLabel="$t('public.terms_and_conditions')"-->
+<!--                                :terms="subscription.master.master_term"-->
+<!--                                :managementFee="subscription.master.master_management_fee"-->
+<!--                            />-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <InputError :message="form.errors.terms"/>-->
+<!--                </div>-->
 
-                <div class="flex w-full justify-end gap-3">
-                    <Button
-                        type="button"
-                        severity="secondary"
-                        text
-                        class="justify-center w-full md:w-auto px-6"
-                        @click="closeDialog"
-                        :disabled="form.processing"
-                    >
-                        {{ $t('public.cancel') }}
-                    </Button>
-                    <Button
-                        type="submit"
-                        class="justify-center w-full md:w-auto px-6"
-                        @click.prevent="submitForm"
-                        :disabled="form.processing"
-                    >
-                        {{ $t('public.confirm') }}
-                    </Button>
-                </div>
-            </div>
+<!--                <div class="flex w-full justify-end gap-3">-->
+<!--                    <Button-->
+<!--                        type="button"-->
+<!--                        severity="secondary"-->
+<!--                        text-->
+<!--                        class="justify-center w-full md:w-auto px-6"-->
+<!--                        @click="closeDialog"-->
+<!--                        :disabled="form.processing"-->
+<!--                    >-->
+<!--                        {{ $t('public.cancel') }}-->
+<!--                    </Button>-->
+<!--                    <Button-->
+<!--                        type="submit"-->
+<!--                        class="justify-center w-full md:w-auto px-6"-->
+<!--                        @click.prevent="submitForm"-->
+<!--                        :disabled="form.processing"-->
+<!--                    >-->
+<!--                        {{ $t('public.confirm') }}-->
+<!--                    </Button>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </Dialog>
 </template>

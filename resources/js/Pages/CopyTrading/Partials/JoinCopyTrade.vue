@@ -72,12 +72,12 @@ const closeDialog = () => {
 </script>
 
 <template>
-    <Button
-        class="w-full"
-        @click="openDialog"
-    >
-        {{ $t('public.subscribe') }}
-    </Button>
+<!--    <Button-->
+<!--        class="w-full"-->
+<!--        @click="openDialog"-->
+<!--    >-->
+<!--        {{ $t('public.subscribe') }}-->
+<!--    </Button>-->
 
     <Dialog
         v-model:visible="visible"

@@ -485,9 +485,9 @@ watchEffect(() => {
                 </div>
             </form>
         </div>
-        <div class="flex justify-end mt-8">
-            <Button @click.prevent="openConfirmModal">{{ $t('public.save') }}</Button>
-        </div>
+<!--        <div class="flex justify-end mt-8">-->
+<!--            <Button @click.prevent="openConfirmModal">{{ $t('public.save') }}</Button>-->
+<!--        </div>-->
     </section>
 
     <Modal :show="confirmModal" :title="$t('public.profile_update_confirmation')" max-width="md" @close="closeModal">

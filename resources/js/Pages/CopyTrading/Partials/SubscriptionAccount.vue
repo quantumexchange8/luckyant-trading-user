@@ -278,10 +278,10 @@ watchEffect(() => {
                         </div>
 
                         <!-- Actions -->
-                        <SubscriptionAccountAction
-                            :strategyType="strategyType"
-                            :subscriber="subscriber"
-                        />
+<!--                        <SubscriptionAccountAction-->
+<!--                            :strategyType="strategyType"-->
+<!--                            :subscriber="subscriber"-->
+<!--                        />-->
                     </div>
                 </template>
             </Card>

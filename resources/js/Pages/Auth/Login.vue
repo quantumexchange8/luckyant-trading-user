@@ -94,12 +94,12 @@ onMounted(() => {
                     </Button>
                 </div>
 
-                <p v-if="canRegister" class="text-sm text-gray-600 dark:text-gray-400">
-                    {{ $t('public.not_have_account') }}
-                    <Link :href="route('register')" class="text-primary-600 hover:underline">
-                        {{ $t('public.register') }}
-                    </Link>
-                </p>
+<!--                <p v-if="canRegister" class="text-sm text-gray-600 dark:text-gray-400">-->
+<!--                    {{ $t('public.not_have_account') }}-->
+<!--                    <Link :href="route('register')" class="text-primary-600 hover:underline">-->
+<!--                        {{ $t('public.register') }}-->
+<!--                    </Link>-->
+<!--                </p>-->
             </div>
         </form>
     </GuestLayout>

@@ -36,6 +36,7 @@ class RegisteredUserController extends Controller
      */
     public function create($referral = null): Response
     {
+        abort(404);
         return Inertia::render('Auth/Register', [
             'countries' => (new SelectOptionService())->getCountries(),
             'nationality' => (new SelectOptionService())->getNationalities(),

@@ -18,13 +18,13 @@ const props = defineProps({
     <div class="flex flex-col gap-2">
         <template v-if="wallet.type === 'cash_wallet'">
             <div class="flex justify-between w-full gap-2">
-<!--                <Deposit-->
-<!--                    :wallet="wallet"-->
-<!--                />-->
-<!--                <Withdrawal-->
-<!--                    :withdrawalFee="withdrawalFee"-->
-<!--                    :withdrawalFeePercentage="withdrawalFeePercentage"-->
-<!--                />-->
+                <Deposit
+                    :wallet="wallet"
+                />
+                <Withdrawal
+                    :withdrawalFee="withdrawalFee"
+                    :withdrawalFeePercentage="withdrawalFeePercentage"
+                />
             </div>
             <div class="flex items-center justify-center w-full">
 <!--                <InternalTransfer-->
